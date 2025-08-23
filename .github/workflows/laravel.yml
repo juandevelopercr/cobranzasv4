@@ -1,0 +1,21 @@
+name: Laravel
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+jobs:
+  ftp_principal:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout del repositorio consortium V4.4
+        uses: actions/checkout@v4
+      - name: Upload consortium V4.4
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: 144.126.137.131
+          username: ${{ secrets.FTPUSERNAMEPRINCIPAL }}
+          password: ${{ secrets.FTPPASSWORD }}
