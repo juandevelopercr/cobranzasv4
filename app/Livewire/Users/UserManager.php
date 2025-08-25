@@ -7,14 +7,11 @@ use App\Helpers\Helpers;
 use App\Livewire\BaseComponent;
 use App\Models\Bank;
 use App\Models\DataTableConfig;
-use App\Models\Department;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
@@ -54,7 +51,6 @@ class UserManager extends BaseComponent
   public $initials;
   public $password;
   public $password_confirmation;
-  public $department_id;
   public $profile_photo_path;
 
   public $oldProfile_photo_path = NULL; // Imagen existente en la BD
@@ -65,69 +61,17 @@ class UserManager extends BaseComponent
   public $defaultColumns;
   public $listActives;
 
-  #[Computed()]
-  public function listroles()
-  {
-    return Role::all();
-  }
-
-  #[Computed()]
-  public function departments()
-  {
-    return Department::orderBy('name', 'asc')->get();
-  }
-
-  #[Computed()]
-  public function listbancos()
-  {
-    return Bank::where('active', 1)->orderBy('name', 'asc')->get();
-  }
-
-  #[Computed]
-  public function departmentsWithBanks()
-  {
-    return Department::with('banks')->get();
-  }
-
-  #[Computed]
-  public function allBanks()
-  {
-    return Bank::all();
-  }
-
-  /*
-  public function getBanksForDepartment($departmentId)
-  {
-    if (!$departmentId) return collect();
-
-    return $this->departmentsWithBanks->firstWhere('id', $departmentId)?->banks ?? collect();
-  }
-  */
-
-  public function getBanksForDepartment($departmentId)
-  {
-    if (!$departmentId) return collect();
-
-    // Cachear resultados para mejor performance
-    return once(function () use ($departmentId) {
-      return Department::with('banks')->find($departmentId)?->banks ?? collect();
-    });
-  }
+  public $listroles = [];
+  public $listbanks = [];
 
   //#[Url()]
   public $roles = [];
-  public $bancos = [];
-  public $departamentos = [];
-
-  public $roleAssignments = [];
-  public $availableRoles = [];
-  public $allDepartments = [];
+  public $banks = [];
 
   // Escuha el evento del componente customerModal
   protected $listeners = [
     'datatableSettingChange' => 'refresDatatable',
     'dateRangeSelected' => 'dateRangeSelected',
-    'department-changed' => 'updateBanksForDepartment'
   ];
 
   protected function getModelClass(): string
@@ -137,30 +81,24 @@ class UserManager extends BaseComponent
 
   public function mount()
   {
-    $this->refresDatatable();
-
-    if (session('current_role_name') == User::SUPERADMIN) {
-      $this->availableRoles = Role::orderBy('id', 'DESC')->pluck('name', 'id')->toArray();
+    if (Auth::user()->hasRole(User::SUPERADMIN)) {
+      $this->listroles = Role::orderBy('id', 'DESC')->get();
     } else {
-      $this->availableRoles = Role::where('name', '<>', User::SUPERADMIN)->orderBy('id', 'DESC')->pluck('name', 'id')->toArray();
+      $this->listroles = Role::where('name', '<>', User::SUPERADMIN)->orderBy('id', 'DESC')->get();
     }
 
-    //$this->availableRoles = Role::all()->pluck('name', 'id')->toArray();
-    $this->allDepartments = Department::all()->keyBy('id');
+    $this->listbanks = Bank::orderBy('name', 'ASC')->get();
 
-    if ($this->action == 'create') {
-      $this->addRoleAssignment(); // Iniciar con un campo vacío
-    }
-
+    $this->refresDatatable();
     $this->listActives = [['id' => 1, 'name' => 'Activo'], ['id' => 0, 'name' => 'Inactivo']];
   }
 
   public function render()
   {
     $users = User::search($this->search, $this->filters) // Utiliza el scopeSearch para la búsqueda
-      //->when($this->active !== '', function ($query) {
-      //$query->where('users.active', $this->active);
-      //})
+      ->when($this->active !== '', function ($query) {
+        $query->where('users.active', $this->active);
+      })
       ->orderBy($this->sortBy, $this->sortDir)
       ->paginate($this->perPage);
 
@@ -201,15 +139,10 @@ class UserManager extends BaseComponent
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
 
-    // Resetear todas las asignaciones de roles
-    $this->roleAssignments = [];
-
-    // Agregar una asignación vacía
-    $this->addRoleAssignment();
-
     $this->active = 1;
     $this->action = 'create';
     $this->dispatch('scroll-to-top');
+    $this->dispatch('reinitSelect2Controls');
   }
 
   public function rules()
@@ -219,70 +152,16 @@ class UserManager extends BaseComponent
       'email'         => 'required|string|email|max:255|unique:users,email,' . $this->recordId,
       'initials'      => 'required|string|max:30',
       'password'      => 'nullable|string|min:8|confirmed',
-      'roleAssignments' => [
-        'required',
-        'array',
-        'min:1',
-        function ($attribute, $value, $fail) {
-          $hasValidRole = collect($value)->contains(function ($assignment) {
-            return !empty($assignment['role_id']);
-          });
-
-          if (!$hasValidRole) {
-            $fail('Debe asignar al menos un rol al usuario');
-          }
-        }
-      ],
+      'roles'         => 'required|array|min:1',
+      'roles.*'       => 'exists:roles,name',
+      'banks'         => 'nullable|array|min:0',
+      'banks.*'       => 'exists:banks,id',  // Cambiado de 'name' a 'id'
       'active'        => 'required|integer|in:0,1',
     ];
-
-    // Precargar roles
-    $roleIds = collect($this->roleAssignments)
-      ->pluck('role_id')
-      ->filter()
-      ->unique()
-      ->toArray();
-
-    $roles = !empty($roleIds)
-      ? Role::whereIn('id', $roleIds)->get()->keyBy('id')
-      : collect();
-
-    $uniqueCombinations = [];
-
-    foreach ($this->roleAssignments as $index => $assignment) {
-      $roleId = $assignment['role_id'] ?? null;
-      $deptId = $assignment['department_id'] ?? null;
-
-      if ($roleId) {
-        $rules["roleAssignments.$index.role_id"] = 'required|exists:roles,id';
-
-        // Obtener el modelo del rol
-        $role = $roles->get($roleId);
-
-        // Solo aplicar reglas de departamento/bancos si el rol NO es de acceso completo
-        if ($role && !in_array($role->name, User::ROLES_ALL_DEPARTMENTS)) {
-          $comboKey = $roleId . '-' . $deptId;
-
-          if ($deptId) {
-            if (in_array($comboKey, $uniqueCombinations)) {
-              $rules["roleAssignments.$index.combo"] = 'unique_combo';
-            } else {
-              $uniqueCombinations[] = $comboKey;
-            }
-          }
-
-          $rules["roleAssignments.$index.department_id"] = 'required|exists:departments,id';
-          $rules["roleAssignments.$index.banks"] = 'required|array|min:1';
-          $rules["roleAssignments.$index.banks.*"] = 'exists:banks,id';
-        }
-      }
-    }
 
     if (empty($this->recordId)) {
       $rules['password'] = 'required|string|min:8|confirmed';
     }
-
-    $this->dispatch('reinitFormControls');
 
     return $rules;
   }
@@ -293,15 +172,7 @@ class UserManager extends BaseComponent
       'required' => 'El campo :attribute es obligatorio.',
       'email.unique' => 'El :attribute ya está registrado.',
       'password.confirmed' => 'Las contraseñas no coinciden.',
-      'password.min' => 'La clave debe tener cómo mínimo 8 caracteres',
-      'bancos.required' => 'Debe seleccionar al menos un banco.',
-      'bancos.min' => 'Debe seleccionar al menos un banco.',
-      'departamentos.required' => 'Debe seleccionar al menos un departamento.',
-      'departamentos.min' => 'Debe seleccionar al menos un departamento.',
-
-      'unique_combo' => 'La combinación de rol y departamento ya existe en otra asignación.',
-      'roleAssignments.*.department_id.required' => 'Debe seleccionar un departamento para el rol.',
-      'roleAssignments.*.banks.required' => 'Debe seleccionar al menos un banco para el rol.',
+      'password.min' => 'La clave debe tener cómo mínimo 8 caracteres'
     ];
   }
 
@@ -313,9 +184,8 @@ class UserManager extends BaseComponent
       'initials' => 'iniciales',
       'password' => 'contraseña',
       'password_confirmation' => 'confirmación de contraseña',
-      'department_id' => 'departamento',
       'roles' => 'roles',
-      'bancos' => 'banco',
+      'banks' => 'bancos',
       'active' => 'estado',
     ];
   }
@@ -331,7 +201,6 @@ class UserManager extends BaseComponent
         'profile_photo_path' => 'image|mimes:jpg,jpeg,png,gif|max:2048',
       ]);
     }
-
     try {
       if ($this->profile_photo_path) {
         $imageName = uniqid() . '.' . $this->profile_photo_path->extension();
@@ -353,85 +222,10 @@ class UserManager extends BaseComponent
 
       $closeForm = $this->closeForm;
 
-      // Obtener IDs de roles únicos
-      $roleIds = collect($this->roleAssignments)
-        ->pluck('role_id')
-        ->filter()
-        ->unique()
-        ->toArray();
-
-      // Pre-cargar todos los roles involucrados
-      $roles = Role::whereIn('id', $roleIds)->get()->keyBy('id');
-
-      // Preparar listas para diferentes tipos de asignaciones
-      $globalRoles = [];
-      $departmentAssignments = [];
-
-      foreach ($this->roleAssignments as $assignment) {
-        $role = $roles[$assignment['role_id']] ?? null;
-        if (!$role) continue;
-
-        if (in_array($role->name, User::ROLES_ALL_DEPARTMENTS)) {
-          $globalRoles[] = $role->name;
-        } elseif ($assignment['department_id']) {
-          $departmentAssignments[] = $assignment;
-        }
+      if ($user) {
+        $user->syncRoles($validatedData['roles']);
+        $user->syncbanks($validatedData['banks']);
       }
-
-      // Construir lista completa de roles (nombres) para sincronización
-      $allRoles = $globalRoles;
-      foreach ($departmentAssignments as $assignment) {
-        $role = $roles[$assignment['role_id']] ?? null;
-        if ($role) {
-          $allRoles[] = $role->name;
-        }
-      }
-
-      // Eliminar duplicados (por si un rol aparece en ambos tipos)
-      $allRoles = array_unique($allRoles);
-
-      // Sincronizar TODOS los roles
-      $user->syncRoles($allRoles);
-
-      // Eliminar asignaciones departamentales previas
-      DB::table('user_role_department')->where('user_id', $user->id)->delete();
-      DB::table('user_role_department_banks')->where('user_id', $user->id)->delete();
-
-      // Procesar asignaciones específicas
-      $departmentPivots = [];
-      $bankRecords = [];
-
-      foreach ($departmentAssignments as $assignment) {
-        $role = $roles[$assignment['role_id']] ?? null;
-        $departmentId = $assignment['department_id'];
-
-        if (!$role || !$departmentId) continue;
-
-        $departmentPivots[] = [
-          'user_id' => $user->id,
-          'role_id' => $role->id,
-          'department_id' => $departmentId
-        ];
-
-        foreach ($assignment['banks'] ?? [] as $bankId) {
-          $bankRecords[] = [
-            'user_id' => $user->id,
-            'role_id' => $role->id,
-            'department_id' => $departmentId,
-            'bank_id' => $bankId
-          ];
-        }
-      }
-
-      // Inserciones masivas
-      if (!empty($departmentPivots)) {
-        DB::table('user_role_department')->insert($departmentPivots);
-      }
-
-      if (!empty($bankRecords)) {
-        DB::table('user_role_department_banks')->insert($bankRecords);
-      }
-
 
       $this->resetControls();
       if ($closeForm) {
@@ -451,7 +245,6 @@ class UserManager extends BaseComponent
     }
   }
 
-  /*
   public function edit($recordId)
   {
     $recordId = $this->getRecordAction($recordId);
@@ -460,147 +253,35 @@ class UserManager extends BaseComponent
       return; // Ya se lanzó la notificación desde getRecordAction
     }
 
+    $user = User::find($recordId);
     $this->recordId = $recordId;
-    $user = User::with([
-      'roles',
-      'departments' => function ($query) {
-        $query->withPivot('role_id');
-      },
-      'banks'
-    ])->findOrFail($recordId);
 
     $this->name = $user->name;
     $this->email = $user->email;
     $this->initials = $user->initials;
-    $this->active = $user->active;
     $this->profile_photo_path = $user->profile_photo_path;
-    $this->oldProfile_photo_path = $user->profile_photo_path;
+    $this->active = $user->active;
 
-    $this->roleAssignments = $this->formatRoleAssignments($user);
+    $this->roles = $user->getRoleNames();
 
-    $this->action = 'edit';
-
-    $this->roles = $user->getRoleNames()->toArray();
-
-    $this->roleAssignments = [];
-
-    // Agrupar asignaciones por combinación única rol-departamento
-    $groupedAssignments = [];
-
-    foreach ($user->roleAssignments as $assignment) {
-      $key = $assignment->role_id . '-' . $assignment->department_id;
-
-      if (!isset($groupedAssignments[$key])) {
-        $groupedAssignments[$key] = [
-          'role_id' => $assignment->role_id,
-          'department_id' => $assignment->department_id,
-          'banks' => []
-        ];
-      }
-
-      if ($assignment->bank_id) {
-        $groupedAssignments[$key]['banks'][] = $assignment->bank_id;
-      }
-    }
-
-    $this->roleAssignments = array_values($groupedAssignments);
-
-    // Si no hay asignaciones, agregar una vacía
-    if (empty($this->roleAssignments)) {
-      $this->addRoleAssignment();
-    }
-
-    $this->bancos = $user->banks->pluck('id')->toArray();
-    $this->departamentos = $user->departments->pluck('id')->toArray();
+    $this->banks = $user->banks->pluck('id')->toArray();
 
     // Cargar la imagen actual guardada en la base de datos
     $this->oldProfile_photo_path = $user->profile_photo_path;
 
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
-
-    //$this->dispatch('reinit-form-controls-delayed');
-    $this->dispatch('reinitFormControls');
-  }
-  */
-  public function edit($recordId)
-  {
-    $recordId = $this->getRecordAction($recordId);
-
-    if (!$recordId) {
-      return; // Ya se lanzó la notificación desde getRecordAction
-    }
-
-    $this->recordId = $recordId;
-    $user = User::with([
-      'roles',
-      'departments' => function ($query) {
-        $query->withPivot('role_id');
-      },
-      'banks'
-    ])->findOrFail($recordId);
-
-    $this->name = $user->name;
-    $this->email = $user->email;
-    $this->initials = $user->initials;
-    $this->active = $user->active;
-    $this->profile_photo_path = $user->profile_photo_path;
-    $this->oldProfile_photo_path = $user->profile_photo_path;
-
-    // RESETEAR LAS ASIGNACIONES DE ROLES
-    $this->roleAssignments = [];
-
-    // 1. PRIMERO CARGAR ROLES DE ACCESO COMPLETO (SPATIE)
-    foreach ($user->roles as $role) {
-      if (in_array($role->name, User::ROLES_ALL_DEPARTMENTS)) {
-        $this->roleAssignments[] = [
-          'role_id' => $role->id,
-          'department_id' => null,
-          'banks' => []
-        ];
-      }
-    }
-
-    // 2. LUEGO CARGAR ROLES CON DEPARTAMENTOS (TABLAS PERSONALIZADAS)
-    $departmentAssignments = DB::table('user_role_department')
-      ->where('user_id', $user->id)
-      ->get();
-
-    foreach ($departmentAssignments as $assignment) {
-      $banks = DB::table('user_role_department_banks')
-        ->where('user_id', $user->id)
-        ->where('role_id', $assignment->role_id)
-        ->where('department_id', $assignment->department_id)
-        ->pluck('bank_id')
-        ->toArray();
-
-      $this->roleAssignments[] = [
-        'role_id' => $assignment->role_id,
-        'department_id' => $assignment->department_id,
-        'banks' => $banks
-      ];
-    }
-
-    // Si no hay asignaciones, agregar una vacía
-    if (empty($this->roleAssignments)) {
-      $this->addRoleAssignment();
-    }
+    $this->dispatch('reinitSelect2Controls');
 
     $this->action = 'edit';
-
-    // Eliminar estas líneas redundantes
-    // $this->roles = $user->getRoleNames()->toArray();
-    // $this->bancos = $user->banks->pluck('id')->toArray();
-    // $this->departamentos = $user->departments->pluck('id')->toArray();
-
-    $this->resetErrorBag();
-    $this->resetValidation();
-    $this->dispatch('reinitFormControls');
   }
 
   public function update()
   {
     $recordId = $this->recordId;
+
+    //dd($this);
+    // Valida los datos
     $validatedData = $this->validate();
 
     // Validar la imagen solo si existe una nueva imagen
@@ -609,8 +290,8 @@ class UserManager extends BaseComponent
         'profile_photo_path' => 'image|mimes:jpg,jpeg,png,gif|max:2048',
       ]);
     }
-
     try {
+      // Encuentra el usuario existente
       $user = User::findOrFail($recordId);
 
       // Procesa la nueva imagen si se subió
@@ -635,180 +316,41 @@ class UserManager extends BaseComponent
         $validatedData['profile_photo_path'] = $this->oldProfile_photo_path;
       }
 
-      // Actualizar datos básicos del usuario
-      $updateData = [
+      // Actualiza el usuario
+      $user->update([
         'name' => $validatedData['name'],
         'email' => $validatedData['email'],
         'initials' => $validatedData['initials'],
+        'password' => $validatedData['password'] ? Hash::make($validatedData['password']) : $user->password,
         'active' => $validatedData['active'],
         'profile_photo_path' => $validatedData['profile_photo_path']
-      ];
-
-      if (!empty($validatedData['password'])) {
-        $updateData['password'] = Hash::make($validatedData['password']);
-      }
-
-      $user->update($updateData);
-
-      // Procesar asignaciones de roles
-      $this->processRoleAssignments($user);
-
-      // Actualizar el estado del componente
-      $this->refreshAfterUpdate($user);
-
-      $this->selectedIds = [];
-      $this->dispatch('updateSelectedIds', $this->selectedIds);
-
-      $this->dispatch('show-notification', [
-        'type' => 'success',
-        'message' => __('The record has been updated')
       ]);
+
+      $closeForm = $this->closeForm;
+
+      $roleIds = array_map(function ($role) {
+        return is_array($role) ? $role['id'] : $role;
+      }, $validatedData['roles'] ?? []);
+
+      $user->syncRoles($roleIds);
+
+      // Sincronizar bancos usando los IDs
+      $user->banks()->sync($this->banks);
+
+      // Restablece los controles y emite el evento para desplazar la página al inicio
+      $this->resetControls();
+      $this->dispatch('scroll-to-top');
+      $this->dispatch('show-notification', ['type' => 'success', 'message' => __('The record has been updated')]);
+
+      if ($closeForm) {
+        $this->action = 'list';
+      } else {
+        $this->action = 'edit';
+        $this->edit($user->id);
+      }
     } catch (\Exception $e) {
-      $this->dispatch('show-notification', [
-        'type' => 'error',
-        'message' => __('An error occurred while updating the record') . ': ' . $e->getMessage()
-      ]);
+      $this->dispatch('show-notification', ['type' => 'error', 'message' => __('An error occurred while updating the registro') . $e->getMessage()]);
     }
-  }
-
-  protected function processRoleAssignments(User $user)
-  {
-    $roleIds = collect($this->roleAssignments)
-      ->pluck('role_id')
-      ->filter()
-      ->unique()
-      ->toArray();
-
-    $roles = Role::whereIn('id', $roleIds)->get()->keyBy('id');
-
-    // Preparar listas
-    $rolesToSync = [];
-    $departmentAssignments = [];
-
-    foreach ($this->roleAssignments as $assignment) {
-      $roleId = $assignment['role_id'] ?? null;
-      if (!$roleId) continue;
-
-      $role = $roles[$roleId] ?? Role::find($roleId);
-      if (!$role) continue;
-
-      $rolesToSync[] = $role->name;
-
-      // Solo procesar departamentos si NO es rol de acceso completo
-      if (!in_array($role->name, User::ROLES_ALL_DEPARTMENTS)) {
-        $departmentAssignments[] = [
-          'role' => $role,
-          'department_id' => $assignment['department_id'] ?? null,
-          'banks' => $assignment['banks'] ?? []
-        ];
-      }
-    }
-
-    // Sincronizar roles (elimina todos y agrega los nuevos)
-    $user->syncRoles(array_unique($rolesToSync));
-
-    // Procesar asignaciones departamentales
-    $this->processDepartmentAssignments($user, $departmentAssignments);
-  }
-
-  protected function processDepartmentAssignments(User $user, $assignments)
-  {
-    // Eliminar todas las asignaciones existentes
-    DB::table('user_role_department')->where('user_id', $user->id)->delete();
-    DB::table('user_role_department_banks')->where('user_id', $user->id)->delete();
-
-    $departmentPivots = [];
-    $bankRecords = [];
-
-    foreach ($assignments as $assignment) {
-      if (!$assignment['department_id']) continue;
-
-      $departmentPivots[] = [
-        'user_id' => $user->id,
-        'role_id' => $assignment['role']->id,
-        'department_id' => $assignment['department_id']
-      ];
-
-      foreach ($assignment['banks'] as $bankId) {
-        $bankRecords[] = [
-          'user_id' => $user->id,
-          'role_id' => $assignment['role']->id,
-          'department_id' => $assignment['department_id'],
-          'bank_id' => $bankId
-        ];
-      }
-    }
-
-    // Inserciones masivas
-    if (!empty($departmentPivots)) {
-      DB::table('user_role_department')->insert($departmentPivots);
-    }
-
-    if (!empty($bankRecords)) {
-      DB::table('user_role_department_banks')->insert($bankRecords);
-    }
-  }
-
-  protected function refreshAfterUpdate(User $user)
-  {
-    $this->roleAssignments = $this->formatRoleAssignments($user);
-    if ($this->closeForm) {
-      //dd("Closed");
-      $this->action = 'list';
-    } else {
-      $this->action = 'edit';
-      $this->edit($user->id);
-      /*
-      $this->recordId = $user->id;
-      $this->name = $user->name;
-      $this->email = $user->email;
-      $this->initials = $user->initials;
-      $this->active = $user->active;
-      $this->profile_photo_path = $user->profile_photo_path;
-      $this->oldProfile_photo_path = $user->profile_photo_path;
-      */
-    }
-
-    //$this->dispatch('reinitFormControls');
-  }
-
-  // AÑADIR ESTE MÉTODO PARA FORMATAR LAS ASIGNACIONES
-  protected function formatRoleAssignments(User $user)
-  {
-    $assignments = [];
-
-    // 1. Roles de acceso completo (Spatie)
-    foreach ($user->roles as $role) {
-      if (in_array($role->name, User::ROLES_ALL_DEPARTMENTS)) {
-        $assignments[] = [
-          'role_id' => $role->id,
-          'department_id' => null,
-          'banks' => []
-        ];
-      }
-    }
-
-    // 2. Roles con departamentos
-    $departmentAssignments = DB::table('user_role_department')
-      ->where('user_id', $user->id)
-      ->get();
-
-    foreach ($departmentAssignments as $assignment) {
-      $banks = DB::table('user_role_department_banks')
-        ->where('user_id', $user->id)
-        ->where('role_id', $assignment->role_id)
-        ->where('department_id', $assignment->department_id)
-        ->pluck('bank_id')
-        ->toArray();
-
-      $assignments[] = [
-        'role_id' => $assignment->role_id,
-        'department_id' => $assignment->department_id,
-        'banks' => $banks
-      ];
-    }
-
-    return $assignments;
   }
 
   public function confirmarAccion($recordId, $metodo, $titulo, $mensaje, $textoBoton)
@@ -892,6 +434,11 @@ class UserManager extends BaseComponent
     $this->resetPage(); // Resetea la página a la primera cada vez que se actualiza $perPage
   }
 
+  public function resetPhoto()
+  {
+    $this->profile_photo_path = null; // Limpia la propiedad `photo`
+  }
+
   public function cancel()
   {
     $this->action = 'list';
@@ -907,7 +454,6 @@ class UserManager extends BaseComponent
       'initials',
       'password',
       'password_confirmation',
-      'department_id',
       'active',
       'roles',
       'profile_photo_path',
@@ -919,9 +465,6 @@ class UserManager extends BaseComponent
 
     $this->recordId = '';
     $this->oldProfile_photo_path = '';
-
-    // Añadir una asignación vacía después del reset
-    $this->addRoleAssignment();
   }
 
   public function setSortBy($sortByField)
@@ -959,9 +502,8 @@ class UserManager extends BaseComponent
 
   public $filters = [
     'filter_name' => NULL,
-    'filter_departments' => NULL,
-    'filter_role' => NULL,
     'filter_email' => NULL,
+    'filter_role' => NULL,
     'filter_initials' => NULL,
     'filter_created_at' => NULL,
     'filter_active' => NULL,
@@ -990,21 +532,21 @@ class UserManager extends BaseComponent
         'visible' => true,
       ],
       [
-        'field' => 'departments',
-        'orderName' => '',
-        'label' => __('Department'),
-        'filter' => 'filter_departments',
+        'field' => 'email',
+        'orderName' => 'email',
+        'label' => __('Email'),
+        'filter' => 'filter_email',
         'filter_type' => 'input',
         'filter_sources' => '',
         'filter_source_field' => '',
         'columnType' => 'string',
         'columnAlign' => '',
         'columnClass' => '',
-        'function' => 'getHtmlcolumnDepartment',
+        'function' => '',
         'parameters' => [],
         'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
+        'openHtmlTab' => '<span class="emp_name text-truncate">',
+        'closeHtmlTab' => '</span',
         'width' => NULL,
         'visible' => true,
       ],
@@ -1024,25 +566,6 @@ class UserManager extends BaseComponent
         'sumary' => '',
         'openHtmlTab' => '',
         'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'email',
-        'orderName' => 'email',
-        'label' => __('Email'),
-        'filter' => 'filter_email',
-        'filter_type' => 'input',
-        'filter_sources' => '',
-        'filter_source_field' => '',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => '',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '<span class="emp_name text-truncate">',
-        'closeHtmlTab' => '</span>',
         'width' => NULL,
         'visible' => true,
       ],
@@ -1214,106 +737,5 @@ class UserManager extends BaseComponent
         'message' => __('An error occurred, the email could not be sent')
       ]);
     }
-  }
-
-  // En el componente
-  public function loadBanks($role)
-  {
-    $this->dispatch('banksUpdated');
-  }
-
-  public function updateBanksForDepartment($role, $departmentId)
-  {
-    if (!$departmentId) {
-      return;
-    }
-
-    // Actualizar bancos disponibles
-    $department = Department::find($departmentId);
-    $this->banks[$role] = $department->banks->pluck('id')->toArray();
-
-    // Forzar actualización de la vista
-    $this->dispatch('refresh-selects');
-  }
-
-  public function updateBanksForRole($index, $departmentId)
-  {
-    if (!$departmentId) {
-      return [];
-    }
-
-    $department = Department::with('banks')->find($departmentId);
-    return $department ? $department->banks->toArray() : [];
-  }
-
-  // Modificar el método addRoleAssignment
-  public function addRoleAssignment()
-  {
-    $this->roleAssignments[] = [
-      'role_id' => null,
-      'department_id' => null,
-      'banks' => []
-    ];
-
-    $this->dispatch('assignmentAdded');
-  }
-
-  // Método para eliminar asignaciones
-  public function removeRoleAssignment($index)
-  {
-    unset($this->roleAssignments[$index]);
-    $this->roleAssignments = array_values($this->roleAssignments);
-    $this->dispatch('reinitFormControls');
-  }
-
-  // Actualizar bancos cuando cambia un departamento
-  public function updatedRoleAssignments($value, $path)
-  {
-    $pathParts = explode('.', $path);
-
-    Log::debug("updatedRoleAssignments = ", [$pathParts]);
-
-    if (count($pathParts) === 3 && $pathParts[2] === 'department_id') {
-      $index = $pathParts[1];
-      $this->roleAssignments[$index]['banks'] = [];
-
-      // Disparar evento para actualizar bancos
-      $this->dispatch('update-banks', index: $index);
-    }
-
-    $this->dispatch('reinitFormControls');
-  }
-
-  // Nuevos métodos para manejar cambios en los selects
-  public function updateRoleAssignment($index, $roleId)
-  {
-    $this->roleAssignments[$index]['role_id'] = $roleId;
-
-    Log::debug("roleAssignments = ", [$roleId]);
-    // Si el rol es de acceso completo, limpiar departamento y bancos
-    $role = Role::find($roleId);
-    if ($role && in_array($role->name, User::ROLES_ALL_DEPARTMENTS)) {
-      $this->roleAssignments[$index]['department_id'] = null;
-      $this->roleAssignments[$index]['banks'] = [];
-    }
-
-    $this->dispatch('reinitFormControls');
-  }
-
-  public function updateDepartmentAssignment($index, $departmentId)
-  {
-    Log::debug("updateDepartmentAssignment = ", [$index]);
-    $this->roleAssignments[$index]['department_id'] = $departmentId;
-    $this->roleAssignments[$index]['banks'] = [];
-
-    // Disparar evento para actualizar el select de bancos
-    $this->dispatch('updateBanks', index: $index);
-    $this->dispatch('reinitFormControls');
-  }
-
-  // Resetear página cuando cambien los filtros
-  public function updatedFilters($value, $key)
-  {
-    $this->resetPage();
   }
 }

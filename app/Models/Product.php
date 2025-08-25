@@ -86,11 +86,6 @@ class Product extends Model
     return $this->belongsTo(User::class, 'created_by');
   }
 
-  public function departments()
-  {
-    return $this->belongsToMany(Department::class, 'department_products', 'product_id', 'department_id');
-  }
-
   public function banks()
   {
     return $this->belongsToMany(Bank::class, 'products_banks', 'product_id', 'bank_id');
@@ -104,11 +99,6 @@ class Product extends Model
   public function productsBanks()
   {
     return $this->hasMany(ProductsBank::class, 'product_id');
-  }
-
-  public function productsDepartments()
-  {
-    return $this->hasMany(DepartmentProduct::class, 'product_id');
   }
 
   public function honorariosTimbres()
@@ -148,7 +138,6 @@ class Product extends Model
       ->join('business', 'products.business_id', '=', 'business.id')
       ->join('unit_types', 'products.unit_type_id', '=', 'unit_types.id')
       ->join('users', 'products.created_by', '=', 'users.id')
-      ->with('departments')
       ->with('banks')
       ->where(function ($q) use ($value) {
         $q->where('products.name', 'like', "%{$value}%")

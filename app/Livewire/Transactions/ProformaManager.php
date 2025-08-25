@@ -8,7 +8,6 @@ use App\Models\BusinessLocation;
 use App\Models\Contact;
 use App\Models\Currency;
 use App\Models\DataTableConfig;
-use App\Models\Department;
 use App\Models\EconomicActivity;
 use App\Models\Transaction;
 use App\Models\TransactionCommission;
@@ -39,7 +38,6 @@ class ProformaManager extends TransactionManager
     'filter_consecutivo' => NULL,
     'filter_customer_name' => NULL,
     'filter_numero_caso' => NULL,
-    'filter_department_name' => NULL,
     'filter_user_name' => NULL,
     'filter_issuer_name' => NULL,
     'filter_codigosContables' => NULL,
@@ -229,25 +227,6 @@ class ProformaManager extends TransactionManager
         'filter_type' => 'input',
         'filter_sources' => '',
         'filter_source_field' => '',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => '',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'department_name',
-        'orderName' => 'departments.name',
-        'label' => __('Department'),
-        'filter' => 'filter_department_name',
-        'filter_type' => 'select',
-        'filter_sources' => 'departments',
-        'filter_source_field' => 'name',
         'columnType' => 'string',
         'columnAlign' => '',
         'columnClass' => '',
@@ -527,10 +506,10 @@ class ProformaManager extends TransactionManager
     $query = Transaction::search($this->search, $this->filters)
       ->whereIn('document_type', $document_type);
 
-    $allowedRoles = User::ROLES_ALL_DEPARTMENTS;
-
     // Condiciones según el rol del usuario
-    if (in_array(Session::get('current_role_name'), $allowedRoles)) {
+    $allowedRoles = User::ROLES_ALL_BANKS;
+    $user = auth()->user();
+    if ($user->hasAnyRole($allowedRoles)) {
       $query->where(function ($q) use ($allowedRoles) {
         // Condición 1: Estado PROCESO creado por usuario con rol especial
         $q->where('proforma_status', Transaction::PROCESO)
@@ -546,17 +525,10 @@ class ProformaManager extends TransactionManager
         $q->orWhere('proforma_status', Transaction::SOLICITADA);
       });
     } else {
-      // Obtener departamentos y bancos de la sesión
-      $departments = Session::get('current_department', []);
-      $banks = Session::get('current_banks', []);
-
-      // Filtrar por departamento y banco
-      if (!empty($departments)) {
-        $query->whereIn('transactions.department_id', $departments);
-      }
-
-      if (!empty($banks)) {
-        $query->whereIn('transactions.bank_id', $banks);
+      //Obtener bancos
+      $allowedBanks = $user->banks->pluck('id');
+      if (!empty($allowedBanks)) {
+        $query->whereIn('transactions.bank_id', $allowedBanks);
       }
 
       // Excluir transacciones creadas por usuarios con roles especiales
@@ -576,8 +548,9 @@ class ProformaManager extends TransactionManager
   {
     $query = $this->getFilteredQuery();
 
-    $allowedRoles = User::ROLES_ALL_DEPARTMENTS;
-    if (!in_array(Session::get('current_role_name'), $allowedRoles)) {
+    $allowedRoles = User::ROLES_ALL_BANKS;
+    // Condiciones según el rol del usuario
+    if (Auth::user()->hasAnyRole($allowedRoles)) {
       $query->orderBy('transactions.transaction_date', 'DESC')
         ->orderBy('id', 'DESC');
     } else
@@ -585,13 +558,6 @@ class ProformaManager extends TransactionManager
 
     // Ordenamiento y paginación final
     $records = $query->paginate($this->perPage);
-
-    /*
-    $records = $query
-      ->orderBy($this->sortBy, $this->sortDir)
-      ->orderBy('transactions.id', $this->sortDir)
-      ->paginate($this->perPage);
-    */
 
     $stats = $this->getStatics();
 
@@ -664,7 +630,6 @@ class ProformaManager extends TransactionManager
       'contact_id'            => 'required|integer|exists:contacts,id',
       'contact_economic_activity_id' => 'nullable|integer|exists:economic_activities,id',
       'currency_id'           => 'required|integer|exists:currencies,id',
-      'department_id'         => 'required|integer|exists:departments,id',
       'area_id'               => 'nullable|integer|exists:areas,id',
       'bank_id'               => 'nullable|integer|exists:banks,id',
       'codigo_contable_id'    => 'nullable|integer|exists:codigo_contables,id',
@@ -809,7 +774,6 @@ class ProformaManager extends TransactionManager
       'document_type'         => 'tipo de documento',
       'currency_id'           => 'moneda',
       'condition_sale'        => 'condición de venta',
-      'department_id'         => 'departamento',
       'proforma_type'         => 'tipo de acto',
       'status'                => 'estado',
       'transaction_date'      => 'fecha de transacción',
@@ -890,199 +854,6 @@ class ProformaManager extends TransactionManager
         $transaction->payments()->create($pago);
       }
 
-      // Banco Lafise entonces se pone siempre el centro de costo y codigo contable para cualquier departamento
-      if ($this->bank_id == Bank::LAFISE) // Banco Lafise
-      {
-        if (!in_array(session('current_role_name'), User::ROLES_ALL_DEPARTMENTS)) {
-
-          if ($this->department_id == Department::RETAIL) { //Si el departemento es 1 Retail entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-            $ccosto = 14; // DAVID ARTURO CAMPOS BRENES
-          } else
-						if ($this->department_id == Department::BANCACORPORATIVA) { //Si el departemento es 2 Banca corporativa entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-            $ccosto = 14; // DAVID ARTURO CAMPOS BRENES
-          } else
-						if ($this->department_id == Department::LAFISE) { //Si el departemento es 4 Lafise entonces asignar el centro de costo 28 Lafise
-            $ccosto = 28; // LAFISE
-          } else {
-            // Insertar automaticamente el centro de costo DAVID ARTURO CAMPOS BRENES
-            $ccosto = 14; //DAVID ARTURO CAMPOS BRENES
-          }
-
-          $data = TransactionCommission::where(['transaction_id' => $transaction->id, 'centro_costo_id' => $ccosto, 'abogado_encargado' => Auth::user()->initials])->first();
-
-          if (is_null($data)) {
-            $data = new TransactionCommission;
-            $data->transaction_id = $transaction->id;
-            $data->centro_costo_id = $ccosto;
-            $data->abogado_encargado = Auth::user()->initials;
-            $data->percent = 100;
-            $data->save();
-          }
-        }
-      } else {
-        if (!in_array(session('current_role_name'), User::ROLES_ALL_DEPARTMENTS)) {
-          if ($this->department_id != Department::TERCERO && $this->bank_id != Bank::TERCEROS && $transaction->department && $transaction->department->centroCosto) {
-            $data = TransactionCommission::where(['transaction_id' => $transaction->id, 'centro_costo_id' => $transaction->department->centroCosto->id, 'abogado_encargado' => Auth::user()->initials])->first();
-
-            if (is_null($data)) {
-              $data = new TransactionCommission;
-              $data->transaction_id = $transaction->id;
-              $data->centro_costo_id = $transaction->department->centroCosto->id;
-              $data->abogado_encargado = Auth::user()->initials;
-              $data->percent = 100;
-              $data->save();
-            }
-          }
-        }
-      }
-
-
-      // Insertar el centro de costo automáticamente
-      /*
-      if ($this->bank_id != Bank::LAFISE) // Banco Lafise
-      {
-        if ($this->department_id == Department::RETAIL) { //Si el departemento es 1 Retail entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-          $ccosto = 1; // BANCA RETAIL NORMAL
-          $this->codigo_contable_id = 1;
-        } elseif ($this->department_id == Department::BANCACORPORATIVA) { //Si el departemento es 2 Banca corporativa entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-          $ccosto = 2; // BANCA CORPORATIVA
-          $this->codigo_contable_id = 2;
-        }
-        $data = TransactionCommission::where(['transaction_id' => $transaction->id, 'centro_costo_id' => $ccosto, 'abogado_encargado' => Auth::user()->initials])->first();
-
-        if (is_null($data)) {
-          $data = new TransactionCommission;
-          $data->transaction_id = $transaction->id;
-          $data->centro_costo_id = $ccosto;
-          $data->abogado_encargado = Auth::user()->initials;
-          $data->percent = 100;
-          $data->save();
-        }
-      } elseif ($this->bank_id = Bank::LAFISE) // Banco Lafise
-      {
-        if ($this->department_id == Department::RETAIL) { //Si el departemento es 1 Retail entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-          $ccosto = 14; // DAVID ARTURO CAMPOS BRENES
-          $this->codigo_contable_id = 2;
-        } elseif ($this->department_id == Department::BANCACORPORATIVA) { //Si el departemento es 2 Banca corporativa entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-          $ccosto = 14; // DAVID ARTURO CAMPOS BRENES
-          $this->codigo_contable_id = 2;
-        } elseif ($this->department_id == Department::LAFISE) { //Si el departemento es 4 Lafise entonces asignar el centro de costo 28 Lafise
-          $ccosto = 28; // LAFISE
-          $this->codigo_contable_id = 2;
-        }
-        $data = TransactionCommission::where(['transaction_id' => $transaction->id, 'centro_costo_id' => $ccosto, 'abogado_encargado' => Auth::user()->initials])->first();
-
-        if (is_null($data)) {
-          $data = new TransactionCommission;
-          $data->transaction_id = $transaction->id;
-          $data->centro_costo_id = $ccosto;
-          $data->abogado_encargado = Auth::user()->initials;
-          $data->percent = 100;
-          $data->save();
-        }
-      } elseif ($this->bank_id == Bank::TERCEROS) // Banco Lafise
-      {
-        if ($this->department_id == Department::TERCERO) { //Si el departemento es 1 Retail entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-          $ccosto = 1; // BANCA RETAIL NORMAL
-          $this->codigo_contable_id = 2;
-        }
-        $data = TransactionCommission::where(['transaction_id' => $transaction->id, 'centro_costo_id' => $ccosto, 'abogado_encargado' => Auth::user()->initials])->first();
-
-        if (is_null($data)) {
-          $data = new TransactionCommission;
-          $data->transaction_id = $transaction->id;
-          $data->centro_costo_id = $ccosto;
-          $data->abogado_encargado = Auth::user()->initials;
-          $data->percent = 100;
-          $data->save();
-        }
-      }
-      */
-
-      /*
-      if ($this->bank_id != Bank::LAFISE && $this->bank_id != Bank::TERCEROS) // Banco Lafise
-      {
-        //if (!in_array(session('current_role_name'), User::ROLES_ALL_DEPARTMENTS)) {
-        if ($this->department_id == Department::RETAIL) { //Si el departemento es 1 Retail entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-          $ccosto = 14; // DAVID ARTURO CAMPOS BRENES
-          $this->codigo_contable_id = 2;
-        } else
-					if ($this->department_id == Department::BANCACORPORATIVA) { //Si el departemento es 2 Banca corporativa entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-          $ccosto = 14; // DAVID ARTURO CAMPOS BRENES
-          $this->codigo_contable_id = 2;
-        } else
-					if ($this->department_id == Department::LAFISE) { //Si el departemento es 4 Lafise entonces asignar el centro de costo 28 Lafise
-          $ccosto = 28; // LAFISE
-          $this->codigo_contable_id = 2;
-        }
-
-        $data = TransactionCommission::where(['transaction_id' => $transaction->id, 'centro_costo_id' => $ccosto, 'abogado_encargado' => Auth::user()->initials])->first();
-
-        if (is_null($data)) {
-          $data = new TransactionCommission;
-          $data->transaction_id = $transaction->id;
-          $data->centro_costo_id = $ccosto;
-          $data->abogado_encargado = Auth::user()->initials;
-          $data->percent = 100;
-          $data->save();
-        }
-      } else
-        // Banco Lafise entonces se pone siempre el centro de costo y codigo contable para cualquier departamento
-        if ($this->bank_id == Bank::LAFISE) // Banco Lafise
-        {
-          //if (!in_array(session('current_role_name'), User::ROLES_ALL_DEPARTMENTS)) {
-          if ($this->department_id == Department::RETAIL) { //Si el departemento es 1 Retail entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-            $ccosto = 14; // DAVID ARTURO CAMPOS BRENES
-            $this->codigo_contable_id = 2;
-          } else
-					if ($this->department_id == Department::BANCACORPORATIVA) { //Si el departemento es 2 Banca corporativa entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-            $ccosto = 14; // DAVID ARTURO CAMPOS BRENES
-            $this->codigo_contable_id = 2;
-          } else
-					if ($this->department_id == Department::LAFISE) { //Si el departemento es 4 Lafise entonces asignar el centro de costo 28 Lafise
-            $ccosto = 28; // LAFISE
-            $this->codigo_contable_id = 2;
-          }
-
-          $data = TransactionCommission::where(['transaction_id' => $transaction->id, 'centro_costo_id' => $ccosto, 'abogado_encargado' => Auth::user()->initials])->first();
-
-          if (is_null($data)) {
-            $data = new TransactionCommission;
-            $data->transaction_id = $transaction->id;
-            $data->centro_costo_id = $ccosto;
-            $data->abogado_encargado = Auth::user()->initials;
-            $data->percent = 100;
-            $data->save();
-          }
-        } elseif ($this->bank_id == Bank::TERCEROS) // Banco Lafise
-        {
-          //if (!in_array(session('current_role_name'), User::ROLES_ALL_DEPARTMENTS)) {
-          if ($this->department_id == Department::TERCERO) { //Si el departemento es 1 Retail entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-            $ccosto = 14; // DAVID ARTURO CAMPOS BRENES
-            $this->codigo_contable_id = 2;
-          } else
-					if ($this->department_id == Department::BANCACORPORATIVA) { //Si el departemento es 2 Banca corporativa entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-            $ccosto = 14; // DAVID ARTURO CAMPOS BRENES
-            $this->codigo_contable_id = 2;
-          } else
-					if ($this->department_id == Department::LAFISE) { //Si el departemento es 4 Lafise entonces asignar el centro de costo 28 Lafise
-            $ccosto = 28; // LAFISE
-            $this->codigo_contable_id = 2;
-          }
-
-          $data = TransactionCommission::where(['transaction_id' => $transaction->id, 'centro_costo_id' => $ccosto, 'abogado_encargado' => Auth::user()->initials])->first();
-
-          if (is_null($data)) {
-            $data = new TransactionCommission;
-            $data->transaction_id = $transaction->id;
-            $data->centro_costo_id = $ccosto;
-            $data->abogado_encargado = Auth::user()->initials;
-            $data->percent = 100;
-            $data->save();
-          }
-        }
-      */
-
       $closeForm = $this->closeForm;
 
       if ($transaction) {
@@ -1126,7 +897,6 @@ class ProformaManager extends TransactionManager
     $this->contact_economic_activity_id = $record->contact_economic_activity_id;
     $this->cuenta_id              = $record->cuenta_id;
     $this->currency_id            = $record->currency_id;
-    $this->department_id          = $record->department_id;
     $this->area_id                = $record->area_id;
     $this->bank_id                = $record->bank_id;
     $this->caso_id                = $record->caso_id;
@@ -1621,7 +1391,6 @@ class ProformaManager extends TransactionManager
       'contact_id',
       'contact_economic_activity_id',
       'currency_id',
-      'department_id',
       'area_id',
       'bank_id',
       'codigo_contable_id',
@@ -1705,13 +1474,6 @@ class ProformaManager extends TransactionManager
       }
     }
 
-    if ($propertyName == 'department_id') {
-      // Lifise o Terceros
-      //$this->setDefaultValues();
-      // emitir el evento para que actualice la info en las lineas
-      $this->dispatch('departmentChange', $this->department_id); // Enviar evento al frontend
-    }
-
     if ($propertyName == 'location_id') {
       if (!empty($this->location_id)) {
         $location = BusinessLocation::find($this->location_id);
@@ -1722,21 +1484,6 @@ class ProformaManager extends TransactionManager
 
     if ($propertyName == 'bank_id') {
       //$this->setDefaultValues();
-    }
-
-    if ($propertyName == 'bank_id' || $propertyName == 'proforma_type') {
-      if (!in_array(session('current_role_name'), User::ROLES_ALL_DEPARTMENTS) && $this->bank_id == Bank::SANJOSE && $this->proforma_type == 'HONORARIO') {
-        $this->location_id = 7; // CONSORTIUM DERECHO FINANCIERO S.R.L. id = 7
-
-        $location = BusinessLocation::find($this->location_id);
-        if ($location)
-          $this->notes = $location->notes;
-      } else
-      if (!in_array(session('current_role_name'), User::ROLES_ALL_DEPARTMENTS)) {
-        $this->location_id = NULL;
-      }
-      // emitir el evento para que actualice la info en las lineas
-      $this->dispatch('bankChange', $this->bank_id); // Enviar evento al frontend
     }
 
     if ($propertyName == 'proforma_type' && $this->recordId > 0) {
@@ -1758,17 +1505,6 @@ class ProformaManager extends TransactionManager
     }
 
     $this->dispatch('reinitSelect2Controls');
-    /*
-    if ($propertyName == 'location_id') {
-      if ($this->location_id == '' | is_null($this->location_id))
-        $this->location_economic_activity_id = null;
-    }
-
-    if ($propertyName == 'contact_id') {
-      if ($this->contact_id == '' | is_null($this->contact_id))
-        $this->contact_economic_activity_id = null;
-    }
-    */
 
     $this->dispatch('updateExportFilters', [
       'search' => $this->search,
@@ -1804,39 +1540,6 @@ class ProformaManager extends TransactionManager
     }
   }
 
-  public function setDefaultValues()
-  {
-    if ($this->bank_id != Bank::LAFISE) // Banco Lafise
-    {
-      if ($this->department_id == Department::RETAIL) { //Si el departemento es 1 Retail entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-        $ccosto = 1; // BANCA RETAIL NORMAL
-        $this->codigo_contable_id = 1;
-      } elseif ($this->department_id == Department::BANCACORPORATIVA) { //Si el departemento es 2 Banca corporativa entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-        $ccosto = 2; // BANCA CORPORATIVA
-        $this->codigo_contable_id = 2;
-      }
-    } else
-    if ($this->bank_id = Bank::LAFISE) // Banco Lafise
-    {
-      if ($this->department_id == Department::RETAIL) { //Si el departemento es 1 Retail entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-        $ccosto = 14; // DAVID ARTURO CAMPOS BRENES
-        $this->codigo_contable_id = 2;
-      } elseif ($this->department_id == Department::BANCACORPORATIVA) { //Si el departemento es 2 Banca corporativa entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-        $ccosto = 14; // DAVID ARTURO CAMPOS BRENES
-        $this->codigo_contable_id = 2;
-      } elseif ($this->department_id == Department::LAFISE) { //Si el departemento es 4 Lafise entonces asignar el centro de costo 28 Lafise
-        $ccosto = 28; // LAFISE
-        $this->codigo_contable_id = 2;
-      }
-    } elseif ($this->bank_id == Bank::TERCEROS) // Banco Lafise
-    {
-      if ($this->department_id == Department::TERCERO) { //Si el departemento es 1 Retail entonces asignar el centro de costo 14 DAVID ARTURO CAMPOS BRENES
-        $ccosto = 1; // BANCA RETAIL NORMAL
-        $this->codigo_contable_id = 2;
-      }
-    }
-  }
-
   public function updatedEmails()
   {
     // Divide la cadena en correos separados por , o ;
@@ -1864,46 +1567,12 @@ class ProformaManager extends TransactionManager
     }
   }
 
-  public function setEnableControl()
-  {
-    /*
-    $this->enableoc = false;
-    $this->enablemigo = false;
-    $this->enableor = false;
-    $this->enablegln = false;
-    $this->enableprebill = false;
-
-    if ($this->bank_id == Bank::SANJOSE) {
-      $this->enableoc = true;
-      $this->enablemigo = true;
-
-      $this->or = '';
-      $this->gln = '';
-      $this->prebill = '';
-    } else
-    if ($this->bank_id == Bank::TERCEROS) {
-      $this->enableoc = true;
-      $this->enablemigo = true;
-      $this->enableor = true;
-      $this->enablegln = true;
-      $this->enableprebill = true;
-    } else {
-      $this->oc = '';
-      $this->migo = '';
-      $this->or = '';
-      $this->gln = '';
-      $this->prebill = '';
-    }
-      */
-  }
-
   public function getStatics()
   {
-    $allowedRoles = User::ROLES_ALL_DEPARTMENTS;
-    $currentRole = Session::get('current_role_name');
-    $isAllDepartments = in_array($currentRole, $allowedRoles);
-
-    if ($isAllDepartments) {
+    $allowedRoles = User::ROLES_ALL_BANKS;
+    $user = Auth::user();
+    // Si el usuario tiene acceso completo, usar todos los bancos del departamento
+    if ($user->hasAnyRole($allowedRoles)) {
       // Usuarios con acceso a todos los departamentos
       $stats = Transaction::where('document_type', $this->document_type)
         ->whereHas('createdBy.roles', function ($query) use ($allowedRoles) {
@@ -1920,16 +1589,11 @@ class ProformaManager extends TransactionManager
         ->first();
     } else {
       // Usuarios con acceso limitado - solo sus departamentos/bancos
-      $departments = Session::get('current_department', []);
-      $banks = Session::get('current_banks', []);
+      $banks = $user->banks->pluck('id');
 
       $stats = Transaction::where('document_type', $this->document_type)
-        ->where(function ($query) use ($departments, $banks, $allowedRoles) {
-          // Filtrar por departamento y banco
-          if (!empty($departments)) {
-            $query->whereIn('department_id', $departments);
-          }
-
+        ->where(function ($query) use ($banks, $allowedRoles) {
+          // Filtrar por banco
           if (!empty($banks)) {
             $query->whereIn('bank_id', $banks);
           }
@@ -1952,24 +1616,6 @@ class ProformaManager extends TransactionManager
 
     return $stats;
   }
-
-  /*
-    $stats = Transaction::select([
-      DB::raw("COUNT(*) AS total_facturas_proceso"),
-      DB::raw("SUM(CASE WHEN proforma_status = 'SOLICITADA' THEN 1 ELSE 0 END) AS facturas_por_aprobar"),
-      DB::raw("SUM(CASE WHEN currency_id = " . Currency::DOLARES . " AND proforma_type = 'HONORARIO' THEN totalComprobante ELSE 0 END) AS totalUsdHonorario"),
-      DB::raw("SUM(CASE WHEN currency_id = " . Currency::COLONES . " AND proforma_type = 'HONORARIO' THEN totalComprobante ELSE 0 END) AS totalCrcHonorario"),
-      DB::raw("SUM(CASE WHEN currency_id = " . Currency::DOLARES . " AND proforma_type = 'GASTO' THEN totalComprobante ELSE 0 END) AS totalUsdGasto"),
-      DB::raw("SUM(CASE WHEN currency_id = " . Currency::COLONES . " AND proforma_type = 'GASTO' THEN totalComprobante ELSE 0 END) AS totalCrcGasto")
-    ])
-      ->whereMonth('created_at', Carbon::now()->month)
-      ->whereYear('created_at', Carbon::now()->year)
-      ->where('document_type', $this->document_type)
-      ->first();
-
-    return $stats;
-    */
-
 
   public function beforeclonar()
   {

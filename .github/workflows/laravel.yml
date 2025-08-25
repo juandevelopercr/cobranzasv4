@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Checkout del repositorio consortium V4.4
+      - name: Checkout del repositorio cobranzas V4.4
         uses: actions/checkout@v4
-      - name: Upload consortium V4.4
+      - name: Upload cobranzas V4.4
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: 144.126.137.131

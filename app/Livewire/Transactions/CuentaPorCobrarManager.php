@@ -368,21 +368,15 @@ class CuentaPorCobrarManager extends TransactionManager
       ->whereNotIn('transactions_commissions.centro_costo_id', [1, 12, 14, 15, 16, 17, 28, 31]);
 
     // Condiciones según el rol del usuario
-    $allowedRoles = User::ROLES_ALL_DEPARTMENTS;
-    if (in_array(Session::get('current_role_name'), $allowedRoles)) {
+    $allowedRoles = User::ROLES_ALL_BANKS;
+    $user = auth()->user();
+    if ($user->hasAnyRole($allowedRoles)) {
       $query->where('proforma_status', Transaction::FACTURADA);
     } else {
-      // Obtener departamentos y bancos de la sesión
-      $departments = Session::get('current_department', []);
-      $banks = Session::get('current_banks', []);
-
-      // Filtrar por departamento y banco
-      if (!empty($departments)) {
-        $query->whereIn('transactions.department_id', $departments);
-      }
-
-      if (!empty($banks)) {
-        $query->whereIn('transactions.bank_id', $banks);
+      //Obtener bancos
+      $allowedBanks = $user->banks->pluck('id');
+      if (!empty($allowedBanks)) {
+        $query->whereIn('transactions.bank_id', $allowedBanks);
       }
     }
 

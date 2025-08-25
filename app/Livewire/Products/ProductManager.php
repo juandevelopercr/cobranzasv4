@@ -8,7 +8,6 @@ use App\Models\Bank;
 use App\Models\Country;
 use App\Models\Currency;
 use App\Models\DataTableConfig;
-use App\Models\Department;
 use App\Models\Product;
 use App\Models\ProductTax;
 use App\Models\UnitType;
@@ -55,7 +54,6 @@ class ProductManager extends BaseComponent
 
   // Listados
   public $unitTypes;
-  public $listdepartments;
   public $listbanks;
 
   public $name;
@@ -79,7 +77,6 @@ class ProductManager extends BaseComponent
   public $image;
   public $created_by;
 
-  public $departments;
   public $banks;
   public $closeForm = false;
 
@@ -118,7 +115,6 @@ class ProductManager extends BaseComponent
   {
     $this->business_id = 1;
     $this->unitTypes = UnitType::where('active', 1)->orderBy('name', 'ASC')->get();
-    $this->listdepartments = Department::orderBy('name', 'ASC')->get();
     $this->listbanks = Bank::orderBy('name', 'ASC')->get();
     $this->listActives = [['id' => 1, 'name' => 'Activo'], ['id' => 0, 'name' => 'Inactivo']];
 
@@ -189,8 +185,6 @@ class ProductManager extends BaseComponent
       'enable_quantity' => 'nullable|numeric|min:0',
       'impuesto_and_timbres_separados' => 'nullable|numeric|min:0',
       'additional_charge' => 'nullable|numeric|min:0',
-      'departments' => 'nullable|array',
-      'departments.*' => 'exists:departments,id',
       'banks' => 'required|array',
       'banks.*' => 'exists:banks,id',
       //'sku' => 'required|string|max:20|unique:products,sku',
@@ -230,7 +224,6 @@ class ProductManager extends BaseComponent
       'enable_quantity' => 'anable quantity',
       'impuesto_and_timbres_separados' => 'impuesto',
       'additional_charge' => 'additional charge',
-      'departments' => 'departments',
       'banks' => 'bancos',
       //'sku' => 'required|string|max:20|unique:products,sku',
       'active' => 'active',
@@ -267,7 +260,6 @@ class ProductManager extends BaseComponent
       ]));
 
       if ($record) {
-        $record->departments()->sync($this->departments);
         $record->banks()->sync($this->banks);
       }
 
@@ -303,7 +295,7 @@ class ProductManager extends BaseComponent
       return; // Ya se lanzó la notificación desde getRecordAction
     }
 
-    $record = Product::with('departments')->findOrFail($recordId);
+    $record = Product::with('banks')->findOrFail($recordId);
     $this->recordId = $recordId;
 
     $this->name = $record->name;
@@ -318,7 +310,6 @@ class ProductManager extends BaseComponent
     $this->impuesto_and_timbres_separados = $record->impuesto_and_timbres_separados;
     $this->additional_charge = $record->additional_charge;
     //'sku' => 'required|string|max:20|unique:products,sku',
-    $this->departments = $record->departments->pluck('id')->toArray();
     $this->banks = $record->banks->pluck('id')->toArray();
     $this->active = $record->active;
 
@@ -361,7 +352,6 @@ class ProductManager extends BaseComponent
 
       $closeForm = $this->closeForm;
 
-      $record->departments()->sync($this->departments);
       $record->banks()->sync($this->banks);
 
       // Restablece los controles y emite el evento para desplazar la página al inicio
@@ -476,7 +466,6 @@ class ProductManager extends BaseComponent
       'active',
       'created_by',
       'closeForm',
-      'departments',
       'activeTab',
       'degloseHtml'
     );
@@ -541,7 +530,6 @@ class ProductManager extends BaseComponent
     'filter_bank' => NULL,
     'filter_type_notarial_act' => NULL,
     'filter_unit_type' => NULL,
-    'filter_departments' => NULL,
     'filter_active' => NULL,
   ];
 
@@ -663,25 +651,6 @@ class ProductManager extends BaseComponent
         'visible' => true,
       ],
       [
-        'field' => 'departments',
-        'orderName' => '',
-        'label' => __('Department'),
-        'filter' => 'filter_departments',
-        'filter_type' => 'input',
-        'filter_sources' => '',
-        'filter_source_field' => '',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => 'wrap-col-200',
-        'function' => 'getHtmlcolumnDepartment',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
         'field' => 'active',
         'orderName' => 'products.active',
         'label' => __('Active'),
@@ -788,13 +757,6 @@ class ProductManager extends BaseComponent
 
       // Clonar impuestos
       foreach ($original->taxes as $item) {
-        $copy = $item->replicate();
-        $copy->product_id = $cloned->id;
-        $copy->save();
-      }
-
-      // Clonar departments
-      foreach ($original->productsDepartments as $item) {
         $copy = $item->replicate();
         $copy->product_id = $cloned->id;
         $copy->save();

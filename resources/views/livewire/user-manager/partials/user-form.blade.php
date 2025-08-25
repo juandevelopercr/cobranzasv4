@@ -1,6 +1,5 @@
 @php
     use App\Models\User;
-    use Spatie\Permission\Models\Role;
 @endphp
 <!-- Form to add new record -->
 <!-- Multi Column with Form Separator -->
@@ -8,17 +7,20 @@
   <h5 class="card-header">{{ __('User Information') }}</h5>
 
     @if ($errors->any())
-    <div class="alert alert-danger">
+    <div class="alert alert-danger mb-4">
         <strong>{{ __('Please fix the following errors:') }}</strong>
-        <ul>
-            @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
+        <ul class="mt-2">
+            @foreach ($errors->getMessages() as $field => $messages)
+                @foreach ($messages as $message)
+                    <li>
+                        <strong>{{ $field }}:</strong> {{ $message }}
+                    </li>
+                @endforeach
             @endforeach
         </ul>
     </div>
     @endif
-
-  <form wire:submit.prevent="{{ $action == 'edit' ? 'update' : 'store' }}" class="card-body" enctype="multipart/form-data">
+  <form wire:submit.prevent="{{ $action == 'edit' ? 'update' : 'store' }}" class="card-body">
     <h6>1. {{ __('Personal Information') }}</h6>
     <div class="row">
       <div class="col-md-12">
@@ -75,6 +77,8 @@
         </div>
       </div>
     </div>
+
+
 
     <div class="row g-6">
       <div class="col-md-6 fv-plugins-icon-container">
@@ -169,127 +173,42 @@
       </div>
     </div>
 
+
     <br>
-    <!-- Sección de Permisos -->
     <h6>3. {{ __('Permisos') }}</h6>
-    @foreach ($roleAssignments as $index => $assignment)
-    @php
-    $roleId = $assignment['role_id'] ?? null;
+    <div class="row g-6">
+      <div class="col-md-6">
+          <label class="form-label">{{ __('Role') }}</label>
+          <div wire:ignore>
+              <select class="form-select bank-select select2" multiple wrire:model="roles" id="roles">
+                  @foreach ($this->listroles as $rol)
+                    <option value="{{ $rol->name }}" wire:key="role-{{ $rol->name }}">{{ $rol->name }}</option>
+                  @endforeach
+              </select>
+          </div>
+          @error("roles")
+              <div class="text-danger mt-1">{{ $message }}</div>
+          @enderror
+      </div>
 
-    // Usar el helper de roles directamente
-    $isFullAccess = false;
-    if ($roleId) {
-        $role = \Spatie\Permission\Models\Role::find($roleId);
-        $isFullAccess = $role ? in_array($role->name, \App\Models\User::ROLES_ALL_DEPARTMENTS) : false;
-    }
+      <div class="col-md-6">
+          <label class="form-label">{{ __('Banks') }}</label>
+          <div wire:ignore>
+              <select class="form-select bank-select select2" multiple wrire:model="banks" id="banks">
+                  @foreach ($listbanks as $bank)
+                      <option value="{{ $bank->id }}"
+                          {{ in_array($bank->id, $assignment['banks'] ?? []) ? 'selected' : '' }}>
+                          {{ $bank->name }}
+                      </option>
+                  @endforeach
+              </select>
+          </div>
+          @error("banks")
+              <div class="text-danger mt-1">{{ $message }}</div>
+          @enderror
+      </div>
 
-    // Obtener bancos para el departamento
-    $departmentBanks = [];
-    if (!$isFullAccess && $assignment['department_id']) {
-        $department = \App\Models\Department::with('banks')->find($assignment['department_id']);
-        $departmentBanks = $department->banks ?? [];
-    }
-    @endphp
-
-    <div class="role-assignment border rounded p-3 mb-3" wire:key="assignment-{{ $index }}">
-        <!-- Encabezado con botón de eliminar -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="mb-0">Asignación #{{ $index + 1 }}</h6>
-            <button type="button" class="btn btn-sm btn-danger"
-                    wire:click="removeRoleAssignment({{ $index }})"
-                    @if(count($roleAssignments) <= 1) disabled @endif>
-                <i class="fas fa-trash me-1"></i> Eliminar
-            </button>
-        </div>
-
-        <div class="row g-3">
-            <!-- Selección de Rol -->
-            <div class="col-md-3">
-                <label class="form-label">{{ __('Role') }}</label>
-                <div wire:ignore>
-                  <select
-                      class="form-select role-select"
-                      wire:model="roleAssignments.{{ $index }}.role_id"
-                      wire:change="updateRoleAssignment({{ $index }}, $event.target.value)"
-                      data-index="{{ $index }}"
-                      data-type="role">
-                      <option value="">{{ __('Select Role') }}</option>
-                      @foreach ($availableRoles as $id => $name)
-                          <option value="{{ $id }}" {{ $assignment['role_id'] == $id ? 'selected' : '' }}>
-                              {{ $name }}
-                          </option>
-                      @endforeach
-                  </select>
-                </div>
-                @error("roleAssignments.{$index}.role_id")
-                    <div class="text-danger mt-1">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <!-- Departamento (solo para roles sin acceso total) -->
-            @if (!$isFullAccess)
-                <div class="col-md-3">
-                    <label class="form-label">{{ __('Department') }}</label>
-                    <div wire:ignore>
-                    <select
-                        class="form-select department-select"
-                        wire:model="roleAssignments.{{ $index }}.department_id"
-                        wire:change="updateDepartmentAssignment({{ $index }}, $event.target.value)"
-                        data-index="{{ $index }}"
-                        data-type="department">
-                        <option value="">{{ __('Select Department') }}</option>
-                        @foreach ($this->departments as $department)
-                            <option value="{{ $department->id }}" {{ $assignment['department_id'] == $department->id ? 'selected' : '' }}>
-                                {{ $department->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    </div>
-                    @error("roleAssignments.{$index}.department_id")
-                        <div class="text-danger mt-1">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <!-- Bancos (solo si hay departamento seleccionado) -->
-                @if ($assignment['department_id'])
-                    <div class="col-md-6">
-                        <label class="form-label">{{ __('Banks') }}</label>
-                        <div wire:ignore>
-                        <select
-                            class="form-select bank-select"
-                            wire:model="roleAssignments.{{ $index }}.banks"
-                            multiple
-                            data-index="{{ $index }}"
-                            data-type="bank">
-                            @foreach ($departmentBanks  as $bank)
-                                <option value="{{ $bank->id }}" {{ in_array($bank->id, $assignment['banks'] ?? []) ? 'selected' : '' }}>
-                                    {{ $bank->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        </div>
-                        @error("roleAssignments.{$index}.banks")
-                            <div class="text-danger mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
-                @endif
-            @else
-                <div class="col-md-8 d-flex align-items-center">
-                    <div class="alert alert-primary mb-0 w-100">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Este rol tiene acceso completo a todos los departamentos y bancos.
-                    </div>
-                </div>
-            @endif
-        </div>
     </div>
-    @endforeach
-
-    <!-- Botón para agregar más asignaciones -->
-    <button type="button" class="btn btn-primary mb-3" wire:click="addRoleAssignment">
-        <i class="fas fa-plus me-2"></i> {{ __('Add Assignment') }}
-    </button>
-
 
     <div class="pt-6">
       {{-- Incluye botones de guardar y guardar y cerrar --}}
@@ -307,236 +226,57 @@
       </button>
     </div>
   </form>
-
   {{-- @livewire('users.user-activity-timeline') --}}
 </div>
 
-@script
+@script()
 <script>
-$(document).ready(function() {
-    console.log("Documento listo - Iniciando script");
+  const initializeSelect2 = () => {
+      const selects = [
+        'roles',
+        'banks',
+      ];
 
-    function initSelect2(element) {
-        console.log("Inicializando Select2 para elemento:", element);
-        
-        const isMultiple = $(element).prop('multiple');
-        console.log("¿Es múltiple?", isMultiple);
-        
-        const dropdownParent = $(element).closest('.role-assignment');
-        console.log("Dropdown parent encontrado:", dropdownParent.length ? "Sí" : "No");
-        
-        const isBankSelect = $(element).data('type') === 'bank';
-        console.log("¿Es select de bancos?", isBankSelect);
+      selects.forEach((id) => {
+        const element = document.getElementById(id);
+        if (element) {
+          //console.log(`Inicializando Select2 para: ${id}`);
 
-        const options = {
-            width: '100%',
-            dropdownParent: dropdownParent,
-            placeholder: isMultiple ? 'Seleccione bancos' : 'Seleccione una opción',
-            allowClear: !isMultiple,
-            closeOnSelect: false
-        };
+          $(`#${id}`).select2();
 
-        // Inicializar Select2
-        $(element).select2(options);
-        console.log("Select2 inicializado para elemento:", element);
+          $(`#${id}`).on('change', function() {
+            const newValue = $(this).val();
+            const livewireValue = @this.get(id);
 
-        // Agregar funcionalidad de "Seleccionar todos" solo para bancos (multiselect)
-        if (isMultiple) {
-            console.log("Agregando funcionalidad de 'Seleccionar todos' para bancos");
-            
-            // Escuchar cuando se abre el dropdown
-            $(element).on('select2:open', function(e) {
-                console.log("Dropdown abierto para el select de bancos");
-                
-                // Obtener el contenedor del dropdown
-                const dropdown = $('.select2-container--open .select2-dropdown');
-                const results = dropdown.find('.select2-results');
-                
-                // Generar ID único para este toggle
-                const toggleId = `s2-togall-${$(element).data('index')}`;
-                
-                // Si ya existe el botón, solo actualizamos su estado
-                if ($(`#${toggleId}`).length) {
-                    console.log("El botón ya existe, actualizando estado");
-                    updateToggleButton(element, toggleId);
-                    return;
-                }
-                
-                console.log("Agregando botón toggle al dropdown");
-                const toggleButton = $(`
-                    <span id="${toggleId}" class="s2-togall-button" style="cursor:pointer; padding: 5px 10px; display: flex; justify-content: space-between; align-items: center; background-color: #f8f9fa; border-bottom: 1px solid #eee;">
-                        <span class="s2-select-label"><i class="fas fa-square me-2 text-secondary"></i> Seleccionar todo</span>
-                        <span class="s2-unselect-label" style="display:none;"><i class="fas fa-check-square text-primary me-2"></i> Deseleccionar todo</span>
-                    </span>
-                `);
-                
-                results.before(toggleButton);
-                updateToggleButton(element, toggleId);
-                
-                // Manejador de clic para el botón
-                toggleButton.on('click', function(e) {
-                    e.stopPropagation();
-                    console.log("Click en el botón toggle");
-                    
-                    const $select = $(element);
-                    const allOptions = $select.find('option').map(function() {
-                        return $(this).val();
-                    }).get();
-                    
-                    const selected = $select.val() || [];
-                    const allSelected = selected.length === allOptions.length;
-                    
-                    if (allSelected) {
-                        console.log("Deseleccionando todos");
-                        $select.val([]);
-                    } else {
-                        console.log("Seleccionando todos");
-                        $select.val(allOptions);
-                    }
-                    
-                    $select.trigger('change');
-                    updateToggleButton(element, toggleId);
-                    
-                    // Cerrar el dropdown después de la acción
-                    $select.select2('close');
-                });
-            });
+            if (newValue !== livewireValue) {
+              // Actualiza Livewire solo si es el select2 de `condition_sale`
+              // Hay que poner wire:ignore en el select2 para que todo vaya bien
+              const specificIds = ['roles', 'banks']; // Lista de IDs específicos
+
+              if (specificIds.includes(id)) {
+                @this.set(id, newValue);
+              } else {
+                // Para los demás select2, actualiza localmente sin llamar al `updated`
+                @this.set(id, newValue, false);
+              }
+            }
+          });
         }
 
-        // Sincronizar con Livewire
-        $(element).on('change', function(e) {
-            console.log("Cambio detectado en select:", this);
-            
-            const index = $(this).data('index');
-            const type = $(this).data('type');
-            const value = $(this).val();
-            
-            console.log("Datos:", {index, type, value});
-            
-            const finalValue = isMultiple ? (Array.isArray(value) ? value : [value]) : value;
-            console.log("Valor final a enviar a Livewire:", finalValue);
-            
-            @this.set(`roleAssignments.${index}.${type === 'bank' ? 'banks' : type + '_id'}`, finalValue);
-            console.log("Valor enviado a Livewire");
-            
-            // Actualizar el botón si es un select de bancos
-            if (type === 'bank') {
-                const toggleId = `s2-togall-${index}`;
-                updateToggleButton(this, toggleId);
-            }
-        });
-    }
+        // Sincroniza el valor actual desde Livewire al Select2
+        const currentValue = @this.get(id);
+        $(`#${id}`).val(currentValue).trigger('change');
+      });
 
-    // Función para actualizar el estado del botón toggle
-    function updateToggleButton(selectElement, toggleId) {
-        const $select = $(selectElement);
-        const allOptions = $select.find('option').map(function() {
-            return $(this).val();
-        }).get();
-        const selected = $select.val() || [];
-        const allSelected = selected.length === allOptions.length;
-        
-        const toggle = $(`#${toggleId}`);
-        if (toggle.length) {
-            toggle.find('.s2-select-label').toggle(!allSelected);
-            toggle.find('.s2-unselect-label').toggle(allSelected);
-        }
-    }
+    };
 
-    function initializeAllSelects() {
-        console.groupCollapsed("Inicializando todos los selects");
-        console.log("Buscando selects...");
-        
-        const $selects = $('.role-select, .department-select, .bank-select');
-        console.log("Encontrados", $selects.length, "selects");
-        
-        $selects.each(function(index) {
-            console.log(`Procesando select #${index}:`, this);
-            
-            if (!$(this).hasClass('select2-hidden-accessible')) {
-                console.log("Select2 no inicializado - Inicializando");
-                initSelect2(this);
-            } else {
-                console.log("Select2 ya inicializado - Saltando");
-            }
-        });
-        
-        console.groupEnd();
-    }
-
-    // Inicializar al cargar
-    console.log("Iniciando inicialización inicial");
-    initializeAllSelects();
-
-    // Re-inicializar con Livewire
-    Livewire.on('reinitFormControls', () => {
-        console.log("Livewire: reinitFormControls recibido");
-        
-        setTimeout(() => {
-            console.log("Reinicializando controles después de 300ms");
-            initializeAllSelects();
-        }, 300);
-    });
-    
-    console.log("Escuchadores configurados");
-});
-</script>
-@endscript
-
-@php
-/*  
-@script
-<script>
-$(document).ready(function() {
-    function initSelect2(element) {
-        const isMultiple = $(element).prop('multiple');
-        const dropdownParent = $(element).closest('.role-assignment');
-
-        $(element).select2({
-            width: '100%',
-            dropdownParent: dropdownParent,
-            placeholder: isMultiple ? 'Seleccione bancos' : 'Seleccione una opción',
-            allowClear: !isMultiple
-        });
-
-        // Manejar cambios para sincronizar con Livewire
-        $(element).on('change', function(e) {
-            const index = $(this).data('index');
-            const type = $(this).data('type');
-            const value = $(this).val();
-
-            // Para selects múltiples, asegurarse de que siempre sea un array
-            const finalValue = isMultiple ? (Array.isArray(value) ? value : [value]) : value;
-
-            // Actualizar Livewire
-            @this.set(`roleAssignments.${index}.${type === 'bank' ? 'banks' : type + '_id'}`, finalValue);
-        });
-    }
-
-    // Inicializar todos los selects al cargar
-    function initializeAllSelects() {
-        console.log("Entró al initializeAllSelects");
-        $('.role-select, .department-select, .bank-select').each(function() {
-            if (!$(this).hasClass('select2-hidden-accessible')) {
-                initSelect2(this);
-            }
-        });
-    }
-
-    // Inicializar al cargar
-    initializeAllSelects();
-
-    // Re-inicializar cuando Livewire emita el evento
-    Livewire.on('reinitFormControls', () => {
+    // Re-ejecuta las inicializaciones después de actualizaciones de Livewire
+    Livewire.on('reinitSelect2Controls', () => {
+      console.log('Reinicializando controles después de Livewire update reinitFormControls');
       setTimeout(() => {
-            initializeAllSelects();
-        }, 300);
-
+        initializeSelect2();
+      }, 300); // Retraso para permitir que el DOM se estabilice
     });
 
-
-});
 </script>
 @endscript
-*/
-@endphp

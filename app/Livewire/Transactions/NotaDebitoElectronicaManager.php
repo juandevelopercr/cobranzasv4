@@ -419,23 +419,17 @@ class NotaDebitoElectronicaManager extends TransactionManager
       ->where('document_type', $this->document_type);
 
     // Condiciones según el rol del usuario
-    $allowedRoles = User::ROLES_ALL_DEPARTMENTS;
-    if (in_array(Session::get('current_role_name'), $allowedRoles)) {
+    $allowedRoles = User::ROLES_ALL_BANKS;
+    $user = auth()->user();
+    if ($user->hasAnyRole($allowedRoles)) {
       $query->where(function ($q) {
         $q->whereIn('status', [Transaction::PENDIENTE, Transaction::RECIBIDA, Transaction::ACEPTADA, Transaction::RECHAZADA, Transaction::ANULADA]);
       });
     } else {
-      // Obtener departamentos y bancos de la sesión
-      $departments = Session::get('current_department', []);
-      $banks = Session::get('current_banks', []);
-
-      // Filtrar por departamento y banco
-      if (!empty($departments)) {
-        $query->whereIn('transactions.department_id', $departments);
-      }
-
-      if (!empty($banks)) {
-        $query->whereIn('transactions.bank_id', $banks);
+      //Obtener bancos
+      $allowedBanks = $user->banks->pluck('id');
+      if (!empty($allowedBanks)) {
+        $query->whereIn('transactions.bank_id', $allowedBanks);
       }
 
       $query->whereIn('status', [Transaction::PENDIENTE, Transaction::RECIBIDA, Transaction::ACEPTADA, Transaction::RECHAZADA, Transaction::ANULADA]);

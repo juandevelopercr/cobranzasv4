@@ -19,7 +19,7 @@ class EventServiceProvider extends ServiceProvider
   protected $listen = [
     Login::class => [
       StoreSessionVariables::class,
-      SetSessionVariables::class,
+      //SetSessionVariables::class,
       // HandleUserLogin::class,
     ],
     /*

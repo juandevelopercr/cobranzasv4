@@ -165,7 +165,7 @@
 
     @include('livewire.transactions-lines.partials._form-taxes')
 
-    @if (in_array(session('current_role_name'), User::ROLES_ALL_DEPARTMENTS))
+    @if (auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
       @include('livewire.transactions-lines.partials._form-discounts')
     @endif
 

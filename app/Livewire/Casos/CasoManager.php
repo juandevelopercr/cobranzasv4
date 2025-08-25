@@ -128,11 +128,7 @@ class CasoManager extends BaseComponent
   #[Computed]
   public function estados()
   {
-    $user = Auth::user();
-    if (Session::get('current_role_name') == User::BANCO)
-      $estados = CasoEstado::whereIn('id', [CasoEstado::ASIGNADO, CasoEstado::FORMALIZADO, CasoEstado::EN_TRAMITE, CasoEstado::INSCRITO, CasoEstado::ENTREGADO])->orderBy('name', 'ASC')->get();
-    else
-      $estados = CasoEstado::orderBy('name', 'ASC')->get();
+    $estados = CasoEstado::orderBy('name', 'ASC')->get();
     return $estados;
   }
 
@@ -145,52 +141,35 @@ class CasoManager extends BaseComponent
     $this->setDepartments();
     $this->banks = [];
 
-    $allowedRoles = User::ROLES_ALL_DEPARTMENTS;
-    if (!in_array(Session::get('current_role_name'), $allowedRoles)) {
-      $departments = Session::get('current_department');
-
+    // Condiciones según el rol del usuario
+    $allowedRoles = User::ROLES_ALL_BANKS;
+    $user = auth()->user();
+    if ($user->hasAnyRole($allowedRoles)) {
       // Abogados (con roles y en los departamentos asignados)
       $this->abogados = User::where('active', 1)
         ->whereHas('roles', function ($query) {
-          $query->whereIn('name', [User::ABOGADO, User::ABOGADO_EDITOR, User::JEFE_AREA_SENIOR]);
-        })
-        ->whereHas('departments', function ($query) use ($departments) {
-          $query->whereIn('departments.id', $departments);
+          $query->whereIn('name', [User::ABOGADO]);
         })
         ->orderBy('name', 'ASC')
         ->get();
 
       // Asistentes (también deben estar en los mismos departamentos)
       $this->asistentes = User::where('active', 1)
-        ->role(User::ABOGADO) // Si 'Abogado' es el rol que quieres para asistentes
-        ->whereHas('departments', function ($query) use ($departments) {
-          $query->whereIn('departments.id', $departments);
-        })
-        ->orderBy('name', 'ASC')
-        ->get();
-
-      // Garantias (también deben estar en los mismos departamentos)
-      $this->garantias = Garantia::where('active', 1)
-        ->whereHas('departments', function ($query) use ($departments) {
-          $query->whereIn('departments.id', $departments);
+        ->whereHas('roles', function ($query) {
+          $query->whereIn('name', [User::ASISTENTE]);
         })
         ->orderBy('name', 'ASC')
         ->get();
     } else {
       $this->abogados = User::where('active', 1)
         ->whereHas('roles', function ($query) {
-          $query->whereIn('name', [User::ABOGADO, User::ABOGADO_EDITOR, User::JEFE_AREA_SENIOR]);
+          $query->whereIn('name', [User::ABOGADO]);
         })
         ->orderBy('name', 'ASC')
         ->get();
 
       $this->asistentes = User::where('active', 1)
-        ->role(User::ABOGADO) // usa el nombre exacto del rol
-        ->orderBy('name', 'ASC')
-        ->get();
-
-      // Garantias (también deben estar en los mismos departamentos)
-      $this->garantias = Garantia::where('active', 1)
+        ->role(User::ASISTENTE) // usa el nombre exacto del rol
         ->orderBy('name', 'ASC')
         ->get();
     }
@@ -202,10 +181,14 @@ class CasoManager extends BaseComponent
     $query = Caso::search($this->search, $this->filters);
 
     // 🔒 Acceso según rol
-    if (!in_array(session('current_role_name'),  User::ROLES_ALL_DEPARTMENTS)) {
-      // Puede ver casos solo de departamentos asignados
-      $query->whereIn('casos.department_id', Session::get('current_department'))
-        ->whereIn('casos.bank_id', Session::get('current_banks'));
+    // Condiciones según el rol del usuario
+    $allowedRoles = User::ROLES_ALL_BANKS;
+    $user = auth()->user();
+    if (!$user->hasAnyRole($allowedRoles)) {
+      $allowedBanks = $user->banks->pluck('id');
+      if (!empty($allowedBanks)) {
+        $query->whereIn('casos.bank_id', $allowedBanks);
+      }
     }
 
     // Ordenar resultados

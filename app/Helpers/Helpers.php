@@ -1424,7 +1424,7 @@ class Helpers
     $recipientName = $name;
 
     $fromEmail = env('MAIL_USERNAME');
-    $subject = __('Consortium Legal login information');
+    $subject = __('Consortium Cobranzas login information');
 
     $bussines = Business::find(1);
     $logoRelativePath = 'assets/img/logos/' . ($bussines->logo ?? 'default-logo.png');

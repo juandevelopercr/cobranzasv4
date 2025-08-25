@@ -135,7 +135,7 @@ use App\Models\User;
                     'transaction_id' => $this->recordId,
                     'canview'   => auth()->user()->can('view-comision-proformas'),
                     'cancreate' => false,
-                    'canedit'   => in_array(session('current_role_name'), User::ROLES_ALL_DEPARTMENTS),
+                    'canedit'   => auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS),
                     'candelete' => false,
                     'canexport' => auth()->user()->can('export-comision-proformas'),
                   ])

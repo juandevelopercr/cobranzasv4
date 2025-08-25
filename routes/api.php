@@ -57,7 +57,7 @@ Route::get('/user-assignments', function (Request $request) {
 
   // Agregar roles con acceso total
   $fullAccessRoles = $user->roles()
-    ->whereIn('name', User::ROLES_ALL_DEPARTMENTS)
+    ->whereIn('name', User::ROLES_ALL_BANKS)
     ->get()
     ->map(function ($role) {
       return [
@@ -72,49 +72,3 @@ Route::get('/user-assignments', function (Request $request) {
 
   return response()->json($fullAccessRoles->concat($assignments));
 });
-
-/*
-Route::get('/user-assignments', function (Request $request) {
-  $email = $request->query('email');
-  $user = User::where('email', $email)->first();
-
-  if (!$user) {
-    return response()->json([]);
-  }
-
-  // Obtener asignaciones específicas (agrupadas por rol y departamento)
-  $assignments = UserRoleDepartmentBank::where('user_id', $user->id)
-    ->with(['role', 'department'])
-    ->get()
-    ->groupBy(['role_id', 'department_id']) // Agrupa para eliminar duplicados
-    ->map(function ($group) {
-      $first = $group->first()->first(); // Primer registro del grupo
-      return [
-        'id' => $first->id,
-        'display' => $first->role->name . ' - ' . $first->department->name,
-        'role_id' => $first->role_id,
-        'role_name' => $first->role->name,
-        'department_id' => $first->department_id,
-        'department_name' => $first->department->name
-      ];
-    })
-    ->values(); // Reindexa el array
-
-  // Agregar roles con acceso total
-  $fullAccessRoles = $user->roles()
-    ->whereIn('name', User::ROLES_ALL_DEPARTMENTS)
-    ->get()
-    ->map(function ($role) {
-      return [
-        'id' => 'full-' . $role->id,
-        'display' => $role->name . ' (Acceso Total)',
-        'role_id' => $role->id,
-        'role_name' => $role->name,
-        'department_id' => null,
-        'department_name' => 'Todos los Departamentos'
-      ];
-    });
-
-  return response()->json($fullAccessRoles->merge($assignments));
-});
-*/

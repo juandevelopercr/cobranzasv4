@@ -55,7 +55,7 @@ use App\Models\User;
                   <i class="bx bx-dollar bx-lg d-sm-none"></i>
                 </button>
               </li>
-              @if (in_array(session('current_role_name'), User::ROLES_ALL_DEPARTMENTS))
+              @if (auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
               <li class="nav-item">
                 <button type="button" class="nav-link @if ($this->activeTab == 'comisiones') show active @endif" role="tab"
                   wire:click="changeTab('comisiones')">
@@ -128,7 +128,7 @@ use App\Models\User;
                   </div>
                 </div>
               </div>
-              @if (in_array(session('current_role_name'), User::ROLES_ALL_DEPARTMENTS))
+              @if (auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
                 <div class="tab-pane fade @if ($this->activeTab == 'comisiones') show active @endif" id="navs-justified-cost-center" role="tabpanel">
                   <div class="{{ $this->recordId ? '' : 'd-none' }}">
                     @livewire('transactions-commissions.transaction-commission-manager', [

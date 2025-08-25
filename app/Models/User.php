@@ -38,24 +38,14 @@ class User extends Authenticatable
   use LogsActivity;
   use CausesActivity;
 
-  public const ROLES_ALL_DEPARTMENTS = [
+  public const ROLES_ALL_BANKS = [
     'SuperAdmin',
     'Administrador',
-    'AdminContabilidad',
-    'AdminFacturacion',
-    'AdminPagos',
-    'AdminCXC',
-    'Socio',
   ];
 
   public const ROLES_ALL_CASOS = [
     'SuperAdmin',
     'Administrador',
-    'Jefe',
-    'JefeSenior',
-    'Asistente',
-    'AbogadoEditor',
-    'AyudanteDeJefe'
   ];
 
   public const ROLES_REQUIRED_BANK = [
@@ -64,13 +54,9 @@ class User extends Authenticatable
 
   public const SUPERADMIN = 'SuperAdmin';
   public const ADMINISTRADOR = 'Administrador';
-  public const JEFE_AREA = 'Jefe';
-  public const JEFE_AREA_SENIOR = 'JefeSenior';
+  public const JEFE_AREA = 'JefeArea';
   public const ABOGADO = 'Abogado';
-  public const ABOGADO_EDITOR = 'AbogadoEditor';
   public const ASISTENTE = 'Asistente';
-  public const AYUDANTE_JEFE = 'AyudanteDeJefe';
-  public const BANCO = 'Banco';
 
   /**
    * The attributes that are mass assignable.
@@ -180,147 +166,19 @@ class User extends Authenticatable
   }
 
   /**
-   * Relación directa con las asignaciones de rol, departamento y banco
-   */
-  public function roleAssignments()
-  {
-    return $this->hasMany(UserRoleDepartmentBank::class);
-  }
-
-  public function departments()
-  {
-    return $this->belongsToMany(Department::class, 'user_role_department_banks', 'user_id', 'department_id')
-      ->distinct()
-      ->select('departments.id', 'departments.name'); // Especificar tabla
-  }
-
-  /**
    * Obtener bancos a través de las asignaciones
    */
   public function banks()
   {
-    return $this->belongsToMany(Bank::class, 'user_role_department_banks', 'user_id', 'bank_id')
-      ->distinct()
-      ->select('banks.id', 'banks.name');
+    return $this->belongsToMany(Bank::class, 'user_has_banks', 'user_id', 'bank_id');
   }
+
 
   public function hasAnyRole(array $roles)
   {
     return $this->roles()->whereIn('name', $roles)->exists();
   }
 
-
-  public function getContextBanks($roleId, $departmentId = null)
-  {
-    $query = $this->roleAssignments()->where('role_id', $roleId);
-
-    if ($departmentId) {
-      $query->where('department_id', $departmentId);
-    }
-
-    return $query->pluck('bank_id')
-      ->unique()
-      ->toArray();
-  }
-
-  /*
-  public function scopeSearch($query, $value, $filters = [])
-  {
-    // Selección de columnas sin joins innecesarios
-    $query->select([
-      'users.id',
-      'users.name',
-      'users.initials',
-      'users.email',
-      'users.profile_photo_path',
-      'users.created_at',
-      'users.active'
-    ]);
-
-    // Búsqueda principal con subconsultas para roles
-    /*
-    $query->where(function ($q) use ($value) {
-      $q->where('users.name', 'like', "%{$value}%")
-        ->orWhere('users.initials', 'like', "%{$value}%")
-        ->orWhere('users.email', 'like', "%{$value}%")
-        ->orWhere(function ($q) use ($value) {
-          $q->whereIn('users.id', function ($subquery) use ($value) {
-            $subquery->select('user_id')
-              ->from('role_user')
-              ->join('roles', 'roles.id', '=', 'role_user.role_id')
-              ->where('roles.name', 'like', "%{$value}%");
-          });
-        });
-    });
-    //aqui cerrra el comentario
-
-    // Aplica filtros adicionales si están definidos
-    if (!empty($filters['filter_name'])) {
-      //dd($filters['filter_name']);
-      $query->where('users.name', 'like', '%' . $filters['filter_name'] . '%');
-    }
-
-    if (!empty($filters['filter_departments'])) {
-      $query->whereHas('departments', function ($q) use ($filters) {
-        $q->where('departments.name', 'like', '%' . $filters['filter_departments'] . '%');
-      });
-    }
-
-    if (!empty($filters['filter_email'])) {
-      $query->where('users.email', 'like', '%' . $filters['filter_email'] . '%');
-    }
-
-    if (!empty($filters['filter_initials'])) {
-      $query->where('users.initials', 'like', '%' . $filters['filter_initials'] . '%');
-    }
-
-    if (!empty($filters['filter_created_at'])) {
-      $range = explode(' to ', $filters['filter_created_at']);
-
-      if (count($range) === 2) {
-        try {
-          // Validar y convertir las fechas del rango
-          $start = Carbon::createFromFormat('d-m-Y', $range[0])->format('Y-m-d');
-          $end = Carbon::createFromFormat('d-m-Y', $range[1])->format('Y-m-d');
-
-          // Aplicar filtro si ambas fechas son válidas
-          $query->whereBetween('users.created_at', [$start, $end]);
-        } catch (\Exception $e) {
-          // Manejar el caso de fechas inválidas (opcional: log o ignorar)
-        }
-      } else {
-        try {
-          // Validar y convertir la fecha única
-          $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_created_at'])->format('Y-m-d');
-
-          // Aplicar filtro si la fecha es válida
-          $query->whereDate('users.created_at', $singleDate);
-        } catch (\Exception $e) {
-          // Manejar el caso de fecha inválida (opcional: log o ignorar)
-        }
-      }
-    }
-
-    if (isset($filters['filter_active']) && !is_null($filters['filter_active'])  && $filters['filter_active'] !== '') {
-      $query->where('users.active', '=', $filters['filter_active']);
-    }
-
-    // Agrupar por ID de usuario para evitar duplicados
-    // Agrupar por TODAS las columnas seleccionadas
-    $query->groupBy([
-      'users.id',
-      'users.name',
-      'users.initials',
-      'users.email',
-      'users.profile_photo_path',
-      'users.created_at',
-      'users.active'
-    ]);
-
-
-    return $query;
-  }
-  */
   public function scopeSearch($query, $value, $filters = [])
   {
     // Selección de columnas básicas

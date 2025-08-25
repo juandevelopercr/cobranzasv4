@@ -27,8 +27,7 @@ use App\Models\CasoEstado;
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
           <input type="text" wire:model="deudor" id="deudor" class="form-control @error('deudor') is-invalid @enderror"
-            placeholder="{{ __('Deudor') }}"
-             {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::ASISTENTE, User::BANCO]) ? 'disabled' : '' !!}>
+            placeholder="{{ __('Deudor') }}">
         </div>
         @error('deudor')
         <div class="text-danger mt-1">{{ $message }}</div>
@@ -53,7 +52,7 @@ use App\Models\CasoEstado;
           <span class="input-group-text"><i class="bx bx-barcode"></i></span>
           <input type="text" wire:model="numero_tomo" id="numero_tomo" class="form-control @error('numero_tomo') is-invalid @enderror"
             placeholder="{{ __('Número de tomo') }}"
-            {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::AYUDANTE_JEFE, User::BANCO]) ? 'disabled' : '' !!}>
+            >
         </div>
         @error('numero_tomo')
         <div class="text-danger mt-1">{{ $message }}</div>
@@ -66,7 +65,7 @@ use App\Models\CasoEstado;
           <span class="input-group-text"><i class="bx bx-barcode"></i></span>
           <input type="text" wire:model="asiento_presentacion" id="asiento_presentacion" class="form-control @error('asiento_presentacion') is-invalid @enderror"
             placeholder="{{ __('Asiento de presentación') }}"
-            {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::AYUDANTE_JEFE, User::BANCO]) ? 'disabled' : '' !!}>
+            >
         </div>
         @error('asiento_presentacion')
         <div class="text-danger mt-1">{{ $message }}</div>
@@ -101,7 +100,7 @@ use App\Models\CasoEstado;
             wire:ignore
             class="form-control date-picke @error('fecha_firma') is-invalid @enderror"
             placeholder="dd-mm-aaaa"
-            {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::ASISTENTE, User::AYUDANTE_JEFE, User::BANCO]) ? 'disabled' : '' !!}>
+            >
         </div>
         @error('fecha_firma')
         <div class="text-danger mt-1">{{ $message }}</div>
@@ -119,7 +118,7 @@ use App\Models\CasoEstado;
             wire:ignore
             class="form-control date-picke @error('fecha_presentacion') is-invalid @enderror"
             placeholder="dd-mm-aaaa"
-            {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::AYUDANTE_JEFE, User::BANCO]) ? 'disabled' : '' !!}>
+            >
         </div>
         @error('fecha_presentacion')
         <div class="text-danger mt-1">{{ $message }}</div>
@@ -137,7 +136,7 @@ use App\Models\CasoEstado;
             wire:ignore
             class="form-control date-picke @error('fecha_inscripcion') is-invalid @enderror"
             placeholder="dd-mm-aaaa"
-            {!! in_array(session('current_role_name'), [User::ABOGADO, User::ASISTENTE, User::AYUDANTE_JEFE, User::BANCO]) ? 'disabled' : '' !!}>
+            >
         </div>
         @error('fecha_inscripcion')
         <div class="text-danger mt-1">{{ $message }}</div>
@@ -155,7 +154,7 @@ use App\Models\CasoEstado;
             wire:ignore
             class="form-control date-picke @error('fecha_entrega') is-invalid @enderror"
             placeholder="dd-mm-aaaa"
-            {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::AYUDANTE_JEFE, User::BANCO]) ? 'disabled' : '' !!}>
+            >
         </div>
         @error('fecha_entrega')
         <div class="text-danger mt-1">{{ $message }}</div>
@@ -168,7 +167,7 @@ use App\Models\CasoEstado;
         <label class="form-label" for="abogado_cargo_id">{{ __('Abogado a cargo') }}</label>
         <div wire:ignore>
           <select wire:model="abogado_cargo_id" id="abogado_cargo_id" class="select2 form-select @error('abogado_cargo_id') is-invalid @enderror"
-          {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::ASISTENTE, User::BANCO]) ? 'disabled' : '' !!}>
+          >
             <option value="">{{ __('Seleccione...') }}</option>
             @foreach ($this->abogados as $abogado)
               <option value="{{ $abogado->id }}">{{ $abogado->name }}</option>
@@ -184,7 +183,7 @@ use App\Models\CasoEstado;
         <label class="form-label" for="abogado_revisor_id">{{ __('Abogado revisor') }}</label>
         <div wire:ignore>
           <select wire:model="abogado_revisor_id" id="abogado_revisor_id" class="select2 form-select @error('abogado_revisor_id') is-invalid @enderror"
-            {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::ASISTENTE, User::AYUDANTE_JEFE, User::BANCO]) ? 'disabled' : '' !!}>
+            >
             <option value="">{{ __('Seleccione...') }}</option>
             @foreach ($this->abogados as $abogado)
               <option value="{{ $abogado->id }}">{{ $abogado->name }}</option>
@@ -200,7 +199,7 @@ use App\Models\CasoEstado;
         <label class="form-label" for="abogado_formalizador_id">{{ __('Abogado formalizador') }}</label>
         <div wire:ignore>
           <select wire:model="abogado_formalizador_id" id="abogado_formalizador_id" class="select2 form-select @error('abogado_formalizador_id') is-invalid @enderror"
-            {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::ASISTENTE, User::AYUDANTE_JEFE, User::BANCO]) ? 'disabled' : '' !!}>
+            >
             <option value="">{{ __('Seleccione...') }}</option>
             @foreach ($this->abogados as $abogado)
               <option value="{{ $abogado->id }}">{{ $abogado->name }}</option>
@@ -216,7 +215,7 @@ use App\Models\CasoEstado;
         <label class="form-label" for="asistente_id">{{ __('Asistente') }}</label>
         <div wire:ignore>
           <select wire:model="asistente_id" id="asistente_id" class="select2 form-select @error('asistente_id') is-invalid @enderror"
-            {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::ASISTENTE, User::BANCO]) ? 'disabled' : '' !!}>
+            >
             <option value="">{{ __('Seleccione...') }}</option>
             @foreach ($this->asistentes as $asistente)
               <option value="{{ $asistente->id }}">{{ $asistente->name }}</option>
@@ -234,7 +233,7 @@ use App\Models\CasoEstado;
       <div class="col-md-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="bank_id">{{ __('Bank') }}</label>
         <select wire:model="bank_id" id="bank_id" class="select2 form-select @error('bank_id') is-invalid @enderror"
-          {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::ASISTENTE, User::BANCO]) ? 'disabled' : '' !!}>
+          >
           <option value="">{{ __('Seleccione...') }}</option>
           @foreach ($this->banks as $bank)
             <option value="{{ $bank->id }}">{{ $bank->name }}</option>
@@ -252,7 +251,7 @@ use App\Models\CasoEstado;
           <input type="text" wire:model="sucursal" id="sucursal"
               class="form-control @error('sucursal') is-invalid @enderror"
               placeholder="{{ __('Sucursal') }}"
-              {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::ASISTENTE, User::BANCO]) ? 'disabled' : '' !!}>
+              >
         </div>
         @error('sucursal')
         <div class="text-danger mt-1">{{ $message }}</div>
@@ -263,7 +262,7 @@ use App\Models\CasoEstado;
         <label class="form-label" for="currency_id">{{ __('Currency') }}</label>
         <div wire:ignore>
           <select wire:model="currency_id" id="currency_id" class="select2 form-select @error('currency_id') is-invalid @enderror"
-            {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::ASISTENTE, User::BANCO]) ? 'disabled' : '' !!}>
+            >
             <option value="">{{ __('Seleccione...') }}</option>
             @foreach ($this->currencies as $currency)
               <option value="{{ $currency->id }}">{{ $currency->code }}</option>
@@ -297,7 +296,7 @@ use App\Models\CasoEstado;
         >
           <div class="input-group input-group-merge has-validation">
             <input type="text" id="monto" x-ref="cleaveInput" wire:ignore class="form-control js-input-monto"
-            {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::ASISTENTE, User::BANCO]) ? 'disabled' : '' !!}>
+            >
           </div>
         </div>
         @error('monto')
@@ -309,7 +308,7 @@ use App\Models\CasoEstado;
         <label class="form-label" for="caratula_id">{{ __('Tipo de Carátula') }}</label>
         <div wire:ignore>
           <select wire:model="caratula_id" id="caratula_id" class="select2 form-select @error('caratula_id') is-invalid @enderror"
-            {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::ASISTENTE, User::BANCO]) ? 'disabled' : '' !!}>
+            >
             <option value="">{{ __('Seleccione...') }}</option>
             @foreach ($this->caratulas as $caratula)
               <option value="{{ $caratula->id }}">{{ $caratula->name }}</option>
@@ -325,7 +324,7 @@ use App\Models\CasoEstado;
         <label class="form-label" for="garantia_id">{{ __('Número Garantía') }}</label>
         <div wire:ignore>
           <select wire:model="garantia_id" id="garantia_id" class="select2 form-select @error('garantia_id') is-invalid @enderror"
-            {!! in_array(session('current_role_name'), [User::ABOGADO, User::ASISTENTE, User::AYUDANTE_JEFE, User::BANCO]) ? 'disabled' : '' !!}>
+            >
             <option value="">{{ __('Seleccione...') }}</option>
             @foreach ($this->garantias as $garantia)
               <option value="{{ $garantia->id }}">{{ $garantia->name }}</option>
@@ -344,7 +343,7 @@ use App\Models\CasoEstado;
           <input type="text" wire:model="numero_garantia" id="numero_garantia"
               class="form-control @error('numero_garantia') is-invalid @enderror"
               placeholder="{{ __('Número de garantía') }}"
-              {!! in_array(session('current_role_name'), [User::ABOGADO, User::ASISTENTE, User::AYUDANTE_JEFE, User::BANCO]) ? 'disabled' : '' !!}>
+              >
         </div>
         @error('numero_garantia')
         <div class="text-danger mt-1">{{ $message }}</div>
@@ -373,7 +372,7 @@ use App\Models\CasoEstado;
         >
           <div class="input-group input-group-merge has-validation">
             <input type="text" id="costo_caso_retiro" x-ref="cleaveInput" wire:ignore class="form-control js-input-costo_caso_retiro"
-            {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::ASISTENTE, User::AYUDANTE_JEFE, User::BANCO]) ? 'disabled' : '' !!}>
+            >
           </div>
         </div>
         @error('costo_caso_retiro')
@@ -388,7 +387,7 @@ use App\Models\CasoEstado;
           <input type="text" wire:model="nombre_formalizo" id="nombre_formalizo"
               class="form-control @error('nombre_formalizo') is-invalid @enderror"
               placeholder="{{ __('Ejecutivo a cargo') }}"
-              {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::ASISTENTE, User::BANCO]) ? 'disabled' : '' !!}>
+              >
         </div>
         @error('nombre_formalizo')
         <div class="text-danger mt-1">{{ $message }}</div>
@@ -402,7 +401,7 @@ use App\Models\CasoEstado;
           <input type="text" wire:model="fiduciaria" id="fiduciaria"
               class="form-control @error('fiduciaria') is-invalid @enderror"
               placeholder="{{ __('fiduciaria') }}"
-              {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::ASISTENTE, User::BANCO]) ? 'disabled' : '' !!}>
+              >
         </div>
         @error('fiduciaria')
         <div class="text-danger mt-1">{{ $message }}</div>
@@ -416,7 +415,7 @@ use App\Models\CasoEstado;
           <input type="text" wire:model="desarrollador" id="desarrollador"
               class="form-control @error('desarrollador') is-invalid @enderror"
               placeholder="{{ __('Desarrollador') }}"
-              {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::ASISTENTE, User::BANCO]) ? 'disabled' : '' !!}>
+              >
         </div>
         @error('desarrollador')
         <div class="text-danger mt-1">{{ $message }}</div>
@@ -487,7 +486,7 @@ use App\Models\CasoEstado;
           <span class="input-group-text"><i class="bx bx-barcode"></i></span>
           <input type="text" wire:model="numero_gestion" id="numero_gestion" class="form-control @error('numero_gestion') is-invalid @enderror"
             placeholder="{{ __('Número de gestión') }}"
-            {!! in_array(session('current_role_name'), [User::ABOGADO, User::ABOGADO_EDITOR, User::ASISTENTE, User::BANCO]) ? 'disabled' : '' !!}>
+            >
         </div>
         @error('numero_gestion')
         <div class="text-danger mt-1">{{ $message }}</div>
@@ -495,7 +494,7 @@ use App\Models\CasoEstado;
       </div>
 
       @php
-        if (session('current_role_name') || $this->estado_id == CasoEstado::DEFECTUOSO)
+        if ($this->estado_id == CasoEstado::DEFECTUOSO)
 				  $this->estado_id = CasoEstado::EN_TRAMITE;
       @endphp
 
@@ -503,7 +502,7 @@ use App\Models\CasoEstado;
         <label class="form-label" for="estado_id">{{ __('Estado') }}</label>
         <div wire:ignore>
           <select wire:model="estado_id" id="estado_id" class="select2 form-select @error('estado_id') is-invalid @enderror"
-            {!! in_array(session('current_role_name'), [User::ABOGADO, User::ASISTENTE, User::AYUDANTE_JEFE, User::BANCO]) ? 'disabled' : '' !!}>
+            >
             <option value="">{{ __('Seleccione...') }}</option>
             @foreach ($this->estados as $estado)
               <option value="{{ $estado->id }}">{{ $estado->name }}</option>

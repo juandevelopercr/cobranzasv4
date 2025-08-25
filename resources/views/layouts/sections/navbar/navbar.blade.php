@@ -132,7 +132,7 @@ $navbarDetached = $navbarDetached ?? '';
                                                 John Doe
                                                 @endif
                                             </h6>
-                                            <small class="text-muted">{{ session('current_role_name') }}</small>
+                                            <small class="text-muted">{{ auth()->user()->getRoleNames()->join(', ') }}</small>
                                         </div>
                                     </div>
                                 </a>

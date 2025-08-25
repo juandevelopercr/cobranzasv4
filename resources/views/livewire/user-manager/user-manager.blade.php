@@ -88,7 +88,7 @@
   </div>
 
   <div class="card">
-    <h4 class="card-header pb-0 text-md-start text-center ms-n2">{{ __('Users') }}</h4>
+    <h5 class="card-header pb-0 text-md-start text-center ms-n2">{{ __('Users') }}</h5>
 
     <div class="card-datatable text-nowrap">
       <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
@@ -173,6 +173,59 @@
 
                 @include('livewire.includes.columns', ['columns' => $this->columns, 'record'=>$record])
 
+                @php
+                  /*
+                <td>
+                  @can("edit-users")
+                  <button wire:click="edit({{ $record->id }})" wire:loading.attr="disabled"
+                    wire:target="edit({{ $record->id }})" class="btn btn-icon item-edit" data-bs-toggle="tooltip"
+                    data-bs-offset="0,8" data-bs-placement="top" data-bs-custom-class="tooltip-dark"
+                    data-bs-original-title="{{ __('Edit') }}">
+
+                    <!-- Ícono normal (visible cuando no está en loading) -->
+                    <span wire:loading.remove wire:target="edit({{ $record->id }})">
+                      <i class="bx bx-edit bx-md"></i>
+                    </span>
+
+                    <!-- Ícono de carga (visible cuando está en loading) -->
+                    <span wire:loading wire:target="edit({{ $record->id }})">
+                      <i class="spinner-border spinner-border-sm me-1" role="status"></i>
+                    </span>
+                  </button>
+                  @endcan
+
+                  <!-- Botón para Enviar Credenciales por Email -->
+                  @can("edit-users")
+                  <button wire:click.prevent="confirmarAccion(
+                      {{ $record->id }},
+                      'credentialSend',
+                      '{{ __('Are you sure you want to send the login credentials to the system?') }}',
+                      '{{ __("After confirmation a new password will be generated and sent to the user's email address") }}',
+                      '{{ __('Yes, proceed') }}')" class="btn btn-icon item-trash text-primary" data-bs-toggle="tooltip"
+                    data-bs-offset="0,8" data-bs-placement="top" data-bs-custom-class="tooltip-dark"
+                    data-bs-original-title="{{ __('Enviar credenciales de acceso') }}">
+                    <i class="bx bx-envelope"></i> <!-- Icono de Email -->
+                  </button>
+                  @endcan
+
+                  @can("delete-users")
+                  @if ($record->id != 1)
+                  <button wire:click.prevent="confirmarAccion(
+                              {{ $record->id }},
+                              'delete',
+                              '{{ __('Are you sure you want to delete this record') }} ?',
+                              '{{ __('After confirmation, the record will be deleted') }}',
+                              '{{ __('Yes, proceed') }}'
+                            )" class="btn btn-icon item-trash text-danger" data-bs-toggle="tooltip"
+                    data-bs-offset="0,8" data-bs-placement="top" data-bs-custom-class="tooltip-dark"
+                    data-bs-original-title="{{ __('Delete') }}">
+                    <i class="bx bx-trash bx-md"></i>
+                  </button>
+                  @endif
+                  @endcan
+                </td>
+                */
+                @endphp
               </tr>
               @endforeach
             </tbody>

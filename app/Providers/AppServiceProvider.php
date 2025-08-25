@@ -73,7 +73,7 @@ class AppServiceProvider extends ServiceProvider
       return $user->hasRole('SuperAdmin') ? true : null;
     });
 
-    Movimiento::observe(MovimientoObserver::class);
+    //Movimiento::observe(MovimientoObserver::class);
 
     /*
     Validator::extend('unique_combo', function ($attribute, $value, $parameters, $validator) {
@@ -81,10 +81,11 @@ class AppServiceProvider extends ServiceProvider
       return false;
     });
     */
-
+    /*
     Validator::extend('unique_combo', function ($attribute, $value, $parameters, $validator) {
       return false; // Siempre falla porque la duplicidad se detecta previamente
     }, 'La combinación de rol y departamento está duplicada');
+    */
 
     Vite::useStyleTagAttributes(function (?string $src, string $url, ?array $chunk, ?array $manifest) {
       if ($src !== null) {

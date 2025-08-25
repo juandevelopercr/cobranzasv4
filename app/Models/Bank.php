@@ -37,7 +37,7 @@ class Bank extends Model
 
   public function users()
   {
-    return $this->belongsToMany(User::class, 'bank_user')->withTimestamps();
+    return $this->belongsToMany(User::class, 'user_has_banks', 'bank_id', 'user_id');
   }
 
   public function scopeSearch($query, $value, $filters = [])

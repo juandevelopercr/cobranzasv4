@@ -509,10 +509,10 @@ class NotaCreditoDigitalManager extends TransactionManager
     $query = Transaction::search($this->search, $this->filters)
       ->whereIn('document_type', $document_type);
 
-    $allowedRoles = User::ROLES_ALL_DEPARTMENTS;
-
     // Condiciones según el rol del usuario
-    if (in_array(Session::get('current_role_name'), $allowedRoles)) {
+    $allowedRoles = User::ROLES_ALL_BANKS;
+    $user = auth()->user();
+    if ($user->hasAnyRole($allowedRoles)) {
       $query->where(function ($q) use ($allowedRoles) {
         // Condición 1: Estado PROCESO creado por usuario con rol especial
         $q->where('proforma_status', Transaction::PROCESO)
@@ -528,17 +528,10 @@ class NotaCreditoDigitalManager extends TransactionManager
         $q->orWhere('proforma_status', Transaction::FACTURADA);
       });
     } else {
-      // Obtener departamentos y bancos de la sesión
-      $departments = Session::get('current_department', []);
-      $banks = Session::get('current_banks', []);
-
-      // Filtrar por departamento y banco
-      if (!empty($departments)) {
-        $query->whereIn('transactions.department_id', $departments);
-      }
-
-      if (!empty($banks)) {
-        $query->whereIn('transactions.bank_id', $banks);
+      //Obtener bancos
+      $allowedBanks = $user->banks->pluck('id');
+      if (!empty($allowedBanks)) {
+        $query->whereIn('transactions.bank_id', $allowedBanks);
       }
 
       // Excluir transacciones creadas por usuarios con roles especiales

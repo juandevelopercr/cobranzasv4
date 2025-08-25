@@ -16,8 +16,8 @@ use App\Models\User;
                   wire:ignore>
                 <label class="form-label" for="department">{{ __('Department') }}</label>
                 <select x-ref="select" id="department"
-                        class="select2 form-select @error('department') is-invalid @enderror">                  
-                  @if (in_array(session('current_role_name'), User::ROLES_ALL_DEPARTMENTS))                  
+                        class="select2 form-select @error('department') is-invalid @enderror">
+                  @if (auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
                       <option value="">{{ __('Todos') }}</option>
                   @endif
                   @foreach ($this->departments as $department)

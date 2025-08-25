@@ -3,7 +3,7 @@
 return [
   "creatorName" => "Software Solutions",
   "creatorUrl" => "https://softwaresolutions.co.cr",
-  "templateName" => "Consortium",
+  "templateName" => "Cobranzas",
   "templateSuffix" => "",
   "templateVersion" => "3.0.0",
   "templateFree" => false,

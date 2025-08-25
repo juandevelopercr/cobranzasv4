@@ -13,7 +13,6 @@ use App\Models\ConditionSale;
 use App\Models\Cuenta;
 use App\Models\Currency;
 use App\Models\DataTableConfig;
-use App\Models\Department;
 use App\Models\EconomicActivity;
 use App\Models\PaymentMethod;
 use App\Models\Transaction;
@@ -78,7 +77,6 @@ abstract class TransactionManager extends BaseComponent
   public $cuenta_id;
   public $showInstruccionesPago;
   public $currency_id;
-  public $department_id;
   public $area_id;
   public $bank_id;
   public $codigo_contable_id;
@@ -218,8 +216,6 @@ abstract class TransactionManager extends BaseComponent
   public $RefCodigoOtro;
   public $RefRazon;
 
-  public $departments;
-
   public $clientEmail = '';
 
   // Esto para actualizar el tab de comisiones
@@ -251,33 +247,27 @@ abstract class TransactionManager extends BaseComponent
   public function banks()
   {
     $bancos = [];
+    $user = Auth::user();
     if ($this->action == 'list') {
-      $bancos = Bank::whereIn('id', session('current_banks'))->orderBy('name', 'ASC')->get();
+      if ($user->hasAnyRole(User::ROLES_ALL_BANKS)) {
+        $bancos = Bank::orderBy('name', 'ASC')->get();
+      } else {
+        $allowedBanks = $user->banks->pluck('id');
+        $bancos = Bank::whereIn('id', $allowedBanks)
+          ->orderBy('name', 'ASC')
+          ->get();
+      }
     } else {
-      if ($this->department_id) {
-        if ($this->department_id) {
-          // Obtener todos los bancos del departamento seleccionado
-          $departmentBanks = Department::find($this->department_id)->banks()->pluck('id')->toArray();
-
-          // Filtrar solo los bancos a los que el usuario tiene acceso
-          $authorizedBanks = session('current_banks', []);
-
-          // Si el usuario tiene acceso completo, usar todos los bancos del departamento
-          if (session('is_full_access', false)) {
-            $bancos = Bank::whereIn('id', $departmentBanks)
-              ->orderBy('name', 'ASC')
-              ->get();
-          }
-          // Si no es acceso completo, intersectar con los bancos autorizados
-          else {
-            $allowedBanks = array_intersect($departmentBanks, $authorizedBanks);
-            $bancos = Bank::whereIn('id', $allowedBanks)
-              ->orderBy('name', 'ASC')
-              ->get();
-          }
-        } else {
-          $bancos = collect();
-        }
+      // Si el usuario tiene acceso completo, usar todos los bancos del departamento
+      if ($user->hasAnyRole(User::ROLES_ALL_BANKS)) {
+        $bancos = Bank::orderBy('name', 'ASC')->get();
+      }
+      // Si no es acceso completo, intersectar con los bancos autorizados
+      else {
+        $allowedBanks = $user->banks->pluck('id');
+        $bancos = Bank::whereIn('id', $allowedBanks)
+          ->orderBy('name', 'ASC')
+          ->get();
       }
     }
     return $bancos;
@@ -502,11 +492,6 @@ abstract class TransactionManager extends BaseComponent
     $this->areas = Area::orderBy('name', 'ASC')->get();
     $this->users = User::where('active', 1)->orderBy('name', 'ASC')->get();
     $this->cuentas = Cuenta::orderBy('nombre_cuenta', 'ASC')->get();
-
-    $this->departments = Department::whereIn('id', session('current_department'))
-      ->where('active', 1)
-      ->orderBy('name', 'ASC')
-      ->get();
 
     $this->instruccionesPagos = [
       ['id' => 'NACIONAL', 'name' => 'NACIONAL'],
@@ -1311,7 +1296,7 @@ abstract class TransactionManager extends BaseComponent
       }
     }
 
-    if ($clonar == false && !in_array(session('current_role_name'), User::ROLES_ALL_DEPARTMENTS)) {
+    if ($clonar == false && !Auth::user()->hasAnyRole(User::ROLES_ALL_BANKS)) {
       $transaction = Transaction::find($recordId);
       if ($transaction->proforma_status != Transaction::PROCESO) {
         $this->dispatch('show-notification', [

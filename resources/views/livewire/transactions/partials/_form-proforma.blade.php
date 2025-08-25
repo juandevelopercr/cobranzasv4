@@ -89,21 +89,6 @@ use App\Models\User;
     </div>
 
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
-      <label class="form-label" for="department_id">{{ __('Department') }}</label>
-      <div wire:ignore>
-        <select wire:model="department_id" id="department_id" class="select2 form-select @error('department_id') is-invalid @enderror">
-          <option value="">{{ __('Seleccione...') }}</option>
-          @foreach ($this->departments as $department)
-            <option value="{{ $department->id }}">{{ $department->name }}</option>
-          @endforeach
-        </select>
-      </div>
-      @error('department_id')
-      <div class="text-danger mt-1">{{ $message }}</div>
-      @enderror
-    </div>
-
-    <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="bank_id">{{ __('Bank') }}</label>
         <select wire:model="bank_id" id="bank_id" class="select2 form-select @error('bank_id') is-invalid @enderror" @if ($recordId) disabled @endif>
           <option value="">{{ __('Seleccione...') }}</option>
@@ -192,7 +177,7 @@ use App\Models\User;
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="codigo_contable_id">{{ __('Accounting Code') }}</label>
       <select wire:model="codigo_contable_id" id="codigo_contable_id" class="select2 form-select @error('codigo_contable_id') is-invalid @enderror"
-        @if (!in_array(session('current_role_name'), User::ROLES_ALL_DEPARTMENTS))
+        @if (!auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
           disabled
         @endif>
         <option value="">{{ __('Seleccione...') }}</option>
@@ -222,7 +207,7 @@ use App\Models\User;
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="location_id"><span class="badge bg-primary">{{ __('Issuer') }}</span></label>
       <select wire:model="location_id" id="location_id" class="select2 form-select @error('location_id') is-invalid @enderror"
-        @if (!in_array(session('current_role_name'), User::ROLES_ALL_DEPARTMENTS))
+        @if (!auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
           disabled
         @endif>
         <option value="">{{ __('Seleccione...') }}</option>
@@ -239,7 +224,7 @@ use App\Models\User;
       <label class="form-label" for="location_economic_activity_id">{{ __('Location Economic Activity') }}</label>
         <div wire:ignore>
           <select wire:model="location_economic_activity_id" id="location_economic_activity_id" class="select2 form-select @error('location_economic_activity_id') is-invalid @enderror"
-            @if (!in_array(session('current_role_name'), User::ROLES_ALL_DEPARTMENTS))
+            @if (!auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
               disabled
             @endif>
             <option value="">{{ __('Seleccione...') }}</option>
@@ -328,7 +313,7 @@ use App\Models\User;
       <label class="form-label" for="proforma_status">{{ __('Status') }}</label>
       <div wire:ignore>
         <select wire:model="proforma_status" id="proforma_status" class="select2 form-select @error('proforma_status') is-invalid @enderror"
-          @if (!in_array(session('current_role_name'), ['SuperAdmin', 'Administrador'])) ? disabled @endif>
+          @if (!auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS)) ? disabled @endif>
           <option value="">{{ __('Seleccione...') }}</option>
           @foreach ($this->statusOptions as $statu)
             <option value="{{ $statu['id'] }}">{{ $statu['name'] }}</option>

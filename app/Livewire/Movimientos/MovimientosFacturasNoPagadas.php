@@ -533,13 +533,14 @@ class MovimientosFacturasNoPagadas extends TransactionManager
       $query->whereIn('transactions.location_id', $emisores);
     }
 
-    // Filtro por rol (si no tiene acceso a todos los departamentos)
-    $allowedRoles = User::ROLES_ALL_DEPARTMENTS;
-    if (!in_array(Session::get('current_role_name'), $allowedRoles)) {
-      $departments = Session::get('current_department', []);
-      // Filtrar por departamento y banco
-      if (!empty($departments)) {
-        $query->whereIn('transactions.department_id', $departments);
+    // Condiciones según el rol del usuario
+    $allowedRoles = User::ROLES_ALL_BANKS;
+    $user = auth()->user();
+    if (!$user->hasAnyRole($allowedRoles)) {
+      //Obtener bancos
+      $allowedBanks = $user->banks->pluck('id');
+      if (!empty($allowedBanks)) {
+        $query->whereIn('transactions.bank_id', $allowedBanks);
       }
     }
 

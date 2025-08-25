@@ -565,24 +565,19 @@ class SeguimientoManager extends TransactionManager
       ->where('transactions_commissions.centro_costo_id', $business->centro_costo_calculo_registro_id);
 
     // Condiciones según el rol del usuario
-    $allowedRoles = User::ROLES_ALL_DEPARTMENTS;
-    if (in_array(Session::get('current_role_name'), $allowedRoles)) {
+    $allowedRoles = User::ROLES_ALL_BANKS;
+    $user = Auth::user();
+    if ($user->hasAnyRole($allowedRoles)) {
       $query->where(function ($q) {
         $q->whereIn('proforma_status', [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA]);
       });
     } else {
-      // Obtener departamentos y bancos de la sesión
-      $departments = Session::get('current_department', []);
-      $banks = Session::get('current_banks', []);
-
-      // Filtrar por departamento y banco
-      if (!empty($departments)) {
-        $query->whereIn('transactions.department_id', $departments);
+      //Obtener bancos
+      $allowedBanks = $user->banks->pluck('id');
+      if (!empty($allowedBanks)) {
+        $query->whereIn('transactions.bank_id', $allowedBanks);
       }
 
-      if (!empty($banks)) {
-        $query->whereIn('transactions.bank_id', $banks);
-      }
       $query->whereIn('proforma_status', [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA]);
     }
 

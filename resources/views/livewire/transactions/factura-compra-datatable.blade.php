@@ -93,7 +93,7 @@
                   $tComprobante = 0;
                   $tComprobanteUsd = 0;
                   $tComprobanteCrc = 0;
-                  $allowedRoles = User::ROLES_ALL_DEPARTMENTS;
+                  $allowedRoles = User::ROLES_ALL_BANKS;
                   @endphp
 
                   @foreach ($records as $record)
@@ -120,7 +120,7 @@
                         'canedit' => auth()->user()->can('edit-proformas') &&
                             ($record->proforma_status == Transaction::PROCESO ||
                             ($record->proforma_status == Transaction::SOLICITADA &&
-                            in_array(Session::get('current_role_name'), $allowedRoles)))
+                            auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS)))
                     ])
 
                   </tr>

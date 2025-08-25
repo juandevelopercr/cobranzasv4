@@ -3,6 +3,21 @@
   <form wire:submit.prevent="{{ $action == 'edit' ? 'update' : 'store' }}" class="card-body">
     <h6>1. {{ __('General Information') }}</h6>
 
+    @if ($errors->any())
+    <div class="alert alert-danger mb-4">
+        <strong>{{ __('Please fix the following errors:') }}</strong>
+        <ul class="mt-2">
+            @foreach ($errors->getMessages() as $field => $messages)
+                @foreach ($messages as $message)
+                    <li>
+                        <strong>{{ $field }}:</strong> {{ $message }}
+                    </li>
+                @endforeach
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
     <div class="row g-6">
       <div class="col-md-6 fv-plugins-icon-container">
         <label class="form-label" for="name">{{ __('Name') }}</label>
@@ -101,8 +116,19 @@
           <div class="text-danger mt-1">{{ $message }}</div>
         @enderror
       </div>
+
+      <div class="col-md-3 fv-plugins-icon-container">
+        <div class="form-check form-switch" style="margin-top: 30px;">
+          <input type="checkbox" class="form-check-input" id="active" wire:model.defer="active" {{ $active==1
+            ? 'checked' : '' }} />
+
+          <label for="future-billing" class="switch-label">{{ __('Active') }}</label>
+        </div>
+      </div>
     </div>
 
+    @php
+    /*
     <br>
     <h6 class="mt-4">2. {{ __('Configuration for registration calculation') }}</h6>
 
@@ -215,16 +241,9 @@
           <div class="text-danger mt-1">{{ $message }}</div>
         @enderror
       </div>
-
-      <div class="col-md-3 fv-plugins-icon-container">
-        <div class="form-check form-switch" style="margin-top: 30px;">
-          <input type="checkbox" class="form-check-input" id="active" wire:model.defer="active" {{ $active==1
-            ? 'checked' : '' }} />
-
-          <label for="future-billing" class="switch-label">{{ __('Active') }}</label>
-        </div>
-      </div>
     </div>
+    */
+    @endphp
 
     <br>
     <div class="pt-6">
