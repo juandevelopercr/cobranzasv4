@@ -83,21 +83,6 @@
     </div>
 
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
-      <label class="form-label" for="department_id">{{ __('Department') }}</label>
-      <div wire:ignore>
-        <select wire:model="department_id" id="department_id" class="select2 form-select @error('department_id') is-invalid @enderror" disabled>
-          <option value="">{{ __('Seleccione...') }}</option>
-          @foreach ($this->departments as $department)
-            <option value="{{ $department->id }}">{{ $department->name }}</option>
-          @endforeach
-        </select>
-      </div>
-      @error('department_id')
-      <div class="text-danger mt-1">{{ $message }}</div>
-      @enderror
-    </div>
-
-    <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="bank_id">{{ __('Bank') }}</label>
       <select wire:model="bank_id" id="bank_id" class="select2 form-select @error('bank_id') is-invalid @enderror" disabled>
         <option value="">{{ __('Seleccione...') }}</option>
