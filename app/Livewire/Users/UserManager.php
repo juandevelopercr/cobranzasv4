@@ -138,7 +138,7 @@ class UserManager extends BaseComponent
   {
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
-
+    $this->resetControls();
     $this->active = 1;
     $this->action = 'create';
     $this->dispatch('scroll-to-top');
@@ -224,7 +224,7 @@ class UserManager extends BaseComponent
 
       if ($user) {
         $user->syncRoles($validatedData['roles']);
-        $user->syncbanks($validatedData['banks']);
+        $user->banks()->sync($validatedData['banks']);
       }
 
       $this->resetControls();
@@ -334,8 +334,8 @@ class UserManager extends BaseComponent
 
       $user->syncRoles($roleIds);
 
-      // Sincronizar bancos usando los IDs
       $user->banks()->sync($this->banks);
+
 
       // Restablece los controles y emite el evento para desplazar la página al inicio
       $this->resetControls();
@@ -456,6 +456,7 @@ class UserManager extends BaseComponent
       'password_confirmation',
       'active',
       'roles',
+      'banks',
       'profile_photo_path',
       'closeForm',
     );
