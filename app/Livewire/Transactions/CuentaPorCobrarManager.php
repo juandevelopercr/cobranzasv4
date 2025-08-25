@@ -454,7 +454,6 @@ class CuentaPorCobrarManager extends TransactionManager
       'contact_id'            => 'required|integer|exists:contacts,id',
       'contact_economic_activity_id' => 'nullable|integer|exists:economic_activities,id',
       'currency_id'           => 'required|integer|exists:currencies,id',
-      'department_id'         => 'required|integer|exists:departments,id',
       'area_id'               => 'nullable|integer|exists:areas,id',
       'bank_id'               => 'nullable|integer|exists:banks,id',
       'codigo_contable_id'    => 'nullable|integer|exists:codigo_contables,id',

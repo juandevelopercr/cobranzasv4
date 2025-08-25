@@ -112,25 +112,6 @@ class CotizacionManager extends TransactionManager
         'visible' => true,
       ],
       [
-        'field' => 'department_name',
-        'orderName' => 'departments.name',
-        'label' => __('Department'),
-        'filter' => 'filter_department_name',
-        'filter_type' => 'select',
-        'filter_sources' => 'departments',
-        'filter_source_field' => 'name',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => '',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
         'field' => 'user_name',
         'orderName' => 'users.name',
         'label' => __('User'),
@@ -400,8 +381,6 @@ class CotizacionManager extends TransactionManager
     $this->proforma_status = 'PROCESO';
     $this->proforma_change_type = Helpers::formatDecimal(Session::get('exchange_rate'));
 
-    $departments = session('current_department');
-    $this->department_id = (int)$departments[0];
     $this->created_by = Auth::user()->id;
     $this->invoice_type = 'FACTURA';
 
@@ -431,7 +410,6 @@ class CotizacionManager extends TransactionManager
       'contact_id'            => 'required|integer|exists:contacts,id',
       'contact_economic_activity_id' => 'nullable|integer|exists:economic_activities,id',
       'currency_id'           => 'required|integer|exists:currencies,id',
-      'department_id'         => 'required|integer|exists:departments,id',
       'area_id'               => 'nullable|integer|exists:areas,id',
       'bank_id'               => 'nullable|integer|exists:banks,id',
       'codigo_contable_id'    => 'nullable|integer|exists:codigo_contables,id',
