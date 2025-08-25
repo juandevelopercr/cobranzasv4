@@ -16,6 +16,6 @@ jobs:
       - name: Upload cobranzas V4.4
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: 144.126.137.131
+          server: 209.145.53.12
           username: ${{ secrets.FTPUSERNAMEPRINCIPAL }}
           password: ${{ secrets.FTPPASSWORD }}
