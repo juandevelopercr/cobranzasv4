@@ -276,7 +276,7 @@ class ContactManager extends BaseComponent
       $rules['exoneration_date'] = 'required|date';
       $rules['exoneration_institution_id'] = 'required|exists:institutions,id';
     } else {
-      $rules['exoneration_percent'] = 'nullable|numeric|min:0.01|max:100';
+      $rules['exoneration_percent'] = 'nullable|numeric|min:0|max:100';
       $rules['exoneration_doc'] = 'nullable|max:40';
       $rules['exoneration_date'] = 'nullable|date';
       $rules['exoneration_institution_id'] = 'nullable|exists:institutions,id';
@@ -373,7 +373,7 @@ class ContactManager extends BaseComponent
 
     $this->validateAdditionalRules();
 
-    $this->exoneration_date = !empty($this->exoneration_date) ? Carbon::parse($this->exoneration_date)->format('Y-m-d') : $this->exoneration_date;
+    $this->exoneration_date = !empty($this->exoneration_date) ? Carbon::parse($this->exoneration_date)->format('Y-m-d') : null;
     $this->exoneration_percent = empty($this->exoneration_percent) ? NULL : $this->exoneration_percent;
 
     // Validar primero
@@ -501,7 +501,7 @@ class ContactManager extends BaseComponent
 
     $this->validateAdditionalRules();
 
-    $this->exoneration_date = !empty($this->exoneration_date) ? Carbon::parse($this->exoneration_date)->format('Y-m-d') : $this->exoneration_date;
+    $this->exoneration_date = !empty($this->exoneration_date) ? Carbon::parse($this->exoneration_date)->format('Y-m-d') : null;
     $this->exoneration_percent = empty($this->exoneration_percent) ? NULL : $this->exoneration_percent;
 
     // Validar
