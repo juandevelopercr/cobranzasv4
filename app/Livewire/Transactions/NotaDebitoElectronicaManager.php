@@ -726,7 +726,6 @@ class NotaDebitoElectronicaManager extends TransactionManager
     // Se emite este evento para los componentes hijos
     $this->dispatch('updateTransactionContext', [
       'transaction_id'    => $record->id,
-      'department_id'     => $record->department_id,
       'bank_id'           => $record->bank_id,
       'type_notarial_act' => $record->proforma_type,
     ]);
@@ -734,7 +733,6 @@ class NotaDebitoElectronicaManager extends TransactionManager
     // Almacenar en sesión Y emitir evento global
     $contextData = [
       'transaction_id'    => $record->id,
-      'department_id'     => $record->department_id,
       'bank_id'           => $record->bank_id,
       'type_notarial_act' => $record->proforma_type,
     ];
@@ -822,7 +820,6 @@ class NotaDebitoElectronicaManager extends TransactionManager
 
       $this->dispatch('updateTransactionContext', [
         'transaction_id'    => $record->id,
-        'department_id'     => $record->department_id,
         'bank_id'           => $record->bank_id,
         'type_notarial_act' => $record->proforma_type,
       ]);

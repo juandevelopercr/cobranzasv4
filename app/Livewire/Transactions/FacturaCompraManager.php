@@ -811,7 +811,6 @@ class FacturaCompraManager extends TransactionManager
     // Se emite este evento para los componentes hijos
     $this->dispatch('updateTransactionContext', [
       'transaction_id'    => $record->id,
-      'department_id'     => $record->department_id,
       'bank_id'           => $record->bank_id,
       'type_notarial_act' => $record->proforma_type,
     ]);
@@ -899,7 +898,6 @@ class FacturaCompraManager extends TransactionManager
 
       $this->dispatch('updateTransactionContext', [
         'transaction_id'    => $record->id,
-        'department_id'     => $record->department_id,
         'bank_id'           => $record->bank_id,
         'type_notarial_act' => $record->proforma_type,
       ]);

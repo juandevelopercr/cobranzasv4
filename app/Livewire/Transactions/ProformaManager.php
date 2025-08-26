@@ -994,7 +994,6 @@ class ProformaManager extends TransactionManager
     // Se emite este evento para los componentes hijos
     $this->dispatch('updateTransactionContext', [
       'transaction_id'    => $record->id,
-      'department_id'     => $record->department_id,
       'bank_id'           => $record->bank_id,
       'type_notarial_act' => $record->proforma_type,
     ]);
@@ -1090,7 +1089,6 @@ class ProformaManager extends TransactionManager
 
       $this->dispatch('updateTransactionContext', [
         'transaction_id'    => $record->id,
-        'department_id'     => $record->department_id,
         'bank_id'           => $record->bank_id,
         'type_notarial_act' => $record->proforma_type,
       ]);
@@ -1490,7 +1488,6 @@ class ProformaManager extends TransactionManager
       // Se emite este evento para los componentes hijos
       $this->dispatch('updateTransactionContext', [
         'transaction_id'    => $this->recordId,
-        'department_id'     => $this->department_id,
         'bank_id'           => $this->bank_id,
         'type_notarial_act' => $this->proforma_type,
       ]);

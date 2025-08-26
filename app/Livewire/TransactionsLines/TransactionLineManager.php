@@ -106,7 +106,6 @@ class TransactionLineManager extends BaseComponent
   //public $cargoAdicional;
 
   //Propiedades de la transaction
-  public $department_id;
   public $bank_id;
   public $type_notarial_act;
 
@@ -200,7 +199,6 @@ class TransactionLineManager extends BaseComponent
   {
     // Aqui si entra cuando edito
     $this->transaction_id = $data['transaction_id'];
-    $this->department_id = $data['department_id'];
     $this->bank_id = $data['bank_id'];
     $this->type_notarial_act = $data['type_notarial_act'];
     // Aquí puedes recargar los datos si es necesario
