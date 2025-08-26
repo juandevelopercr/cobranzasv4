@@ -376,6 +376,14 @@ class ContactManager extends BaseComponent
     $this->exoneration_date = !empty($this->exoneration_date) ? Carbon::parse($this->exoneration_date)->format('Y-m-d') : null;
     $this->exoneration_percent = empty($this->exoneration_percent) ? NULL : $this->exoneration_percent;
 
+    if (empty($this->exoneration_type_id) || is_null($this->exoneration_type_id)) {
+      $this->exoneration_type_id = NULL;
+      $this->exoneration_percent = NULL;
+      $this->exoneration_doc = NULL;
+      $this->exoneration_date = NULL;
+      $this->exoneration_institution_id = NULL;
+    }
+
     // Validar primero
     $validatedData = $this->validate();
 
@@ -503,6 +511,14 @@ class ContactManager extends BaseComponent
 
     $this->exoneration_date = !empty($this->exoneration_date) ? Carbon::parse($this->exoneration_date)->format('Y-m-d') : null;
     $this->exoneration_percent = empty($this->exoneration_percent) ? NULL : $this->exoneration_percent;
+
+    if (empty($this->exoneration_type_id) || is_null($this->exoneration_type_id)) {
+      $this->exoneration_type_id = NULL;
+      $this->exoneration_percent = NULL;
+      $this->exoneration_doc = NULL;
+      $this->exoneration_date = NULL;
+      $this->exoneration_institution_id = NULL;
+    }
 
     // Validar
     $validatedData = $this->validate();
