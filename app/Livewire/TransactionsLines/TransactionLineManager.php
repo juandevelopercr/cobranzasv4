@@ -149,7 +149,7 @@ class TransactionLineManager extends BaseComponent
   {
     $query = Product::query()
       ->select(['products.id as id', 'products.name as name'])
-      ->join('product_honorarios_timbres', 'product_honorarios_timbres.product_id', '=', 'products.id')
+      ->join('product_honorarios_timbresX', 'product_honorarios_timbres.product_id', '=', 'products.id')
       ->join('products_banks', 'products_banks.product_id', '=', 'products.id') // 🔵 Agregar este LEFT JOIN a products_banks
       ->where(function ($q) {
         // Siempre filtra por type_notarial_act principal
