@@ -151,35 +151,11 @@ class TransactionLineManager extends BaseComponent
     $query = Product::query()
       ->select(['products.id as id', 'products.name as name'])
       ->join('product_honorarios_timbres', 'product_honorarios_timbres.product_id', '=', 'products.id')
-      ->join('department_products', function ($join) {
-        $join->on('department_products.product_id', '=', 'products.id')
-          ->where('department_products.department_id', '=', $this->department_id);
-      })
-      ->join('department_banks', function ($join) {
-        $join->on('department_banks.department_id', '=', 'department_products.department_id')
-          ->where('department_banks.bank_id', '=', $this->bank_id);
-      })
       ->join('products_banks', 'products_banks.product_id', '=', 'products.id') // 🔵 Agregar este LEFT JOIN a products_banks
       ->where(function ($q) {
         // Siempre filtra por type_notarial_act principal
         $q->where('products.type_notarial_act', '=', $this->type_notarial_act)
           ->where('products_banks.bank_id', '=', $this->bank_id);
-
-        /*
-        // Para HONORARIO → filtrar por banco (ahora en products_banks)
-        if ($this->type_notarial_act === 'HONORARIO') {
-          $q->where('products_banks.bank_id', '=', $this->bank_id);
-        }
-
-        // Para GASTO → también incluir productos sin banco ni departamento
-        if ($this->type_notarial_act === 'GASTO') {
-          $q->orWhere(function ($subQ) {
-            $subQ->where('products.type_notarial_act', 'GASTO')
-              ->whereNull('department_products.department_id')
-              ->whereNull('products_banks.bank_id'); // 🔵 Aquí también filtra sobre products_banks
-          });
-        }
-        */
       });
 
     // Evitar filas duplicadas
