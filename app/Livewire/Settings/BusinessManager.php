@@ -67,7 +67,7 @@ class BusinessManager extends Component
   public $centrosCostos;
   public $emisores;
 
-  public array $customers = [];
+  //public array $customers = [];
   public bool $dispatchCustomers = true;
 
   public $validatedEmails; // Almacena correos válidos
@@ -141,7 +141,7 @@ class BusinessManager extends Component
       $this->active = $record->active;
     }
 
-    $this->customers = $record->customerCalculoRegistros->pluck('id')->toArray();
+    //$this->customers = $record->customerCalculoRegistros->pluck('id')->toArray();
 
     $this->oldlogo = $record->logo;
   }
@@ -163,7 +163,6 @@ class BusinessManager extends Component
       'integer' => 'El campo :attribute debe ser un número entero.',
       'proforma_no.required' => 'El campo proforma es obligatorio cuando el tipo de documento es PR.',
       'consecutivo.required' => 'El campo consecutivo es obligatorio para documentos que no sean proforma.',
-      'customers.required' => 'El campo clientes es obligatorio',
     ];
   }
 
@@ -208,9 +207,7 @@ class BusinessManager extends Component
       'pass_imap' => 'nullable|string',
       'puerto_imap' => 'nullable|string',
       'imap_encryptation' => 'nullable|string',
-      'active' => 'nullable|boolean',
-      'customers' => 'required|array|min:1',
-      'customers.*' => 'integer|exists:contacts,id'
+      'active' => 'nullable|boolean'
     ]);
 
     // Validar la imagen solo si existe una nueva imagen
@@ -254,7 +251,7 @@ class BusinessManager extends Component
         $this->oldlogo = $validatedData['logo'];
       }
 
-      $business->customerCalculoRegistros()->sync($validatedData['customers'] ?? []);
+      //$business->customerCalculoRegistros()->sync($validatedData['customers'] ?? []);
 
       // 1. Actualizar configuración en tiempo de ejecución
       $this->setMailConfig();

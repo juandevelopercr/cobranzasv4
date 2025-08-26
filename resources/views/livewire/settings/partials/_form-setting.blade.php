@@ -157,15 +157,6 @@
           <div class="text-danger mt-1">{{ $message }}</div>
           @enderror
         </div>
-
-        <div class="col-md-12 select2-primary fv-plugins-icon-container">
-          <label class="form-label" for="customers">{{ __('Clientes Cálculo de Registro') }}</label>
-          <div wire:ignore>
-            <select id="customers" class="form-select select2-ajax" data-placeholder="Buscar cliente..." multiple>
-            </select>
-          </div>
-        </div>
-
     </div>
     <br>
     <h6>2. {{ __('Emails Setting') }}</h6>
