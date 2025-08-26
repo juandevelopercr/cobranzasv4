@@ -170,6 +170,7 @@ class TransactionLineManager extends BaseComponent
     return TaxType::orderBy('code', 'ASC')->get();
   }
 
+
   #[Computed]
   public function taxRates()
   {
