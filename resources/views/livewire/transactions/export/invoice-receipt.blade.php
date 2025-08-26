@@ -601,7 +601,7 @@
                       <p class="tm_f12 tm_text_center">
                           Emitida conforme lo establecido en la resolución de Factura Electrónica, Nº DGT-R-033-2019<br> del veinte de junio de dos mil diecinueve de la Dirección General de Tributación.
                       </p>
-							        <p class="tm_f12">Factura Generada por: www.softwaresolutions.co.cr Versión 4.4</p>
+							        <p class="tm_f12">Factura Generada por: www.softwaresolutions.co.cr<br> Versión 4.4</p>
                     </td>
                   </tr>
                 </table>
