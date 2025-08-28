@@ -213,6 +213,7 @@ class ProductTaxManager extends BaseComponent
 
     $this->exoneration_date = !empty($this->exoneration_date) ? Carbon::parse($this->exoneration_date)->format('Y-m-d') : $this->exoneration_date;
     $this->exoneration_percent = empty($this->exoneration_percent) ? NULL : $this->exoneration_percent;
+    $this->exoneration_institution_id = empty($this->exoneration_institution_id) ? NULL : $this->exoneration_institution_id;
 
     try {
 
@@ -363,8 +364,8 @@ class ProductTaxManager extends BaseComponent
     $this->validateAdditionalRules();
 
     $this->exoneration_date = !empty($this->exoneration_date) ? Carbon::parse($this->exoneration_date)->format('Y-m-d') : $this->exoneration_date;
-
     $this->exoneration_percent = empty($this->exoneration_percent) ? NULL : $this->exoneration_percent;
+    $this->exoneration_institution_id = empty($this->exoneration_institution_id) ? NULL : $this->exoneration_institution_id;
 
     //dd($this);
     try {
