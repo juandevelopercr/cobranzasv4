@@ -73,7 +73,8 @@
         "view-seguimientofacturas",
         "view-electronicinvoices",
         "view-notascreditoelectronicas",
-        "view-notasdebitoelectronicas"
+        "view-notasdebitoelectronicas",
+        "view-comprobantes"
       ],
       "submenu": [
         {
@@ -177,7 +178,7 @@
           "name": "Comprobantes electrónicos",
           "slug": "billing-comprobantes-electronicos",
           "permissions": [
-            "view-comprobantess"
+            "view-comprobantes"
           ]
         }
       ]
