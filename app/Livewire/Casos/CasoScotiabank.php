@@ -215,6 +215,7 @@ class CasoScotiabank extends CasoManager
       'ajustificacion_casos_protocolizados_embargo' => ['nullable', 'string'],
       'tiempo_dias' => ['nullable', 'string'],
       'tiempo_annos' => ['nullable', 'string'],
+      'pcomentarios_bullet_point' => ['nullable', 'string'],
 
       'nombre_cliente' => ['nullable', 'string', 'max:150'],
       'empresa' => ['nullable', 'string', 'max:150'],
@@ -990,10 +991,21 @@ class CasoScotiabank extends CasoManager
       $record->update($validatedData);
       DB::commit();
 
+      $closeForm = $this->closeForm;
+
+      // Restablece los controles y emite el evento para desplazar la página al inicio
+      $this->resetControls();
+      $this->dispatch('scroll-to-top');
+
       $this->dispatch('show-notification', ['type' => 'success', 'message' => 'Caso actualizado correctamente.']);
-      $this->action = 'edit';
-      $this->edit($record->id);
-    } catch (\Throwable $e) {
+
+      if ($closeForm) {
+        $this->action = 'list';
+      } else {
+        $this->action = 'edit';
+        $this->edit($record->id);
+      }
+    } catch (\Exception $e) {
       DB::rollBack();
       $this->dispatch('show-notification', ['type' => 'error', 'message' => 'Error al actualizar el caso: ' . $e->getMessage()]);
     }
