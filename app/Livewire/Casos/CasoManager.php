@@ -10,6 +10,7 @@ use App\Models\CasoEstado;
 use App\Models\Currency;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -25,7 +26,7 @@ class CasoManager extends BaseComponent
   // ====== Parámetros de tabla/listado ======
   #[Url(history: true)] public $search = '';
   #[Url(history: true)] public $active = '';
-  #[Url(history: true)] public $sortBy = 'casos.created_at';
+  #[Url(history: true)] public $sortBy = 'casos.id';
   #[Url(history: true)] public $sortDir = 'DESC';
   #[Url()] public $perPage = 10;
 
@@ -662,5 +663,470 @@ class CasoManager extends BaseComponent
   protected function getModelClass(): string
   {
     return Caso::class;
+  }
+
+  public function resetControls()
+  {
+    $this->reset(
+      'pnumero',
+      'contact_id',
+      'product_id',
+      'proceso_id',
+      'currency_id',
+      'pnombre_apellidos_deudor',
+      'pcedula_deudor',
+      'psaldo_dolarizado',
+      'psaldo_de_seguros',
+      'psaldo_de_multas',
+      'pfecha_pago_multas_y_seguros',
+      'pfecha_asignacion_caso',
+      'abogado_id',
+      'asistente1_id',
+      'asistente2_id',
+      'pnumero_operacion1',
+      'pnumero_operacion2',
+      'pnumero_contrato',
+      'pnombre_demandado',
+      'pnumero_cedula',
+      'pnombre_arrendatario',
+      'pcedula_arrendatario',
+      'pcorreo_demandado_deudor_o_arrendatario',
+      'ptelefono_demandado_deudor_o_arrendatario',
+      'pnombre_contacto_o_arrendatario',
+      'pnombre_coarrendatario',
+      'pcedula_coarrendatario',
+      'pcorreo_coarrendatario',
+      'ptelefono_coarrendatario',
+      'pdatos_codeudor1',
+      'pdatos_codeudor2',
+      'pdatos_anotantes',
+      'pdetalle_garantia',
+      'pubicacion_garantia',
+      'pfecha_presentacion_demanda',
+      'pdespacho_judicial_juzgado',
+      'pnumero_expediente_judicial',
+      'pmonto_estimacion_demanda',
+      'pexpectativa_recuperacion_id',
+      'pgastos_legales_caso',
+      'pcomentarios_bullet_point',
+      'pplaca1',
+      'pplaca2',
+      'pdepartamento_solicitante',
+      'pfecha_e_instruccion_levantamiento',
+      'pcontrato_leasing',
+      'ptitular_contrato',
+      'pcedula_titular',
+      'pestatus_operacion',
+      'ppoderdante_id',
+      'pfecha_ingreso_cobro_judicial',
+      'pfecha_escrito_demanda',
+      'nfecha_traslado_juzgado',
+      'nfecha_notificacion_todas_partes',
+      'npartes_notificadas',
+      'sfecha_captura',
+      'sfecha_sentencia',
+      'sfecha_remate',
+      'sfecha_primer_remate',
+      'sfecha_segundo_remate',
+      'sfecha_tercer_remate',
+      'afecha_aprobacion_remate',
+      'afecha_protocolizacion',
+      'afecha_senalamiento_puesta_posesion',
+      'apuesta_posesion',
+      'agastos_legales',
+      'ahonorarios_totales',
+      'anumero_placa1',
+      'anumero_placa2',
+      'acolisiones_embargos_anotaciones',
+      'anumero_marchamo',
+      'afirma_legal',
+      'afecha_registro',
+      'afecha_presentacion_protocolizacion',
+      'afecha_inscripcion',
+      'afecha_terminacion',
+      'afecha_suspencion_arreglo',
+      'ajustificacion_casos_protocolizados_embargo',
+      'aestado_proceso_general_id',
+      'afecha_informe_ultima_gestion',
+      'atipo_expediente',
+      'areasignaciones',
+      'nmarchamo',
+      'nanotaciones',
+      'nubicacion_garantia',
+      'ntalleres_situaciones',
+      'nfecha_notificacion',
+      'ncomentarios',
+      'nhonorarios_notificacion',
+      'nhonorarios_cobro_administrativo',
+      'nexonerado_cobro',
+      'nfecha_pago',
+      'nestado_actual_primera_notificacion',
+      'noposicion_demanda',
+      'nfecha_audiencia',
+      'ntipo_garantia',
+      'nembargos_cuentas',
+      'nembargos_salarios',
+      'nembargos_muebles',
+      'nembargos_inmuebles',
+      'nestado_id',
+      'afecha_aprobacion_arreglo',
+      'acomentarios',
+      'aregistro_pago',
+      'afecha_envio_cotizacion_gasto',
+      'atraspaso_tercero',
+      'tfecha_traspaso',
+      'thonorarios_traspaso',
+      'tgastos_traspaso',
+      'ttraspaso_favor_tercero',
+      'tfecha_envio_borrador_escritura',
+      'tborrador_escritura',
+      'tfecha_firma_escritura',
+      'tfecha_presentacion_escritura',
+      'tfecha_comunicacion',
+      'tautorizacion_tercero',
+      'tfecha_entrega_titulo_propiedad',
+      'tfecha_exclusion',
+      'tfecha_terminacion',
+      'tgastos_legales',
+      'thonorarios_totales',
+      'lasesoramiento_formal',
+      'lfecha_entrega_poder',
+      'lsumaria',
+      'lcausa',
+      'lfecha_levantamiento_gravamen',
+      'lfecha_comunicado_banco',
+      'lproveedores_servicio',
+      'fhonorarios_levantamiento',
+      'fcomision_ccc',
+      'fhonorarios_totales',
+      'efecha_visita',
+      'egestion_a_realizar',
+      'eestado_cliente_gran_tamano',
+      'ranotacion',
+      'rmarchamo_al_dia',
+      'rpendiente',
+      'rcausa',
+      'rfecha_desinscripcion',
+      'rhonorario_escritura_inscripcion',
+      'rgastos_impuestos',
+      'dnombre_notario',
+      'dnumero_carnet',
+      'dcorreo_electronico',
+      'dnumero_telefonico',
+      'destado_casos_con_anotaciones',
+      'dfecha_interposicion_denuncia',
+      'dnumero_expediente',
+      'dresultado_sentencia',
+      'dgastos_microfilm',
+      'dhonorarios',
+      'bapersonamiento_formal',
+      'bfecha_entrega_poder',
+      'bsumaria',
+      'bcausa',
+      'bfecha_levantamiento_gravamen',
+      'bproveedores_servicios',
+      'bgastos_proceso',
+      'bhonorarios_levantamiento',
+      'bhonorarios_comision',
+      'bhonorarios_totales',
+      'f1fecha_asignacion_capturador',
+      'f1proveedor_servicio',
+      'f1estado_captura',
+      'f1honorarios_capturador',
+      'f1honorarios_comision',
+      'f2causa_remate',
+      'f2publicacion_edicto',
+      'f2fecha_publicacion_edicto',
+      'f2tiempo_concedido_edicto',
+      'f2preclusion_tiempo',
+      'f2estado_remanente',
+      'afecha_firmeza_aprobacion_remate',
+      'abienes_adjudicados',
+      'asaldo_capital_operacion',
+      'aestimacion_demanda_en_presentacion',
+      'abufete',
+      'acarga_gastos_legales',
+      'agastos_mas_honorarios_acumulados',
+      'ahonorarios_iniciales',
+      'adiferencia_demanda_presentada',
+      'adiferencia_sentencia_afavor',
+      'adiferencia_sentencia_enfirme',
+      'adiferencia_liquidacion_de_sentencia_enfirme',
+      'adiferencia_segunda_liquidacion_de_sentencia_enfirme',
+      'adiferencia_tercera_liquidacion_de_sentencia_enfirme',
+      'adiferencia_cuarta_liquidacion_de_sentencia_enfirme',
+      'adiferencia_quinta_liquidacion_de_sentencia_enfirme',
+      'adiferencia_sexta_liquidacion_de_sentencia_enfirme',
+      'adiferencia_septima_liquidacion_de_sentencia_enfirme',
+      'adiferencia_octava_liquidacion_de_sentencia_enfirme',
+      'adiferencia_novena_liquidacion_de_sentencia_enfirme',
+      'adiferencia_decima_liquidacion_de_sentencia_enfirme',
+      'adiferencia_decima_primera_liquidacion_de_sentencia_enfirme',
+      'adiferencia_decima_segunda_liquidacion_de_sentencia_enfirme',
+      'adiferencia_decima_tercera_liquidacion_de_sentencia_enfirme',
+      'adiferencia_decima_cuarta_liquidacion_de_sentencia_enfirme',
+      'adiferencia_decima_quinta_liquidacion_de_sentencia_enfirme',
+      'adiferencia_decima_sexta_liquidacion_de_sentencia_enfirme',
+      'adiferencia_decima_septima_liquidacion_de_sentencia_enfirme',
+      'adiferencia_decima_octava_liquidacion_de_sentencia_enfirme',
+      'adiferencia_decima_novena_liquidacion_de_sentencia_enfirme',
+      'agastos_legales_iniciales',
+      'adiferencia_gastos_legales',
+      'anumero_grupo',
+      'ajuzgado',
+      'aestado_operacion',
+      'pretenciones',
+      'pfecha_ultimo_giro',
+      'nfecha_entrega_requerimiento_pago',
+      'nfecha_entrega_orden_captura',
+      'testado_proceso_id',
+      'lestado_levantamiento_id',
+      'bestado_levantamiento_id',
+      'ddespacho_judicial_juzgado_id',
+      'ldespacho_judicial_juzgado_id',
+      'afecha_levantamiento',
+      'pfecha_informe',
+      'pnumero_tarjeta',
+      'pnombre_persona_juridica',
+      'pnumero_cedula_juridica',
+      'pcomprador',
+      'amonto_avaluo',
+      'afecha_avaluo',
+      'aembargo_cuentas',
+      'aembargo_salarios',
+      'aembargo_muebles',
+      'aembargo_inmuebles',
+      'aretenciones_con_giro',
+      'afecha_ultimo_giro',
+      'pmonto_estimacion_demanda_colones',
+      'pmonto_estimacion_demanda_dolares',
+      'pfecha_curso_demanda',
+      'pfecha_primer_giro',
+      'pmonto_retencion_colones',
+      'pmonto_retencion_dolares',
+      'pinmueble',
+      'pvehiculo',
+      'pente',
+      'pmonto_prima',
+      'pplazo_arreglo_pago',
+      'pmonto_arreglo_pago',
+      'pmonto_cuota',
+      'pestado_arreglo',
+      'pno_cuota',
+      'pdatos_fiadores',
+      'fecha_creacion',
+      'psubsidiaria',
+      'afecha_presentacion_embargo',
+      'afecha_arreglo_pago',
+      'afecha_pago',
+      'amonto_cancelar',
+      'amonto_incobrable',
+      'acontacto_telefonico',
+      'acorreo',
+      'pmueble',
+      'pestadoid',
+      'ames_avance_judicial',
+      'pavance_cronologico',
+      'lavance_cronologico',
+      'savance_cronologico',
+      'aavance_cronologico',
+      'f1avance_cronologico',
+      'f2avance_cronologico',
+      'navance_cronologico',
+      'fecha_importacion',
+      'nombre_cliente',
+      'email_cliente',
+      'nfecha_ultima_liquidacion',
+      'fecha_activacion',
+      'codigo_activacion',
+      'user_create',
+      'user_update',
+      'pultima_gestion_cobro_administrativo',
+      'pfecha_devolucion_demanda_firma',
+      'estado_id',
+      'asaldo_capital_operacion_usd',
+      'aestimacion_demanda_en_presentacion_usd',
+      'liquidacion_intereses_aprobada_crc',
+      'liquidacion_intereses_aprobada_usd',
+      'ahonorarios_totales_usd',
+      'tiempo_dias',
+      'tiempo_annos',
+      'empresa',
+      'fecha_inicio_retenciones',
+      'fecha_prescripcion',
+      'fecha_pruebas',
+      'motivo_terminacion',
+      'honorarios_legales_dolares'
+    );
+    $this->recordId = '';
+    $this->dispatch('updateSelectedIds', []);
+  }
+
+  public function formatDateForStorageDB()
+  {
+    $this->pfecha_pago_multas_y_seguros = $this->normalizeDateForDB($this->pfecha_pago_multas_y_seguros);
+    $this->pfecha_asignacion_caso = $this->normalizeDateForDB($this->pfecha_asignacion_caso);
+    $this->pfecha_presentacion_demanda = $this->normalizeDateForDB($this->pfecha_presentacion_demanda);
+    $this->pfecha_e_instruccion_levantamiento = $this->normalizeDateForDB($this->pfecha_e_instruccion_levantamiento);
+    $this->pfecha_ingreso_cobro_judicial = $this->normalizeDateForDB($this->pfecha_ingreso_cobro_judicial);
+    $this->pfecha_escrito_demanda = $this->normalizeDateForDB($this->pfecha_escrito_demanda);
+    $this->nfecha_traslado_juzgado = $this->normalizeDateForDB($this->nfecha_traslado_juzgado);
+    $this->nfecha_notificacion_todas_partes = $this->normalizeDateForDB($this->nfecha_notificacion_todas_partes);
+    $this->sfecha_captura = $this->normalizeDateForDB($this->sfecha_captura);
+    $this->sfecha_sentencia = $this->normalizeDateForDB($this->sfecha_sentencia);
+    $this->sfecha_remate = $this->normalizeDateForDB($this->sfecha_remate);
+    $this->sfecha_primer_remate = $this->normalizeDateForDB($this->sfecha_primer_remate);
+    $this->sfecha_segundo_remate = $this->normalizeDateForDB($this->sfecha_segundo_remate);
+    $this->sfecha_tercer_remate = $this->normalizeDateForDB($this->sfecha_tercer_remate);
+    $this->afecha_aprobacion_remate = $this->normalizeDateForDB($this->afecha_aprobacion_remate);
+    $this->afecha_protocolizacion = $this->normalizeDateForDB($this->afecha_protocolizacion);
+    $this->afecha_senalamiento_puesta_posesion = $this->normalizeDateForDB($this->afecha_senalamiento_puesta_posesion);
+    $this->afecha_informe_ultima_gestion = $this->normalizeDateForDB($this->afecha_informe_ultima_gestion);
+    $this->nfecha_notificacion = $this->normalizeDateForDB($this->nfecha_notificacion);
+    $this->nfecha_pago = $this->normalizeDateForDB($this->nfecha_pago);
+    $this->nfecha_audiencia = $this->normalizeDateForDB($this->nfecha_audiencia);
+    $this->afecha_aprobacion_arreglo = $this->normalizeDateForDB($this->afecha_aprobacion_arreglo);
+    $this->afecha_envio_cotizacion_gasto = $this->normalizeDateForDB($this->afecha_envio_cotizacion_gasto);
+    $this->tfecha_traspaso = $this->normalizeDateForDB($this->tfecha_traspaso);
+    $this->tfecha_envio_borrador_escritura = $this->normalizeDateForDB($this->tfecha_envio_borrador_escritura);
+    $this->tfecha_firma_escritura = $this->normalizeDateForDB($this->tfecha_firma_escritura);
+    $this->tfecha_presentacion_escritura = $this->normalizeDateForDB($this->tfecha_presentacion_escritura);
+    $this->tfecha_comunicacion = $this->normalizeDateForDB($this->tfecha_comunicacion);
+    $this->tfecha_entrega_titulo_propiedad = $this->normalizeDateForDB($this->tfecha_entrega_titulo_propiedad);
+    $this->tfecha_exclusion = $this->normalizeDateForDB($this->tfecha_exclusion);
+    $this->tfecha_terminacion = $this->normalizeDateForDB($this->tfecha_terminacion);
+    $this->lfecha_entrega_poder = $this->normalizeDateForDB($this->lfecha_entrega_poder);
+    $this->lfecha_levantamiento_gravamen = $this->normalizeDateForDB($this->lfecha_levantamiento_gravamen);
+    $this->lfecha_comunicado_banco = $this->normalizeDateForDB($this->lfecha_comunicado_banco);
+    $this->efecha_visita = $this->normalizeDateForDB($this->efecha_visita);
+    $this->rfecha_desinscripcion = $this->normalizeDateForDB($this->rfecha_desinscripcion);
+    $this->dfecha_interposicion_denuncia = $this->normalizeDateForDB($this->dfecha_interposicion_denuncia);
+    $this->bfecha_entrega_poder = $this->normalizeDateForDB($this->bfecha_entrega_poder);
+    $this->bfecha_levantamiento_gravamen = $this->normalizeDateForDB($this->bfecha_levantamiento_gravamen);
+    $this->f1fecha_asignacion_capturador = $this->normalizeDateForDB($this->f1fecha_asignacion_capturador);
+    $this->f2fecha_publicacion_edicto = $this->normalizeDateForDB($this->f2fecha_publicacion_edicto);
+    $this->afecha_firmeza_aprobacion_remate = $this->normalizeDateForDB($this->afecha_firmeza_aprobacion_remate);
+    $this->pfecha_ultimo_giro = $this->normalizeDateForDB($this->pfecha_ultimo_giro);
+    $this->nfecha_entrega_requerimiento_pago = $this->normalizeDateForDB($this->nfecha_entrega_requerimiento_pago);
+    $this->nfecha_entrega_orden_captura = $this->normalizeDateForDB($this->nfecha_entrega_orden_captura);
+    $this->afecha_levantamiento = $this->normalizeDateForDB($this->afecha_levantamiento);
+    $this->pfecha_informe = $this->normalizeDateForDB($this->pfecha_informe);
+    $this->afecha_avaluo = $this->normalizeDateForDB($this->afecha_avaluo);
+    $this->afecha_ultimo_giro = $this->normalizeDateForDB($this->afecha_ultimo_giro);
+    $this->pfecha_curso_demanda = $this->normalizeDateForDB($this->pfecha_curso_demanda);
+    $this->pfecha_primer_giro = $this->normalizeDateForDB($this->pfecha_primer_giro);
+    $this->fecha_creacion = $this->normalizeDateForDB($this->fecha_creacion);
+    $this->afecha_presentacion_embargo = $this->normalizeDateForDB($this->afecha_presentacion_embargo);
+    $this->afecha_arreglo_pago = $this->normalizeDateForDB($this->afecha_arreglo_pago);
+    $this->afecha_pago = $this->normalizeDateForDB($this->afecha_pago);
+    $this->fecha_importacion = $this->normalizeDateForDB($this->fecha_importacion);
+    $this->nfecha_ultima_liquidacion = $this->normalizeDateForDB($this->nfecha_ultima_liquidacion);
+    $this->fecha_activacion = $this->normalizeDateForDB($this->fecha_activacion);
+    $this->pfecha_devolucion_demanda_firma = $this->normalizeDateForDB($this->pfecha_devolucion_demanda_firma);
+    $this->fecha_inicio_retenciones = $this->normalizeDateForDB($this->fecha_inicio_retenciones);
+    $this->fecha_prescripcion = $this->normalizeDateForDB($this->fecha_prescripcion);
+    $this->fecha_pruebas = $this->normalizeDateForDB($this->fecha_pruebas);
+  }
+
+  public function normalizeDateForDB($value)
+  {
+    if (empty($value)) return null;
+
+    try {
+      // El formato de entrada es d-m-Y (12-08-2025 → 12 agosto 2025)
+      return \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d');
+    } catch (\Throwable $e) {
+      return null;
+    }
+  }
+
+  public function normalizeDateForView($value)
+  {
+    if (empty($value)) return null;
+    try {
+      return Carbon::createFromFormat('Y-m-d', $value)->format('d-m-Y');
+    } catch (\Throwable $e) {
+      return null;
+    }
+  }
+
+  public function confirmarAccion($recordId, $metodo, $titulo, $mensaje, $textoBoton, $clonar = false)
+  {
+    $recordId = $this->getRecordAction($recordId, $clonar);
+
+    if (!$recordId) {
+      return; // Ya se lanzó la notificación desde getRecordAction
+    }
+
+    // static::getName() devuelve automáticamente el nombre del componente Livewire actual, útil para dispatchTo.
+    $this->dispatch('show-confirmation-dialog', [
+      'recordId' => $recordId,
+      'componentName' => static::getName(), // o puedes pasarlo como string
+      'methodName' => $metodo,
+      'title' => $titulo,
+      'message' => $mensaje,
+      'confirmText' => $textoBoton,
+    ]);
+  }
+
+  public function beforedelete()
+  {
+    $this->confirmarAccion(
+      null,
+      'delete',
+      '¿Está seguro que desea eliminar este registro?',
+      'Después de confirmar, el registro será eliminado',
+      __('Sí, proceed')
+    );
+  }
+
+  #[On('delete')]
+  public function delete($recordId)
+  {
+    try {
+      $record = Caso::findOrFail($recordId);
+
+      if ($record->delete()) {
+
+        $this->selectedIds = array_filter(
+          $this->selectedIds,
+          fn($selectedId) => $selectedId != $recordId
+        );
+
+        // Opcional: limpiar "seleccionar todo" si ya no aplica
+        if (empty($this->selectedIds)) {
+          $this->selectAll = false;
+        }
+
+        // Emitir actualización
+        $this->dispatch('updateSelectedIds', $this->selectedIds);
+
+        // Emitir un evento de éxito si la eliminación es exitosa
+        $this->dispatch('show-notification', [
+          'type' => 'success',
+          'message' => __('The record has been deleted')
+        ]);
+      }
+    } catch (QueryException $e) {
+      // Capturar errores de integridad referencial (clave foránea)
+      if ($e->getCode() == '23000') { // Código de error SQL para restricciones de integridad
+        $this->dispatch('show-notification', [
+          'type' => 'error',
+          'message' => __('The record cannot be deleted because it is related to other data.')
+        ]);
+      } else {
+        // Otro tipo de error SQL
+        $this->dispatch('show-notification', [
+          'type' => 'error',
+          'message' => __('An unexpected database error occurred.') . ' ' . $e->getMessage()
+        ]);
+      }
+    } catch (\Exception $e) {
+      // Capturar cualquier otro error general
+      $this->dispatch('show-notification', [
+        'type' => 'error',
+        'message' => __('An error occurred while deleting the record') . ' ' . $e->getMessage()
+      ]);
+    }
   }
 }

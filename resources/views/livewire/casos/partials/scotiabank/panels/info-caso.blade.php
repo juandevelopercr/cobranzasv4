@@ -50,12 +50,13 @@
 
   <div class="col-md-3 select2-primary fv-plugins-icon-container">
     <label class="form-label" for="bank_id">{{ __('Bank') }}</label>
+      <div wire:ignore>
       <select wire:model="bank_id" id="bank_id" class="select2 form-select @error('bank_id') is-invalid @enderror">
-        <option value="">{{ __('Seleccione...') }}</option>
         @foreach ($this->banks as $bank)
           <option value="{{ $bank->id }}">{{ $bank->name }}</option>
         @endforeach
       </select>
+      </div>
     @error('bank_id')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
@@ -63,12 +64,14 @@
 
   <div class="col-md-3 select2-primary fv-plugins-icon-container">
     <label class="form-label" for="product_id">{{ __('Producto') }}</label>
+      <div wire:ignore>
       <select wire:model="product_id" id="product_id" class="select2 form-select @error('product_id') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
         @foreach ($this->productos as $product)
           <option value="{{ $product->id }}">{{ $product->nombre }}</option>
         @endforeach
       </select>
+      </div>
     @error('product_id')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
@@ -76,12 +79,14 @@
 
   <div class="col-md-3 select2-primary fv-plugins-icon-container">
     <label class="form-label" for="proceso_id">{{ __('Proceso') }}</label>
+      <div wire:ignore>
       <select wire:model="proceso_id" id="proceso_id" class="select2 form-select @error('proceso_id') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
         @foreach ($this->procesos as $proceso)
           <option value="{{ $proceso->id }}">{{ $proceso->nombre }}</option>
         @endforeach
       </select>
+      </div>
     @error('proceso_id')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
@@ -234,7 +239,7 @@
       <select wire:model="abogado_id" id="abogado_id" class="select2 form-select @error('abogado_id') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
         @foreach ($this->abogados as $abogado)
-          <option value="{{ $abogado->id }}">{{ $abogado->nombre }}</option>
+          <option value="{{ $abogado->id }}">{{ $abogado->name }}</option>
         @endforeach
       </select>
     </div>
@@ -244,31 +249,31 @@
   </div>
 
   <div class="col-md-3 select2-primary fv-plugins-icon-container">
-    <label class="form-label" for="asistente1">{{ __('Asistente #1') }}</label>
+    <label class="form-label" for="asistente1_id">{{ __('Asistente #1') }}</label>
     <div wire:ignore>
-      <select wire:model="asistente1" id="asistente1" class="select2 form-select @error('asistente1') is-invalid @enderror">
+      <select wire:model="asistente1_id" id="asistente1_id" class="select2 form-select @error('asistente1_id') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
         @foreach ($this->asistentes as $asistente)
-          <option value="{{ $asistente->id }}">{{ $asistente->nombre }}</option>
+          <option value="{{ $asistente->id }}">{{ $asistente->name }}</option>
         @endforeach
       </select>
     </div>
-    @error('asistente1')
+    @error('asistente1_id')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
 
   <div class="col-md-3 select2-primary fv-plugins-icon-container">
-    <label class="form-label" for="asistente2">{{ __('Asistente #2') }}</label>
+    <label class="form-label" for="asistente2_id">{{ __('Asistente #2') }}</label>
     <div wire:ignore>
-      <select wire:model="asistente2" id="asistente2" class="select2 form-select @error('asistente2') is-invalid @enderror">
+      <select wire:model="asistente2_id" id="asistente2_id" class="select2 form-select @error('asistente2_id') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
         @foreach ($this->asistentes as $asistente)
-          <option value="{{ $asistente->id }}">{{ $asistente->nombre }}</option>
+          <option value="{{ $asistente->id }}">{{ $asistente->name }}</option>
         @endforeach
       </select>
     </div>
-    @error('asistente2')
+    @error('asistente2_id')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
@@ -782,7 +787,7 @@
 
   <div class="col-md-12 fv-plugins-icon-container">
     <label class="form-label" for="pavance_cronologico">{{ __('Avance Cronológico') }}</label>
-    <textarea class="form-control" wire:model="pavance_cronologico" name="pavance_cronologico" id="pavance_cronologico" rows="3"
+    <textarea class="form-control" wire:model="pavance_cronologico" name="pavance_cronologico" id="pavance_cronologico" rows="5"
               placeholder="{{ __('Avance Cronológico') }}"></textarea>
     @error('pavance_cronologico')
     <div class="text-danger mt-1">{{ $message }}</div>

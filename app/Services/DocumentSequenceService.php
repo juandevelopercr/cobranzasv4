@@ -213,21 +213,28 @@ class DocumentSequenceService
       if ($documentType === Transaction::CASO) {
         // Proforma: Filtrar por documento de gasto
 
-        $documentType = Transaction::PROFORMAGASTO;
-
         $sequence = DB::table('document_sequences')
           ->where('document_type', $documentType)
           ->lockForUpdate()
           ->first();
 
         if (!$sequence) {
+
+          // Buscar el consecutivo de casos
+          $number = DB::table('casos')->max('pnumero') + 1;
+
+          // Si no hay registros, que sea 1
+          if (!$number) {
+            $number = 1;
+          }
+
           DB::table('document_sequences')->insert([
             'document_type' => $documentType,
-            'current_sequence' => 1,
+            'current_sequence' => $number,
             'created_at' => now(),
             'updated_at' => now()
           ]);
-          $number = 1;
+
           return $number;
         }
 

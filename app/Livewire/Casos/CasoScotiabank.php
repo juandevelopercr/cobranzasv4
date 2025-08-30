@@ -112,10 +112,10 @@ class CasoScotiabank extends CasoManager
   {
     $rules = [
       // === REQUIRED ===
-      'contact_id'   => ['required', 'integer', 'exists:clientes,id'],
-      'bank_id'     => ['required', 'integer', 'exists:bancos,id'],
+      'contact_id'   => ['required', 'integer', 'exists:contacts,id'],
+      'bank_id'     => ['required', 'integer', 'exists:banks,id'],
       'product_id'  => ['required', 'integer', 'exists:casos_productos,id'],
-      'currency_id'    => ['required', 'integer', 'exists:monedas,id'],
+      'currency_id'    => ['required', 'integer', 'exists:currencies,id'],
       'fecha_creacion' => ['required', 'date'],
 
       // === INTEGER FIELDS ===
@@ -630,6 +630,8 @@ class CasoScotiabank extends CasoManager
 
   public function store()
   {
+    $this->formatDateForStorageDB();
+
     $validatedData = $this->validate();
 
     // Generar consecutivo
@@ -674,12 +676,310 @@ class CasoScotiabank extends CasoManager
     $record = Caso::findOrFail($recordId);
     $this->recordId = $record->id;
 
+    $this->pnumero = $record->pnumero;
+    $this->contact_id = $record->contact_id;
+    $this->bank_id = $record->bank_id;
+    $this->product_id = $record->product_id;
+    $this->proceso_id = $record->proceso_id;
+    $this->currency_id = $record->currency_id;
+    $this->pnombre_apellidos_deudor = $record->pnombre_apellidos_deudor;
+    $this->pcedula_deudor = $record->pcedula_deudor;
+    $this->psaldo_dolarizado = $record->psaldo_dolarizado;
+    $this->psaldo_de_seguros = $record->psaldo_de_seguros;
+    $this->psaldo_de_multas = $record->psaldo_de_multas;
+
+    //Campos de fecha
+    $this->pfecha_pago_multas_y_seguros = $this->normalizeDateForView($record->pfecha_pago_multas_y_seguros);
+    $this->pfecha_asignacion_caso = $this->normalizeDateForView($record->pfecha_asignacion_caso);
+    $this->pfecha_presentacion_demanda = $this->normalizeDateForView($record->pfecha_presentacion_demanda);
+    $this->pfecha_e_instruccion_levantamiento = $this->normalizeDateForView($record->pfecha_e_instruccion_levantamiento);
+    $this->pfecha_ingreso_cobro_judicial = $this->normalizeDateForView($record->pfecha_ingreso_cobro_judicial);
+    $this->pfecha_escrito_demanda = $this->normalizeDateForView($record->pfecha_escrito_demanda);
+    $this->nfecha_traslado_juzgado = $this->normalizeDateForView($record->nfecha_traslado_juzgado);
+    $this->nfecha_notificacion_todas_partes = $this->normalizeDateForView($record->nfecha_notificacion_todas_partes);
+    $this->sfecha_captura = $this->normalizeDateForView($record->sfecha_captura);
+    $this->sfecha_sentencia = $this->normalizeDateForView($record->sfecha_sentencia);
+    $this->sfecha_remate = $this->normalizeDateForView($record->sfecha_remate);
+    $this->sfecha_primer_remate = $this->normalizeDateForView($record->sfecha_primer_remate);
+    $this->sfecha_segundo_remate = $this->normalizeDateForView($record->sfecha_segundo_remate);
+    $this->sfecha_tercer_remate = $this->normalizeDateForView($record->sfecha_tercer_remate);
+    $this->afecha_aprobacion_remate = $this->normalizeDateForView($record->afecha_aprobacion_remate);
+    $this->afecha_protocolizacion = $this->normalizeDateForView($record->afecha_protocolizacion);
+    $this->afecha_senalamiento_puesta_posesion = $this->normalizeDateForView($record->afecha_senalamiento_puesta_posesion);
+    $this->afecha_informe_ultima_gestion = $this->normalizeDateForView($record->afecha_informe_ultima_gestion);
+    $this->nfecha_notificacion = $this->normalizeDateForView($record->nfecha_notificacion);
+    $this->nfecha_pago = $this->normalizeDateForView($record->nfecha_pago);
+    $this->nfecha_audiencia = $this->normalizeDateForView($record->nfecha_audiencia);
+    $this->afecha_aprobacion_arreglo = $this->normalizeDateForView($record->afecha_aprobacion_arreglo);
+    $this->afecha_envio_cotizacion_gasto = $this->normalizeDateForView($record->afecha_envio_cotizacion_gasto);
+    $this->tfecha_traspaso = $this->normalizeDateForView($record->tfecha_traspaso);
+    $this->tfecha_envio_borrador_escritura = $this->normalizeDateForView($record->tfecha_envio_borrador_escritura);
+    $this->tfecha_firma_escritura = $this->normalizeDateForView($record->tfecha_firma_escritura);
+    $this->tfecha_presentacion_escritura = $this->normalizeDateForView($record->tfecha_presentacion_escritura);
+    $this->tfecha_comunicacion = $this->normalizeDateForView($record->tfecha_comunicacion);
+    $this->tfecha_entrega_titulo_propiedad = $this->normalizeDateForView($record->tfecha_entrega_titulo_propiedad);
+    $this->tfecha_exclusion = $this->normalizeDateForView($record->tfecha_exclusion);
+    $this->tfecha_terminacion = $this->normalizeDateForView($record->tfecha_terminacion);
+    $this->lfecha_entrega_poder = $this->normalizeDateForView($record->lfecha_entrega_poder);
+    $this->lfecha_levantamiento_gravamen = $this->normalizeDateForView($record->lfecha_levantamiento_gravamen);
+    $this->lfecha_comunicado_banco = $this->normalizeDateForView($record->lfecha_comunicado_banco);
+    $this->efecha_visita = $this->normalizeDateForView($record->efecha_visita);
+    $this->rfecha_desinscripcion = $this->normalizeDateForView($record->rfecha_desinscripcion);
+    $this->dfecha_interposicion_denuncia = $this->normalizeDateForView($record->dfecha_interposicion_denuncia);
+    $this->bfecha_entrega_poder = $this->normalizeDateForView($record->bfecha_entrega_poder);
+    $this->bfecha_levantamiento_gravamen = $this->normalizeDateForView($record->bfecha_levantamiento_gravamen);
+    $this->f1fecha_asignacion_capturador = $this->normalizeDateForView($record->f1fecha_asignacion_capturador);
+    $this->f2fecha_publicacion_edicto = $this->normalizeDateForView($record->f2fecha_publicacion_edicto);
+    $this->afecha_firmeza_aprobacion_remate = $this->normalizeDateForView($record->afecha_firmeza_aprobacion_remate);
+    $this->pfecha_ultimo_giro = $this->normalizeDateForView($record->pfecha_ultimo_giro);
+    $this->nfecha_entrega_requerimiento_pago = $this->normalizeDateForView($record->nfecha_entrega_requerimiento_pago);
+    $this->nfecha_entrega_orden_captura = $this->normalizeDateForView($record->nfecha_entrega_orden_captura);
+    $this->afecha_levantamiento = $this->normalizeDateForView($record->afecha_levantamiento);
+    $this->pfecha_informe = $this->normalizeDateForView($record->pfecha_informe);
+    $this->afecha_avaluo = $this->normalizeDateForView($record->afecha_avaluo);
+    $this->afecha_ultimo_giro = $this->normalizeDateForView($record->afecha_ultimo_giro);
+    $this->pfecha_curso_demanda = $this->normalizeDateForView($record->pfecha_curso_demanda);
+    $this->pfecha_primer_giro = $this->normalizeDateForView($record->pfecha_primer_giro);
+    $this->fecha_creacion = $this->normalizeDateForView($record->fecha_creacion);
+    $this->afecha_presentacion_embargo = $this->normalizeDateForView($record->afecha_presentacion_embargo);
+    $this->afecha_arreglo_pago = $this->normalizeDateForView($record->afecha_arreglo_pago);
+    $this->afecha_pago = $this->normalizeDateForView($record->afecha_pago);
+    $this->fecha_importacion = $this->normalizeDateForView($record->fecha_importacion);
+    $this->nfecha_ultima_liquidacion = $this->normalizeDateForView($record->nfecha_ultima_liquidacion);
+    $this->fecha_activacion = $this->normalizeDateForView($record->fecha_activacion);
+    $this->pfecha_devolucion_demanda_firma = $this->normalizeDateForView($record->pfecha_devolucion_demanda_firma);
+    $this->fecha_inicio_retenciones = $this->normalizeDateForView($record->fecha_inicio_retenciones);
+    $this->fecha_prescripcion = $this->normalizeDateForView($record->fecha_prescripcion);
+    $this->fecha_pruebas = $this->normalizeDateForView($record->fecha_pruebas);
+
+    $this->abogado_id = $record->abogado_id;
+    $this->asistente1_id = $record->asistente1_id;
+    $this->asistente2_id = $record->asistente2_id;
+    $this->pnumero_operacion1 = $record->pnumero_operacion1;
+    $this->pnumero_operacion2 = $record->pnumero_operacion2;
+    $this->pnumero_contrato = $record->pnumero_contrato;
+    $this->pnombre_demandado = $record->pnombre_demandado;
+    $this->pnumero_cedula = $record->pnumero_cedula;
+    $this->pnombre_arrendatario = $record->pnombre_arrendatario;
+    $this->pcedula_arrendatario = $record->pcedula_arrendatario;
+    $this->pcorreo_demandado_deudor_o_arrendatario = $record->pcorreo_demandado_deudor_o_arrendatario;
+    $this->ptelefono_demandado_deudor_o_arrendatario = $record->ptelefono_demandado_deudor_o_arrendatario;
+    $this->pnombre_contacto_o_arrendatario = $record->pnombre_contacto_o_arrendatario;
+    $this->pnombre_coarrendatario = $record->pnombre_coarrendatario;
+    $this->pcedula_coarrendatario = $record->pcedula_coarrendatario;
+    $this->pcorreo_coarrendatario = $record->pcorreo_coarrendatario;
+    $this->ptelefono_coarrendatario = $record->ptelefono_coarrendatario;
+    $this->pdatos_codeudor1 = $record->pdatos_codeudor1;
+    $this->pdatos_codeudor2 = $record->pdatos_codeudor2;
+    $this->pdatos_anotantes = $record->pdatos_anotantes;
+    $this->pdetalle_garantia = $record->pdetalle_garantia;
+    $this->pubicacion_garantia = $record->pubicacion_garantia;
+    $this->pdespacho_judicial_juzgado = $record->pdespacho_judicial_juzgado;
+    $this->pnumero_expediente_judicial = $record->pnumero_expediente_judicial;
+    $this->pmonto_estimacion_demanda = $record->pmonto_estimacion_demanda;
+    $this->pexpectativa_recuperacion_id = $record->pexpectativa_recuperacion_id;
+    $this->pgastos_legales_caso = $record->pgastos_legales_caso;
+    $this->pcomentarios_bullet_point = $record->pcomentarios_bullet_point;
+    $this->pplaca1 = $record->pplaca1;
+    $this->pplaca2 = $record->pplaca2;
+    $this->pdepartamento_solicitante = $record->pdepartamento_solicitante;
+    $this->pcontrato_leasing = $record->pcontrato_leasing;
+    $this->ptitular_contrato = $record->ptitular_contrato;
+    $this->pcedula_titular = $record->pcedula_titular;
+    $this->pestatus_operacion = $record->pestatus_operacion;
+    $this->ppoderdante_id = $record->ppoderdante_id;
+    $this->npartes_notificadas = $record->npartes_notificadas;
+    $this->apuesta_posesion = $record->apuesta_posesion;
+    $this->agastos_legales = $record->agastos_legales;
+    $this->ahonorarios_totales = $record->ahonorarios_totales;
+    $this->anumero_placa1 = $record->anumero_placa1;
+    $this->anumero_placa2 = $record->anumero_placa2;
+    $this->acolisiones_embargos_anotaciones = $record->acolisiones_embargos_anotaciones;
+    $this->anumero_marchamo = $record->anumero_marchamo;
+    $this->afirma_legal = $record->afirma_legal;
+    $this->afecha_registro = $record->afecha_registro;
+    $this->afecha_presentacion_protocolizacion = $record->afecha_presentacion_protocolizacion;
+    $this->afecha_inscripcion = $record->afecha_inscripcion;
+    $this->afecha_terminacion = $record->afecha_terminacion;
+    $this->afecha_suspencion_arreglo = $record->afecha_suspencion_arreglo;
+    $this->ajustificacion_casos_protocolizados_embargo = $record->ajustificacion_casos_protocolizados_embargo;
+    $this->aestado_proceso_general_id = $record->aestado_proceso_general_id;
+    $this->atipo_expediente = $record->atipo_expediente;
+    $this->areasignaciones = $record->areasignaciones;
+    $this->nmarchamo = $record->nmarchamo;
+    $this->nanotaciones = $record->nanotaciones;
+    $this->nubicacion_garantia = $record->nubicacion_garantia;
+    $this->ntalleres_situaciones = $record->ntalleres_situaciones;
+    $this->ncomentarios = $record->ncomentarios;
+    $this->nhonorarios_notificacion = $record->nhonorarios_notificacion;
+    $this->nhonorarios_cobro_administrativo = $record->nhonorarios_cobro_administrativo;
+    $this->nexonerado_cobro = $record->nexonerado_cobro;
+    $this->nestado_actual_primera_notificacion = $record->nestado_actual_primera_notificacion;
+    $this->noposicion_demanda = $record->noposicion_demanda;
+    $this->ntipo_garantia = $record->ntipo_garantia;
+    $this->nembargos_cuentas = $record->nembargos_cuentas;
+    $this->nembargos_salarios = $record->nembargos_salarios;
+    $this->nembargos_muebles = $record->nembargos_muebles;
+    $this->nembargos_inmuebles = $record->nembargos_inmuebles;
+    $this->nestado_id = $record->nestado_id;
+    $this->acomentarios = $record->acomentarios;
+    $this->aregistro_pago = $record->aregistro_pago;
+    $this->atraspaso_tercero = $record->atraspaso_tercero;
+    $this->thonorarios_traspaso = $record->thonorarios_traspaso;
+    $this->tgastos_traspaso = $record->tgastos_traspaso;
+    $this->ttraspaso_favor_tercero = $record->ttraspaso_favor_tercero;
+    $this->tborrador_escritura = $record->tborrador_escritura;
+    $this->tautorizacion_tercero = $record->tautorizacion_tercero;
+    $this->tgastos_legales = $record->tgastos_legales;
+    $this->thonorarios_totales = $record->thonorarios_totales;
+    $this->lasesoramiento_formal = $record->lasesoramiento_formal;
+    $this->lsumaria = $record->lsumaria;
+    $this->lcausa = $record->lcausa;
+    $this->lproveedores_servicio = $record->lproveedores_servicio;
+    $this->fhonorarios_levantamiento = $record->fhonorarios_levantamiento;
+    $this->fcomision_ccc = $record->fcomision_ccc;
+    $this->fhonorarios_totales = $record->fhonorarios_totales;
+    $this->egestion_a_realizar = $record->egestion_a_realizar;
+    $this->eestado_cliente_gran_tamano = $record->eestado_cliente_gran_tamano;
+    $this->ranotacion = $record->ranotacion;
+    $this->rmarchamo_al_dia = $record->rmarchamo_al_dia;
+    $this->rpendiente = $record->rpendiente;
+    $this->rcausa = $record->rcausa;
+    $this->rhonorario_escritura_inscripcion = $record->rhonorario_escritura_inscripcion;
+    $this->rgastos_impuestos = $record->rgastos_impuestos;
+    $this->dnombre_notario = $record->dnombre_notario;
+    $this->dnumero_carnet = $record->dnumero_carnet;
+    $this->dcorreo_electronico = $record->dcorreo_electronico;
+    $this->dnumero_telefonico = $record->dnumero_telefonico;
+    $this->destado_casos_con_anotaciones = $record->destado_casos_con_anotaciones;
+    $this->dnumero_expediente = $record->dnumero_expediente;
+    $this->dresultado_sentencia = $record->dresultado_sentencia;
+    $this->dgastos_microfilm = $record->dgastos_microfilm;
+    $this->dhonorarios = $record->dhonorarios;
+    $this->bapersonamiento_formal = $record->bapersonamiento_formal;
+    $this->bsumaria = $record->bsumaria;
+    $this->bcausa = $record->bcausa;
+    $this->bproveedores_servicios = $record->bproveedores_servicios;
+    $this->bgastos_proceso = $record->bgastos_proceso;
+    $this->bhonorarios_levantamiento = $record->bhonorarios_levantamiento;
+    $this->bhonorarios_comision = $record->bhonorarios_comision;
+    $this->bhonorarios_totales = $record->bhonorarios_totales;
+    $this->f1proveedor_servicio = $record->f1proveedor_servicio;
+    $this->f1estado_captura = $record->f1estado_captura;
+    $this->f1honorarios_capturador = $record->f1honorarios_capturador;
+    $this->f1honorarios_comision = $record->f1honorarios_comision;
+    $this->f2causa_remate = $record->f2causa_remate;
+    $this->f2publicacion_edicto = $record->f2publicacion_edicto;
+    $this->f2tiempo_concedido_edicto = $record->f2tiempo_concedido_edicto;
+    $this->f2preclusion_tiempo = $record->f2preclusion_tiempo;
+    $this->f2estado_remanente = $record->f2estado_remanente;
+    $this->abienes_adjudicados = $record->abienes_adjudicados;
+    $this->asaldo_capital_operacion = $record->asaldo_capital_operacion;
+    $this->aestimacion_demanda_en_presentacion = $record->aestimacion_demanda_en_presentacion;
+    $this->abufete = $record->abufete;
+    $this->acarga_gastos_legales = $record->acarga_gastos_legales;
+    $this->agastos_mas_honorarios_acumulados = $record->agastos_mas_honorarios_acumulados;
+    $this->ahonorarios_iniciales = $record->ahonorarios_iniciales;
+    $this->adiferencia_demanda_presentada = $record->adiferencia_demanda_presentada;
+    $this->adiferencia_sentencia_afavor = $record->adiferencia_sentencia_afavor;
+    $this->adiferencia_sentencia_enfirme = $record->adiferencia_sentencia_enfirme;
+    $this->adiferencia_liquidacion_de_sentencia_enfirme = $record->adiferencia_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_segunda_liquidacion_de_sentencia_enfirme = $record->adiferencia_segunda_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_tercera_liquidacion_de_sentencia_enfirme = $record->adiferencia_tercera_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_cuarta_liquidacion_de_sentencia_enfirme = $record->adiferencia_cuarta_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_quinta_liquidacion_de_sentencia_enfirme = $record->adiferencia_quinta_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_sexta_liquidacion_de_sentencia_enfirme = $record->adiferencia_sexta_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_septima_liquidacion_de_sentencia_enfirme = $record->adiferencia_septima_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_octava_liquidacion_de_sentencia_enfirme = $record->adiferencia_octava_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_novena_liquidacion_de_sentencia_enfirme = $record->adiferencia_novena_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_decima_liquidacion_de_sentencia_enfirme = $record->adiferencia_decima_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_decima_primera_liquidacion_de_sentencia_enfirme = $record->adiferencia_decima_primera_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_decima_segunda_liquidacion_de_sentencia_enfirme = $record->adiferencia_decima_segunda_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_decima_tercera_liquidacion_de_sentencia_enfirme = $record->adiferencia_decima_tercera_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_decima_cuarta_liquidacion_de_sentencia_enfirme = $record->adiferencia_decima_cuarta_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_decima_quinta_liquidacion_de_sentencia_enfirme = $record->adiferencia_decima_quinta_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_decima_sexta_liquidacion_de_sentencia_enfirme = $record->adiferencia_decima_sexta_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_decima_septima_liquidacion_de_sentencia_enfirme = $record->adiferencia_decima_septima_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_decima_octava_liquidacion_de_sentencia_enfirme = $record->adiferencia_decima_octava_liquidacion_de_sentencia_enfirme;
+    $this->adiferencia_decima_novena_liquidacion_de_sentencia_enfirme = $record->adiferencia_decima_novena_liquidacion_de_sentencia_enfirme;
+    $this->agastos_legales_iniciales = $record->agastos_legales_iniciales;
+    $this->adiferencia_gastos_legales = $record->adiferencia_gastos_legales;
+    $this->anumero_grupo = $record->anumero_grupo;
+    $this->ajuzgado = $record->ajuzgado;
+    $this->aestado_operacion = $record->aestado_operacion;
+    $this->pretenciones = $record->pretenciones;
+    $this->testado_proceso_id = $record->testado_proceso_id;
+    $this->lestado_levantamiento_id = $record->lestado_levantamiento_id;
+    $this->bestado_levantamiento_id = $record->bestado_levantamiento_id;
+    $this->ddespacho_judicial_juzgado_id = $record->ddespacho_judicial_juzgado_id;
+    $this->ldespacho_judicial_juzgado_id = $record->ldespacho_judicial_juzgado_id;
+    $this->pnumero_tarjeta = $record->pnumero_tarjeta;
+    $this->pnombre_persona_juridica = $record->pnombre_persona_juridica;
+    $this->pnumero_cedula_juridica = $record->pnumero_cedula_juridica;
+    $this->pcomprador = $record->pcomprador;
+    $this->amonto_avaluo = $record->amonto_avaluo;
+    $this->aembargo_cuentas = $record->aembargo_cuentas;
+    $this->aembargo_salarios = $record->aembargo_salarios;
+    $this->aembargo_muebles = $record->aembargo_muebles;
+    $this->aembargo_inmuebles = $record->aembargo_inmuebles;
+    $this->aretenciones_con_giro = $record->aretenciones_con_giro;
+    $this->pmonto_estimacion_demanda_colones = $record->pmonto_estimacion_demanda_colones;
+    $this->pmonto_estimacion_demanda_dolares = $record->pmonto_estimacion_demanda_dolares;
+    $this->pmonto_retencion_colones = $record->pmonto_retencion_colones;
+    $this->pmonto_retencion_dolares = $record->pmonto_retencion_dolares;
+    $this->pinmueble = $record->pinmueble;
+    $this->pvehiculo = $record->pvehiculo;
+    $this->pente = $record->pente;
+    $this->pmonto_prima = $record->pmonto_prima;
+    $this->pplazo_arreglo_pago = $record->pplazo_arreglo_pago;
+    $this->pmonto_arreglo_pago = $record->pmonto_arreglo_pago;
+    $this->pmonto_cuota = $record->pmonto_cuota;
+    $this->pestado_arreglo = $record->pestado_arreglo;
+    $this->pno_cuota = $record->pno_cuota;
+    $this->pdatos_fiadores = $record->pdatos_fiadores;
+    $this->psubsidiaria = $record->psubsidiaria;
+    $this->amonto_cancelar = $record->amonto_cancelar;
+    $this->amonto_incobrable = $record->amonto_incobrable;
+    $this->acontacto_telefonico = $record->acontacto_telefonico;
+    $this->acorreo = $record->acorreo;
+    $this->pmueble = $record->pmueble;
+    $this->pestadoid = $record->pestadoid;
+    $this->ames_avance_judicial = $record->ames_avance_judicial;
+    $this->pavance_cronologico = $record->pavance_cronologico;
+    $this->lavance_cronologico = $record->lavance_cronologico;
+    $this->savance_cronologico = $record->savance_cronologico;
+    $this->aavance_cronologico = $record->aavance_cronologico;
+    $this->f1avance_cronologico = $record->f1avance_cronologico;
+    $this->f2avance_cronologico = $record->f2avance_cronologico;
+    $this->navance_cronologico = $record->navance_cronologico;
+    $this->nombre_cliente = $record->nombre_cliente;
+    $this->email_cliente = $record->email_cliente;
+    $this->codigo_activacion = $record->codigo_activacion;
+    $this->user_create = $record->user_create;
+    $this->user_update = $record->user_update;
+    $this->pultima_gestion_cobro_administrativo = $record->pultima_gestion_cobro_administrativo;
+    $this->estado_id = $record->estado_id;
+    $this->asaldo_capital_operacion_usd = $record->asaldo_capital_operacion_usd;
+    $this->aestimacion_demanda_en_presentacion_usd = $record->aestimacion_demanda_en_presentacion_usd;
+    $this->liquidacion_intereses_aprobada_crc = $record->liquidacion_intereses_aprobada_crc;
+    $this->liquidacion_intereses_aprobada_usd = $record->liquidacion_intereses_aprobada_usd;
+    $this->ahonorarios_totales_usd = $record->ahonorarios_totales_usd;
+    $this->tiempo_dias = $record->tiempo_dias;
+    $this->tiempo_annos = $record->tiempo_annos;
+    $this->empresa = $record->empresa;
+    $this->motivo_terminacion = $record->motivo_terminacion;
+    $this->honorarios_legales_dolares = $record->honorarios_legales_dolares;
+
     $this->action = 'edit';
     $this->dispatch('select2');
   }
 
+
   public function update()
   {
+    $this->formatDateForStorageDB();
+
+    //Campos de fecha
     $this->validate();
 
     $validatedData = $this->validate();
@@ -696,17 +996,6 @@ class CasoScotiabank extends CasoManager
     } catch (\Throwable $e) {
       DB::rollBack();
       $this->dispatch('show-notification', ['type' => 'error', 'message' => 'Error al actualizar el caso: ' . $e->getMessage()]);
-    }
-  }
-
-  public function delete($id)
-  {
-    try {
-      $record = Caso::findOrFail($id);
-      $record->delete();
-      $this->dispatch('show-notification', ['type' => 'success', 'message' => 'Caso eliminado.']);
-    } catch (\Throwable $e) {
-      $this->dispatch('show-notification', ['type' => 'error', 'message' => 'Error al eliminar: ' . $e->getMessage()]);
     }
   }
 
@@ -1013,51 +1302,6 @@ class CasoScotiabank extends CasoManager
     ];
   }
 
-  /** Construye el array para persistir incluído formateo de TODAS las fechas. */
-  private function collectAllFieldsForPersistence(): array
-  {
-    $fields = $this->fieldList();
-
-    $data = [];
-    foreach ($fields as $f) {
-      $val = $this->{$f} ?? null;
-      if (in_array($f, $this->dateFields)) {
-        $data[$f] = $this->normalizeDate($val);
-      } else {
-        $data[$f] = $val;
-      }
-    }
-
-    // aseguramos bank_id si venimos preseleccionado en mount
-    /*
-    if (!$data['bank_id'] && $this->banks && $this->banks->first()) {
-      $data['bank_id'] = $this->banks->first()->id;
-    }
-    */
-    $data['bank_id'] = $this->bank_id;
-
-
-    // No tocamos created_at/updated_at/deleted_at aquí (Eloquent los maneja)
-    return $data;
-  }
-
-  private function normalizeDate($value)
-  {
-    if (empty($value)) return null;
-    try {
-      return Carbon::parse($value)->format('Y-m-d');
-    } catch (\Throwable $e) {
-      return null;
-    }
-  }
-
-  public function resetControls()
-  {
-    $this->reset($this->fieldList());
-    $this->recordId = '';
-    $this->dispatch('updateSelectedIds', []);
-  }
-
   // ====== Datatable (placeholder mínimo para respetar estructura del ejemplo) ======
   public function refresDatatable()
   {
@@ -1144,7 +1388,7 @@ class CasoScotiabank extends CasoManager
       [
         'field' => 'pnumero_operacion1',
         'orderName' => 'pnumero_operacion1',
-        'label' => __('Número'),
+        'label' => __('Número Operación1'),
         'filter' => 'filter_pnumero_operacion1',
         'filter_type' => 'input',
         'filter_sources' => '',

@@ -227,12 +227,21 @@
       ]
     },
     {
-      "url": "casos/scotiabank",
-      "name": "Casos Scotiabank",
-      "icon": "menu-icon tf-icons bx bx-archive",
-      "slug": "casos-scotiabank",
+      "name": "Casos",
+      "icon": "menu-icon tf-icons bx bx-wallet",
+      "slug": "casos",
       "permissions": [
-        "view-casos"
+        "view-casos-scotiabank"
+      ],
+      "submenu": [
+        {
+          "url": "casos/scotiabank",
+          "name": "Scotiabank",
+          "slug": "casos-scotiabank",
+          "permissions": [
+            "view-casos-scotiabank"
+          ]
+        }
       ]
     },
     {

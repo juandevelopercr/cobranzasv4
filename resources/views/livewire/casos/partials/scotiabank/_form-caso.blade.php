@@ -8,8 +8,19 @@ use App\Models\CasoEstado;
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h6>1. {{ __('Información del Caso') }}</h6>
+        <h4 class="mb-0"><span class="badge bg-primary">1. {{ __('Información del Caso') }}</span></h4><br>
         @include('livewire.casos.partials.scotiabank.panels.info-caso')
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-6">
+  <div class="col-md">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-0"><span class="badge bg-secondary text-white">2. {{ __('Notificación - Public Edicto') }}</span></h4><br>
+        @include('livewire.casos.partials.scotiabank.panels.notificacion-caso')
       </div>
     </div>
   </div>
@@ -74,6 +85,14 @@ use App\Models\CasoEstado;
       wireIgnore: true,
     },
     pexpectativa_recuperacion_id: {
+      fireEvent: false,
+      wireIgnore: true,
+    },
+    nmarchamo: {
+      fireEvent: false,
+      wireIgnore: true,
+    },
+    nexonerado_cobro: {
       fireEvent: false,
       wireIgnore: true,
     }
