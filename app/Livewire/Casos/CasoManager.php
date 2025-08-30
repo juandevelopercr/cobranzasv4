@@ -328,6 +328,7 @@ class CasoManager extends BaseComponent
   public $motivo_terminacion;
 
   public $pdatos_codeudor1;
+  public $pdatos_codeudor2;
   public $pdatos_anotantes;
   public $pnumero_cedula;
   public $pinmueble;
