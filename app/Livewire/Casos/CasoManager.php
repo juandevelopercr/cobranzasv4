@@ -346,207 +346,7 @@ class CasoManager extends BaseComponent
     $deleted_at;
 
   // ====== Config de validación por grupos (para crear reglas sin omitir nada) ======
-  private $dateFields = [
-    'pfecha_pago_multas_y_seguros',
-    'pfecha_asignacion_caso',
-    'pfecha_presentacion_demanda',
-    'pfecha_ingreso_cobro_judicial',
-    'pfecha_escrito_demanda',
-    'nfecha_traslado_juzgado',
-    'nfecha_notificacion_todas_partes',
-    'sfecha_captura',
-    'sfecha_sentencia',
-    'sfecha_remate',
-    'sfecha_primer_remate',
-    'sfecha_segundo_remate',
-    'sfecha_tercer_remate',
-    'afecha_aprobacion_remate',
-    'afecha_protocolizacion',
-    'afecha_senalamiento_puesta_posesion',
-    'afecha_registro',
-    'afecha_presentacion_protocolizacion',
-    'afecha_inscripcion',
-    'afecha_terminacion',
-    'afecha_suspencion_arreglo',
-    'afecha_informe_ultima_gestion',
-    'nfecha_notificacion',
-    'nfecha_pago',
-    'nfecha_audiencia',
-    'afecha_aprobacion_arreglo',
-    'afecha_envio_cotizacion_gasto',
-    'tfecha_traspaso',
-    'tfecha_envio_borrador_escritura',
-    'tfecha_firma_escritura',
-    'tfecha_presentacion_escritura',
-    'tfecha_comunicacion',
-    'tfecha_entrega_titulo_propiedad',
-    'tfecha_exclusion',
-    'tfecha_terminacion',
-    'lfecha_entrega_poder',
-    'lfecha_levantamiento_gravamen',
-    'lfecha_comunicado_banco',
-    'efecha_visita',
-    'rfecha_desinscripcion',
-    'dfecha_interposicion_denuncia',
-    'bfecha_entrega_poder',
-    'bfecha_levantamiento_gravamen',
-    'f1fecha_asignacion_capturador',
-    'f2fecha_publicacion_edicto',
-    'afecha_firmeza_aprobacion_remate',
-    'pfecha_ultimo_giro',
-    'nfecha_entrega_requerimiento_pago',
-    'nfecha_entrega_orden_captura',
-    'afecha_levantamiento',
-    'pfecha_informe',
-    'afecha_avaluo',
-    'afecha_ultimo_giro',
-    'pfecha_curso_demanda',
-    'pfecha_primer_giro',
-    'fecha_creacion',
-    'afecha_presentacion_embargo',
-    'afecha_arreglo_pago',
-    'afecha_pago',
-    'fecha_importacion',
-    'nfecha_ultima_liquidacion',
-    'fecha_activacion',
-    'pultima_gestion_cobro_administrativo',
-    'pfecha_devolucion_demanda_firma',
-    'fecha_inicio_retenciones',
-    'fecha_prescripcion',
-    'fecha_pruebas',
-    'created_at',
-    'updated_at',
-    'deleted_at'
-  ];
-
-  private $varchar2Fields = [
-    'apuesta_posesion',
-    'nexonerado_cobro',
-    'noposicion_demanda',
-    'nembargos_cuentas',
-    'nembargos_salarios',
-    'nembargos_muebles',
-    'nembargos_inmuebles',
-    'abienes_adjudicados',
-    'aembargo_cuentas',
-    'aembargo_salarios',
-    'aembargo_muebles',
-    'aembargo_inmuebles',
-    'ranotacion',
-    'rmarchamo_al_dia',
-    'rpendiente'
-  ];
-
-  private $varchar10Fields = ['nmarchamo', 'pestado_arreglo', 'codigo_activacion', 'tiempo_dias', 'tiempo_annos'];
-
-  private $varchar30Fields = ['ptelefono_demandado_deudor_o_arrendatario', 'pplaca1', 'pplaca2', 'pnumero_cedula_juridica'];
-
-  private $varchar50Fields = [
-    'pcedula_deudor',
-    'pcedula_arrendatario',
-    'pcorreo_demandado_deudor_o_arrendatario',
-    'dnumero_carnet',
-    'dcorreo_electronico',
-    'dnumero_telefonico',
-    'anumero_placa1',
-    'anumero_placa2',
-    'anumero_marchamo',
-    'atipo_expediente',
-    'pnumero_operacion2',
-    'pnumero_contrato',
-    'pnumero_tarjeta',
-    'acontacto_telefonico',
-    'acorreo'
-  ];
-
-  private $varchar100Fields = [
-    'pnombre_apellidos_deudor',
-    'pnombre_arrendatario',
-    'pnombre_contacto_o_arrendatario',
-    'pnombre_coarrendatario',
-    'pcedula_coarrendatario',
-    'pcorreo_coarrendatario',
-    'ptelefono_coarrendatario',
-    'pnumero_cedula',
-    'pdepartamento_solicitante',
-    'pcontrato_leasing',
-    'ptitular_contrato',
-    'pcedula_titular',
-    'pestatus_operacion',
-    'afirma_legal',
-    'areasignaciones',
-    'nestado_actual_primera_notificacion',
-    'ntipo_garantia',
-    'f1proveedor_servicio',
-    'f1estado_captura',
-    'f2causa_remate',
-    'f2publicacion_edicto',
-    'f2tiempo_concedido_edicto',
-    'f2preclusion_tiempo',
-    'f2estado_remanente',
-    'abufete',
-    'ajuzgado',
-    'aestado_operacion',
-    'pnombre_persona_juridica',
-    'pcomprador',
-    'aretenciones_con_giro',
-    'pente',
-    'pplazo_arreglo_pago',
-    'pno_cuota',
-    'psubsidiaria',
-    'pestadoid',
-    'dnombre_notario',
-    'destado_casos_con_anotaciones',
-    'bapersonamiento_formal',
-    'bsumaria',
-    'bcausa',
-    'bproveedores_servicios',
-    'lasesoramiento_formal',
-    'lsumaria',
-    'lcausa',
-    'lproveedores_servicio',
-    'egestion_a_realizar',
-    'eestado_cliente_gran_tamano',
-    'asaldo_capital_operacion_usd',
-    'aestimacion_demanda_en_presentacion_usd',
-    'liquidacion_intereses_aprobada_crc',
-    'liquidacion_intereses_aprobada_usd',
-    'ahonorarios_totales_usd',
-    'motivo_terminacion'
-  ];
-
-  private $varchar150Fields = ['nombre_cliente', 'empresa'];
-
-  private $varchar160Fields = ['email_cliente'];
-
-  private $varchar200Fields = [
-    'psaldo_dolarizado',
-    'pnumero_operacion1',
-    'pnombre_demandado',
-    'pnumero_expediente_judicial',
-    'pmonto_estimacion_demanda',
-    'pdatos_codeudor1',
-    'pdatos_anotantes',
-    'agastos_legales',
-    'ahonorarios_totales',
-    'asaldo_capital_operacion',
-    'aestimacion_demanda_en_presentacion',
-    'amonto_avaluo',
-    'pmonto_estimacion_demanda_colones',
-    'pmonto_estimacion_demanda_dolares',
-    'pmonto_retencion_colones',
-    'pmonto_retencion_dolares',
-    'pinmueble',
-    'pvehiculo',
-    'pdatos_fiadores',
-    'amonto_cancelar',
-    'amonto_incobrable',
-    'pmueble',
-    'bgastos_proceso'
-  ];
-
-  private $varchar255Fields = ['pdespacho_judicial_juzgado', 'pdatos_codeudor2'];
-
+  /*
   private $textFields = [
     'pdetalle_garantia',
     'pubicacion_garantia',
@@ -575,7 +375,9 @@ class CasoManager extends BaseComponent
     'f2avance_cronologico',
     'navance_cronologico'
   ];
+  */
 
+  /*
   private $decimalFields = [
     'psaldo_de_seguros',
     'psaldo_de_multas',
@@ -632,9 +434,13 @@ class CasoManager extends BaseComponent
     'pmonto_cuota',
     'honorarios_legales_dolares'
   ];
+  */
 
+  /*
   private $intFields = ['pnumero', 'pexpectativa_recuperacion_id'];
+  */
 
+  /*
   private $bigintFKFields = [
     'contact_id' => 'contacts,id',
     'bank_id' => 'banks,id',
@@ -654,10 +460,12 @@ class CasoManager extends BaseComponent
     'nestado_id' => 'casos_estados,id',
     'estado_id' => 'casos_estados,id',
   ];
+  */
 
   protected $listeners = [
     'datatableSettingChange' => 'refresDatatable',
     'dateRangeSelected' => 'dateRangeSelected',
+    'dateSelected' => 'handleDateSelected',
   ];
 
   protected function getModelClass(): string

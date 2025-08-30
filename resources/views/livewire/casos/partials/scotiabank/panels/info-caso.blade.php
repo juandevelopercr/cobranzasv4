@@ -19,7 +19,7 @@
     <label class="form-label" for="fecha_creacion">{{ __('Fecha de creación') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="fecha_creacion" @if (!$recordId) readonly @endif
+      <input type="text" id="fecha_creacion"
         wire:model="fecha_creacion"
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
@@ -201,7 +201,7 @@
     <label class="form-label" for="pfecha_pago_multas_y_seguros">{{ __('Fecha Pago Multas Y Seguros') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="pfecha_pago_multas_y_seguros" @if (!$recordId) readonly @endif
+      <input type="text" id="pfecha_pago_multas_y_seguros"
         wire:model="pfecha_pago_multas_y_seguros"
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
@@ -219,7 +219,7 @@
     <label class="form-label" for="pfecha_asignacion_caso">{{ __('Fecha Asignación de Caso') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="pfecha_asignacion_caso" @if (!$recordId) readonly @endif
+      <input type="text" id="pfecha_asignacion_caso"
         wire:model="pfecha_asignacion_caso"
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
@@ -293,7 +293,7 @@
     <label class="form-label" for="pfecha_e_instruccion_levantamiento">{{ __('Fecha e instrucciòn de levantamiento') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="pfecha_e_instruccion_levantamiento" @if (!$recordId) readonly @endif
+      <input type="text" id="pfecha_e_instruccion_levantamiento"
         wire:model="pfecha_e_instruccion_levantamiento"
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
@@ -520,7 +520,7 @@
     <label class="form-label" for="pfecha_presentacion_demanda">{{ __('Fecha Presentación Demanda') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="pfecha_presentacion_demanda" @if (!$recordId) readonly @endif
+      <input type="text" id="pfecha_presentacion_demanda"
         wire:model="pfecha_presentacion_demanda"
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
@@ -605,7 +605,7 @@
     <label class="form-label" for="pfecha_informe">{{ __('Fecha de informe') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="pfecha_informe" @if (!$recordId) readonly @endif
+      <input type="text" id="pfecha_informe"
         wire:model="pfecha_informe"
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
@@ -749,7 +749,7 @@
     <label class="form-label" for="pfecha_ultimo_giro">{{ __('Fecha de último giro') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="pfecha_ultimo_giro" @if (!$recordId) readonly @endif
+      <input type="text" id="pfecha_ultimo_giro"
         wire:model="pfecha_ultimo_giro"
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"

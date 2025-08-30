@@ -280,7 +280,6 @@ abstract class TransactionManager extends BaseComponent
     'productUpdated' => 'refreshTotalByProduct',
     'chargeUpdated' => 'refreshTotalByCharge',
     'dateRangeSelected' => 'dateRangeSelected',
-    'dateSelected' => 'handleDateSelected',
     'datatableSettingChange' => 'refresDatatable',
   ];
 

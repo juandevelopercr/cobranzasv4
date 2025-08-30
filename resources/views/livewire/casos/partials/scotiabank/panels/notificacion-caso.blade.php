@@ -3,7 +3,7 @@
     <label class="form-label" for="nfecha_traslado_juzgado">{{ __('Fecha Traslado Juzgado') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="nfecha_traslado_juzgado" @if (!$recordId) readonly @endif
+      <input type="text" id="nfecha_traslado_juzgado"
         wire:model="nfecha_traslado_juzgado"
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
@@ -21,7 +21,7 @@
     <label class="form-label" for="nfecha_entrega_requerimiento_pago">{{ __('Fecha de entrega requerimiento pago') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="nfecha_entrega_requerimiento_pago" @if (!$recordId) readonly @endif
+      <input type="text" id="nfecha_entrega_requerimiento_pago"
         wire:model="nfecha_entrega_requerimiento_pago"
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
@@ -39,7 +39,7 @@
     <label class="form-label" for="nfecha_entrega_orden_captura">{{ __('Fecha de entrega orden de captura') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="nfecha_entrega_orden_captura" @if (!$recordId) readonly @endif
+      <input type="text" id="nfecha_entrega_orden_captura"
         wire:model="nfecha_entrega_orden_captura"
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
@@ -57,7 +57,7 @@
     <label class="form-label" for="nfecha_notificacion_todas_partes">{{ __('Fecha Notificación Todas las Partes') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="nfecha_notificacion_todas_partes" @if (!$recordId) readonly @endif
+      <input type="text" id="nfecha_notificacion_todas_partes"
         wire:model="nfecha_notificacion_todas_partes"
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
@@ -75,7 +75,7 @@
     <label class="form-label" for="nfecha_ultima_liquidacion">{{ __('Fecha de última liquidación') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="nfecha_ultima_liquidacion" @if (!$recordId) readonly @endif
+      <input type="text" id="nfecha_ultima_liquidacion"
         wire:model="nfecha_ultima_liquidacion"
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
@@ -143,7 +143,7 @@
     <label class="form-label" for="nfecha_notificacion">{{ __('Fecha de notificación') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="nfecha_notificacion" @if (!$recordId) readonly @endif
+      <input type="text" id="nfecha_notificacion"
         wire:model="nfecha_notificacion"
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
@@ -244,7 +244,7 @@
     <label class="form-label" for="nfecha_pago">{{ __('Fecha de pago') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="nfecha_pago" @if (!$recordId) readonly @endif
+      <input type="text" id="nfecha_pago"
         wire:model="nfecha_pago"
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
