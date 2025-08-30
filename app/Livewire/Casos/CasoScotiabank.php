@@ -1066,7 +1066,6 @@ class CasoScotiabank extends CasoManager
     DB::beginTransaction();
     try {
       $record = Caso::findOrFail($this->recordId);
-      dd($validatedData);
       $record->update($validatedData);
       DB::commit();
 
