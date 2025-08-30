@@ -260,7 +260,6 @@ class CasoManager extends BaseComponent
 
   public $dcorreo_electronico;
   public $pcorreo_demandado_deudor_o_arrendatario;
-  public $pcorreo_coarrendatario;
 
   public $pnumero_operacion2;
   public $pnumero_contrato;

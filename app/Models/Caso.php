@@ -230,7 +230,6 @@ class Caso extends Model
 
     'dcorreo_electronico',
     'pcorreo_demandado_deudor_o_arrendatario',
-    'pcorreo_coarrendatario',
 
     'pnumero_operacion2',
     'pnumero_contrato',
