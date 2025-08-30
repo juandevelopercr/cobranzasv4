@@ -47,7 +47,6 @@ class Caso extends Model
     'psaldo_de_seguros',
     'psaldo_de_multas',
 
-    'pmonto_estimacion_demanda_dolares',
     'pgastos_legales_caso',
     'pmonto_prima',
     'nhonorarios_notificacion',
