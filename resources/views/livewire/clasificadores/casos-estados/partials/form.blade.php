@@ -48,6 +48,47 @@
           <label for="future-billing" class="switch-label">{{ __('Active') }}</label>
         </div>
       </div>
+
+      <div class="col-md-12 fv-plugins-icon-container"
+          x-data="select2LivewireMultipleWithToggle({
+            wireModelName: 'banks',
+            postUpdate: true
+          })"
+          x-init="init($refs.select)"
+          wire:ignore>
+        <label class="form-label" for="banks">{{ __('Bank') }}</label>
+        <select x-ref="select" id="banks"
+                class="form-select"
+                multiple>
+          @foreach ($this->listbanks as $bank)
+            <option value="{{ $bank->id }}"> {{ $bank->name }} </option>
+          @endforeach
+        </select>
+        @error('banks')
+          <div class="text-danger mt-1">{{ $message }}</div>
+        @enderror
+      </div>
+
+
+      <div class="col-md-12 fv-plugins-icon-container"
+          x-data="select2LivewireMultipleWithToggle({
+            wireModelName: 'products',
+            postUpdate: true
+          })"
+          x-init="init($refs.select)"
+          wire:ignore>
+        <label class="form-label" for="products">{{ __('Product') }}</label>
+        <select x-ref="select" id="products"
+                class="form-select"
+                multiple>
+            @foreach ($this->listproducts as $product)
+              <option value="{{ $product->id }}">{{ $product->nombre }}</option>
+            @endforeach
+        </select>
+        @error('products')
+          <div class="text-danger mt-1">{{ $message }}</div>
+        @enderror
+      </div>
     </div>
 
     <div class="row g-6">

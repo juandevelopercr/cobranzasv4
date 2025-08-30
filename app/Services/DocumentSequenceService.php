@@ -206,6 +206,40 @@ class DocumentSequenceService
     });
   }
 
+  public static function generateConsecutiveCaso($documentType): string
+  {
+    return DB::transaction(function () use ($documentType) {
+      // Determinar si se filtra por user_id o emitter_id
+      if ($documentType === Transaction::CASO) {
+        // Proforma: Filtrar por documento de gasto
+
+        $documentType = Transaction::PROFORMAGASTO;
+
+        $sequence = DB::table('document_sequences')
+          ->where('document_type', $documentType)
+          ->lockForUpdate()
+          ->first();
+
+        if (!$sequence) {
+          DB::table('document_sequences')->insert([
+            'document_type' => $documentType,
+            'current_sequence' => 1,
+            'created_at' => now(),
+            'updated_at' => now()
+          ]);
+          $number = 1;
+          return $number;
+        }
+
+        $newSequence = $sequence->current_sequence + 1;
+        DB::table('document_sequences')
+          ->where('id', $sequence->id)
+          ->update(['current_sequence' => $newSequence, 'updated_at' => now()]);
+
+        return $newSequence;
+      }
+    });
+  }
 
   public static function generateConsecutiveNotaDigital($documentType): string
   {

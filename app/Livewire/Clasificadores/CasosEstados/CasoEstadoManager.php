@@ -3,7 +3,9 @@
 namespace App\Livewire\Clasificadores\CasosEstados;
 
 use App\Livewire\BaseComponent;
+use App\Models\Bank;
 use App\Models\CasoEstado;
+use App\Models\CasoProducto;
 use App\Models\DataTableConfig;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -48,6 +50,12 @@ class CasoEstadoManager extends BaseComponent
   public $defaultColumns;
   public $listActives;
 
+  public $listbanks = [];
+  public $listproducts = [];
+
+  public $banks;
+  public $products;
+
   protected $listeners = [
     'datatableSettingChange' => 'refresDatatable',
   ];
@@ -60,6 +68,8 @@ class CasoEstadoManager extends BaseComponent
   public function mount()
   {
     $this->listActives = [['id' => 1, 'name' => 'Si'], ['id' => 0, 'name' => 'No']];
+    $this->listbanks = Bank::where('active', 1)->orderBy('name', 'ASC')->get();
+    $this->listproducts = CasoProducto::where('activo', 1)->orderBy('nombre', 'ASC')->get();
     $this->refresDatatable();
   }
 
@@ -81,6 +91,7 @@ class CasoEstadoManager extends BaseComponent
 
     $this->action = 'create';
     $this->dispatch('scroll-to-top');
+    $this->dispatch('reinitFormControls');
   }
 
   // Definir reglas, mensajes y atributos
@@ -123,6 +134,8 @@ class CasoEstadoManager extends BaseComponent
       // Crear el usuario con la contraseña encriptada
       $record = CasoEstado::create($validatedData);
 
+      $record->banks()->sync($this->selected_banks);
+
       $closeForm = $this->closeForm;
 
       $this->resetControls();
@@ -155,8 +168,12 @@ class CasoEstadoManager extends BaseComponent
     $this->description = $record->description;
     $this->active = $record->active;
 
+    $this->banks = $record->banks->pluck('id');
+    $this->products = $record->products->pluck('id');
+
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
+    $this->dispatch('reinitFormControls');
 
     $this->action = 'edit';
   }
@@ -173,6 +190,8 @@ class CasoEstadoManager extends BaseComponent
 
       // Actualiza el usuario
       $record->update($validatedData);
+
+      $record->banks()->sync($this->selected_banks);
 
       $closeForm = $this->closeForm;
 
@@ -211,13 +230,14 @@ class CasoEstadoManager extends BaseComponent
     ]);
   }
 
-  public function beforedelete(){
+  public function beforedelete()
+  {
     $this->confirmarAccion(
-        null,
-        'delete',
-        '¿Está seguro que desea eliminar este registro?',
-        'Después de confirmar, el registro será eliminado',
-        __('Sí, proceed')
+      null,
+      'delete',
+      '¿Está seguro que desea eliminar este registro?',
+      'Después de confirmar, el registro será eliminado',
+      __('Sí, proceed')
     );
   }
 
@@ -290,6 +310,7 @@ class CasoEstadoManager extends BaseComponent
 
   public function updated($propertyName)
   {
+    //$this->dispatch('reinitFormControls');
     // Elimina el error de validación del campo actualizado
     $this->resetErrorBag($propertyName);
   }

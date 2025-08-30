@@ -9,8 +9,8 @@ use Illuminate\Support\Str;
 
 class CasoController extends Controller
 {
-  public function index()
+  public function scotiabank()
   {
-    return view('content.casos.index', []);
+    return view('content.casos.scotiabank', []);
   }
 }

@@ -227,10 +227,10 @@
       ]
     },
     {
-      "url": "casos",
-      "name": "Casos",
+      "url": "casos/scotiabank",
+      "name": "Casos Scotiabank",
       "icon": "menu-icon tf-icons bx bx-archive",
-      "slug": "casos.index",
+      "slug": "casos-scotiabank",
       "permissions": [
         "view-casos"
       ]
@@ -448,25 +448,49 @@
           ],
           "submenu": [
             {
-              "url": "classifiers/caratulas",
-              "name": "Carátulas",
-              "slug": "classifiers-casos-caratulas",
-              "permissions": [
-                "view-classifiers"
-              ]
-            },
-            {
-              "url": "classifiers/garantias",
-              "name": "Garantias",
-              "slug": "classifiers-casos-garantias",
-              "permissions": [
-                "view-classifiers"
-              ]
-            },
-            {
               "url": "classifiers/casos-estados",
               "name": "Estados",
-              "slug": "classifiers-casos-casos-estados",
+              "slug": "classifiers-casos-estados",
+              "permissions": [
+                "view-classifiers"
+              ]
+            },
+            {
+              "url": "classifiers/casos-products",
+              "name": "Productos",
+              "slug": "classifiers-casos-products",
+              "permissions": [
+                "view-classifiers"
+              ]
+            },
+            {
+              "url": "classifiers/casos-procesos",
+              "name": "Procesos",
+              "slug": "classifiers-casos-procesos",
+              "permissions": [
+                "view-classifiers"
+              ]
+            },
+            {
+              "url": "classifiers/casos-juzgados",
+              "name": "Juzgados",
+              "slug": "classifiers-casos-juzgados",
+              "permissions": [
+                "view-classifiers"
+              ]
+            },
+            {
+              "url": "classifiers/casos-poderdantes",
+              "name": "Poderdantes",
+              "slug": "classifiers-casos-poderdantes",
+              "permissions": [
+                "view-classifiers"
+              ]
+            },
+            {
+              "url": "classifiers/casos-expectativas",
+              "name": "Expectativas",
+              "slug": "classifiers-casos-expectativas",
               "permissions": [
                 "view-classifiers"
               ]

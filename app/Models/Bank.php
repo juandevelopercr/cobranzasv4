@@ -12,10 +12,16 @@ class Bank extends Model
 {
   use HasFactory;
 
-  const TERCEROS   = 3;
-  const LAFISE     = 4;
-  const DAVIVIENDA = 5;
-  const SANJOSE    = 6;
+  const SCOTIABANKCR     = 1;
+  const TERCEROS         = 3;
+  const LAFISE           = 4;
+  const DAVIVIENDA       = 5;
+  const SANJOSE          = 6;
+  const FINANCIERACAFSA  = 7;
+  const BANCOGENERAL     = 8;
+  const BANCODECOSTARICA = 12;
+  const SCOTIABANKBCH    = 13;
+  const COOCIQUE         = 14;
 
   protected $fillable = [
     'name',

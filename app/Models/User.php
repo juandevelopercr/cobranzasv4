@@ -54,9 +54,11 @@ class User extends Authenticatable
 
   public const SUPERADMIN = 'SuperAdmin';
   public const ADMINISTRADOR = 'Administrador';
+  public const ADMINISTRACION = 'Administracion';
   public const JEFE_AREA = 'JefeArea';
   public const ABOGADO = 'Abogado';
   public const ASISTENTE = 'Asistente';
+  public const ASIGNACIONES = 'Asignaciones';
 
   /**
    * The attributes that are mass assignable.

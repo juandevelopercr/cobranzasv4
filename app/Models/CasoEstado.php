@@ -2,20 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Bank;
+use App\Models\CasoProducto;
 use Illuminate\Database\Eloquent\Model;
 
 class CasoEstado extends Model
 {
-  const SIN_ASIGNAR = 1;
-  const ASIGNADO = 2;
-  const FORMALIZADO = 3;
-  const EN_TRAMITE = 4;
-  const INSCRITO = 5;
-  const DEFECTUOSO = 6;
-  const RETIRO = 7;
-  const ENTREGADO = 8;
-  const REINGRESO = 9;
-
   // Nombre de la tabla
   protected $table = 'casos_estados';
 
@@ -28,6 +20,22 @@ class CasoEstado extends Model
   protected $casts = [
     'active' => 'boolean',
   ];
+
+  /**
+   * Obtener bancos a través de las asignaciones
+   */
+  public function banks()
+  {
+    return $this->belongsToMany(Bank::class, 'casos_estados_bancos', 'estado_id', 'bank_id');
+  }
+
+  /**
+   * Obtener bancos a través de las asignaciones
+   */
+  public function products()
+  {
+    return $this->belongsToMany(CasoProducto::class, 'casos_estados_productos', 'estado_id', 'product_id');
+  }
 
   public function scopeSearch($query, $value, $filters = [])
   {
@@ -82,9 +90,9 @@ class CasoEstado extends Model
                 title="Editar"
                 wire:click="edit({$this->id})"
                 wire:loading.attr="disabled"
-                wire:target="edit">
-                <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="edit"></i>
-                <i class="bx bx-edit {$iconSize}" wire:loading.remove wire:target="edit"></i>
+                wire:target="edit({$this->id})">
+                <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="edit({$this->id})"></i>
+                <i class="bx bx-edit {$iconSize}" wire:loading.remove wire:target="edit({$this->id})"></i>
             </button>
         HTML;
     }

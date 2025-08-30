@@ -14,6 +14,11 @@ use App\Http\Controllers\classifiers\AreaPracticaController;
 use App\Http\Controllers\classifiers\BankController;
 use App\Http\Controllers\classifiers\CaratulaController;
 use App\Http\Controllers\classifiers\CasoEstadoController;
+use App\Http\Controllers\classifiers\CasoExpectativaController;
+use App\Http\Controllers\classifiers\CasoJuzgadoController;
+use App\Http\Controllers\classifiers\CasoPoderdanteController;
+use App\Http\Controllers\classifiers\CasoProcesoController;
+use App\Http\Controllers\classifiers\CasoProductController;
 use App\Http\Controllers\classifiers\CatalogoCuentaController;
 use App\Http\Controllers\classifiers\CentroCostoController;
 use App\Http\Controllers\classifiers\ComisionistaController;
@@ -143,11 +148,18 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
   Route::get('classifiers/caratulas', [CaratulaController::class, 'index'])->name('classifiers-casos-caratulas');
   Route::get('classifiers/garantias', [GarantiaController::class, 'index'])->name('classifiers-casos-garantias');
   Route::get('classifiers/casos-estados', [CasoEstadoController::class, 'index'])->name('classifiers-casos-estados');
-  Route::get('classifiers/productos-casos', [ProductoCasoController::class, 'index'])->name('classifiers-productos-casos');
+  Route::get('classifiers/casos-products', [CasoProductController::class, 'index'])->name('classifiers-casos-products');
+  Route::get('classifiers/casos-procesos', [CasoProcesoController::class, 'index'])->name('classifiers-casos-procesos');
+  Route::get('classifiers/casos-juzgados', [CasoJuzgadoController::class, 'index'])->name('classifiers-casos-juzgados');
+  Route::get('classifiers/casos-poderdantes', [CasoPoderdanteController::class, 'index'])->name('classifiers-casos-poderdantes');
+  Route::get('classifiers/casos-expectativas', [CasoExpectativaController::class, 'index'])->name('classifiers-casos-expectativas');
   Route::get('classifiers/grupos-empresariales', [GrupoEmpresarialController::class, 'index'])->name('classifiers-grupos-empresariales');
   Route::get('classifiers/areas-practicas', [AreaPracticaController::class, 'index'])->name('classifiers-areas-practicas');
   Route::get('classifiers/sectores', [SectorController::class, 'index'])->name('classifiers-sectores');
   Route::get('classifiers/comisionistas', [ComisionistaController::class, 'index'])->name('classifiers-comisionistas');
+
+  // CRUD Casos
+  Route::get('casos/scotiabank', [CasoController::class, 'scotiabank'])->name('casos-scotiabank');
 
   // CRUD MODULO BANCOS
   Route::get('banks/movements', [MovimientoController::class, 'index'])->name('banks-movements.index');
