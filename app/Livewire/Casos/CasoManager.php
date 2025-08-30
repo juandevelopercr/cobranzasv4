@@ -796,10 +796,14 @@ class CasoManager extends BaseComponent
       'pnombre_demandado',
       'bgastos_proceso',
       'pdespacho_judicial_juzgado',
-      'pdatos_codeudor2'
+      'pdatos_codeudor2',
+      'activeTab',
+      'closeForm'
     );
+    $this->selectedIds = [];
+    $this->dispatch('updateSelectedIds', $this->selectedIds);
+
     $this->recordId = '';
-    $this->dispatch('updateSelectedIds', []);
   }
 
   public function formatDateForStorageDB()
