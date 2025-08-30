@@ -972,4 +972,11 @@ class CasoManager extends BaseComponent
       ]);
     }
   }
+
+  public function cancel()
+  {
+    $this->action = 'list';
+    $this->resetControls();
+    $this->dispatch('scroll-to-top');
+  }
 }
