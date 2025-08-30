@@ -797,7 +797,6 @@ class CasoManager extends BaseComponent
       'bgastos_proceso',
       'pdespacho_judicial_juzgado',
       'pdatos_codeudor2',
-      'activeTab',
       'closeForm'
     );
     $this->selectedIds = [];
