@@ -164,7 +164,6 @@ class Caso extends Model
     'fecha_inicio_retenciones',
     'fecha_prescripcion',
     'fecha_pruebas',
-    'f2fecha_publicacion_edicto',
     'pultima_gestion_cobro_administrativo',
     'afecha_presentacion_embargo',
     'afecha_arreglo_pago',

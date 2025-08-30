@@ -257,7 +257,6 @@ class CasoScotiabank extends CasoManager
       'fecha_inicio_retenciones' => ['nullable', 'date'],
       'fecha_prescripcion' => ['nullable', 'date'],
       'fecha_pruebas' => ['nullable', 'date'],
-      'f2fecha_publicacion_edicto' => ['nullable', 'date'],
       'pultima_gestion_cobro_administrativo' => ['nullable', 'date'],
       'afecha_presentacion_embargo' => ['nullable', 'date'],
       'afecha_arreglo_pago' => ['nullable', 'date'],

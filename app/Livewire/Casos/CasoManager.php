@@ -194,7 +194,6 @@ class CasoManager extends BaseComponent
   public $fecha_inicio_retenciones;
   public $fecha_prescripcion;
   public $fecha_pruebas;
-  public $f2fecha_publicacion_edicto;
   public $pultima_gestion_cobro_administrativo;
   public $afecha_presentacion_embargo;
   public $afecha_arreglo_pago;
