@@ -8,7 +8,7 @@ use App\Models\CasoEstado;
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h6>1. {{ __('1- Información del Caso') }}</h6>
+        <h6>1. {{ __('Información del Caso') }}</h6>
         @include('livewire.casos.partials.scotiabank.panels.info-caso')
       </div>
     </div>

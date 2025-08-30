@@ -1467,4 +1467,23 @@ class CasoScotiabank extends CasoManager
     ];
     return $this->defaultColumns;
   }
+
+  public function storeAndClose()
+  {
+    // para mantenerse en el formulario
+    $this->closeForm = true;
+
+    // Llama al método de almacenamiento
+    $this->store();
+  }
+
+  public function updateAndClose()
+  {
+    // ... el resto del código
+    // para mantenerse en el formulario
+    $this->closeForm = true;
+
+    // Llama al método de actualización
+    $this->update();
+  }
 }
