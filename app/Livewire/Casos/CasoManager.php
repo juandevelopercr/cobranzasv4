@@ -198,6 +198,7 @@ class CasoManager extends BaseComponent
   public $afecha_presentacion_embargo;
   public $afecha_arreglo_pago;
   public $afecha_pago;
+  public $nfecha_audiencia;
 
   // === STRINGS ===
   public $pdetalle_garantia;

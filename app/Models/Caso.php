@@ -168,6 +168,7 @@ class Caso extends Model
     'afecha_presentacion_embargo',
     'afecha_arreglo_pago',
     'afecha_pago',
+    'nfecha_audiencia',
 
     // === STRINGS ===
     'pdetalle_garantia',
