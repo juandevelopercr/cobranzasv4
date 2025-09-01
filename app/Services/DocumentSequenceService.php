@@ -38,8 +38,6 @@ class DocumentSequenceService
         }
       }
 
-      $anno = Carbon::now()->format('y'); // año en dos dígitos
-
       // Determinar si se filtra por user_id o emitter_id
       if (in_array($documentType, [Transaction::PROFORMA, Transaction::NOTACREDITO, Transaction::NOTADEBITO, Transaction::COTIZACION, Transaction::PROFORMACOMPRA, Transaction::CASO])) {
         // Proforma: Filtrar por usuario
@@ -88,10 +86,8 @@ class DocumentSequenceService
                 ->value('consecutivo');
               break;
             case Transaction::CASO:
-              $secuencia = DB::table('casos')
-                ->selectRaw('IFNULL(MAX(SUBSTRING(numero, 1, 4)) + 1, 1) AS numero')
-                ->whereRaw('SUBSTRING(numero, 5, 2) = ?', [$anno])
-                ->value('numero');
+              // Obtener el consecutivo
+              $secuencia = DB::table('casos')->max('pnumero') + 1;
               break;
           }
           /*
@@ -104,7 +100,6 @@ class DocumentSequenceService
           ]);
           */
           if ($documentType == Transaction::CASO) {
-            $secuencia = str_pad($secuencia, 4, '0', STR_PAD_LEFT) . $anno;
             return $secuencia;
           }
 
@@ -196,35 +191,12 @@ class DocumentSequenceService
       // Determinar si se filtra por user_id o emitter_id
       if ($documentType === Transaction::CASO) {
         // Proforma: Filtrar por documento de gasto
-
-        if (Auth::check()) {
-          $userId = Auth::id();
-          $initials = Auth::user()->initials;
-        } else {
-          // Usuario por defecto para contextos sin autenticación (cron, jobs, etc.)
-          $defaultUser = User::find(1); // ID 1 = admin
-
-          if (!$defaultUser) {
-            throw new \Exception("Usuario por defecto no encontrado");
-          }
-
-          $userId = $defaultUser->id;
-          $initials = $defaultUser->initials;
-        }
-
-
         $sequence = DB::table('document_sequences')
           ->where('document_type', $documentType)
           ->lockForUpdate()
           ->first();
 
         if (!$sequence) {
-          $secuencia = DB::table('casos')
-            ->where('created_by', $userId)
-            ->whereIn('document_type', [Transaction::CASO])
-            ->selectRaw('IFNULL(MAX(SUBSTRING(proforma_no, 5, 5)) + 1, 1) as consecutivo')
-            ->value('consecutivo');
-
           // Buscar el consecutivo de casos
           $number = DB::table('casos')->max('pnumero') + 1;
 
