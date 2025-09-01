@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Transaction;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -16,76 +17,6 @@ class DocumentSequenceService
    * @param int|null $emitterId
    * @return string
    */
-  /*
-  public static function generateConsecutive($documentType, $emitterId = null, $userId = null, $initials = null): string
-  {
-    return DB::transaction(function () use ($documentType, $emitterId) {
-      $userId = Auth::id();
-      $initials = Auth::user()->initials;
-
-      // Determinar si se filtra por user_id o emitter_id
-      if ($documentType === Transaction::PROFORMA || $documentType === 'PRC' || $documentType === 'CASO') {
-        // Proforma: Filtrar por usuario
-        $sequence = DB::table('document_sequences')
-          ->where('user_id', $userId)
-          ->where('document_type', $documentType)
-          ->lockForUpdate()
-          ->first();
-
-        if (!$sequence) {
-          DB::table('document_sequences')->insert([
-            'user_id' => $userId,
-            'document_type' => $documentType,
-            'current_sequence' => 1,
-            'created_at' => now(),
-            'updated_at' => now()
-          ]);
-          $number = 1;
-          return str_pad($number, 10, '0', STR_PAD_LEFT) . $initials;
-        }
-
-        $newSequence = $sequence->current_sequence + 1;
-        DB::table('document_sequences')
-          ->where('id', $sequence->id)
-          ->update(['current_sequence' => $newSequence, 'updated_at' => now()]);
-
-        return str_pad($newSequence, 10, '0', STR_PAD_LEFT) . $initials;
-      } else {
-        // Otros Documentos: Filtrar por emisor
-        if (!$emitterId) {
-          throw new \InvalidArgumentException('El emisor es requerido para este documento.');
-        }
-
-        $sequence = DB::table('document_sequences')
-          ->where('emitter_id', $emitterId)
-          ->where('document_type', $documentType)
-          ->lockForUpdate()
-          ->first();
-
-        if (!$sequence) {
-          DB::table('document_sequences')->insert([
-            'user_id' => $userId,
-            'emitter_id' => $emitterId,
-            'document_type' => $documentType,
-            'current_sequence' => 1,
-            'created_at' => now(),
-            'updated_at' => now()
-          ]);
-          return str_pad(1, 10, '0', STR_PAD_LEFT);
-        }
-
-        $newSequence = $sequence->current_sequence + 1;
-        DB::table('document_sequences')
-          ->where('id', $sequence->id)
-          ->update(['current_sequence' => $newSequence, 'user_id' => $userId, 'updated_at' => now()]);
-
-        return str_pad($newSequence, 10, '0', STR_PAD_LEFT);
-      }
-    });
-  }
-  */
-
-
   public static function generateConsecutive($documentType, $emitterId = null, $userId = null, $initials = null): string
   {
     return DB::transaction(function () use ($documentType, $emitterId, $userId, $initials) {
@@ -107,6 +38,8 @@ class DocumentSequenceService
         }
       }
 
+      $anno = Carbon::now()->format('y'); // año en dos dígitos
+
       // Determinar si se filtra por user_id o emitter_id
       if (in_array($documentType, [Transaction::PROFORMA, Transaction::NOTACREDITO, Transaction::NOTADEBITO, Transaction::COTIZACION, Transaction::PROFORMACOMPRA, Transaction::CASO])) {
         // Proforma: Filtrar por usuario
@@ -117,6 +50,51 @@ class DocumentSequenceService
           ->first();
 
         if (!$sequence) {
+          $secuencia = 1;
+          switch ($documentType) {
+            case Transaction::PROFORMA:
+              $secuencia = DB::table('transactions')
+                ->where('created_by', $userId)
+                ->whereIn('document_type', [Transaction::PROFORMA, Transaction::FACTURAELECTRONICA, Transaction::TIQUETEELECTRONICO])
+                ->selectRaw('IFNULL(MAX(SUBSTRING(proforma_no, 5, 5)) + 1, 1) as consecutivo')
+                ->value('consecutivo');
+              break;
+            case Transaction::NOTACREDITO:
+              $secuencia = DB::table('transactions')
+                ->where('created_by', $userId)
+                ->whereIn('document_type', [Transaction::NOTACREDITO])
+                ->selectRaw('IFNULL(MAX(SUBSTRING(proforma_no, 5, 5)) + 1, 1) as consecutivo')
+                ->value('consecutivo');
+              break;
+            case Transaction::NOTADEBITO:
+              $secuencia = DB::table('transactions')
+                ->where('created_by', $userId)
+                ->whereIn('document_type', [Transaction::NOTADEBITO])
+                ->selectRaw('IFNULL(MAX(SUBSTRING(proforma_no, 5, 5)) + 1, 1) as consecutivo')
+                ->value('consecutivo');
+              break;
+            case Transaction::COTIZACION:
+              $secuencia = DB::table('transactions')
+                ->where('created_by', $userId)
+                ->whereIn('document_type', [Transaction::COTIZACION])
+                ->selectRaw('IFNULL(MAX(SUBSTRING(proforma_no, 5, 5)) + 1, 1) as consecutivo')
+                ->value('consecutivo');
+              break;
+            case Transaction::PROFORMACOMPRA:
+              $secuencia = DB::table('transactions')
+                ->where('created_by', $userId)
+                ->whereIn('document_type', [Transaction::PROFORMACOMPRA])
+                ->selectRaw('IFNULL(MAX(SUBSTRING(proforma_no, 5, 5)) + 1, 1) as consecutivo')
+                ->value('consecutivo');
+              break;
+            case Transaction::CASO:
+              $secuencia = DB::table('casos')
+                ->selectRaw('IFNULL(MAX(SUBSTRING(numero, 1, 4)) + 1, 1) AS numero')
+                ->whereRaw('SUBSTRING(numero, 5, 2) = ?', [$anno])
+                ->value('numero');
+              break;
+          }
+          /*
           DB::table('document_sequences')->insert([
             'user_id' => $userId,
             'document_type' => $documentType,
@@ -124,7 +102,13 @@ class DocumentSequenceService
             'created_at' => now(),
             'updated_at' => now()
           ]);
-          $number = 1;
+          */
+          if ($documentType == Transaction::CASO) {
+            $secuencia = str_pad($secuencia, 4, '0', STR_PAD_LEFT) . $anno;
+            return $secuencia;
+          }
+
+          $number = $secuencia;
           return str_pad($number, 10, '0', STR_PAD_LEFT) . $initials;
         }
 
@@ -213,12 +197,33 @@ class DocumentSequenceService
       if ($documentType === Transaction::CASO) {
         // Proforma: Filtrar por documento de gasto
 
+        if (Auth::check()) {
+          $userId = Auth::id();
+          $initials = Auth::user()->initials;
+        } else {
+          // Usuario por defecto para contextos sin autenticación (cron, jobs, etc.)
+          $defaultUser = User::find(1); // ID 1 = admin
+
+          if (!$defaultUser) {
+            throw new \Exception("Usuario por defecto no encontrado");
+          }
+
+          $userId = $defaultUser->id;
+          $initials = $defaultUser->initials;
+        }
+
+
         $sequence = DB::table('document_sequences')
           ->where('document_type', $documentType)
           ->lockForUpdate()
           ->first();
 
         if (!$sequence) {
+          $secuencia = DB::table('casos')
+            ->where('created_by', $userId)
+            ->whereIn('document_type', [Transaction::CASO])
+            ->selectRaw('IFNULL(MAX(SUBSTRING(proforma_no, 5, 5)) + 1, 1) as consecutivo')
+            ->value('consecutivo');
 
           // Buscar el consecutivo de casos
           $number = DB::table('casos')->max('pnumero') + 1;
@@ -261,13 +266,26 @@ class DocumentSequenceService
           ->first();
 
         if (!$sequence) {
+          if ($documentType === Transaction::NOTACREDITO) {
+            $secuencia = DB::table('transactions')
+              ->whereIn('document_type', [Transaction::NOTACREDITO])
+              ->selectRaw('IFNULL(MAX(SUBSTRING(proforma_no, 5, 5)) + 1, 1) as consecutivo')
+              ->value('consecutivo');
+          } else {
+            $secuencia = DB::table('transactions')
+              ->whereIn('document_type', [Transaction::NOTADEBITO])
+              ->selectRaw('IFNULL(MAX(SUBSTRING(proforma_no, 5, 5)) + 1, 1) as consecutivo')
+              ->value('consecutivo');
+          }
+          /*
           DB::table('document_sequences')->insert([
             'document_type' => $documentType,
             'current_sequence' => 1,
             'created_at' => now(),
             'updated_at' => now()
           ]);
-          $number = 1;
+          */
+          $number = $secuencia;
           return $number;
         }
 
