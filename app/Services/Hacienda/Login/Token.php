@@ -90,8 +90,9 @@ class Token
         'password'      => $password,
         'grant_type'    => 'password',
         'client_secret' => '',
-        'scopes'        => '',
       ]);
+
+    //'scopes'        => '',
 
     // Verificar si la respuesta es exitosa
     if ($response->failed()) {
