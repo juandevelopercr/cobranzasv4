@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Helpers\Helpers;
 use App\Models\Department;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Cuenta extends Model
