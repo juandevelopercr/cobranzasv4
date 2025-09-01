@@ -48,6 +48,7 @@ class CasoManager extends BaseComponent
   public $procesos   = [];
   public $clientes   = [];
   public $expectativas   = [];
+  public $juzgados = [];
 
   // =========  TODAS LAS COLUMNAS DE la tabla `casos`  =========
   public $contact_id;

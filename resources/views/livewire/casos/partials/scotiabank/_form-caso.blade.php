@@ -28,6 +28,153 @@ use App\Models\CasoEstado;
 
 <div class="row g-6">
   <div class="col-md">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-0"><span class="badge bg-warning text-white">3. {{ __('Sentencia y/o remate') }}</span></h4><br>
+        @include('livewire.casos.partials.scotiabank.panels.sentencia-caso')
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-6">
+  <div class="col-md">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-0"><span class="badge bg-success text-white">4. {{ __('Arreglo de pago / Tentativa de traspaso') }}</span></h4><br>
+        @include('livewire.casos.partials.scotiabank.panels.arreglo-caso')
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-6">
+  <div class="col-md">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-0"><span class="badge bg-info text-white">5. {{ __('Aprobación o ejecución') }}</span></h4><br>
+        @include('livewire.casos.partials.scotiabank.panels.aprobacion-caso')
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-6">
+  <div class="col-md">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-0"><span class="badge bg-primary text-white">6. {{ __('Traspaso') }}</span></h4><br>
+        @include('livewire.casos.partials.scotiabank.panels.traspaso-caso')
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-6">
+  <div class="col-md">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-0"><span class="badge bg-danger text-white">7. {{ __('Terminaciòn del proceso') }}</span></h4><br>
+        @include('livewire.casos.partials.scotiabank.panels.terminacion-caso')
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-6">
+  <div class="col-md">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-0"><span class="badge bg-success text-white">8. {{ __('Proceso de levantamiento') }}</span></h4><br>
+        @include('livewire.casos.partials.scotiabank.panels.levantamiento-caso')
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-6">
+  <div class="col-md">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-0"><span class="badge bg-primary text-white">9. {{ __('Facturaciòn') }}</span></h4><br>
+        @include('livewire.casos.partials.scotiabank.panels.facturacion-caso')
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row g-6">
+  <div class="col-md">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-0"><span class="badge bg-secundary text-white">10. {{ __('Segmento empresas de gran tamaño') }}</span></h4><br>
+        @include('livewire.casos.partials.scotiabank.panels.segmento-caso')
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-6">
+  <div class="col-md">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-0"><span class="badge bg-info text-white">11. {{ __('Casos con Denuncia de Robo') }}</span></h4><br>
+        @include('livewire.casos.partials.scotiabank.panels.denuncia-caso')
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-6">
+  <div class="col-md">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-0"><span class="badge bg-black text-white">12. {{ __('Casos con anotaciones de pèrdidas total o traspaso defectuoso') }}</span></h4><br>
+        @include('livewire.casos.partials.scotiabank.panels.anotaciones-caso')
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-6">
+  <div class="col-md">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-0"><span class="badge bg-info text-white">13. {{ __('Bienes con gravamen y colisiones') }}</span></h4><br>
+        @include('livewire.casos.partials.scotiabank.panels.bienes-caso')
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-6">
+  <div class="col-md">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-0"><span class="badge bg-danger text-white">14. {{ __('Panel Remanente filtro1') }}</span></h4><br>
+        @include('livewire.casos.partials.scotiabank.panels.filtro1-caso')
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-6">
+  <div class="col-md">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-0"><span class="badge bg-warning text-white">15. {{ __('Panel Remanente filtro2') }}</span></h4><br>
+        @include('livewire.casos.partials.scotiabank.panels.filtro2-caso')
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="row g-6">
+  <div class="col-md">
     <div class="pt-6">
       {{-- Incluye botones de guardar y guardar y cerrar --}}
       @include('livewire.includes.button-saveAndSaveAndClose')
@@ -93,6 +240,18 @@ use App\Models\CasoEstado;
       wireIgnore: true,
     },
     nexonerado_cobro: {
+      fireEvent: false,
+      wireIgnore: true,
+    },
+    apuesta_posesion: {
+      fireEvent: false,
+      wireIgnore: true,
+    },
+    motivo_terminacion: {
+      fireEvent: false,
+      wireIgnore: true,
+    },
+    aestado_proceso_general_id: {
       fireEvent: false,
       wireIgnore: true,
     }

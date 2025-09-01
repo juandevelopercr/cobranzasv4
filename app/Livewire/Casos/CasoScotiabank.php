@@ -9,6 +9,7 @@ use App\Models\Bank;
 use App\Models\Caso;
 use App\Models\CasoEstado;
 use App\Models\CasoExpectativa;
+use App\Models\CasoJuzgado;
 use App\Models\CasoProceso;
 use App\Models\CasoProducto;
 use App\Models\Contact;
@@ -86,6 +87,8 @@ class CasoScotiabank extends CasoManager
       ->get();
 
     $this->expectativas = CasoExpectativa::where('activo', 1)->orderBy('nombre', 'ASC')->get();
+
+    $this->juzgados = CasoJuzgado::where('activo', 1)->orderBy('nombre', 'ASC')->get();
 
 
     $this->refresDatatable();
@@ -207,7 +210,8 @@ class CasoScotiabank extends CasoManager
       'afecha_aprobacion_remate' => ['nullable', 'date'],
       'afecha_protocolizacion' => ['nullable', 'date'],
       'afecha_senalamiento_puesta_posesion' => ['nullable', 'date'],
-      'afecha_registro' => ['nullable', 'date'],
+      //Esto estaba mal es un texto
+      //'afecha_registro' => ['nullable', 'date'],
       'afecha_presentacion_protocolizacion' => ['nullable', 'date'],
       'afecha_inscripcion' => ['nullable', 'date'],
       'afecha_terminacion' => ['nullable', 'date'],
@@ -296,6 +300,7 @@ class CasoScotiabank extends CasoManager
       'f1avance_cronologico' => ['nullable', 'string'],
       'f2avance_cronologico' => ['nullable', 'string'],
       'navance_cronologico' => ['nullable', 'string'],
+      'afecha_registro' => ['nullable', 'string'],
 
       'nombre_cliente' => ['nullable', 'string', 'max:150'],
       'empresa' => ['nullable', 'string', 'max:150'],

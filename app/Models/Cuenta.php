@@ -221,4 +221,20 @@ class Cuenta extends Model
     $html .= '</div>';
     return $html;
   }
+
+  public function getBalance()
+  {
+    if ($this->id) {
+      $status = 'REGISTRADO';
+      $dataDate = [
+        'DateStart' => Carbon::now()->startOfMonth()->toDateString(),
+        'DateEnd'   => Carbon::now()->endOfMonth()->toDateString(),
+      ];
+      $balance = Helpers::calculaBalance([$this->id], $dataDate, $status);
+      if ($this->moneda_id == 16)
+        return $balance['saldo_final_crc'];
+      else
+        return $balance['saldo_final_usd'];
+    }
+  }
 }

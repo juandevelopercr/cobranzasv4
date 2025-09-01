@@ -678,7 +678,7 @@ class CuentaManager extends BaseComponent
         'columnType' => 'decimal',
         'columnAlign' => 'right',
         'columnClass' => '',
-        'function' => '',
+        'function' => 'getBalance',
         'parameters' => [],
         'sumary' => '',
         'openHtmlTab' => '',
