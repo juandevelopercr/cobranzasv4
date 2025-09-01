@@ -168,6 +168,7 @@ abstract class TransactionManager extends BaseComponent
   public float $pendientePorPagar = 0.00;
   public float $totalPagado = 0.00;
   public float $vuelto = 0.00;
+  public $is_old = 0;
 
   // Estadísticas para el Header
   public $totalProceso;
@@ -837,158 +838,6 @@ abstract class TransactionManager extends BaseComponent
     }
   }
 
-  /*
-  #[On('clonar')]
-  public function clonar($recordId)
-  {
-    $recordId = $this->getRecordAction($recordId, true);
-
-    if (!$recordId) {
-      return; // Ya se lanzó la notificación desde getRecordAction
-    }
-
-    DB::beginTransaction();
-
-    try {
-      $original = Transaction::with(['lines', 'otherCharges', 'commisions', 'documents'])->findOrFail($recordId);
-
-      // Generar consecutivo
-      $consecutive = DocumentSequenceService::generateConsecutive(
-        $original->document_type,
-        NULL
-      );
-
-      // Clonar transaction
-      $cloned = $original->replicate();
-      $cloned->proforma_no = $consecutive;
-      $cloned->created_by = auth()->user()->id;
-      $cloned->proforma_status = Transaction::PROCESO;
-      $cloned->location_id = NULL;
-      $cloned->status = NULL;
-      $cloned->payment_status = 'due';
-      $cloned->consecutivo = NULL;
-      $cloned->key = NULL;
-      $cloned->access_token = NULL;
-      $cloned->response_xml = NULL;
-      $cloned->filexml = NULL;
-      $cloned->filepdf = NULL;
-      $cloned->transaction_reference = NULL;
-      $cloned->transaction_reference_id = NULL;
-      $cloned->numero_deposito_pago = NULL;
-      $cloned->numero_traslado_honorario = NULL;
-      $cloned->numero_traslado_gasto = NULL;
-      $cloned->proforma_change_type = Session::get('exchange_rate');
-      $cloned->factura_change_type = NULL;
-      $cloned->num_request_hacienda_set = 0;
-      $cloned->num_request_hacienda_get = 0;
-      $cloned->comision_pagada = 0;
-      $cloned->transaction_date = Carbon::now('America/Costa_Rica')->format('Y-m-d H:i:s');
-      $cloned->invoice_date = NULL;
-      $cloned->fecha_pago = NULL;
-      $cloned->fecha_deposito_pago = NULL;
-      $cloned->fecha_traslado_honorario = NULL;
-      $cloned->fecha_traslado_gasto = NULL;
-      $cloned->fecha_solicitud_factura = NULL;
-      $cloned->fecha_envio_email = NULL;
-      $cloned->fecha_comision_pagada = NULL;
-      $cloned->totalPagado = 0;
-      $cloned->pendientePorPagar = $original->totalComprobante;
-      $cloned->vuelto = 0;
-      $cloned->RefRazon = NULL;
-      $cloned->RefCodigoOtro = NULL;
-      $cloned->RefCodigo = NULL;
-      $cloned->RefFechaEmision = NULL;
-      $cloned->RefNumero = NULL;
-      $cloned->RefTipoDocOtro = NULL;
-      $cloned->RefTipoDoc = NULL;
-      $cloned->RefTipoDoc = NULL;
-      $cloned->save();
-
-      // Clonar lines
-      foreach ($original->lines as $item) {
-        $copy = $item->replicate();
-        $copy->transaction_id = $cloned->id;
-        $copy->fecha_reporte_gasto = NULL;
-        $copy->fecha_pago_registro = NULL;
-        $copy->numero_pago_registro = NULL;
-        $copy->registro_currency_id = NULL;
-        $copy->registro_change_type = NULL;
-        $copy->registro_monto_escritura = NULL;
-        $copy->registro_valor_fiscal = NULL;
-        $copy->registro_cantidad = NULL;
-        $copy->monto_cargo_adicional = NULL;
-        $copy->calculo_registro_normal = NULL;
-        $copy->calculo_registro_iva = NULL;
-        $copy->calculo_registro_no_iva = NULL;
-        $copy->calculo_registro_no_iva = NULL;
-        $copy->save();
-
-        // clonar los taxes
-        foreach ($item->taxes as $tax) {
-          $copyTax = $tax->replicate();
-          $copyTax->transaction_line_id = $copy->id;
-          $copyTax->save();
-        }
-
-        // clonar los descuentos
-        foreach ($item->discounts as $discount) {
-          $copyDiscount = $discount->replicate();
-          $copyDiscount->transaction_line_id = $copy->id;
-          $copyDiscount->save();
-        }
-      }
-
-      // Clonar otros cargos
-      foreach ($original->otherCharges as $item) {
-        $copy = $item->replicate();
-        $copy->transaction_id = $cloned->id;
-        $copy->save();
-      }
-
-      // Clonar commisions
-      foreach ($original->commisions as $item) {
-        $copy = $item->replicate();
-        $copy->transaction_id = $cloned->id;
-        $copy->save();
-      }
-
-      $payment = new TransactionPayment;
-      $payment->transaction_id = $cloned->id;
-      $payment->tipo_medio_pago = '04';  // transaferencia
-      $payment->medio_pago_otros = '';
-      $payment->total_medio_pago = 0;
-      $payment->save();
-
-      // Clona los documentos asociados (colección 'documents')
-      foreach ($original->getMedia('documents') as $media) {
-        // Verifica que el archivo físico existe en el disco configurado
-        if (Storage::disk($media->disk)->exists($media->getPathRelativeToRoot())) {
-          $media->copy($cloned, 'documents');
-        } else {
-          Log::warning("Archivo no encontrado al clonar media ID {$media->id}: " . $media->getPath());
-        }
-      }
-
-      DB::commit();
-
-      $this->selectedIds = [];
-      $this->dispatch('updateSelectedIds', $this->selectedIds);
-
-      //$this->recordId = '';
-      $this->recordId = $cloned->id;
-      $this->action = 'edit';
-
-      $this->dispatch('show-notification', ['type' => 'success', 'message' => __('The proforma has been successfully cloned')]);
-
-      return response()->json(['success' => true, 'message' => 'Proforma clonada exitosamente', 'id' => $cloned->id]);
-    } catch (\Exception $e) {
-      DB::rollBack();
-      $this->dispatch('show-notification', ['type' => 'error', 'message' => __('An error has occurred. While cloning the proforma') . ' ' . $e->getMessage()]);
-      Log::error('Error al clonar producto.', ['error' => $e->getMessage()]);
-    }
-  }
-  */
-
   public function getStatusDocumentInHacienda($recordId)
   {
     try {
@@ -1292,6 +1141,17 @@ abstract class TransactionManager extends BaseComponent
 
       if (count($this->selectedIds) == 1) {
         $recordId = $this->selectedIds[0];
+      }
+    }
+
+    if ($clonar) {
+      $transaction = Transaction::find($recordId);
+      if ($transaction->is_old) {
+        $this->dispatch('show-notification', [
+          'type' => 'warning',
+          'message' => 'La proforma que intenta clonar fue creada en una versión anterior, por lo que no es compatiple con la versión actual del sistema. Seleccione una proforma realizada con la nueva versión del sistema'
+        ]);
+        return;
       }
     }
 

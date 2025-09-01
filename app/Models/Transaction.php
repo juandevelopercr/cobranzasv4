@@ -201,7 +201,8 @@ class Transaction extends Model implements HasMedia
     'totalPagado',
     'pendientePorPagar',
     'vuelto',
-    'invoice_type'
+    'invoice_type',
+    'is_old'
   ];
 
   public function business()
