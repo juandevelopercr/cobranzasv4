@@ -8,6 +8,7 @@ use App\Models\Currency;
 use App\Models\DataTableConfig;
 use App\Models\Transaction;
 use App\Models\TransactionLine;
+use App\Models\TransactionPayment;
 use App\Models\User;
 use App\Services\DocumentSequenceService;
 use App\Services\Hacienda\ApiHacienda;
@@ -767,6 +768,13 @@ class InvoiceManager extends TransactionManager
         //$clonedCharge->amount = -abs($charge->amount);
         $clonedCharge->save();
       }
+
+      $payment = new TransactionPayment;
+      $payment->transaction_id = $cloned->id;
+      $payment->tipo_medio_pago = '04';  // transaferencia
+      $payment->medio_pago_otros = '';
+      $payment->total_medio_pago = $cloned->totalComprobante;
+      $payment->save();
 
       // Clonar comisiones y documentos si es necesario
       // ... (agregar lógica similar según requerimientos)
