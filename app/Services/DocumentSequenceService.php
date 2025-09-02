@@ -54,35 +54,35 @@ class DocumentSequenceService
               $secuencia = DB::table('transactions')
                 ->where('created_by', $userId)
                 ->whereIn('document_type', [Transaction::PROFORMA, Transaction::FACTURAELECTRONICA, Transaction::TIQUETEELECTRONICO])
-                ->selectRaw('IFNULL(MAX(SUBSTRING(proforma_no, 5, 5)) + 1, 1) as consecutivo')
+                ->selectRaw('IFNULL(MAX(CAST(SUBSTRING(proforma_no, 5, 5) AS UNSIGNED)) + 1, 1) as consecutivo')
                 ->value('consecutivo');
               break;
             case Transaction::NOTACREDITO:
               $secuencia = DB::table('transactions')
                 ->where('created_by', $userId)
                 ->whereIn('document_type', [Transaction::NOTACREDITO])
-                ->selectRaw('IFNULL(MAX(SUBSTRING(proforma_no, 5, 5)) + 1, 1) as consecutivo')
+                ->selectRaw('IFNULL(MAX(CAST(SUBSTRING(proforma_no, 5, 5) AS UNSIGNED)) + 1, 1) as consecutivo')
                 ->value('consecutivo');
               break;
             case Transaction::NOTADEBITO:
               $secuencia = DB::table('transactions')
                 ->where('created_by', $userId)
                 ->whereIn('document_type', [Transaction::NOTADEBITO])
-                ->selectRaw('IFNULL(MAX(SUBSTRING(proforma_no, 5, 5)) + 1, 1) as consecutivo')
+                ->selectRaw('IFNULL(MAX(CAST(SUBSTRING(proforma_no, 5, 5) AS UNSIGNED)) + 1, 1) as consecutivo')
                 ->value('consecutivo');
               break;
             case Transaction::COTIZACION:
               $secuencia = DB::table('transactions')
                 ->where('created_by', $userId)
                 ->whereIn('document_type', [Transaction::COTIZACION])
-                ->selectRaw('IFNULL(MAX(SUBSTRING(proforma_no, 5, 5)) + 1, 1) as consecutivo')
+                ->selectRaw('IFNULL(MAX(CAST(SUBSTRING(proforma_no, 5, 5) AS UNSIGNED)) + 1, 1) as consecutivo')
                 ->value('consecutivo');
               break;
             case Transaction::PROFORMACOMPRA:
               $secuencia = DB::table('transactions')
                 ->where('created_by', $userId)
                 ->whereIn('document_type', [Transaction::PROFORMACOMPRA])
-                ->selectRaw('IFNULL(MAX(SUBSTRING(proforma_no, 5, 5)) + 1, 1) as consecutivo')
+                ->selectRaw('IFNULL(MAX(CAST(SUBSTRING(proforma_no, 5, 5) AS UNSIGNED)) + 1, 1) as consecutivo')
                 ->value('consecutivo');
               break;
             case Transaction::CASO:
@@ -90,15 +90,13 @@ class DocumentSequenceService
               $secuencia = DB::table('casos')->max('pnumero') + 1;
               break;
           }
-          /*
           DB::table('document_sequences')->insert([
             'user_id' => $userId,
             'document_type' => $documentType,
-            'current_sequence' => 1,
+            'current_sequence' => $secuencia,
             'created_at' => now(),
             'updated_at' => now()
           ]);
-          */
           if ($documentType == Transaction::CASO) {
             return $secuencia;
           }
@@ -238,25 +236,24 @@ class DocumentSequenceService
           ->first();
 
         if (!$sequence) {
+          $secuencia = 1;
           if ($documentType === Transaction::NOTACREDITO) {
             $secuencia = DB::table('transactions')
               ->whereIn('document_type', [Transaction::NOTACREDITO])
-              ->selectRaw('IFNULL(MAX(SUBSTRING(proforma_no, 5, 5)) + 1, 1) as consecutivo')
+              ->selectRaw('IFNULL(MAX(CAST(SUBSTRING(proforma_no, 5, 5) AS UNSIGNED)) + 1, 1) as consecutivo')
               ->value('consecutivo');
           } else {
             $secuencia = DB::table('transactions')
               ->whereIn('document_type', [Transaction::NOTADEBITO])
-              ->selectRaw('IFNULL(MAX(SUBSTRING(proforma_no, 5, 5)) + 1, 1) as consecutivo')
+              ->selectRaw('IFNULL(MAX(CAST(SUBSTRING(proforma_no, 5, 5) AS UNSIGNED)) + 1, 1) as consecutivo')
               ->value('consecutivo');
           }
-          /*
           DB::table('document_sequences')->insert([
             'document_type' => $documentType,
             'current_sequence' => 1,
             'created_at' => now(),
             'updated_at' => now()
           ]);
-          */
           $number = $secuencia;
           return $number;
         }

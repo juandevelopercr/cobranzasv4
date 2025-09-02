@@ -825,7 +825,7 @@ class ProformaManager extends TransactionManager
 
     // Validar nuevamente para asegurar que el campo correcto esté presente
     $this->validate([
-      'proforma_no' => 'required|string|max:20',
+      'proforma_no' => 'required|string|max:30',
     ]);
 
     $this->totalPagado = collect($this->payments)->sum(function ($p) {
