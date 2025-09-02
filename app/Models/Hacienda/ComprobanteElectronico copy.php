@@ -69,12 +69,10 @@ class ComprobanteElectronico extends ComprobanteElectronico\ComprobanteElectroni
     $this->setEmisor($emisor);
 
     // ✅ Configuración del Receptor
-    if ($transaction->document_type != 'TE') {
-      $receptor = new ReceptorType($this->transaction);
+    $receptor = new ReceptorType($this->transaction);
 
-      // ✅ Asignar Receptor
-      $this->setReceptor($receptor);
-    }
+    // ✅ Asignar Receptor
+    $this->setReceptor($receptor);
 
     // ✅ Asignar La condición de venta
     $this->setCondicionVenta($this->transaction->condition_sale);
@@ -461,7 +459,7 @@ class ComprobanteElectronico extends ComprobanteElectronico\ComprobanteElectroni
         // Agregar Impuestos
         $this->generarImpuestos($dom, $nodoLineaDetalle, $taxes);
 
-        if ($this->transaction->document_type != 'FEC' && $this->transaction->document_type != 'PRC') {
+        if ($this->transaction->document_type != 'TE' && $this->transaction->document_type != 'FEC' && $this->transaction->document_type != 'PRC') {
           $nodoLineaDetalle->appendChild($this->createElement($dom, 'ImpuestoAsumidoEmisorFabrica', $line->getImpuestoAsumidoEmisorFabrica()));
         }
 
@@ -775,7 +773,7 @@ class ComprobanteElectronico extends ComprobanteElectronico\ComprobanteElectroni
 
     $nodoResumenFactura->appendChild($this->createElement($dom, 'TotalImpuesto', $resumen->getTotalImpuesto()));
 
-    if ($this->transaction->document_type != 'TE' && $this->transaction->document_type != 'FEC' && $this->transaction->document_type != 'PRC') {
+    if ($this->transaction->document_type != 'FEC' && $this->transaction->document_type != 'PRC') {
       $nodoResumenFactura->appendChild($this->createElement($dom, 'TotalImpAsumEmisorFabrica', $resumen->getTotalImpAsumEmisorFabrica()));
       $nodoResumenFactura->appendChild($this->createElement($dom, 'TotalIVADevuelto', $resumen->getTotalIVADevuelto()));
     }
