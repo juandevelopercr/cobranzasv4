@@ -1488,8 +1488,9 @@ class HistoryManager extends TransactionManager
       $original = Transaction::with(['lines', 'otherCharges', 'commisions', 'documents'])->findOrFail($recordId);
 
       // Generar consecutivo
+      $document_type = Transaction::PROFORMA;
       $consecutive = DocumentSequenceService::generateConsecutive(
-        $original->document_type,
+        $document_type,
         NULL
       );
 
