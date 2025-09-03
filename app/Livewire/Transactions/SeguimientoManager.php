@@ -48,6 +48,7 @@ class SeguimientoManager extends TransactionManager
     'filter_action' => NULL,
     'filter_consecutivo' => NULL,
     'filter_transaction_date' => NULL,
+    'filter_document_type' => NULL,
     'filter_customer_name' => NULL,
     'filter_numero_caso' => NULL,
     'filter_currency_code' => NULL,
@@ -150,6 +151,25 @@ class SeguimientoManager extends TransactionManager
         'columnAlign' => '',
         'columnClass' => '',
         'function' => '',
+        'parameters' => [],
+        'sumary' => '',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'document_type',
+        'orderName' => 'transactions.document_type',
+        'label' => __('Tipo'),
+        'filter' => 'filter_document_type',
+        'filter_type' => 'select',
+        'filter_sources' => 'documentTypes',
+        'filter_source_field' => 'name',
+        'columnType' => 'string',
+        'columnAlign' => 'center',
+        'columnClass' => '',
+        'function' => 'getHtmlDocumentType',
         'parameters' => [],
         'sumary' => '',
         'openHtmlTab' => '',
@@ -1396,9 +1416,11 @@ class SeguimientoManager extends TransactionManager
     try {
       $original = Transaction::with(['lines', 'otherCharges', 'commisions', 'documents'])->findOrFail($recordId);
 
+      $document_type = 'PR';
+
       // Generar consecutivo
       $consecutive = DocumentSequenceService::generateConsecutive(
-        $original->document_type,
+        $document_type,
         NULL
       );
 

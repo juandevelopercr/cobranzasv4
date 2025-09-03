@@ -1678,9 +1678,11 @@ class ProformaManager extends TransactionManager
     try {
       $original = Transaction::with(['lines', 'otherCharges', 'commisions', 'documents'])->findOrFail($recordId);
 
+      $document_type = 'PR';
+
       // Generar consecutivo
       $consecutive = DocumentSequenceService::generateConsecutive(
-        $original->document_type,
+        $document_type,
         NULL
       );
 
