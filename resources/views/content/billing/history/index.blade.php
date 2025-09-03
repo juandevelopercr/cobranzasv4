@@ -41,5 +41,5 @@ $configData = Helper::appClasses();
 @endsection
 
 @section('content')
-@livewire('transactions.history-manager', ['document_type'=>['PR', 'FE', 'TE', 'NCE', 'NDE']])
+@livewire('transactions.history-manager', ['document_type'=>['PR', 'FE', 'TE']])
 @endsection

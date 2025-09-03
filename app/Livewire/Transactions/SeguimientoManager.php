@@ -42,7 +42,7 @@ class SeguimientoManager extends TransactionManager
 
   public $listaUsuarios;
 
-  public $document_type = ['PR', 'FE', 'TE', 'NCE', 'NDE'];
+  public $document_type = ['PR', 'FE', 'TE'];
 
   public $filters = [
     'filter_action' => NULL,
