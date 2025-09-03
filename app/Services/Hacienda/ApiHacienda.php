@@ -311,10 +311,12 @@ class ApiHacienda
     if (in_array($tipo_comprobante, ['05', '06', '07'])) {
       $transaction->status = Comprobante::RECHAZADA;
       $key = $transaction->key . '-' . $transaction->consecutivo;
+      $transaction->save();
     } else {
       $key = $transaction->key;
       $transaction->status = Transaction::RECHAZADA;
       $transaction->proforma_status = Transaction::RECHAZADA;
+      $transaction->save();
     }
     $mensaje = "$documento con clave: [{$key}] fue rechazado por Hacienda.";
 
@@ -328,11 +330,39 @@ class ApiHacienda
   {
     $estado = 'aceptado';
     if (in_array($tipo_comprobante, ['05', '06', '07'])) {
+      // Nota de crédito o nota de debito
+      if (in_array($transaction->document_type, ['NCE'])) {
+
+        Log::error("Es una nota de crédito electrónica");
+        $referencia = Transaction::where('key', trim($transaction->RefNumero))->first();
+
+        if ($referencia) {
+          $referencia->status = Transaction::ANULADA;
+          $referencia->proforma_status = Transaction::ANULADA;
+
+          if ($referencia->save()) {
+            Log::error("Se guardó el estado en transacción ID: {$referencia->id}");
+          } else {
+            Log::error("Error al guardar estado en transacción ID: {$referencia->id}", [
+              'datos' => $referencia->toArray(), // Registra todos los datos
+              'errores' => $referencia->getErrors() // Si usas validación
+            ]);
+          }
+        } else {
+          Log::warning("No se encontró transacción de referencia", [
+            'key_buscada' => trim($transaction->RefNumero),
+            'nota_id' => $transaction->id
+          ]);
+        }
+      }
+
       $transaction->status = Comprobante::ACEPTADA;
       $key = $transaction->key . '-' . $transaction->consecutivo;
+      $transaction->save();
     } else {
       $transaction->status = Transaction::ACEPTADA;
       $key = $transaction->key;
+      $transaction->save();
     }
     $type = 'success';
     $titulo = "Información <hr class=\"kv-alert-separator\">";
@@ -351,8 +381,10 @@ class ApiHacienda
 
     if (in_array($tipo_comprobante, ['05', '06', '07'])) {
       $transaction->status = Comprobante::RECIBIDA;
+      $transaction->save();
     } else {
       $transaction->status = Transaction::RECIBIDA;
+      $transaction->save();
     }
 
     $transaction->save();
