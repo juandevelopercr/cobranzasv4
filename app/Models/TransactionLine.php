@@ -1070,7 +1070,7 @@ class TransactionLine extends Model
   {
     $exento = 0;
     // Obtiene el monto exento si es un servicio
-    if ($this->product->type == 'service') {
+    if ($this->product->type != 'service') {
       $taxes = $this->taxes;
       foreach ($taxes as $tax) {
         if (in_array($tax->taxRate->code, ['01', '11'])) {
