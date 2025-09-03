@@ -161,6 +161,8 @@
     <br>
     <h6>2. {{ __('Emails Setting') }}</h6>
     <div class="row g-6">
+      @php
+      /*
       <div class="col-md-4 fv-plugins-icon-container">
           <label class="form-label" for="host_smpt">{{ __('Host smtp') }}</label>
           <div class="input-group input-group-merge has-validation">
@@ -218,7 +220,8 @@
         <div class="text-danger mt-1">{{ $message }}</div>
         @enderror
       </div>
-
+      */
+      @endphp
       <div class="col-md-12 fv-plugins-icon-container">
         <label class="form-label" for="notification_email">{{ __('Email notification CC') }}</label>
         <textarea class="form-control @if(count($invalidEmails)) is-invalid @endif"
@@ -243,6 +246,8 @@
     </div>
 
     <br>
+    @php
+    /*
     <h6>4. {{ __('Emails Setting for Imap') }}</h6>
     <div class="row g-6">
       <div class="col-md-4 fv-plugins-icon-container">
@@ -303,6 +308,8 @@
         @enderror
       </div>
     </div>
+    */
+    @endphp
 
 
     <br>

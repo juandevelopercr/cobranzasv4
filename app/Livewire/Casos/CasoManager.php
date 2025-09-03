@@ -24,11 +24,20 @@ class CasoManager extends BaseComponent
   use WithFileUploads, WithPagination;
 
   // ====== Parámetros de tabla/listado ======
-  #[Url(history: true)] public $search = '';
-  #[Url(history: true)] public $active = '';
-  #[Url(history: true)] public $sortBy = 'casos.id';
-  #[Url(history: true)] public $sortDir = 'DESC';
-  #[Url()] public $perPage = 10;
+  #[Url(as: 'c1_search', history: true)]
+  public $search = '';
+
+  #[Url(as: 'c1_active', history: true)]
+  public $active = '';
+
+  #[Url(as: 'c1_sortBy', history: true)]
+  public $sortBy = 'casos.created_at';
+
+  #[Url(as: 'c1_sortDir', history: true)]
+  public $sortDir = 'DESC';
+
+  #[Url(as: 'c1_perPage')]
+  public $perPage = 10;
 
   public $action = 'list';
   public $recordId = '';

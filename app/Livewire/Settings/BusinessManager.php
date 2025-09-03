@@ -252,7 +252,7 @@ class BusinessManager extends Component
       }
 
       //$business->customerCalculoRegistros()->sync($validatedData['customers'] ?? []);
-
+      /*
       // 1. Actualizar configuración en tiempo de ejecución
       $this->setMailConfig();
 
@@ -273,6 +273,7 @@ class BusinessManager extends Component
       ];
 
       $this->updateEnvFile($validated);
+      */
 
       // Limpiar caché de configuración
       //Artisan::call('config:clear');
