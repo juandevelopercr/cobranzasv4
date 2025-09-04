@@ -36,7 +36,7 @@ class ProformaMail extends Mailable
   {
     $email = $this->subject($this->data['subject'])
       ->view('emails.proforma')
-      ->with(['data' => $this->data, 'logo' => $logo]); // Asegúrate de que $this->message sea una cadena de texto
+      ->with(['data' => $this->data, 'logo' => $this->logo]); // Asegúrate de que $this->message sea una cadena de texto
 
     foreach ($this->attachmentPaths as $file) {
       $email->attach($file['path'], [
