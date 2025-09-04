@@ -70,10 +70,10 @@
                 <b class="tm_primary_color">{{ $transaction->location->identification }}</b>
                 <br>
                 @endif
-                Trejos Montealegre, 150 oeste del Oficentro <br>
-                El Cedral, piso 6.<br>
+                Paseo Colón, Torre Mercedes  Piso 7<br>
+                San José,San José,Merced.<br>
                 <a href="/cdn-cgi/l/email-protection" class="__cf_email__"
-                  data-cfemail="3054555d5f70575d51595c1e535f5d">facturae2.cr@consortiumlegal.com</a>
+                  data-cfemail="3054555d5f70575d51595c1e535f5d">cccfacturas@cobranzas.cr</a>
               </p>
             </div>
           </div>
