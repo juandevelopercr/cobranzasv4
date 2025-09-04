@@ -84,7 +84,7 @@
                 $info = $movimiento->getCentroCosto();
             @endphp
 
-            @if (count($movimiento->movimientosCentrosCostos ?? []) == 1)
+            @if (count($movimiento->centrosCostos ?? []) == 1)
                 Código Contable: {{ $info['str_codigo_contable'] }}<br />
                 Centro de Costo: {{ $info['str_centro_costo'] }}<br />
             @else
