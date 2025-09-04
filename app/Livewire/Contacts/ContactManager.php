@@ -697,6 +697,7 @@ class ContactManager extends BaseComponent
       'exoneration_institute_other',
       'exoneration_date',
       'exoneration_percent',
+      'economicActivities'
     );
 
     $this->selectedIds = [];

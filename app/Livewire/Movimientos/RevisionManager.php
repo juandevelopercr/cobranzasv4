@@ -72,16 +72,16 @@ class RevisionManager extends BaseComponent
   public string $monto_letras = '';
 
   public bool $tiene_retencion = false;
-  public ?float $saldo_cancelar = 0;
-  public float $diferencia = 0;
+  public $saldo_cancelar = 0;
+  public $diferencia = 0;
   public ?string $descripcion = null;
   public ?string $numero = null;
   public ?string $beneficiario = null;
 
   public bool $comprobante_pendiente = false;
   public bool $bloqueo_fondos = false;
-  public float $impuesto = 0;
-  public float $total_general = 0;
+  public $impuesto = 0;
+  public $total_general = 0;
 
   public string $status;
   public bool $listo_para_aprobar = false;
@@ -963,7 +963,7 @@ class RevisionManager extends BaseComponent
         'orderName' => 'monto',
         'label' => __('Monto'),
         'filter' => 'filter_monto',
-        'filter_type' => '',
+        'filter_type' => 'input',
         'filter_sources' => '',
         'filter_source_field' => '',
         'columnType' => 'decimal',

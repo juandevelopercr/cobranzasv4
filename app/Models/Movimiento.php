@@ -182,7 +182,7 @@ class Movimiento extends Model implements HasMedia
     }
 
     if (!empty($filters['filter_monto'])) {
-      $query->where('monto', 'like', '%' . $filters['filter_monto'] . '%');
+      $query->where('monto', '=', $filters['filter_monto']);
     }
 
     if (!empty($filters['filter_type'])) {
