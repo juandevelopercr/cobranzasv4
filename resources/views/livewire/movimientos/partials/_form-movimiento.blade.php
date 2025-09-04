@@ -222,10 +222,45 @@
         @enderror
       </div>
 
+      @if ($this->tipo_movimiento != 'DEPOSITO')
+        <div class="col-md-3 fv-plugins-icon-container">
+          <label class="form-label" for="impuesto">{{ __('Tax') }}</label>
+          <div
+            x-data="cleaveLivewire({
+              initialValue: '{{ $impuesto ?? '' }}',
+              wireModelName: 'impuesto',
+              postUpdate: false,
+              decimalScale: 2,
+              allowNegative: true,
+              rawValueCallback: (val) => {
+                //console.log('Callback personalizado:', val);
+                // lógica extra aquí si deseas
+                const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+                if (component) {
+                  component.set('impuesto', val); // <- Esto envía el valor sin comas
+                }
+              }
+            })"
+            x-init="init($refs.cleaveInput)"
+          >
+            <div class="input-group input-group-merge has-validation">
+              {{--  <span class="input-group-text"><i class="bx bx-dollar"></i></span> --}}
+              <input type="text" id="impuesto" x-ref="cleaveInput" wire:ignore class="form-control js-input-impuesto" />
+            </div>
+          </div>
+          @error('impuesto')
+            <div class="text-danger mt-1">{{ $message }}</div>
+          @enderror
+        </div>
+      @endif
+      @endphp
+
+      @php
+      /*
       <div class="col-md-3 fv-plugins-icon-container"
           x-data="{
-            ...cleaveLivewire({ 
-              initialValue: '{{ $impuesto ?? '' }}', 
+            ...cleaveLivewire({
+              initialValue: '{{ $impuesto ?? '' }}',
               wireModelName: 'impuesto',
               postUpdate: false,
               decimalScale: 2,
@@ -257,7 +292,8 @@
           <div class="text-danger mt-1">{{ $message }}</div>
         @enderror
       </div>
-
+      */
+      @endphp
       @php
       /*
       <div class="col-md-3 fv-plugins-icon-container">
