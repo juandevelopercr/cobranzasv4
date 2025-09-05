@@ -525,7 +525,7 @@ use App\Models\User;
   </div>
 
   <br>
-
+  @if ($this->tipo_facturacion == 1)
   <h6 class="mt-4"><span class="badge bg-primary">4. {{ __('Case Information') }}</span></h6>
   <div class="row g-6">
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
@@ -572,7 +572,7 @@ use App\Models\User;
       @enderror
     </div>
   </div>
-
+  @endif
 
   <br>
   <h6 class="mt-4"><span class="badge bg-primary">5. {{ __('Payment Information') }}</span></h6>

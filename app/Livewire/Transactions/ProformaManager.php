@@ -643,6 +643,7 @@ class ProformaManager extends TransactionManager
       'codigo_contable_id'    => 'nullable|integer|exists:codigo_contables,id',
       'caso_id'               => 'nullable|integer|exists:casos,id',
       'created_by'            => 'required|integer|exists:users,id',
+      'tipo_facturacion'      => 'required|integer',
 
       // Enums
       'document_type'         => 'required|in:PR,FE,TE,ND,NC,FEC,FEE,REP',
@@ -962,6 +963,7 @@ class ProformaManager extends TransactionManager
     $this->showInstruccionesPago   = $record->showInstruccionesPago;
     $this->invoice_type            = $record->invoice_type;
 
+    //dd($record->tipo_facturacion);
     if ($record->caso) {
       $this->caso_text = strtoupper(
         implode(' / ', array_filter([
