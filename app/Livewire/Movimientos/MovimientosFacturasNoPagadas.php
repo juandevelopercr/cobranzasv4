@@ -296,199 +296,7 @@ class MovimientosFacturasNoPagadas extends TransactionManager
         'closeHtmlTab' => '',
         'width' => NULL,
         'visible' => true,
-      ],
-      /*
-      [
-        'field' => 'proforma_no',
-        'orderName' => 'proforma_no',
-        'label' => __('No. Proforma'),
-        'filter' => 'filter_proforma_no',
-        'filter_type' => 'input',
-        'filter_sources' => '',
-        'filter_source_field' => '',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => '',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'department_name',
-        'orderName' => 'departments.name',
-        'label' => __('Department'),
-        'filter' => 'filter_department_name',
-        'filter_type' => 'select',
-        'filter_sources' => 'departments',
-        'filter_source_field' => 'name',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => '',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'fecha_solicitud_factura',
-        'orderName' => 'transactions.fecha_solicitud_factura',
-        'label' => __('Application Date'),
-        'filter' => 'filter_fecha_solicitud_factura',
-        'filter_type' => 'date',
-        'filter_sources' => '',
-        'filter_source_field' => '',
-        'columnType' => 'date',
-        'columnAlign' => '',
-        'columnClass' => '',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'issuer_name',
-        'orderName' => 'business_locations.name',
-        'label' => __('Issuer'),
-        'filter' => 'filter_issuer_name',
-        'filter_type' => 'select',
-        'filter_sources' => 'issuers',
-        'filter_source_field' => 'name',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => '',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '<span class="emp_name text-truncate">',
-        'closeHtmlTab' => '</span>',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'codigosContables',
-        'orderName' => 'codigo_contables.codigo',
-        'label' => __('Accounting Code'),
-        'filter' => 'filter_codigosContables',
-        'filter_type' => 'select',
-        'filter_sources' => 'codigosContables',
-        'filter_source_field' => 'descrip',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => '',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'referencia',
-        'orderName' => '',
-        'label' => __('Case/Reference'),
-        'filter' => 'filter_referencia',
-        'filter_type' => 'input',
-        'filter_sources' => '',
-        'filter_source_field' => '',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => '',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'oc',
-        'orderName' => 'oc',
-        'label' => __('O.C'),
-        'filter' => 'filter_oc',
-        'filter_type' => 'input',
-        'filter_sources' => '',
-        'filter_source_field' => '',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => '',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'migo',
-        'orderName' => 'migo',
-        'label' => __('MIGO'),
-        'filter' => 'filter_migo',
-        'filter_type' => 'input',
-        'filter_sources' => '',
-        'filter_source_field' => '',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => '',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'total_usd',
-        'orderName' => '',
-        'label' => __('Total USD'),
-        'filter' => 'filter_total_usd',
-        'filter_type' => '',
-        'filter_sources' => '',
-        'filter_source_field' => '',
-        'columnType' => 'decimal',
-        'columnAlign' => '',
-        'columnClass' => '',
-        'function' => 'getTotalComprobante',
-        'parameters' => ['USD', true],
-        'sumary' => 'tComprobanteUsd',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'total_crc',
-        'orderName' => '',
-        'label' => __('Total CRC'),
-        'filter' => 'filter_total_crc',
-        'filter_type' => '',
-        'filter_sources' => '',
-        'filter_source_field' => '',
-        'columnType' => 'decimal',
-        'columnAlign' => '',
-        'columnClass' => '',
-        'function' => 'getTotalComprobante',
-        'parameters' => ['CRC', true], // Parámetro a pasar a la función
-        'sumary' => 'tComprobanteCrc',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      */
+      ]
     ];
 
     return $this->defaultColumns;
@@ -576,8 +384,15 @@ class MovimientosFacturasNoPagadas extends TransactionManager
 
     $now = now();
 
-    // Preparamos todos los registros a insertar
+    // Buscar transacciones ya registradas
+    $existing = MovimientoFactura::where('movimiento_id', $this->movimientoId)
+      ->whereIn('transaction_id', $this->selectedIds)
+      ->pluck('transaction_id')
+      ->toArray();
+
+    // Preparar solo los que NO existan
     $data = collect($this->selectedIds)
+      ->diff($existing) // elimina duplicados
       ->map(fn($id) => [
         'movimiento_id'   => $this->movimientoId,
         'transaction_id'  => $id,
@@ -586,14 +401,18 @@ class MovimientosFacturasNoPagadas extends TransactionManager
       ])
       ->all();
 
-    // Inserción masiva (más eficiente que save individual)
-    MovimientoFactura::insert($data);
+    // Insertar solo si hay datos
+    if (!empty($data)) {
+      MovimientoFactura::insert($data);
+    }
 
     // Actualiza el saldo a cancelar del componente principal de movimiento
     $this->dispatch('updateSaldoCancelar');
 
     // Actualiza las facturas asociadas al movimiento
     $this->dispatch('actualizarFacturasMovimientos');
+
+    $this->dispatch('actualizarFacturasNoPagadas');
 
     $this->dispatch('show-notification', [
       'type' => 'success',
