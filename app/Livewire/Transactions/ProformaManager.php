@@ -29,6 +29,9 @@ use Livewire\Attributes\On;
 
 class ProformaManager extends TransactionManager
 {
+  public $tiposFacturacion = [];
+  public $caso_text; // para mostrar el texto inicial
+
   public $filters = [
     'filter_action' => NULL,
     'filter_proforma_status' => NULL,
@@ -63,6 +66,11 @@ class ProformaManager extends TransactionManager
     $this->listaUsuarios = User::where('active', 1)->orderBy('name', 'ASC')->get();
     $this->statusOptions = NULL;
     $this->statusOptions = Transaction::getStatusOptions(false);
+    $this->tiposFacturacion = [
+      ['id' => 1, 'name' => 'Individual'],
+      ['id' => 2, 'name' => 'Masiva'],
+      ['id' => 3, 'name' => 'Sin Caso'],
+    ];
     // Aquí puedes agregar lógica específica para proformas
   }
 
@@ -887,9 +895,9 @@ class ProformaManager extends TransactionManager
     }
 
     $record = Transaction::find($recordId);
+
     $this->recordId = $recordId;
     //$this->transaction = $record;
-
     $this->business_id            = $record->business_id;
     $this->location_id            = $record->location_id;
     $this->location_economic_activity_id = $record->location_economic_activity_id;
@@ -929,6 +937,7 @@ class ProformaManager extends TransactionManager
     $this->numero_traslado_gasto  = $record->numero_traslado_gasto;
     $this->contacto_banco         = $record->contacto_banco;
     $this->pay_term_number        = $record->pay_term_number;
+    $this->tipo_facturacion       = $record->tipo_facturacion;
     $this->proforma_change_type   = Helpers::formatDecimal($record->proforma_change_type);
     //$this->proforma_change_type   = $record->proforma_change_type;
     $this->factura_change_type    = $record->factura_change_type;
@@ -952,6 +961,18 @@ class ProformaManager extends TransactionManager
     $this->fecha_solicitud_factura = $record->fecha_solicitud_factura;
     $this->showInstruccionesPago   = $record->showInstruccionesPago;
     $this->invoice_type            = $record->invoice_type;
+
+    if ($record->caso) {
+      $this->caso_text = strtoupper(
+        implode(' / ', array_filter([
+          $record->caso->pnumero,
+          $record->caso->pnumero_operacion1,
+          ($record->caso->pnombre_demandado || $record->caso->pnombre_apellidos_deudor)
+            ? trim($record->caso->pnombre_demandado . ' ' . $record->caso->pnombre_apellidos_deudor)
+            : null
+        ], fn($value) => $value !== null && $value !== ''))
+      );
+    }
 
     // Totales
     $this->totalHonorarios = $record->totalHonorarios;
@@ -1086,6 +1107,7 @@ class ProformaManager extends TransactionManager
 
       // Actualizar
       $record->update($validatedData);
+
 
       $this->dispatch('updateTransactionContext', [
         'transaction_id'    => $record->id,
@@ -1389,8 +1411,10 @@ class ProformaManager extends TransactionManager
       'contact_id',
       'contact_economic_activity_id',
       'currency_id',
+      'caso_text',
       'area_id',
       'bank_id',
+      'caso_id',
       'codigo_contable_id',
       'created_by',
       'proforma_type',
@@ -1417,6 +1441,7 @@ class ProformaManager extends TransactionManager
       'numero_traslado_gasto',
       'contacto_banco',
       'pay_term_number',
+      'tipo_facturacion',
       'proforma_change_type',
       'factura_change_type',
       'num_request_hacienda_set',

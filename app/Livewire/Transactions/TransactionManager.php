@@ -115,6 +115,7 @@ abstract class TransactionManager extends BaseComponent
   public $message;
   public $notes;
   public $detalle_adicional;
+  public $tipo_facturacion;
   public $oc;
   public $migo;
   public $or;

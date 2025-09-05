@@ -191,6 +191,21 @@ use App\Models\User;
     </div>
 
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <label class="form-label" for="tipo_facturacion">{{ __('Tipo de facturacion') }}</label>
+      <div wire:ignore>
+        <select wire:model="tipo_facturacion" id="tipo_facturacion" class="select2 form-select @error('tipo_facturacion') is-invalid @enderror">
+          <option value="">{{ __('Seleccione...') }}</option>
+          @foreach ($this->tiposFacturacion as $tipo)
+            <option value="{{ $tipo['id'] }}">{{ $tipo['name'] }}</option>
+          @endforeach
+        </select>
+      </div>
+      @error('tipo_facturacion')
+      <div class="text-danger mt-1">{{ $message }}</div>
+      @enderror
+    </div>
+
+    <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="proforma_type"><span class="badge bg-primary">{{ __('Type of Act') }}</span></label>
       <div wire:ignore>
         <select wire:model="proforma_type" id="proforma_type" class="select2 form-select @error('proforma_type') is-invalid @enderror">
@@ -510,12 +525,16 @@ use App\Models\User;
   </div>
 
   <br>
+
   <h6 class="mt-4"><span class="badge bg-primary">4. {{ __('Case Information') }}</span></h6>
   <div class="row g-6">
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="caso_id">{{ __('Caso') }}</label>
       <div wire:ignore>
-        <select id="caso_id" class="form-select select2-ajax" data-placeholder="Buscar caso por número o deudor">
+        <select id="caso_id" class="form-select select2-ajax" data-placeholder="Buscar caso...">
+            @if($caso_text)
+                <option value="{{ $caso_id }}" selected>{{ $caso_text }}</option>
+            @endif
         </select>
       </div>
     </div>
@@ -553,6 +572,7 @@ use App\Models\User;
       @enderror
     </div>
   </div>
+
 
   <br>
   <h6 class="mt-4"><span class="badge bg-primary">5. {{ __('Payment Information') }}</span></h6>
@@ -593,7 +613,7 @@ use App\Models\User;
       currency_id: {fireEvent: false},
       contact_economic_activity_id: {fireEvent: false},
       location_economic_activity_id: {fireEvent: false},
-      //condition_sale: {fireEvent: true},
+      tipo_facturacion: {fireEvent: true},
       created_by: {fireEvent: false},
       //location_id: {fireEvent: true},
       //codigo_contable_id: {fireEvent: false},

@@ -60,6 +60,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -67,6 +68,7 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Livewire\Livewire;
 use Maatwebsite\Excel\Facades\Excel;
+
 
 
 
@@ -286,21 +288,63 @@ Route::middleware(['guest'])->group(function () {
 */
 
 // routes/web.php o routes/api.php
+/*
 Route::get('/api/casos/search', function (\Illuminate\Http\Request $request) {
   $term = $request->get('q');
   $bank_id = $request->get('bank_id');
   if ($bank_id) {
     return \App\Models\Caso::query()
-      ->where('numero', 'like', "%{$term}%")
+      ->where('pnumero', 'like', "%{$term}%")
       ->orWhere('deudor', 'like', "%{$term}%")
       ->limit(20)
       ->get()
       ->map(fn($caso) => [
         'id' => $caso->id,
-        'text' => "{$caso->numero} - {$caso->deudor}"
+        'text' => "{$caso->pnumero} - {$caso->deudor}"
       ]);
   } else
     return [];
+});
+*/
+
+Route::get('/api/casos/search', function (\Illuminate\Http\Request $request) {
+  $term = $request->get('q');
+  $bank_id = $request->get('bank_id');
+
+  if (!$bank_id) {
+    return [];
+  }
+
+  $models = \App\Models\Caso::query()
+    ->select([
+      'id',
+      DB::raw("CONCAT_WS(' / ',
+                        CONCAT_WS(' / ', pnumero, pnumero_operacion1),
+                        TRIM(CONCAT_WS(' ', pnombre_demandado, pnombre_apellidos_deudor))
+                    ) AS pnumero")
+    ])
+    ->where(function ($query) use ($term) {
+      $query->where('pnumero', 'like', "%{$term}%")
+        ->orWhere('pnumero_operacion1', 'like', "%{$term}%")
+        ->orWhere('pnombre_demandado', 'like', "%{$term}%")
+        ->orWhere('pnombre_apellidos_deudor', 'like', "%{$term}%");
+    })
+    ->where('bank_id', $bank_id)
+    ->limit(200)
+    ->get();
+
+  if ($models->isEmpty()) {
+    return [];
+  }
+
+  return $models->map(function ($model) {
+    $temp_name = $model->pnumero ?? $model->id;
+    $temp_name = mb_strtoupper($temp_name);
+    return [
+      'id' => $model->id,
+      'text' => $temp_name,
+    ];
+  });
 });
 
 // routes/web.php o routes/api.php
