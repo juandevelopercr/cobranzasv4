@@ -832,7 +832,7 @@ class TransactionLine extends Model
   // Es para forma el xml de FE
   public function getMontoTotal()
   {
-    $amount = $this->honorarios * $this->quantity;
+    $amount = $this->honorarios;
     return number_format($amount, 5, '.', '');
   }
 
