@@ -6,6 +6,54 @@ use Illuminate\Database\Eloquent\Model;
 
 class CasoProducto extends Model
 {
+  // Definición de constantes
+  public const HIPOTECARIO = 2;
+  public const LEASING = 3;
+  public const LEASING_DESINSCRIPCION = 4;
+  public const LEASING_PROCESOS_COBRATORIOS = 5;
+  public const PRENDARIO = 11;
+  public const CUENTA_CORRIENTE = 13;
+  public const FIDEICOMISO = 14;
+  public const PERSONAL = 15;
+  public const PYME = 16;
+  public const TARJETA_CREDITO = 17;
+  public const CREDITO_CONSUMO = 18;
+  public const LEASING_COBRO_ADMINISTRATIVO = 19;
+  public const LEASING_BIENES_CANCELADOS_NO_TRASPASADOS = 20;
+  public const LEASING_MARCHAMOS = 21;
+  public const CREDITO_PERSONAL = 22;
+  public const CREDITO_COMERCIAL = 23;
+  public const CREDITO_PRENDARIO = 24;
+  public const CREDITO_HIPOTECARIO = 25;
+  public const CREDITO_LIBRANZA = 26;
+  public const MONITORIO = 27;
+  public const LEVANTAMIENTO_GRAVAMENES = 28;
+  public const LEASING_LEVANTAMIENTO_GRAVAMEN = 29;
+  public const GARANTIA_MOBILIARIA = 30;
+  public const LETRA_CAMBIO = 31;
+  public const PAGARE = 32;
+  public const AUTOCRED = 45;
+  public const BANCA_DESARROLLO = 46;
+  public const CONSUMO = 47;
+  public const CORPORATIVO = 48;
+  public const CREDITO_CREDIFACIL = 49;
+  public const CPA = 50;
+  public const NO_APLICA = 56;
+  public const CREDITO_CONSUMO_ALT = 58;
+  public const PYMES = 61;
+  public const HIPOTECA = 62;
+  public const PRENDA = 63;
+  public const DFGDE = 64;
+  public const SOBREGIRO = 65;
+  public const FACTURAS = 66;
+  public const CHEQUE = 67;
+  public const COBRO_ADMINISTRATIVO = 68;
+  public const FRAUDE = 69;
+  public const EJECUCION_NOTARIAL_EJECUCION_PRENDARIA = 70;
+  public const DACION_PAGO = 71;
+  public const MICROCREDITOS = 72;
+  public const CONCURSALES = 78;
+
   // Nombre de la tabla
   protected $table = 'casos_productos';
 

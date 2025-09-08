@@ -1,177 +1,222 @@
 <?php
 use App\Models\User;
 use App\Models\CasoEstado;
+use App\Models\CasoProducto;
+$show = false;
+//@if (in_array($this->product_id, [CasoProducto::TARJETA_CREDITO, CasoProducto::PYME, CasoProducto::PERSONAL]))
 ?>
 <!-- Formulario para productos -->
 <form wire:submit.prevent="{{ $action == 'edit' ? 'update' : 'store' }}">
+
+{{-- Información del caso (siempre) --}}
+@if ($this->panels['info'])
 <div class="row g-6">
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h4 class="mb-0"><span class="badge bg-primary">1. {{ __('Información del Caso') }}</span></h4><br>
+        <h4 class="mb-0"><span class="badge bg-primary">{{ __('Información del Caso') }}</span></h4><br>
         @include('livewire.casos.partials.scotiabank.panels.info-caso')
       </div>
     </div>
   </div>
 </div>
+@endif
 
+{{-- Notificación --}}
+@if ($this->panels['notificacion'])
 <div class="row g-6">
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h4 class="mb-0"><span class="badge bg-secondary text-white">2. {{ __('Notificación - Public Edicto') }}</span></h4><br>
+        <h4 class="mb-0"><span class="badge bg-secondary text-white">{{ $this->titleNotification }}</span></h4><br>
         @include('livewire.casos.partials.scotiabank.panels.notificacion-caso')
       </div>
     </div>
   </div>
 </div>
+@endif
 
+{{-- Sentencia --}}
+@if ($this->panels['sentencia'])
 <div class="row g-6">
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h4 class="mb-0"><span class="badge bg-warning text-white">3. {{ __('Sentencia y/o remate') }}</span></h4><br>
+        <h4 class="mb-0"><span class="badge bg-warning text-white">{{ __('Sentencia y/o remate') }}</span></h4><br>
         @include('livewire.casos.partials.scotiabank.panels.sentencia-caso')
       </div>
     </div>
   </div>
 </div>
+@endif
 
+{{-- Arreglo --}}
+@if ($this->panels['arreglo'])
 <div class="row g-6">
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h4 class="mb-0"><span class="badge bg-success text-white">4. {{ __('Arreglo de pago / Tentativa de traspaso') }}</span></h4><br>
+        <h4 class="mb-0"><span class="badge bg-success text-white">{{ __('Arreglo de pago / Tentativa de traspaso') }}</span></h4><br>
         @include('livewire.casos.partials.scotiabank.panels.arreglo-caso')
       </div>
     </div>
   </div>
 </div>
+@endif
 
+{{-- Aprobación --}}
+@if ($this->panels['aprobacion'])
 <div class="row g-6">
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h4 class="mb-0"><span class="badge bg-info text-white">5. {{ __('Aprobación o ejecución') }}</span></h4><br>
+        <h4 class="mb-0"><span class="badge bg-info text-white">{{ __('Aprobación o ejecución') }}</span></h4><br>
         @include('livewire.casos.partials.scotiabank.panels.aprobacion-caso')
       </div>
     </div>
   </div>
 </div>
+@endif
 
+{{-- Traspaso --}}
+@if ($this->panels['traspaso'])
 <div class="row g-6">
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h4 class="mb-0"><span class="badge bg-primary text-white">6. {{ __('Traspaso') }}</span></h4><br>
+        <h4 class="mb-0"><span class="badge bg-primary text-white">{{ __('Traspaso') }}</span></h4><br>
         @include('livewire.casos.partials.scotiabank.panels.traspaso-caso')
       </div>
     </div>
   </div>
 </div>
+@endif
 
+{{-- Terminación --}}
+@if ($this->panels['terminacion'])
 <div class="row g-6">
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h4 class="mb-0"><span class="badge bg-danger text-white">7. {{ __('Terminaciòn del proceso') }}</span></h4><br>
+        <h4 class="mb-0"><span class="badge bg-danger text-white">{{ __('Terminaciòn del proceso') }}</span></h4><br>
         @include('livewire.casos.partials.scotiabank.panels.terminacion-caso')
       </div>
     </div>
   </div>
 </div>
+@endif
 
+{{-- Levantamiento --}}
+@if ($this->panels['levantamiento'])
 <div class="row g-6">
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h4 class="mb-0"><span class="badge bg-success text-white">8. {{ __('Proceso de levantamiento') }}</span></h4><br>
+        <h4 class="mb-0"><span class="badge bg-success text-white">{{ __('Proceso de levantamiento') }}</span></h4><br>
         @include('livewire.casos.partials.scotiabank.panels.levantamiento-caso')
       </div>
     </div>
   </div>
 </div>
+@endif
 
+{{-- Facturación --}}
+@if ($this->panels['facturacion'])
 <div class="row g-6">
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h4 class="mb-0"><span class="badge bg-primary text-white">9. {{ __('Facturaciòn') }}</span></h4><br>
+        <h4 class="mb-0"><span class="badge bg-primary text-white">{{ __('Facturaciòn') }}</span></h4><br>
         @include('livewire.casos.partials.scotiabank.panels.facturacion-caso')
       </div>
     </div>
   </div>
 </div>
+@endif
 
-
+{{-- Segmento empresas --}}
+@if ($this->panels['segmento'])
 <div class="row g-6">
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h4 class="mb-0"><span class="badge bg-secundary text-white">10. {{ __('Segmento empresas de gran tamaño') }}</span></h4><br>
+        <h4 class="mb-0"><span class="badge bg-secundary text-white">{{ __('Segmento empresas de gran tamaño') }}</span></h4><br>
         @include('livewire.casos.partials.scotiabank.panels.segmento-caso')
       </div>
     </div>
   </div>
 </div>
+@endif
 
+{{-- Denuncia --}}
+@if ($this->panels['denuncia'])
 <div class="row g-6">
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h4 class="mb-0"><span class="badge bg-info text-white">11. {{ __('Casos con Denuncia de Robo') }}</span></h4><br>
+        <h4 class="mb-0"><span class="badge bg-info text-white">{{ __('Casos con Denuncia de Robo') }}</span></h4><br>
         @include('livewire.casos.partials.scotiabank.panels.denuncia-caso')
       </div>
     </div>
   </div>
 </div>
+@endif
 
+{{-- Anotaciones --}}
+@if ($this->panels['anotaciones'])
 <div class="row g-6">
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h4 class="mb-0"><span class="badge bg-black text-white">12. {{ __('Casos con anotaciones de pèrdidas total o traspaso defectuoso') }}</span></h4><br>
+        <h4 class="mb-0"><span class="badge bg-black text-white">{{ __('Casos con anotaciones de pèrdidas total o traspaso defectuoso') }}</span></h4><br>
         @include('livewire.casos.partials.scotiabank.panels.anotaciones-caso')
       </div>
     </div>
   </div>
 </div>
+@endif
 
+{{-- Bienes --}}
+@if ($this->panels['bienes'])
 <div class="row g-6">
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h4 class="mb-0"><span class="badge bg-info text-white">13. {{ __('Bienes con gravamen y colisiones') }}</span></h4><br>
+        <h4 class="mb-0"><span class="badge bg-info text-white">{{ __('Bienes con gravamen y colisiones') }}</span></h4><br>
         @include('livewire.casos.partials.scotiabank.panels.bienes-caso')
       </div>
     </div>
   </div>
 </div>
+@endif
 
+{{-- Filtro1 --}}
+@if ($this->panels['filtro1'])
 <div class="row g-6">
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h4 class="mb-0"><span class="badge bg-danger text-white">14. {{ __('Panel Remanente filtro1') }}</span></h4><br>
+        <h4 class="mb-0"><span class="badge bg-danger text-white">{{ __('Panel Remanente filtro1') }}</span></h4><br>
         @include('livewire.casos.partials.scotiabank.panels.filtro1-caso')
       </div>
     </div>
   </div>
 </div>
+@endif
 
+{{-- Filtro2 --}}
+@if ($this->panels['filtro2'])
 <div class="row g-6">
   <div class="col-md">
     <div class="card">
       <div class="card-body">
-        <h4 class="mb-0"><span class="badge bg-warning text-white">15. {{ __('Panel Remanente filtro2') }}</span></h4><br>
+        <h4 class="mb-0"><span class="badge bg-warning text-white">{{ __('Panel Remanente filtro2') }}</span></h4><br>
         @include('livewire.casos.partials.scotiabank.panels.filtro2-caso')
       </div>
     </div>
   </div>
 </div>
-
-
-
+@endif
 
 <div class="row g-6">
   <div class="col-md">
@@ -220,7 +265,7 @@ use App\Models\CasoEstado;
       wireIgnore: true,
     },
     product_id: {
-      fireEvent: false,
+      fireEvent: true,
       wireIgnore: true,
     },
     proceso_id: {

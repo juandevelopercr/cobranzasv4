@@ -135,7 +135,7 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
   Route::get('billing/comprobantes', [InvoiceController::class, 'comprobante'])->name('billing-comprobantes-electronicos');
 
   // CRUD PRODUCTS
-  Route::get('casos', [CasoController::class, 'index'])->name('casos.index');         // Listar usuarios
+  Route::get('casos', [CasoController::class, 'scotiabank'])->name('casos.index');         // Listar usuarios
 
   // CRUD PROFORMAS
   Route::get('settings/business', [SettingController::class, 'index'])->name('settings-business');

@@ -357,6 +357,7 @@ class TransactionChargeManager extends BaseComponent
   {
     try {
       $record = TransactionOtherCharge::findOrFail($recordId);
+      $transaction_id = $record->transaction_id;
 
       if ($record->delete()) {
 
@@ -369,6 +370,8 @@ class TransactionChargeManager extends BaseComponent
         if (empty($this->selectedIds)) {
           $this->selectAll = false;
         }
+
+        $this->dispatch('chargeUpdated', $transaction_id);  // Emitir evento para otros componentes
 
         // Emitir actualización
         $this->dispatch('updateSelectedIds', $this->selectedIds);

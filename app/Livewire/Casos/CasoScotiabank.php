@@ -28,6 +28,7 @@ use Livewire\WithPagination;
 
 class CasoScotiabank extends CasoManager
 {
+  public $titleNotification = 'Notificación - Public Edicto';
 
   #[Computed]
   public function estadosLevantamientos()
@@ -1118,6 +1119,9 @@ class CasoScotiabank extends CasoManager
   {
     $this->resetErrorBag($propertyName);
     $this->resetValidation();
+    if ($propertyName == 'product_id') {
+      $this->getPanelsProperty();
+    }
     $this->dispatch('select2');
   }
 
@@ -1523,5 +1527,91 @@ class CasoScotiabank extends CasoManager
 
     // Llama al método de actualización
     $this->update();
+  }
+
+  public function getPanelsProperty()
+  {
+    $panels = [
+      'info' => true, // siempre se muestra
+      'notificacion' => false,
+      'sentencia' => false,
+      'arreglo' => false,
+      'aprobacion' => false,
+      'traspaso' => false,
+      'terminacion' => false,
+      'levantamiento' => false,
+      'facturacion' => false,
+      'segmento' => false,
+      'denuncia' => false,
+      'anotaciones' => false,
+      'bienes' => false,
+      'filtro1' => false,
+      'filtro2' => false,
+    ];
+
+    $this->titleNotification = 'Notificación - Public Edicto';
+
+    switch ($this->product_id) {
+      case CasoProducto::TARJETA_CREDITO:
+      case CasoProducto::PYME:
+      case CasoProducto::PERSONAL:
+        $panels['traspaso'] = true;
+        break;
+
+      case CasoProducto::HIPOTECARIO:
+      case CasoProducto::PRENDARIO:
+      case CasoProducto::FIDEICOMISO:
+      case CasoProducto::TARJETA_CREDITO:
+      case CasoProducto::PERSONAL:
+      case CasoProducto::CREDITO_CONSUMO:
+      case CasoProducto::CUENTA_CORRIENTE:
+        $panels['notificacion'] = true;
+        $panels['sentencia'] = true;
+        $panels['arreglo'] = true;
+        $panels['aprobacion'] = true;
+        $panels['terminacion'] = true;
+        break;
+
+      case CasoProducto::LEASING:
+      case CasoProducto::LEASING_COBRO_ADMINISTRATIVO:
+      case CasoProducto::LEASING_BIENES_CANCELADOS_NO_TRASPASADOS:
+        $panels['notificacion'] = true;
+        $panels['arreglo'] = true;
+        $panels['traspaso'] = ($this->product_id !== CasoProducto::LEASING);
+        $panels['terminacion'] = true;
+        $panels['sentencia'] = true;
+        $this->titleNotification = 'Notificación y captura';
+        break;
+
+      case CasoProducto::LEASING_LEVANTAMIENTO_GRAVAMEN:
+        $panels['levantamiento'] = true;
+        $panels['facturacion'] = true;
+        $panels['terminacion'] = true;
+        $panels['arreglo'] = true;
+        $panels['aprobacion'] = true;
+        break;
+
+      case CasoProducto::LEASING_MARCHAMOS:
+        $panels['segmento'] = true;
+        $panels['denuncia'] = true;
+        $panels['anotaciones'] = true;
+        $panels['bienes'] = true;
+        $panels['filtro1'] = true;
+        $panels['filtro2'] = true;
+        $panels['terminacion'] = true;
+        $panels['arreglo'] = true;
+        break;
+
+      default:
+        // Predeterminado (prendario/hipotecario)
+        $panels['notificacion'] = true;
+        $panels['sentencia'] = true;
+        $panels['arreglo'] = true;
+        $panels['aprobacion'] = true;
+        $panels['terminacion'] = true;
+        break;
+    }
+
+    return $panels;
   }
 }
