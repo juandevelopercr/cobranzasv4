@@ -130,6 +130,7 @@ class TransactionChargeManager extends BaseComponent
   public function create()
   {
     $this->resetErrorBag(); // Limpia los errores de validación previos
+    $this->resetControls();
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
 
     $transaction = Transaction::with('otherCharges')->find($this->transaction_id);
