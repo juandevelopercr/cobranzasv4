@@ -212,7 +212,7 @@
 
           <input id="saldo_cancelar"
                 x-ref="cleaveInput"
-                class="form-control js-input-saldo-cancelar numeral-mask cleave-init"
+                class="form-control js-input-saldo-cancelar numeral-mask cleave-init fw-bold"
                 type="text"
                 wire:model="saldo_cancelar"
                 disabled/>
@@ -387,7 +387,7 @@
             <input type="text"
             id="diferencia"
             x-ref="cleaveInput"
-            class="form-control js-input-diferencia cleave-init"
+            class="form-control js-input-diferencia cleave-init fw-bold text-danger"
             wire:model="diferencia"
             disabled/>
           </div>
