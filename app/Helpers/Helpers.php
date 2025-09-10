@@ -869,7 +869,7 @@ class Helpers
 
     return $msg;
   }
-  
+
   public static function validateProformaToConvertInvoice($transaction)
   {
     $msg = [];

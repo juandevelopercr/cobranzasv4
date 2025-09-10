@@ -1029,7 +1029,7 @@ class MovimientoManager extends BaseComponent
         'visible' => true,
       ],
       [
-        'field' => '',
+        'field' => 'codigo_contable',
         'orderName' => '',
         'label' => __('Código contable'),
         'filter' => 'filter_codigo_contable',
@@ -1048,7 +1048,7 @@ class MovimientoManager extends BaseComponent
         'visible' => true,
       ],
       [
-        'field' => '',
+        'field' => 'centro_costo',
         'orderName' => '',
         'label' => __('Centro de costo'),
         'filter' => 'filter_centro_costo',
