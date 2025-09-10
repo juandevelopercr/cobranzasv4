@@ -246,6 +246,7 @@ class TransactionLineManager extends BaseComponent
   public function create()
   {
     $this->resetErrorBag(); // Limpia los errores de validación previos
+    $this->resetControls();
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
     $this->action = 'create';
     $this->quantity = 1;

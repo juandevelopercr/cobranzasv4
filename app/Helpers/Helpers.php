@@ -836,6 +836,25 @@ class Helpers
       $msg[] = __('The invoice must have at least one line of detail or other charges') . '<br>';
     }
 
+    if (!$transaction->caso) {
+      $msg[] = __('Debe asignar un caso antes de solicitar la factura') . '<br>';
+    }
+
+    //Validar datos del cliente si tiene marcado tipo FACTURA
+    if ($transaction->contact->invoice_type == Contact::FACTURA) {
+      if (!$transaction->contact->province_id)
+        $msg[] = __('El cliente no tiene definida la provincia, por favor corrija e intente nuevamente') . '<br>';
+
+      if (!$transaction->contact->canton_id)
+        $msg[] = __('El cliente no tiene definido el cantón, por favor corrija e intente nuevamente') . '<br>';
+
+      if (!$transaction->contact->district_id)
+        $msg[] = __('El cliente no tiene definido el distrito, por favor corrija e intente nuevamente') . '<br>';
+
+      if (!$transaction->contact->other_signs || strlen($transaction->contact->other_signs) < 5)
+        $msg[] = __('El cliente no tiene definida la información de otras señas o tiene menos de 5 caracteres, por favor corrija e intente nuevamente') . '<br>';
+    }
+
     /*
     $distributorPercentAmount = $transaction->commisions()->sum('percent');
     if (is_null($distributorPercentAmount) || $distributorPercentAmount < 100) {
@@ -850,7 +869,7 @@ class Helpers
 
     return $msg;
   }
-
+  
   public static function validateProformaToConvertInvoice($transaction)
   {
     $msg = [];
