@@ -354,7 +354,7 @@
 
           <input id="total_general"
                 x-ref="cleaveInput"
-                class="form-control js-input-total-general numeral-mask cleave-init"
+                class="form-control js-input-total-general numeral-mask cleave-init fw-bold"
                 type="text"
                 wire:model ="total_general"
                 disabled/>
