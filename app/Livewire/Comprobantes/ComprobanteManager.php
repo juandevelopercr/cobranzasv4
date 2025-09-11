@@ -54,9 +54,11 @@ class ComprobanteManager extends Component
   public $emisor_nombre;
   public $emisor_tipo_identificacion;
   public $emisor_numero_identificacion;
+
   public $receptor_nombre;
   public $receptor_tipo_identificacion;
   public $receptor_numero_identificacion;
+
   public $tipo_cambio;
   public $total_impuestos;
   public $total_exento;
@@ -253,7 +255,7 @@ class ComprobanteManager extends Component
       'respuesta_hacienda' => 'nullable|string',
 
       'mensajeConfirmacion' => 'required|in:ACEPTADO,ACEPTADOPARCIAL,RECHAZADO',
-      'detalle' => 'required|string|max:80',
+      'detalle' => 'required_if:mensajeConfirmacion,RECHAZADO|string|max:150',
 
       // Mantener estos campos como requeridos
       'key' => 'required|string|max:50|unique:comprobantes,key',
@@ -319,7 +321,7 @@ class ComprobanteManager extends Component
       // Extraer datos básicos del comprobante
       $this->key = (string)($findElement('Clave') ?? '');
       $this->fecha_emision = date('Y-m-d\TH:i', strtotime((string)($findElement('FechaEmision') ?? now())));
-      $this->codigo_actividad = (string)($findElement('CodigoActividad') ?? '');
+      $this->codigo_actividad = (string)($findElement('CodigoActividadEmisor') ?? '');
       $this->situacion_comprobante = (string)($findElement('SituacionComprobante') ?? '1');
 
       // Extraer datos del emisor
@@ -442,6 +444,7 @@ class ComprobanteManager extends Component
 
   public function store()
   {
+    //dd($this);
     $this->validate();
     try {
       // Obtener el emisor del comprobante
@@ -1292,6 +1295,7 @@ class ComprobanteManager extends Component
     //Loguearme en hacienda para obtener el token
     $username = $comprobante->location->api_user_hacienda;
     $password = $comprobante->location->api_password;
+    $token = null;
     try {
       $authService = new AuthService();
       $token = $authService->getToken($username, $password);
@@ -1302,7 +1306,6 @@ class ComprobanteManager extends Component
         'message' => "Ha ocurrido un error al intentar identificarse en la api de hacienda",
       ]);
     }
-
     $tipoDocumento = $comprobante->getComprobanteCode();
 
     $api = new ApiHacienda();
