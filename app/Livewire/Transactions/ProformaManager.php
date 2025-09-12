@@ -746,7 +746,7 @@ class ProformaManager extends TransactionManager
     ];
 
     if ($this->condition_sale == '02') {
-      $rules['pay_term_number'] = 'required|integer|min:1|max:100';
+      $rules['pay_term_number'] = 'required|integer|min:1|max:1000';
     } else {
       $rules['pay_term_number'] = 'nullable';
     }
