@@ -148,6 +148,8 @@
           <option value="30">30</option>
           <option value="45">45</option>
           <option value="60">60</option>
+          <option value="90">90</option>
+          <option value="120">120</option>
         </select>
         @error('pay_term_number')
         <div class="text-danger mt-1">{{ $message }}</div>
