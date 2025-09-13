@@ -246,9 +246,7 @@
     </div>
 
     <br>
-    @php
-    /*
-    <h6>4. {{ __('Emails Setting for Imap') }}</h6>
+    <h6>3. {{ __('Emails Setting for Imap') }}</h6>
     <div class="row g-6">
       <div class="col-md-4 fv-plugins-icon-container">
           <label class="form-label" for="host_imap">{{ __('Host imap') }}</label>
@@ -308,9 +306,6 @@
         @enderror
       </div>
     </div>
-    */
-    @endphp
-
 
     <br>
     <h6>4. {{ __('Medication Registry') }}</h6>

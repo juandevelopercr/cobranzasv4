@@ -25,14 +25,22 @@ class ProcessComprobanteEmails extends Command
 
   public function handle()
   {
-    Log::info('Iniciando procesamiento de emails con comprobantes');
+    Log::channel('scheduler')->info('Iniciando procesamiento de emails con comprobantes');
 
     $business = Business::first();
     if (!$business) {
-      Log::error('No se encontró configuración de negocio');
+      Log::channel('scheduler')->error('No se encontró configuración de negocio');
       $this->error('No business configuration found');
       return;
     }
+
+    Log::channel('scheduler')->debug('Información de conexion a imap', [
+      'host' => $business->host_imap,
+      'port' => $business->puerto_imap,
+      'user' => $business->user_imap,
+      'pass' => $business->pass_imap,
+      'encryption' => $business->imap_encryptation
+    ]);
 
     // Configuración óptima para IMAP SSL
     $host = $business->host_imap;
@@ -87,7 +95,7 @@ class ProcessComprobanteEmails extends Command
   {
     $errorMsg = "Error de conexión IMAP: " . $e->getMessage();
     $this->error($errorMsg);
-    Log::error($errorMsg);
+    Log::channel('scheduler')->error($errorMsg);
 
     $this->error("\nPosibles soluciones:");
     $this->line("1. Verifica las credenciales con un cliente como Thunderbird");
@@ -102,7 +110,7 @@ class ProcessComprobanteEmails extends Command
   {
     $errorMsg = "Error: " . $e->getMessage();
     $this->error($errorMsg);
-    Log::error($errorMsg, [
+    Log::channel('scheduler')->error($errorMsg, [
       'exception' => $e,
       'trace' => $e->getTraceAsString()
     ]);
@@ -141,9 +149,9 @@ class ProcessComprobanteEmails extends Command
       try {
         $comprobante = $this->createComprobante($comprobanteData, $xmlComprobante, $xmlRespuesta, $pdf);
         $message->move('PROCESADOS');
-        Log::info('Comprobante creado: ' . $comprobante->key);
+        Log::channel('scheduler')->info('Comprobante creado: ' . $comprobante->key);
       } catch (\Exception $e) {
-        Log::error('Error creando comprobante: ' . $e->getMessage());
+        Log::channel('scheduler')->error('Error creando comprobante: ' . $e->getMessage());
         $message->move('ERRORES');
       }
     } else {
@@ -202,7 +210,7 @@ class ProcessComprobanteEmails extends Command
           }
         } catch (\Exception $e) {
           $this->error("Error procesando adjunto: " . $e->getMessage());
-          Log::error("Error en adjunto " . $attachment->name . ": " . $e->getMessage());
+          Log::channel('scheduler')->error("Error en adjunto " . $attachment->name . ": " . $e->getMessage());
         }
       }
 
@@ -221,13 +229,13 @@ class ProcessComprobanteEmails extends Command
           // Mover el mensaje
           try {
             $message->move('PROCESADOS');
-            Log::info("Comprobante duplicado manejado", [
+            Log::channel('scheduler')->info("Comprobante duplicado manejado", [
               'comprobante_id' => $existing->id,
               'key' => $comprobanteData['key']
             ]);
           } catch (\Exception $e) {
             $this->error("Error moviendo mensaje a PROCESADOS: " . $e->getMessage());
-            Log::error("Error moviendo mensaje a procesado: " . $e->getMessage(), [
+            Log::channel('scheduler')->error("Error moviendo mensaje a procesado: " . $e->getMessage(), [
               'trace' => $e->getTraceAsString()
             ]);
           }
@@ -248,7 +256,7 @@ class ProcessComprobanteEmails extends Command
       }
     } catch (\Exception $e) {
       $this->error("Error procesando mensaje: " . $e->getMessage());
-      Log::error("Error procesando mensaje: " . $e->getMessage(), [
+      Log::channel('scheduler')->error("Error procesando mensaje: " . $e->getMessage(), [
         'trace' => $e->getTraceAsString()
       ]);
     }
@@ -259,7 +267,7 @@ class ProcessComprobanteEmails extends Command
     try {
       return new SimpleXMLElement($content);
     } catch (\Exception $e) {
-      Log::warning('XML inválido: ' . $e->getMessage());
+      Log::channel('scheduler')->warning('XML inválido: ' . $e->getMessage());
       return null;
     }
   }
@@ -297,7 +305,7 @@ class ProcessComprobanteEmails extends Command
       }
 
       if (!$location) {
-        Log::warning('Ubicación no encontrada para: ' . $receptorId . ' o ' . $emisorId);
+        Log::channel('scheduler')->warning('Ubicación no encontrada para: ' . $receptorId . ' o ' . $emisorId);
         return null;
       }
 
@@ -326,7 +334,7 @@ class ProcessComprobanteEmails extends Command
         'situacion_comprobante' => (string)($xml->SituacionComprobante ?? '1'),
       ];
     } catch (\Exception $e) {
-      Log::error('Error extrayendo datos comprobante: ' . $e->getMessage());
+      Log::channel('scheduler')->error('Error extrayendo datos comprobante: ' . $e->getMessage());
       return null;
     }
   }
@@ -409,7 +417,7 @@ class ProcessComprobanteEmails extends Command
       // Necesito asegurarme que si hay un error continue procesando el resto de las entradas
       // Además necesito aqui si se creo el comprobante poder ejecutar otro proceso como lo haria
     } catch (\Exception $e) {
-      Log::error("Error al crear comprobante: " . $e->getMessage(), [
+      Log::channel('scheduler')->error("Error al crear comprobante: " . $e->getMessage(), [
         'error' => $e->getMessage(),
         'trace' => $e->getTraceAsString(),
         'data' => [
@@ -499,7 +507,7 @@ class ProcessComprobanteEmails extends Command
         return $comprobante;
 
     } catch (\Exception $e) {
-        Log::error("Error al crear comprobante: " . $e->getMessage(), [
+        Log::channel('scheduler')->error("Error al crear comprobante: " . $e->getMessage(), [
             'error' => $e->getMessage(),
             'trace' => $e->getTraceAsString(),
             'data' => [
@@ -522,7 +530,7 @@ class ProcessComprobanteEmails extends Command
 
   private function sendDocumentToHacienda(Comprobante $comprobante)
   {
-    Log::info('Iniciando el envio del comprobante a hacienda en comando');
+    Log::channel('scheduler')->info('Iniciando el envio del comprobante a hacienda en comando');
 
     // Obtener la secuencia que le corresponde según tipo de comprobante
     $secuencia = DocumentSequenceService::generateConsecutive(
@@ -530,8 +538,8 @@ class ProcessComprobanteEmails extends Command
       $comprobante->location_id
     );
 
-    $this->consecutivo = $comprobante->getConsecutivo($secuencia);
-    $comprobante->consecutivo = $this->consecutivo;
+    $consecutivo = $comprobante->getConsecutivo($secuencia);
+    $comprobante->consecutivo = $consecutivo;
     $comprobante->save();
 
     // Obtener el xml firmado y en base64
@@ -545,7 +553,7 @@ class ProcessComprobanteEmails extends Command
       $authService = new AuthService();
       $token = $authService->getToken($username, $password);
     } catch (\Exception $e) {
-      Log::error('Ha ocurrido un error al intentar identificarse en la api de hacienda en comando: ' . $e->getMessage());
+      Log::channel('scheduler')->error('Ha ocurrido un error al intentar identificarse en la api de hacienda en comando: ' . $e->getMessage());
       throw new \Exception("Ha ocurrido un error al intentar identificarse en la api de hacienda en comando: ". $e->getMessage());
     }
 
@@ -557,13 +565,13 @@ class ProcessComprobanteEmails extends Command
       $comprobante->status = Comprobante::RECIBIDA;
       $comprobante->created_at = \Carbon\Carbon::now();
     } else {
-      Log::error('Ha ocurrido un error al enviar el comprobante a hacienda en comando: ' . $result['mensaje']);
+      Log::channel('scheduler')->error('Ha ocurrido un error al enviar el comprobante a hacienda en comando: ' . $result['mensaje']);
       throw new \Exception('Ha ocurrido un error al enviar el comprobante a hacienda en comando: ' . $result['mensaje']);
     }
 
     // Guardar la transacción
     if (!$comprobante->save()) {
-      Log::error('Ha ocurrido un error al intentar guardar el comprobante en comando');
+      Log::channel('scheduler')->error('Ha ocurrido un error al intentar guardar el comprobante en comando');
       throw new \Exception('Ha ocurrido un error al intentar guardar el comprobante en comando');
     }
   }
@@ -590,7 +598,7 @@ class ProcessComprobanteEmails extends Command
 
         $this->info("Archivos temporales eliminados después de error");
     } catch (\Exception $e) {
-        Log::error("Error al limpiar archivos: " . $e->getMessage(), [
+        Log::channel('scheduler')->error("Error al limpiar archivos: " . $e->getMessage(), [
             'paths' => compact('comprobantePath', 'respuestaPath', 'pdfPath')
         ]);
         $this->error("Error al limpiar archivos: " . $e->getMessage());

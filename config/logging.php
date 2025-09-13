@@ -112,6 +112,12 @@ return [
       'replace_placeholders' => true,
     ],
 
+    'scheduler' => [
+        'driver' => 'single',
+        'path' => storage_path('logs/scheduler.log'),
+        'level' => 'info',
+    ],
+
     'errorlog' => [
       'driver' => 'errorlog',
       'level' => env('LOG_LEVEL', 'debug'),
