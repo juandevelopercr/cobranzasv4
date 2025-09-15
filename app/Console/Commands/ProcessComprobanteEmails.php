@@ -20,6 +20,10 @@ use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
 
 class ProcessComprobanteEmails extends Command
 {
+  /*
+  php artisan comprobantes:process-emails
+  */
+
   protected $signature = 'comprobantes:process-emails';
   protected $description = 'Procesa emails con comprobantes electrónicos';
 
@@ -34,6 +38,12 @@ class ProcessComprobanteEmails extends Command
       return;
     }
 
+    // Configuración óptima para IMAP SSL
+    $host = $business->host_imap;
+    $port = $business->puerto_imap;
+    $encryption = $business->imap_encryptation;
+    $validateCert = false;
+
     Log::channel('scheduler')->debug('Información de conexion a imap', [
       'host' => $business->host_imap,
       'port' => $business->puerto_imap,
@@ -42,13 +52,16 @@ class ProcessComprobanteEmails extends Command
       'encryption' => $business->imap_encryptation
     ]);
 
-    // Configuración óptima para IMAP SSL
-    $host = $business->host_imap;
-    $port = $business->puerto_imap;
-    $encryption = $business->imap_encryptation;;
-    $validateCert = false;
+    // Mostrar en consola la información (sin exponer la contraseña)
+    $this->info("Conectando a IMAP:");
+    $this->line("  Host: {$host}");
+    $this->line("  Port: {$port}");
+    $this->line("  User: {$business->user_imap}");
+    $this->line("  Encryption: {$encryption}");
+    // Si quieres mostrar la pass, mejor enmascarada
+    $this->line("  Pass: " . str_repeat('*', strlen($business->pass_imap)));
 
-    $this->info("Conectando a: {$host}:{$port} (SSL)");
+    //$this->info("Conectando a: {$host}:{$port} (SSL)");
 
     try {
       // Configuración para ClientManager (v6.x)
@@ -116,49 +129,6 @@ class ProcessComprobanteEmails extends Command
     ]);
   }
 
-  /*
-  private function processMessage($message, Business $business)
-  {
-    $attachments = $message->getAttachments();
-    $comprobanteData = null;
-    $xmlComprobante = null;
-    $xmlRespuesta = null;
-    $pdf = null;
-
-    // Procesar adjuntos
-    foreach ($attachments as $attachment) {
-      $extension = strtolower(pathinfo($attachment->name, PATHINFO_EXTENSION));
-
-      if ($extension === 'xml') {
-        $content = $attachment->content;
-        $xml = $this->parseXml($content);
-
-        if ($xml && $this->isComprobanteXml($xml)) {
-          $comprobanteData = $this->extractComprobanteData($xml, $business);
-          $xmlComprobante = $content;
-        } elseif ($xml && $this->isRespuestaXml($xml)) {
-          $xmlRespuesta = $content;
-        }
-      } elseif ($extension === 'pdf') {
-        $pdf = $attachment->content;
-      }
-    }
-
-    // Crear comprobante si tenemos datos válidos
-    if ($comprobanteData) {
-      try {
-        $comprobante = $this->createComprobante($comprobanteData, $xmlComprobante, $xmlRespuesta, $pdf);
-        $message->move('PROCESADOS');
-        Log::channel('scheduler')->info('Comprobante creado: ' . $comprobante->key);
-      } catch (\Exception $e) {
-        Log::channel('scheduler')->error('Error creando comprobante: ' . $e->getMessage());
-        $message->move('ERRORES');
-      }
-    } else {
-      $message->move('RECHAZADOS');
-    }
-  }
-  */
   private function processMessage($message, Business $business)
   {
     try {
@@ -312,26 +282,36 @@ class ProcessComprobanteEmails extends Command
       return [
         'location_id' => $location->id,
         'key' => (string)$xml->Clave,
-        //'consecutivo' => (string)$xml->NumeroConsecutivo,
         'fecha_emision' => (string)$xml->FechaEmision,
+        'codigo_actividad' => (string)($xml->CodigoActividadEmisor ?? ''),
+        'codigo_actividad_receptor' => (string)($xml->CodigoActividadReceptor ?? ''),
+        'situacion_comprobante' => (string)($xml->SituacionComprobante ?? '1'),
+
         'emisor_nombre' => (string)$xml->Emisor->Nombre,
         'emisor_tipo_identificacion' => (string)$xml->Emisor->Identificacion->Tipo,
         'emisor_numero_identificacion' => $emisorId,
-        'receptor_nombre' => (string)$xml->Receptor->Nombre,
-        'receptor_tipo_identificacion' => (string)$xml->Receptor->Identificacion->Tipo,
+
+        'receptor_nombre' => (string)$xml->Receptor->Nombre ?? '',
+        'receptor_tipo_identificacion' => (string)$xml->Receptor->Identificacion->Tipo ?? '',
         'receptor_numero_identificacion' => $receptorId,
-        'total_comprobante' => (float)$xml->ResumenFactura->TotalComprobante,
+
         'tipo_cambio' => (float)($xml->ResumenFactura->TipoCambio ?? 1),
+        'total_comprobante' => (float)$xml->ResumenFactura->TotalComprobante,
+        'total_impuestos' => (float)($xml->ResumenFactura->TotalImpuesto ?? 0),
+        'total_gravado' => (float)($xml->ResumenFactura->TotalGravado ?? 0),
+        'total_exento' => (float)($xml->ResumenFactura->TotalExento ?? 0),
+        'total_descuentos' => (float)($xml->ResumenFactura->TotalDescuentos ?? 0),
         'moneda' => (string)($xml->ResumenFactura->CodigoTipoMoneda->CodigoMoneda ?? 'CRC'),
-        'tipo_documento' => $tipoDocumento,
+
         'condicion_venta' => (string)($xml->CondicionVenta ?? '01'),
         'plazo_credito' => (int)($xml->PlazoCredito ?? 0),
         'medio_pago' => (string)($xml->MedioPago ?? '01'),
+        'clave_referencia' => (string)($xml->NumeroDocumento ?? ''), // Para NC/ND
         'status' => 'PENDIENTE',
+
+        'tipo_documento' => $tipoDocumento,
         'detalle' => 'Comprobante Aceptado',
         'mensajeConfirmacion' => 'ACEPTADO',
-        'codigo_actividad' => (string)($xml->CodigoActividad ?? ''),
-        'situacion_comprobante' => (string)($xml->SituacionComprobante ?? '1'),
       ];
     } catch (\Exception $e) {
       Log::channel('scheduler')->error('Error extrayendo datos comprobante: ' . $e->getMessage());
@@ -358,9 +338,13 @@ class ProcessComprobanteEmails extends Command
     return $map[$rootNode] ?? '01';
   }
 
-  /*
   private function createComprobante(array $data, string $xmlComprobante, ?string $xmlRespuesta, ?string $pdf): ?Comprobante
   {
+    // Variables para almacenar las rutas de los archivos creados
+    $comprobantePath = null;
+    $respuestaPath = null;
+    $pdfPath = null;
+
     try {
       $locationId = $data['location_id'];
       $fechaEmision = Carbon::parse($data['fecha_emision']);
@@ -380,7 +364,6 @@ class ProcessComprobanteEmails extends Command
         throw new \Exception("Error al guardar el XML del comprobante");
       }
 
-      $respuestaPath = null;
       if ($xmlRespuesta) {
         $respuestaFilename = $data['key'] . '_respuesta.xml';
         $respuestaPath = "{$basePath}/{$respuestaFilename}";
@@ -389,7 +372,6 @@ class ProcessComprobanteEmails extends Command
         }
       }
 
-      $pdfPath = null;
       if ($pdf) {
         $pdfFilename = $data['key'] . '.pdf';
         $pdfPath = "{$basePath}/{$pdfFilename}";
@@ -399,7 +381,7 @@ class ProcessComprobanteEmails extends Command
       }
 
       // Crear registro en BD con transacción
-      return DB::transaction(function () use ($data, $comprobantePath, $respuestaPath, $pdfPath) {
+      $comprobante = DB::transaction(function () use ($data, $comprobantePath, $respuestaPath, $pdfPath) {
         $comprobante = Comprobante::create([
           ...$data,
           'xml_path' => $comprobantePath,
@@ -407,15 +389,16 @@ class ProcessComprobanteEmails extends Command
           'pdf_path' => $pdfPath
         ]);
 
-        if (!$comprobante) {
-          throw new \Exception("No se pudo crear el registro en la base de datos");
-        }
-
         return $comprobante;
       });
 
-      // Necesito asegurarme que si hay un error continue procesando el resto de las entradas
-      // Además necesito aqui si se creo el comprobante poder ejecutar otro proceso como lo haria
+      // ============================================================
+      // PUNTO 2: Ejecutar procesos adicionales después de crear el comprobante
+      // ============================================================
+      // Aquí puedes llamar a otros procesos que necesiten ejecutarse después de crear el comprobante
+      $this->sendDocumentToHacienda($comprobante);
+
+      return $comprobante;
     } catch (\Exception $e) {
       Log::channel('scheduler')->error("Error al crear comprobante: " . $e->getMessage(), [
         'error' => $e->getMessage(),
@@ -428,103 +411,13 @@ class ProcessComprobanteEmails extends Command
 
       $this->error("Error al crear comprobante: " . $e->getMessage());
 
-      // Opcional: Revertir archivos guardados si falla la BD
-      if (isset($comprobantePath) && Storage::disk('public')->exists($comprobantePath)) {
-        Storage::disk('public')->delete($comprobantePath);
-      }
-      if (isset($respuestaPath) && Storage::disk('public')->exists($respuestaPath)) {
-        Storage::disk('public')->delete($respuestaPath);
-      }
-      if (isset($pdfPath) && Storage::disk('public')->exists($pdfPath)) {
-        Storage::disk('public')->delete($pdfPath);
-      }
+      // ============================================================
+      // PUNTO 1: Limpiar archivos creados si hubo error
+      // ============================================================
+      // Eliminar archivos guardados si falla la transacción
+      //$this->limpiarArchivosCreados($comprobantePath, $respuestaPath, $pdfPath);
 
       return null;
-    }
-  }
-  */
-
-  private function createComprobante(array $data, string $xmlComprobante, ?string $xmlRespuesta, ?string $pdf): ?Comprobante
-  {
-    // Variables para almacenar las rutas de los archivos creados
-    $comprobantePath = null;
-    $respuestaPath = null;
-    $pdfPath = null;
-
-    try {
-        $locationId = $data['location_id'];
-        $fechaEmision = Carbon::parse($data['fecha_emision']);
-        $year = $fechaEmision->format('Y');
-        $month = $fechaEmision->format('m');
-
-        // Crear estructura de carpetas
-        $basePath = "comprobantes/{$locationId}/{$year}/{$month}";
-        Storage::disk('public')->makeDirectory($basePath);
-
-        // Guardar archivos
-        $comprobanteFilename = $data['key'] . '.xml';
-        $comprobantePath = "{$basePath}/{$comprobanteFilename}";
-        $bytesWritten = Storage::disk('public')->put($comprobantePath, $xmlComprobante);
-
-        if ($bytesWritten === false) {
-            throw new \Exception("Error al guardar el XML del comprobante");
-        }
-
-        if ($xmlRespuesta) {
-            $respuestaFilename = $data['key'] . '_respuesta.xml';
-            $respuestaPath = "{$basePath}/{$respuestaFilename}";
-            if (Storage::disk('public')->put($respuestaPath, $xmlRespuesta) === false) {
-                throw new \Exception("Error al guardar el XML de respuesta");
-            }
-        }
-
-        if ($pdf) {
-            $pdfFilename = $data['key'] . '.pdf';
-            $pdfPath = "{$basePath}/{$pdfFilename}";
-            if (Storage::disk('public')->put($pdfPath, $pdf) === false) {
-                throw new \Exception("Error al guardar el PDF");
-            }
-        }
-
-        // Crear registro en BD con transacción
-        $comprobante = DB::transaction(function () use ($data, $comprobantePath, $respuestaPath, $pdfPath) {
-            $comprobante = Comprobante::create([
-                ...$data,
-                'xml_path' => $comprobantePath,
-                'xml_respuesta_path' => $respuestaPath,
-                'pdf_path' => $pdfPath
-            ]);
-
-            return $comprobante;
-        });
-
-        // ============================================================
-        // PUNTO 2: Ejecutar procesos adicionales después de crear el comprobante
-        // ============================================================
-        // Aquí puedes llamar a otros procesos que necesiten ejecutarse después de crear el comprobante
-        $this->sendDocumentToHacienda($comprobante);
-
-        return $comprobante;
-
-    } catch (\Exception $e) {
-        Log::channel('scheduler')->error("Error al crear comprobante: " . $e->getMessage(), [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-            'data' => [
-                'key' => $data['key'] ?? null,
-                'location_id' => $data['location_id'] ?? null
-            ]
-        ]);
-
-        $this->error("Error al crear comprobante: " . $e->getMessage());
-
-        // ============================================================
-        // PUNTO 1: Limpiar archivos creados si hubo error
-        // ============================================================
-        // Eliminar archivos guardados si falla la transacción
-        //$this->limpiarArchivosCreados($comprobantePath, $respuestaPath, $pdfPath);
-
-        return null;
     }
   }
 
@@ -554,7 +447,7 @@ class ProcessComprobanteEmails extends Command
       $token = $authService->getToken($username, $password);
     } catch (\Exception $e) {
       Log::channel('scheduler')->error('Ha ocurrido un error al intentar identificarse en la api de hacienda en comando: ' . $e->getMessage());
-      throw new \Exception("Ha ocurrido un error al intentar identificarse en la api de hacienda en comando: ". $e->getMessage());
+      throw new \Exception("Ha ocurrido un error al intentar identificarse en la api de hacienda en comando: " . $e->getMessage());
     }
 
     $tipoDocumento = $comprobante->getComprobanteCode();
@@ -582,26 +475,26 @@ class ProcessComprobanteEmails extends Command
   private function limpiarArchivosCreados(?string $comprobantePath, ?string $respuestaPath, ?string $pdfPath)
   {
     try {
-        $disk = Storage::disk('public');
+      $disk = Storage::disk('public');
 
-        if ($comprobantePath && $disk->exists($comprobantePath)) {
-            $disk->delete($comprobantePath);
-        }
+      if ($comprobantePath && $disk->exists($comprobantePath)) {
+        $disk->delete($comprobantePath);
+      }
 
-        if ($respuestaPath && $disk->exists($respuestaPath)) {
-            $disk->delete($respuestaPath);
-        }
+      if ($respuestaPath && $disk->exists($respuestaPath)) {
+        $disk->delete($respuestaPath);
+      }
 
-        if ($pdfPath && $disk->exists($pdfPath)) {
-            $disk->delete($pdfPath);
-        }
+      if ($pdfPath && $disk->exists($pdfPath)) {
+        $disk->delete($pdfPath);
+      }
 
-        $this->info("Archivos temporales eliminados después de error");
+      $this->info("Archivos temporales eliminados después de error");
     } catch (\Exception $e) {
-        Log::channel('scheduler')->error("Error al limpiar archivos: " . $e->getMessage(), [
-            'paths' => compact('comprobantePath', 'respuestaPath', 'pdfPath')
-        ]);
-        $this->error("Error al limpiar archivos: " . $e->getMessage());
+      Log::channel('scheduler')->error("Error al limpiar archivos: " . $e->getMessage(), [
+        'paths' => compact('comprobantePath', 'respuestaPath', 'pdfPath')
+      ]);
+      $this->error("Error al limpiar archivos: " . $e->getMessage());
     }
   }
 }

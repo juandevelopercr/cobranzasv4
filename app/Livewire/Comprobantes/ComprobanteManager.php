@@ -271,6 +271,7 @@ class ComprobanteManager extends Component
       'condicion_venta' => 'required|string|in:01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,99',
       'status' => 'required|in:PENDIENTE,RECIBIDA,ACEPTADA,RECHAZADA',
       'codigo_actividad' => 'required|string|max:6',
+      'codigo_actividad_receptor' => 'nullable|string',
       'situacion_comprobante' => 'required|string|in:1,2,3',
     ];
   }
