@@ -785,7 +785,7 @@
     @enderror
   </div>
 
-  <div class="col-md-12 fv-plugins-icon-container">
+  <div class="col-md-9 fv-plugins-icon-container">
     <label class="form-label" for="pavance_cronologico">{{ __('Avance Cronológico') }}</label>
     <textarea class="form-control" wire:model="pavance_cronologico" name="pavance_cronologico" id="pavance_cronologico" rows="5"
               placeholder="{{ __('Avance Cronológico') }}"></textarea>

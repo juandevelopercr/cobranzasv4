@@ -89,7 +89,7 @@
     @enderror
   </div>
 
-  <div class="col-md-12 fv-plugins-icon-container">
+  <div class="col-md-9 fv-plugins-icon-container">
     <label class="form-label" for="npartes_notificadas">{{ __('Partes Notificadas') }}</label>
     <textarea class="form-control" wire:model="npartes_notificadas" name="npartes_notificadas" id="npartes_notificadas" rows="2"
               placeholder="{{ __('Partes Notificadas') }}"></textarea>
@@ -112,7 +112,7 @@
     @enderror
   </div>
 
-  <div class="col-md-12 fv-plugins-icon-container">
+  <div class="col-md-9 fv-plugins-icon-container">
     <label class="form-label" for="nanotaciones">{{ __('Anotaciones') }}</label>
     <textarea class="form-control" wire:model="nanotaciones" name="nanotaciones" id="nanotaciones" rows="2"
               placeholder="{{ __('Anotaciones') }}"></textarea>
@@ -121,7 +121,7 @@
     @enderror
   </div>
 
-  <div class="col-md-12 fv-plugins-icon-container">
+  <div class="col-md-6 fv-plugins-icon-container">
     <label class="form-label" for="nubicacion_garantia">{{ __('Ubicación de la garantía') }}</label>
     <textarea class="form-control" wire:model="nubicacion_garantia" name="nubicacion_garantia" id="nubicacion_garantia" rows="2"
               placeholder="{{ __('Ubicación de la garantía') }}"></textarea>
@@ -130,7 +130,7 @@
     @enderror
   </div>
 
-  <div class="col-md-12 fv-plugins-icon-container">
+  <div class="col-md-6 fv-plugins-icon-container">
     <label class="form-label" for="ntalleres_situaciones">{{ __('Talleres o situaciones especiales') }}</label>
     <textarea class="form-control" wire:model="ntalleres_situaciones" name="ntalleres_situaciones" id="ntalleres_situaciones" rows="2"
               placeholder="{{ __('Talleres o situaciones especiales') }}"></textarea>
@@ -157,7 +157,7 @@
     @enderror
   </div>
 
-  <div class="col-md-12 fv-plugins-icon-container">
+  <div class="col-md-9 fv-plugins-icon-container">
     <label class="form-label" for="ncomentarios">{{ __('Comentarios') }}</label>
     <textarea class="form-control" wire:model="ncomentarios" name="ncomentarios" id="ncomentarios" rows="2"
               placeholder="{{ __('Comentarios') }}"></textarea>

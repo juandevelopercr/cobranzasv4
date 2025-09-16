@@ -129,7 +129,7 @@
     @enderror
   </div>
 
-  <div class="col-md-12 fv-plugins-icon-container">
+  <div class="col-md-9 fv-plugins-icon-container">
     <label class="form-label" for="acolisiones_embargos_anotaciones">{{ __('Colisiones Embargos Anotaciones') }}</label>
     <textarea class="form-control" wire:model="acolisiones_embargos_anotaciones" name="acolisiones_embargos_anotaciones" id="acolisiones_embargos_anotaciones" rows="2"
               placeholder="{{ __('Colisiones Embargos Anotaciones') }}"></textarea>
@@ -160,7 +160,7 @@
     @enderror
   </div>
 
-  <div class="col-md-12 fv-plugins-icon-container">
+  <div class="col-md-6 fv-plugins-icon-container">
     <label class="form-label" for="afecha_registro">{{ __('Fecha de Registro') }}</label>
     <textarea class="form-control" wire:model="afecha_registro" name="afecha_registro" id="afecha_registro" rows="5"
               placeholder="{{ __('Fecha de Registro') }}"></textarea>

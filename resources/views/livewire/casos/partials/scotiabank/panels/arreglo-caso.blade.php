@@ -17,7 +17,7 @@
     @enderror
   </div>
 
-  <div class="col-md-12 fv-plugins-icon-container">
+  <div class="col-md-9 fv-plugins-icon-container">
     <label class="form-label" for="acomentarios">{{ __('Comentarios') }}</label>
     <textarea class="form-control" wire:model="acomentarios" name="acomentarios" id="acomentarios" rows="2"
               placeholder="{{ __('Comentarios') }}"></textarea>
@@ -26,7 +26,7 @@
     @enderror
   </div>
 
-  <div class="col-md-12 fv-plugins-icon-container">
+  <div class="col-md-9 fv-plugins-icon-container">
     <label class="form-label" for="aregistro_pago">{{ __('Registro de pago') }}</label>
     <textarea class="form-control" wire:model="aregistro_pago" name="aregistro_pago" id="aregistro_pago" rows="2"
               placeholder="{{ __('Registro de pago') }}"></textarea>
