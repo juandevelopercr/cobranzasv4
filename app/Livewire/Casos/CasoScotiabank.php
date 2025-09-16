@@ -1054,10 +1054,11 @@ class CasoScotiabank extends CasoManager
     $this->motivo_terminacion = $record->motivo_terminacion;
     $this->honorarios_legales_dolares = $record->honorarios_legales_dolares;
 
+    $this->getPanelsProperty();
+
     $this->action = 'edit';
     $this->dispatch('select2');
   }
-
 
   public function update()
   {

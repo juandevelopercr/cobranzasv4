@@ -31,7 +31,7 @@ class CasoManager extends BaseComponent
   public $active = '';
 
   #[Url(as: 'c1_sortBy', history: true)]
-  public $sortBy = 'casos.created_at';
+  public $sortBy = 'casos.id';
 
   #[Url(as: 'c1_sortDir', history: true)]
   public $sortDir = 'DESC';

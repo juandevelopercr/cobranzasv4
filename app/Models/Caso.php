@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Contact;
+use App\Models\Currency;
 use App\Models\CasoEstado;
 use App\Models\CasoJuzgado;
 use App\Models\CasoProceso;
 use App\Models\CasoProducto;
-use App\Models\Contact;
-use App\Models\Currency;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Caso extends Model
 {
@@ -447,33 +448,195 @@ class Caso extends Model
       ->leftJoin('casos_estados as aestado', 'casos.aestado_proceso_general_id', '=', 'aestado.id');
 
     // 🔹 Filtros adicionales
+    if (!empty($filters['filter_pnumero'])) {
+      $query->where('casos.pnumero', $filters['filter_pnumero']);
+    }
+
+    if (!empty($filters['filter_pnumero_operacion1'])) {
+      $query->where('casos.pnumero_operacion1', $filters['filter_pnumero_operacion1']);
+    }
+
+    if (!empty($filters['filter_pfecha_asignacion_caso'])) {
+      $range = explode(' to ', $filters['filter_pfecha_asignacion_caso']);
+
+      if (count($range) === 2) {
+        try {
+          // Validar y convertir las fechas del rango
+          $start = Carbon::createFromFormat('d-m-Y', $range[0])->format('Y-m-d');
+          $end = Carbon::createFromFormat('d-m-Y', $range[1])->format('Y-m-d');
+
+          // Aplicar filtro si ambas fechas son válidas
+          $query->whereBetween('casos.pfecha_asignacion_caso', [$start, $end]);
+        } catch (\Exception $e) {
+          // Manejar el caso de fechas inválidas (opcional: log o ignorar)
+        }
+      } else {
+        try {
+          // Validar y convertir la fecha única
+          $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_pfecha_asignacion_caso'])
+                            ->format('Y-m-d');
+
+          // Aplicar filtro si la fecha es válida
+          $query->where('casos.pfecha_asignacion_caso', '=', (string) $singleDate);
+        } catch (\Exception $e) {
+          // Manejar el caso de fecha inválida (opcional: log o ignorar)
+        }
+      }
+    }
+
     if (!empty($filters['filter_banco'])) {
       $query->where('banks.id', $filters['filter_banco']);
     }
 
-    if (!empty($filters['filter_contacto'])) {
-      $query->where('contacts.id', $filters['filter_contacto']);
+    if (!empty($filters['filter_producto'])) {
+      $query->where('casos.product_id', $filters['filter_producto']);
+    }
+
+    if (!empty($filters['filter_proceso'])) {
+      $query->where('casos.proceso_id', $filters['filter_proceso']);
     }
 
     if (!empty($filters['filter_abogado'])) {
       $query->where('users.id', $filters['filter_abogado']);
     }
 
-    if (!empty($filters['filter_estado'])) {
-      $query->where('estados.id', $filters['filter_estado']);
+    if (!empty($filters['filter_asistente'])) {
+      $query->where('users.id', $filters['filter_asistente']);
     }
 
-    if (!empty($filters['filter_estado_proceso'])) {
-      $query->where('estado_procesos.id', $filters['filter_estado_proceso']);
+    if (!empty($filters['filter_pnumero_contrato'])) {
+      $query->where('casos.pnumero_contrato', $filters['filter_pnumero_contrato']);
     }
 
-    if (!empty($filters['filter_fecha_inicio'])) {
-      $query->whereDate('casos.created_at', '>=', $filters['filter_fecha_inicio']);
+    if (!empty($filters['filter_pdespacho_judicial_juzgado'])) {
+      $query->where('casos.pdespacho_judicial_juzgado', 'like', '%' . $filters['filter_pdespacho_judicial_juzgado'] . '%');
     }
 
-    if (!empty($filters['filter_fecha_fin'])) {
-      $query->whereDate('casos.created_at', '<=', $filters['filter_fecha_fin']);
+    if (!empty($filters['filter_pnombre_demandado'])) {
+      $query->where('casos.pnombre_demandado', 'like', '%' . $filters['filter_pnombre_demandado'] . '%');
     }
+
+    if (!empty($filters['filter_pnumero_cedula'])) {
+      $query->where('casos.pnumero_cedula', '=', $filters['filter_pnumero_cedula']);
+    }
+
+    if (!empty($filters['filter_pfecha_presentacion_demanda'])) {
+      $range = explode(' to ', $filters['filter_pfecha_presentacion_demanda']);
+
+      if (count($range) === 2) {
+        try {
+          // Validar y convertir las fechas del rango
+          $start = Carbon::createFromFormat('d-m-Y', $range[0])->format('Y-m-d');
+          $end = Carbon::createFromFormat('d-m-Y', $range[1])->format('Y-m-d');
+
+          // Aplicar filtro si ambas fechas son válidas
+          $query->whereBetween('casos.pfecha_presentacion_demanda', [$start, $end]);
+        } catch (\Exception $e) {
+          // Manejar el caso de fechas inválidas (opcional: log o ignorar)
+        }
+      } else {
+        try {
+          // Validar y convertir la fecha única
+          $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_pfecha_presentacion_demanda'])
+                            ->format('Y-m-d');
+
+          // Aplicar filtro si la fecha es válida
+          $query->where('casos.pfecha_presentacion_demanda', '=', (string) $singleDate);
+        } catch (\Exception $e) {
+          // Manejar el caso de fecha inválida (opcional: log o ignorar)
+        }
+      }
+    }
+
+    if (!empty($filters['filter_nfecha_traslado_juzgado'])) {
+      $range = explode(' to ', $filters['filter_nfecha_traslado_juzgado']);
+
+      if (count($range) === 2) {
+        try {
+          // Validar y convertir las fechas del rango
+          $start = Carbon::createFromFormat('d-m-Y', $range[0])->format('Y-m-d');
+          $end = Carbon::createFromFormat('d-m-Y', $range[1])->format('Y-m-d');
+
+          // Aplicar filtro si ambas fechas son válidas
+          $query->whereBetween('casos.nfecha_traslado_juzgado', [$start, $end]);
+        } catch (\Exception $e) {
+          // Manejar el caso de fechas inválidas (opcional: log o ignorar)
+        }
+      } else {
+        try {
+          // Validar y convertir la fecha única
+          $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_nfecha_traslado_juzgado'])
+                            ->format('Y-m-d');
+
+          // Aplicar filtro si la fecha es válida
+          $query->where('casos.nfecha_traslado_juzgado', '=', (string) $singleDate);
+        } catch (\Exception $e) {
+          // Manejar el caso de fecha inválida (opcional: log o ignorar)
+        }
+      }
+    }
+
+    if (!empty($filters['filter_nfecha_notificacion_todas_partes'])) {
+      $range = explode(' to ', $filters['filter_nfecha_notificacion_todas_partes']);
+
+      if (count($range) === 2) {
+        try {
+          // Validar y convertir las fechas del rango
+          $start = Carbon::createFromFormat('d-m-Y', $range[0])->format('Y-m-d');
+          $end = Carbon::createFromFormat('d-m-Y', $range[1])->format('Y-m-d');
+
+          // Aplicar filtro si ambas fechas son válidas
+          $query->whereBetween('casos.nfecha_notificacion_todas_partes', [$start, $end]);
+        } catch (\Exception $e) {
+          // Manejar el caso de fechas inválidas (opcional: log o ignorar)
+        }
+      } else {
+        try {
+          // Validar y convertir la fecha única
+          $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_nfecha_notificacion_todas_partes'])
+                            ->format('Y-m-d');
+
+          // Aplicar filtro si la fecha es válida
+          $query->where('casos.nfecha_notificacion_todas_partes', '=', (string) $singleDate);
+        } catch (\Exception $e) {
+          // Manejar el caso de fecha inválida (opcional: log o ignorar)
+        }
+      }
+    }
+
+    if (!empty($filters['filter_aestado_proceso_general_id'])) {
+      $query->where('casos.aestado_proceso_general_id', $filters['filter_aestado_proceso_general_id']);
+    }
+
+
+    if (!empty($filters['filter_fecha_importacion'])) {
+      $range = explode(' to ', $filters['filter_fecha_importacion']);
+
+      if (count($range) === 2) {
+        try {
+          // Validar y convertir las fechas del rango
+          $start = Carbon::createFromFormat('d-m-Y', $range[0])->format('Y-m-d');
+          $end = Carbon::createFromFormat('d-m-Y', $range[1])->format('Y-m-d');
+
+          // Aplicar filtro si ambas fechas son válidas
+          $query->whereBetween('casos.fecha_importacion', [$start, $end]);
+        } catch (\Exception $e) {
+          // Manejar el caso de fechas inválidas (opcional: log o ignorar)
+        }
+      } else {
+        try {
+          // Validar y convertir la fecha única
+          $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_fecha_importacion'])
+                            ->format('Y-m-d');
+
+          // Aplicar filtro si la fecha es válida
+          $query->where('casos.fecha_importacion', '=', (string) $singleDate);
+        } catch (\Exception $e) {
+          // Manejar el caso de fecha inválida (opcional: log o ignorar)
+        }
+      }
+    }
+
 
     return $query;
   }
