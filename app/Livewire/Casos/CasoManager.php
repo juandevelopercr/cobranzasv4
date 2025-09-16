@@ -1085,4 +1085,10 @@ class CasoManager extends BaseComponent
     $this->resetControls();
     $this->dispatch('scroll-to-top');
   }
+
+  public function resetFilters()
+  {
+    $this->reset('filters');
+    $this->selectedIds = [];
+  }
 }
