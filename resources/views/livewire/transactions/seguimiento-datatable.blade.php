@@ -167,13 +167,13 @@
     </div>
   </div>
 
-  @if($showFechaModal)
+  @if($showDepositoModal)
     <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Modificar datos de depósito</h5>
-                    <button type="button" class="btn-close" wire:click="$set('showFechaModal', false)"></button>
+                    <button type="button" class="btn-close" wire:click="$set('showDepositoModal', false)"></button>
                 </div>
                 <div class="modal-body">
                   <div class="row g-6">
@@ -205,7 +205,51 @@
                       <div class="text-danger mt-1">{{ $message }}</div>
                       @enderror
                     </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                    <!-- Botón Guardar -->
+                    <button type="button"
+                        class="btn btn-success data-submit me-sm-4 me-1 mt-5"
+                        wire:click="saveDepositoModal"
+                        wire:loading.attr="disabled"
+                        wire:target="saveDepositoModal">
 
+                        <!-- Icono + texto normal -->
+                        <span wire:loading.remove wire:target="saveDepositoModal">
+                            <i class="tf-icons bx bx-save bx-18px me-2"></i>{{ __('Save') }}
+                        </span>
+
+                        <!-- Spinner mientras carga -->
+                        <span wire:loading wire:target="saveDepositoModal">
+                            <i class="spinner-border spinner-border-sm me-2" role="status"></i>
+                            {{ __('Updating...') }}
+                        </span>
+                    </button>
+
+                    <!-- Botón Cancelar -->
+                    <button type="button"
+                        class="btn btn-outline-secondary me-sm-4 me-1 mt-5"
+                        wire:click="$set('showDepositoModal', false)"
+                        wire:loading.attr="disabled">
+                        <i class="bx bx-x bx-18px me-2"></i>{{ __('Cancel') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+  @endif
+
+  @if($showHonorarioModal)
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modificar datos de depósito</h5>
+                    <button type="button" class="btn-close" wire:click="$set('showHonorarioModal', false)"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row g-6">
                     <div class="col-md-6 fv-plugins-icon-container">
                       <label class="form-label" for="fechaTrasladoHonorarioModal">{{ __('Fecha de traslado de honorario') }}</label>
                       <div class="input-group input-group-merge has-validation">
@@ -235,17 +279,61 @@
                       <div class="text-danger mt-1">{{ $message }}</div>
                       @enderror
                     </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <!-- Botón Guardar -->
+                  <button type="button"
+                      class="btn btn-success data-submit me-sm-4 me-1 mt-5"
+                      wire:click="saveHonorarioModal"
+                      wire:loading.attr="disabled"
+                      wire:target="saveHonorarioModal">
 
+                      <!-- Icono + texto normal -->
+                      <span wire:loading.remove wire:target="saveHonorarioModal">
+                          <i class="tf-icons bx bx-save bx-18px me-2"></i>{{ __('Save') }}
+                      </span>
+
+                      <!-- Spinner mientras carga -->
+                      <span wire:loading wire:target="saveHonorarioModal">
+                          <i class="spinner-border spinner-border-sm me-2" role="status"></i>
+                          {{ __('Updating...') }}
+                      </span>
+                  </button>
+
+                  <!-- Botón Cancelar -->
+                  <button type="button"
+                      class="btn btn-outline-secondary me-sm-4 me-1 mt-5"
+                      wire:click="$set('showHonorarioModal', false)"
+                      wire:loading.attr="disabled">
+                      <i class="bx bx-x bx-18px me-2"></i>{{ __('Cancel') }}
+                  </button>
+                </div>
+            </div>
+        </div>
+    </div>
+  @endif
+
+  @if($showGastoModal)
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modificar datos de depósito</h5>
+                    <button type="button" class="btn-close" wire:click="$set('showGastoModal', false)"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row g-6">
                     <div class="col-md-6 fv-plugins-icon-container">
                       <label class="form-label" for="fechaTrasladoGastoModal">{{ __('Fecha de traslado de gasto') }}</label>
                       <div class="input-group input-group-merge has-validation">
                         <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-                        <input type="text" id="fechaTrasladoHonorarioModal"
-                          wire:model="fechaTrasladoHonorarioModal"
+                        <input type="text" id="fechaTrasladoGastoModal"
+                          wire:model="fechaTrasladoGastoModal"
                           x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
                           x-init="init($el)"
                           wire:ignore
-                          class="form-control date-picke @error('fechaTrasladoHonorarioModal') is-invalid @enderror"
+                          class="form-control date-picke @error('fechaTrasladoGastoModal') is-invalid @enderror"
                           placeholder="dd-mm-aaaa">
                       </div>
                       @error('fechaTrasladoGastoModal')
@@ -271,24 +359,27 @@
                     <!-- Botón Guardar -->
                     <button type="button"
                         class="btn btn-success data-submit me-sm-4 me-1 mt-5"
-                        wire:click="saveFechaDepositoModal"
+                        wire:click="saveGastoModal"
                         wire:loading.attr="disabled"
-                        wire:target="saveFechaDepositoModal">
+                        wire:target="saveGastoModal">
 
-                        <span wire:loading.remove wire:target="saveFechaDepositoModal">
+                        <!-- Icono + texto normal -->
+                        <span wire:loading.remove wire:target="saveGastoModal">
                             <i class="tf-icons bx bx-save bx-18px me-2"></i>{{ __('Save') }}
                         </span>
-                        <span wire:loading wire:target="saveFechaDepositoModal">
-                            <i class="spinner-border spinner-border-sm me-2" role="status"></i>{{ __('Updating...') }}
+
+                        <!-- Spinner mientras carga -->
+                        <span wire:loading wire:target="saveGastoModal">
+                            <i class="spinner-border spinner-border-sm me-2" role="status"></i>
+                            {{ __('Updating...') }}
                         </span>
                     </button>
 
-                    <!-- Botón Cancelar (sin wire:loading porque no llama a ningún método Livewire) -->
+                    <!-- Botón Cancelar -->
                     <button type="button"
                         class="btn btn-outline-secondary me-sm-4 me-1 mt-5"
-                        wire:click="$set('showFechaModal', false)"
+                        wire:click="$set('showGastoModal', false)"
                         wire:loading.attr="disabled">
-
                         <i class="bx bx-x bx-18px me-2"></i>{{ __('Cancel') }}
                     </button>
                 </div>

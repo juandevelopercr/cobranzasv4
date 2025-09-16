@@ -38,7 +38,9 @@ class SeguimientoManager extends TransactionManager
   public ?string $fechaTrasladoGastoModal = null;
   public ?string $numeroTrasladoGastoModal = null;
 
-  public bool $showFechaModal = false;
+  public bool $showDepositoModal = false;
+  public bool $showHonorarioModal = false;
+  public bool $showGastoModal = false;
 
   public $listaUsuarios;
 
@@ -1295,35 +1297,35 @@ class SeguimientoManager extends TransactionManager
 
   public function openFechaDepositoModal($id)
   {
-    $this->setModalData($id);
+    $this->setDepositoModalData($id);
   }
 
   public function openNumeroDepositoModal($id)
   {
-    $this->setModalData($id);
+    $this->setDepositoModalData($id);
   }
 
   public function openFechaTrasladoHonoarioModal($id)
   {
-    $this->setModalData($id);
+    $this->setHonorarioModalData($id);
   }
 
   public function openNumeroTrasladoHonoarioModal($id)
   {
-    $this->setModalData($id);
+    $this->setHonorarioModalData($id);
   }
 
   public function openFechaTrasladoGastoModal($id)
   {
-    $this->setModalData($id);
+    $this->setGastoModalData($id);
   }
 
   public function openNumeroTrasladoGastoModal($id)
   {
-    $this->setModalData($id);
+    $this->setGastoModalData($id);
   }
 
-  public function setModalData($id)
+  public function setDepositoModalData($id)
   {
     $this->selectedFechaDepositoId = $id;
     $transaction = Transaction::find($id);
@@ -1331,32 +1333,46 @@ class SeguimientoManager extends TransactionManager
       ? \Carbon\Carbon::parse($transaction->fecha_deposito_pago)->format('d-m-Y')
       : null;
     $this->numeroDepositoPagoModal = optional($transaction)->numero_deposito_pago;
+    $this->showDepositoModal = true;
+  }
 
+  public function setHonorarioModalData($id)
+  {
+    $this->selectedFechaDepositoId = $id;
+    $transaction = Transaction::find($id);
     $this->fechaTrasladoHonorarioModal = $transaction->fecha_traslado_honorario
       ? \Carbon\Carbon::parse($transaction->fecha_traslado_honorario)->format('d-m-Y')
       : null;
     $this->numeroTrasladoHonorarioModal = optional($transaction)->numero_traslado_honorario;
+    $this->showHonorarioModal = true;
+  }
+
+  public function setGastoModalData($id)
+  {
+    $this->selectedFechaDepositoId = $id;
+    $transaction = Transaction::find($id);
 
     $this->fechaTrasladoGastoModal = $transaction->fecha_traslado_gasto
       ? \Carbon\Carbon::parse($transaction->fecha_traslado_gasto)->format('d-m-Y')
       : null;
     $this->numeroTrasladoGastoModal = optional($transaction)->numero_traslado_gasto;
-    $this->showFechaModal = true;
+    $this->showGastoModal = true;
   }
 
-  public function saveFechaDepositoModal()
+  public function saveDepositoModal()
   {
     $record = Transaction::findOrFail($this->selectedFechaDepositoId);
-    $record->fecha_deposito_pago = !empty($this->fechaDepositoModal)
-      ? \Carbon\Carbon::parse($this->fechaDepositoModal)->format('Y-m-d')
-      : null;
-    $record->numero_deposito_pago = $this->numeroDepositoPagoModal;
 
     $movimientosFacturas = MovimientoFactura::where('transaction_id', $record->id)->count();
     if ($movimientosFacturas > 0) {
       $this->dispatch('show-notification', ['type' => 'warning', 'message' => 'No se permite modificar la retención de la factura porque está registrada en un movimiento']);
       return;
     }
+
+    $record->fecha_deposito_pago = !empty($this->fechaDepositoModal)
+      ? \Carbon\Carbon::parse($this->fechaDepositoModal)->format('Y-m-d')
+      : null;
+    $record->numero_deposito_pago = $this->numeroDepositoPagoModal;
 
     if (!is_null($record->fecha_deposito_pago) && !empty($record->fecha_deposito_pago) && !is_null($record->numero_deposito_pago) && !empty($record->numero_deposito_pago)) {
       $record->payment_status = 'paid';
@@ -1366,10 +1382,39 @@ class SeguimientoManager extends TransactionManager
         $record->payment_status = 'due';
     }
 
+    $record->save();
+
+    $this->showDepositoModal = false;
+    $this->selectedFechaDepositoId = null;
+    $this->fechaDepositoModal = null;
+    $this->numeroDepositoPagoModal = null;
+
+    $this->resetPage();
+    $this->dispatch('show-notification', ['type' => 'success', 'message' => 'Fecha actualizada correctamente.']);
+  }
+
+  public function saveHonorarioModal()
+  {
+    $record = Transaction::findOrFail($this->selectedFechaDepositoId);
+
     $record->fecha_traslado_honorario = !empty($this->fechaTrasladoHonorarioModal)
       ? \Carbon\Carbon::parse($this->fechaTrasladoHonorarioModal)->format('Y-m-d')
       : null;
     $record->numero_traslado_honorario = $this->numeroTrasladoHonorarioModal;
+
+    $record->save();
+
+    $this->showHonorarioModal = false;
+    $this->fechaTrasladoHonorarioModal = null;
+    $this->numeroTrasladoHonorarioModal = null;
+
+    $this->resetPage();
+    $this->dispatch('show-notification', ['type' => 'success', 'message' => 'Fecha actualizada correctamente.']);
+  }
+
+  public function saveGastoModal()
+  {
+    $record = Transaction::findOrFail($this->selectedFechaDepositoId);
 
     $record->fecha_traslado_gasto = !empty($this->fechaTrasladoGastoModal)
       ? \Carbon\Carbon::parse($this->fechaTrasladoGastoModal)->format('Y-m-d')
@@ -1378,13 +1423,7 @@ class SeguimientoManager extends TransactionManager
 
     $record->save();
 
-    $this->showFechaModal = false;
-    $this->selectedFechaDepositoId = null;
-    $this->fechaDepositoModal = null;
-    $this->numeroDepositoPagoModal = null;
-
-    $this->fechaTrasladoHonorarioModal = null;
-    $this->numeroTrasladoHonorarioModal = null;
+    $this->showGastoModal = false;
 
     $this->fechaTrasladoGastoModal = null;
     $this->numeroTrasladoGastoModal = null;

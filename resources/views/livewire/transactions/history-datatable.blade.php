@@ -174,13 +174,13 @@
     </div>
   </div>
 
-  @if($showFechaModal)
+  @if($showDepositoModal)
     <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Modificar datos de depósito</h5>
-                    <button type="button" class="btn-close" wire:click="$set('showFechaModal', false)"></button>
+                    <button type="button" class="btn-close" wire:click="$set('showDepositoModal', false)"></button>
                 </div>
                 <div class="modal-body">
                   <div class="row g-6">
@@ -218,24 +218,27 @@
                     <!-- Botón Guardar -->
                     <button type="button"
                         class="btn btn-success data-submit me-sm-4 me-1 mt-5"
-                        wire:click="saveFechaDepositoModal"
+                        wire:click="saveDepositoModal"
                         wire:loading.attr="disabled"
-                        wire:target="saveFechaDepositoModal">
+                        wire:target="saveDepositoModal">
 
-                        <span wire:loading.remove wire:target="saveFechaDepositoModal">
+                        <!-- Icono + texto normal -->
+                        <span wire:loading.remove wire:target="saveDepositoModal">
                             <i class="tf-icons bx bx-save bx-18px me-2"></i>{{ __('Save') }}
                         </span>
-                        <span wire:loading wire:target="saveFechaDepositoModal">
-                            <i class="spinner-border spinner-border-sm me-2" role="status"></i>{{ __('Updating...') }}
+
+                        <!-- Spinner mientras carga -->
+                        <span wire:loading wire:target="saveDepositoModal">
+                            <i class="spinner-border spinner-border-sm me-2" role="status"></i>
+                            {{ __('Updating...') }}
                         </span>
                     </button>
 
-                    <!-- Botón Cancelar (sin wire:loading porque no llama a ningún método Livewire) -->
+                    <!-- Botón Cancelar -->
                     <button type="button"
                         class="btn btn-outline-secondary me-sm-4 me-1 mt-5"
-                        wire:click="$set('showFechaModal', false)"
+                        wire:click="$set('showDepositoModal', false)"
                         wire:loading.attr="disabled">
-
                         <i class="bx bx-x bx-18px me-2"></i>{{ __('Cancel') }}
                     </button>
                 </div>

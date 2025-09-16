@@ -31,7 +31,7 @@ class HistoryManager extends TransactionManager
   public ?int $selectedFechaDepositoId = null;
   public ?string $fechaDepositoModal = null;
   public ?string $numeroDepositoPagoModal = null;
-  public bool $showFechaModal = false;
+  public bool $showDepositoModal = false;
 
   public $document_type = ['PR', 'FE', 'TE'];
 
@@ -1256,39 +1256,39 @@ class HistoryManager extends TransactionManager
 
   public function openFechaDepositoModal($id)
   {
+    $this->setDepositoModalData($id);
+  }
+
+  public function openNumeroDepositoModal($id)
+  {
+    $this->setDepositoModalData($id);
+  }
+
+  public function setDepositoModalData($id)
+  {
     $this->selectedFechaDepositoId = $id;
     $transaction = Transaction::find($id);
     $this->fechaDepositoModal = $transaction->fecha_deposito_pago
       ? \Carbon\Carbon::parse($transaction->fecha_deposito_pago)->format('d-m-Y')
       : null;
     $this->numeroDepositoPagoModal = optional($transaction)->numero_deposito_pago;
-    $this->showFechaModal = true;
+    $this->showDepositoModal = true;
   }
 
-  public function openNumeroDepositoModal($id)
-  {
-    $this->selectedFechaDepositoId = $id;
-    $transaction = Transaction::find($id);
-    $this->fechaDepositoModal = $transaction->fecha_deposito_pago
-      ? \Carbon\Carbon::parse($transaction->fecha_deposito_pago)->format('Y-m-d')
-      : null;
-    $this->numeroDepositoPagoModal = optional($transaction)->numero_deposito_pago;
-    $this->showFechaModal = true;
-  }
-
-  public function saveFechaDepositoModal()
+  public function saveDepositoModal()
   {
     $record = Transaction::findOrFail($this->selectedFechaDepositoId);
-    $record->fecha_deposito_pago = !empty($this->fechaDepositoModal)
-      ? \Carbon\Carbon::parse($this->fechaDepositoModal)->format('Y-m-d')
-      : null;
-    $record->numero_deposito_pago = $this->numeroDepositoPagoModal;
 
     $movimientosFacturas = MovimientoFactura::where('transaction_id', $record->id)->count();
     if ($movimientosFacturas > 0) {
       $this->dispatch('show-notification', ['type' => 'warning', 'message' => 'No se permite modificar la retención de la factura porque está registrada en un movimiento']);
       return;
     }
+
+    $record->fecha_deposito_pago = !empty($this->fechaDepositoModal)
+      ? \Carbon\Carbon::parse($this->fechaDepositoModal)->format('Y-m-d')
+      : null;
+    $record->numero_deposito_pago = $this->numeroDepositoPagoModal;
 
     if (!is_null($record->fecha_deposito_pago) && !empty($record->fecha_deposito_pago) && !is_null($record->numero_deposito_pago) && !empty($record->numero_deposito_pago)) {
       $record->payment_status = 'paid';
@@ -1297,9 +1297,10 @@ class HistoryManager extends TransactionManager
       if ($record->getSaldoPendiente($this->selectedFechaDepositoId) > 0)
         $record->payment_status = 'due';
     }
+
     $record->save();
 
-    $this->showFechaModal = false;
+    $this->showDepositoModal = false;
     $this->selectedFechaDepositoId = null;
     $this->fechaDepositoModal = null;
     $this->numeroDepositoPagoModal = null;
