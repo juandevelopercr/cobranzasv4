@@ -879,6 +879,83 @@ class CasoManager extends BaseComponent
     $this->fecha_inicio_retenciones = $this->normalizeDateForDB($this->fecha_inicio_retenciones);
     $this->fecha_prescripcion = $this->normalizeDateForDB($this->fecha_prescripcion);
     $this->fecha_pruebas = $this->normalizeDateForDB($this->fecha_pruebas);
+    $this->afecha_registro = $this->normalizeDateForDB($this->afecha_registro);
+    $this->afecha_presentacion_protocolizacion = $this->normalizeDateForDB($this->afecha_presentacion_protocolizacion);
+    $this->afecha_inscripcion = $this->normalizeDateForDB($this->afecha_inscripcion);
+    $this->afecha_suspencion_arreglo = $this->normalizeDateForDB($this->afecha_suspencion_arreglo);
+    $this->afecha_terminacion = $this->normalizeDateForDB($this->afecha_terminacion);
+  }
+
+  public function formatDateForView($record)
+  {
+    $this->pfecha_pago_multas_y_seguros = $this->normalizeDateForView($record->pfecha_pago_multas_y_seguros);
+    $this->pfecha_asignacion_caso = $this->normalizeDateForView($record->pfecha_asignacion_caso);
+    $this->pfecha_presentacion_demanda = $this->normalizeDateForView($record->pfecha_presentacion_demanda);
+    $this->pfecha_e_instruccion_levantamiento = $this->normalizeDateForView($record->pfecha_e_instruccion_levantamiento);
+    $this->pfecha_ingreso_cobro_judicial = $this->normalizeDateForView($record->pfecha_ingreso_cobro_judicial);
+    $this->pfecha_escrito_demanda = $this->normalizeDateForView($record->pfecha_escrito_demanda);
+    $this->nfecha_traslado_juzgado = $this->normalizeDateForView($record->nfecha_traslado_juzgado);
+    $this->nfecha_notificacion_todas_partes = $this->normalizeDateForView($record->nfecha_notificacion_todas_partes);
+    $this->sfecha_captura = $this->normalizeDateForView($record->sfecha_captura);
+    $this->sfecha_sentencia = $this->normalizeDateForView($record->sfecha_sentencia);
+    $this->sfecha_remate = $this->normalizeDateForView($record->sfecha_remate);
+    $this->sfecha_primer_remate = $this->normalizeDateForView($record->sfecha_primer_remate);
+    $this->sfecha_segundo_remate = $this->normalizeDateForView($record->sfecha_segundo_remate);
+    $this->sfecha_tercer_remate = $this->normalizeDateForView($record->sfecha_tercer_remate);
+    $this->afecha_aprobacion_remate = $this->normalizeDateForView($record->afecha_aprobacion_remate);
+    $this->afecha_protocolizacion = $this->normalizeDateForView($record->afecha_protocolizacion);
+    $this->afecha_senalamiento_puesta_posesion = $this->normalizeDateForView($record->afecha_senalamiento_puesta_posesion);
+    $this->afecha_informe_ultima_gestion = $this->normalizeDateForView($record->afecha_informe_ultima_gestion);
+    $this->nfecha_notificacion = $this->normalizeDateForView($record->nfecha_notificacion);
+    $this->nfecha_pago = $this->normalizeDateForView($record->nfecha_pago);
+    $this->nfecha_audiencia = $this->normalizeDateForView($record->nfecha_audiencia);
+    $this->afecha_aprobacion_arreglo = $this->normalizeDateForView($record->afecha_aprobacion_arreglo);
+    $this->afecha_envio_cotizacion_gasto = $this->normalizeDateForView($record->afecha_envio_cotizacion_gasto);
+    $this->tfecha_traspaso = $this->normalizeDateForView($record->tfecha_traspaso);
+    $this->tfecha_envio_borrador_escritura = $this->normalizeDateForView($record->tfecha_envio_borrador_escritura);
+    $this->tfecha_firma_escritura = $this->normalizeDateForView($record->tfecha_firma_escritura);
+    $this->tfecha_presentacion_escritura = $this->normalizeDateForView($record->tfecha_presentacion_escritura);
+    $this->tfecha_comunicacion = $this->normalizeDateForView($record->tfecha_comunicacion);
+    $this->tfecha_entrega_titulo_propiedad = $this->normalizeDateForView($record->tfecha_entrega_titulo_propiedad);
+    $this->tfecha_exclusion = $this->normalizeDateForView($record->tfecha_exclusion);
+    $this->tfecha_terminacion = $this->normalizeDateForView($record->tfecha_terminacion);
+    $this->lfecha_entrega_poder = $this->normalizeDateForView($record->lfecha_entrega_poder);
+    $this->lfecha_levantamiento_gravamen = $this->normalizeDateForView($record->lfecha_levantamiento_gravamen);
+    $this->lfecha_comunicado_banco = $this->normalizeDateForView($record->lfecha_comunicado_banco);
+    $this->efecha_visita = $this->normalizeDateForView($record->efecha_visita);
+    $this->rfecha_desinscripcion = $this->normalizeDateForView($record->rfecha_desinscripcion);
+    $this->dfecha_interposicion_denuncia = $this->normalizeDateForView($record->dfecha_interposicion_denuncia);
+    $this->bfecha_entrega_poder = $this->normalizeDateForView($record->bfecha_entrega_poder);
+    $this->bfecha_levantamiento_gravamen = $this->normalizeDateForView($record->bfecha_levantamiento_gravamen);
+    $this->f1fecha_asignacion_capturador = $this->normalizeDateForView($record->f1fecha_asignacion_capturador);
+    $this->f2fecha_publicacion_edicto = $this->normalizeDateForView($record->f2fecha_publicacion_edicto);
+    $this->afecha_firmeza_aprobacion_remate = $this->normalizeDateForView($record->afecha_firmeza_aprobacion_remate);
+    $this->pfecha_ultimo_giro = $this->normalizeDateForView($record->pfecha_ultimo_giro);
+    $this->nfecha_entrega_requerimiento_pago = $this->normalizeDateForView($record->nfecha_entrega_requerimiento_pago);
+    $this->nfecha_entrega_orden_captura = $this->normalizeDateForView($record->nfecha_entrega_orden_captura);
+    $this->afecha_levantamiento = $this->normalizeDateForView($record->afecha_levantamiento);
+    $this->pfecha_informe = $this->normalizeDateForView($record->pfecha_informe);
+    $this->afecha_avaluo = $this->normalizeDateForView($record->afecha_avaluo);
+    $this->afecha_ultimo_giro = $this->normalizeDateForView($record->afecha_ultimo_giro);
+    $this->pfecha_curso_demanda = $this->normalizeDateForView($record->pfecha_curso_demanda);
+    $this->pfecha_primer_giro = $this->normalizeDateForView($record->pfecha_primer_giro);
+    $this->fecha_creacion = $this->normalizeDateForView($record->fecha_creacion);
+    $this->afecha_presentacion_embargo = $this->normalizeDateForView($record->afecha_presentacion_embargo);
+    $this->afecha_arreglo_pago = $this->normalizeDateForView($record->afecha_arreglo_pago);
+    $this->afecha_pago = $this->normalizeDateForView($record->afecha_pago);
+    $this->fecha_importacion = $this->normalizeDateForView($record->fecha_importacion);
+    $this->nfecha_ultima_liquidacion = $this->normalizeDateForView($record->nfecha_ultima_liquidacion);
+    $this->fecha_activacion = $this->normalizeDateForView($record->fecha_activacion);
+    $this->pfecha_devolucion_demanda_firma = $this->normalizeDateForView($record->pfecha_devolucion_demanda_firma);
+    $this->fecha_inicio_retenciones = $this->normalizeDateForView($record->fecha_inicio_retenciones);
+    $this->fecha_prescripcion = $this->normalizeDateForView($record->fecha_prescripcion);
+    $this->fecha_pruebas = $this->normalizeDateForView($record->fecha_pruebas);
+    $this->afecha_registro = $this->normalizeDateForView($record->afecha_registro);
+    $this->afecha_presentacion_protocolizacion = $this->normalizeDateForView($record->afecha_presentacion_protocolizacion);
+    $this->afecha_inscripcion = $this->normalizeDateForView($record->afecha_inscripcion);
+    $this->afecha_suspencion_arreglo = $this->normalizeDateForView($record->afecha_suspencion_arreglo);
+    $this->afecha_terminacion = $this->normalizeDateForView($record->afecha_terminacion);
+
   }
 
   public function normalizeDateForDB($value)
@@ -981,6 +1058,25 @@ class CasoManager extends BaseComponent
         'message' => __('An error occurred while deleting the record') . ' ' . $e->getMessage()
       ]);
     }
+  }
+
+  public function confirmarAccionNotificaion($recordId, $metodo, $titulo, $mensaje, $textoBoton)
+  {
+    $recordId = $this->getRecordAction($recordId);
+
+    if (!$recordId) {
+      return; // Ya se lanzó la notificación desde getRecordAction
+    }
+
+    // static::getName() devuelve automáticamente el nombre del componente Livewire actual, útil para dispatchTo.
+    $this->dispatch('show-confirmation-dialog', [
+      'recordId' => $recordId,
+      'componentName' => static::getName(), // o puedes pasarlo como string
+      'methodName' => $metodo,
+      'title' => $titulo,
+      'message' => $mensaje,
+      'confirmText' => $textoBoton,
+    ]);
   }
 
   public function cancel()

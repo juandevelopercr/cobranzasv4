@@ -160,10 +160,19 @@
     @enderror
   </div>
 
-  <div class="col-md-6 fv-plugins-icon-container">
+  <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="afecha_registro">{{ __('Fecha de Registro') }}</label>
-    <textarea class="form-control" wire:model="afecha_registro" name="afecha_registro" id="afecha_registro" rows="5"
-              placeholder="{{ __('Fecha de Registro') }}"></textarea>
+    <div class="input-group input-group-merge has-validation">
+      <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+      <input type="text" id="afecha_registro"
+        wire:model="afecha_registro"
+        x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
+        x-init="init($el)"
+        wire:ignore
+        class="form-control date-picke @error('afecha_registro') is-invalid @enderror"
+        placeholder="dd-mm-aaaa"
+        >
+    </div>
     @error('afecha_registro')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror

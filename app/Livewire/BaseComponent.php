@@ -82,6 +82,43 @@ abstract class BaseComponent extends Component
     return $recordId;
   }
 
+  public function getRecordActionReturnModel($recordId, $model)
+  {
+    if (!isset($recordId) || is_null($recordId)) {
+      if (empty($this->selectedIds)) {
+        $this->dispatch('show-notification', [
+          'type' => 'error',
+          'message' => 'Debe seleccionar un registro.'
+        ]);
+        return;
+      }
+
+      if (count($this->selectedIds) > 1) {
+        $this->dispatch('show-notification', [
+          'type' => 'error',
+          'message' => 'Solo se permite seleccionar un registro.'
+        ]);
+        return;
+      }
+
+      if (count($this->selectedIds) == 1) {
+        $recordId = $this->selectedIds[0];
+      }
+    }
+
+    $record = $model::find($recordId);
+
+    if (!$record) {
+        $this->dispatch('show-notification', [
+          'type' => 'error',
+          'message' => "No se encontró el registro con ID {$recordId}."
+        ]);
+        return null;
+    }
+
+    return $record;
+  }
+
   public function getRecordListAction()
   {
     if (empty($this->selectedIds)) {

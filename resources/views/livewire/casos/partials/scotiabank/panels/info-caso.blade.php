@@ -775,7 +775,7 @@
   </div>
 
   <div class="col-md-3 fv-plugins-icon-container">
-    <label class="form-label" for="user_update">{{ __('Usuario que creó el caso') }}</label>
+    <label class="form-label" for="user_update">{{ __('Usuario que actualizó el caso') }}</label>
     <div class="input-group input-group-merge has-validation">
       <input type="text" wire:model="user_update" id="user_update" class="form-control @error('user_update') is-invalid @enderror" readonly
         placeholder="{{ __('Usuario que creó el caso') }}">
