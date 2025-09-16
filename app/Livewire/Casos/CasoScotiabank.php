@@ -31,7 +31,7 @@ class CasoScotiabank extends CasoManager
   public $titleNotification = 'Notificación - Public Edicto';
 
   #[Computed]
-  public function estadosLevantamientos()
+  public function estados()
   {
     $estados = CasoEstado::join('casos_estados_bancos', 'casos_estados_bancos.estado_id', '=', 'casos_estados.id')
       ->join('casos_estados_productos', 'casos_estados_productos.estado_id', '=', 'casos_estados.id')
@@ -39,7 +39,6 @@ class CasoScotiabank extends CasoManager
       ->where('casos_estados_productos.product_id', $this->product_id)
       ->orderBy('name', 'ASC')
       ->get();
-
     return $estados;
   }
 

@@ -68,9 +68,7 @@
                       style="width: 18px;" data-col="1" aria-label="">
                       <input type="checkbox" class="form-check-input" id="select-all" wire:click="toggleSelectAll">
                     </th>
-
                     @include('livewire.includes.headers', ['columns' => $this->columns])
-
                   </tr>
                   <!-- Fila de filtros -->
                   <tr>

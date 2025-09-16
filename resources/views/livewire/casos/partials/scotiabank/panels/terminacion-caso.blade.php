@@ -18,12 +18,12 @@
   </div>
 
   <div class="col-md-3 select2-primary fv-plugins-icon-container">
-    <label class="form-label" for="aestado_proceso_general_id">{{ __('Cliente') }}</label>
+    <label class="form-label" for="aestado_proceso_general_id">{{ __('Estado Proceso General') }}</label>
     <div wire:ignore>
       <select wire:model.live="aestado_proceso_general_id" id="aestado_proceso_general_id" class="select2 form-select @error('aestado_proceso_general_id') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
         @foreach ($this->estados as $estado)
-          <option value="{{ $estado->id }}">{{ $estado->estado }}</option>
+          <option value="{{ $estado->id }}">{{ $estado->name }}</option>
         @endforeach
       </select>
     </div>
