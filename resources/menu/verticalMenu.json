@@ -231,7 +231,7 @@
       "icon": "menu-icon tf-icons bx bx-wallet",
       "slug": "casos",
       "permissions": [
-        "view-casos-scotiabank"
+        "view-scotiabank-casos"
       ],
       "submenu": [
         {
@@ -239,7 +239,7 @@
           "name": "Scotiabank",
           "slug": "casos-scotiabank",
           "permissions": [
-            "view-casos-scotiabank"
+            "view-scotiabank-casos"
           ]
         }
       ]
