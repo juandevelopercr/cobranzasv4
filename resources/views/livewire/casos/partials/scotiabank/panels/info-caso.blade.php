@@ -107,6 +107,8 @@
     @enderror
   </div>
 
+  @php
+  /*
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="psaldo_dolarizado">{{ __('Saldo Dolarizado') }}</label>
     <div
@@ -135,6 +137,23 @@
     @error('psaldo_dolarizado')
       <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
+  </div>
+  */
+  @endphp
+  <div class="col-md-3 fv-plugins-icon-container">
+    <label class="form-label" for="psaldo_dolarizado">{{ __('Saldo Dolarizado') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <input type="text" wire:model="psaldo_dolarizado" id="psaldo_dolarizado"
+          class="form-control @error('psaldo_dolarizado') is-invalid @enderror"
+          placeholder="{{ __('Saldo Dolarizado') }}"
+          disabled>
+    </div>
+    @error('psaldo_dolarizado')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+    <div class="form-text">
+      {{ __('The system generates it') }}
+    </div>
   </div>
 
   <div class="col-md-3 fv-plugins-icon-container">
