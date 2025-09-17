@@ -145,8 +145,7 @@
     <div class="input-group input-group-merge has-validation">
       <input type="text" wire:model="psaldo_dolarizado" id="psaldo_dolarizado"
           class="form-control @error('psaldo_dolarizado') is-invalid @enderror"
-          placeholder="{{ __('Saldo Dolarizado') }}"
-          disabled>
+          placeholder="{{ __('Saldo Dolarizado') }}">
     </div>
     @error('psaldo_dolarizado')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -610,8 +609,7 @@
     <div class="input-group input-group-merge has-validation">
       <input type="text" wire:model="pmonto_estimacion_demanda" id="pmonto_estimacion_demanda"
           class="form-control @error('pmonto_estimacion_demanda') is-invalid @enderror"
-          placeholder="{{ __('Monto Estimación Demanda') }}"
-          disabled>
+          placeholder="{{ __('Monto Estimación Demanda') }}">
     </div>
     @error('pmonto_estimacion_demanda')
     <div class="text-danger mt-1">{{ $message }}</div>
