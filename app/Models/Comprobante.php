@@ -294,7 +294,7 @@ class Comprobante extends Model
     $html = '';
 
     // PDF del comprobante
-    if ($user->can('download-comprobantes') && $this->pdf_path && Storage::disk('public')->exists($this->pdf_path)) {
+    if ($this->pdf_path && Storage::disk('public')->exists($this->pdf_path)) {
       $html .= <<<HTML
         <button type="button"
             class="btn p-0 me-2"
@@ -309,7 +309,7 @@ class Comprobante extends Model
     }
 
     // XML del comprobante
-    if ($user->can('download-comprobantes') && $this->xml_path && Storage::disk('public')->exists($this->xml_path)) {
+    if ($this->xml_path && Storage::disk('public')->exists($this->xml_path)) {
       $html .= <<<HTML
         <button type="button"
             class="btn p-0 me-2 text-success"
@@ -324,7 +324,7 @@ class Comprobante extends Model
     }
 
     // Respuesta de hacienda XML
-    if ($user->can('download-comprobantes') && $this->xml_respuesta_path && Storage::disk('public')->exists($this->xml_respuesta_path)) {
+    if ($this->xml_respuesta_path && Storage::disk('public')->exists($this->xml_respuesta_path)) {
       $html .= <<<HTML
         <button type="button"
             class="btn p-0 me-2 text-warning"
@@ -354,7 +354,7 @@ class Comprobante extends Model
     }
 
     // Enviar comprobante Hacienda
-    if ($user->can('view-comprobantes') && in_array($this->status, [self::PENDIENTE])) {
+    if (in_array($this->status, [self::PENDIENTE])) {
       $html .= <<<HTML
             <button type="button"
                 class="btn p-0 me-2 text-warning"
@@ -369,7 +369,7 @@ class Comprobante extends Model
     }
 
     // Estado en Hacienda
-    if ($user->can('view-comprobantes') && in_array($this->status, [self::RECIBIDA, self::RECHAZADA])) {
+    if (in_array($this->status, [self::RECIBIDA, self::RECHAZADA])) {
       $html .= <<<HTML
             <button type="button"
                 class="btn p-0 me-2 text-info"
@@ -383,7 +383,7 @@ class Comprobante extends Model
         HTML;
     }
 
-    if ($user->can('download-comprobantes') && $this->xml_respuesta_confirmacion_path && Storage::disk('public')->exists($this->xml_respuesta_confirmacion_path)) {
+    if ($this->xml_respuesta_confirmacion_path && Storage::disk('public')->exists($this->xml_respuesta_confirmacion_path)) {
       $html .= <<<HTML
         <button type="button"
             class="btn p-0 me-2 text-danger"
