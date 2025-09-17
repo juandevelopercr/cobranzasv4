@@ -199,11 +199,21 @@ class BusinessLocation extends Model
       $query->where('email', 'like', '%' . $filters['filter_email'] . '%');
     }
 
-    if (!empty($filters['filter_active'])) {
-      $query->where('active', 'like', '%' . $filters['filter_active'] . '%');
+    if (isset($filters['filter_active']) && !is_null($filters['filter_active'])  && $filters['filter_active'] !== '') {
+      $query->where('business_locations.active', '=', $filters['filter_active']);
     }
 
     return $query;
+  }
+
+  public function getHtmlColumnActive()
+  {
+    if ($this->active) {
+      $output = '<i class="bx bx-check-circle text-success fs-4" title="Activo"></i>';
+    } else {
+      $output = '<i class="bx bx-x-circle text-danger fs-4" title="Inactivo"></i>';
+    }
+    return $output;
   }
 
   public function getHtmlColumnAction(): string

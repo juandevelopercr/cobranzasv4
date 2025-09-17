@@ -538,7 +538,7 @@
       <div class="col-md-6 fv-plugins-icon-container">
         <div class="form-check form-switch ms-2 my-2">
 
-          <input type="checkbox" class="form-check-input" id="active" wire:model.defer="active" {{ $active==1
+          <input type="checkbox" class="form-check-input" id="active" wire:model.live="active" {{ $active==1
             ? 'checked' : '' }} />
 
           <label for="future-billing" class="switch-label">{{ __('Active') }}</label>

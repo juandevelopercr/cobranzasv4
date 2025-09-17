@@ -304,6 +304,15 @@
         @enderror
       </div>
 
+      <div class="col-md-4 fv-plugins-icon-container">
+        <div class="form-check form-switch ms-2 my-7">
+          <input type="checkbox" class="form-check-input" id="active" wire:model.live="active" {{ $active==1
+            ? 'checked' : '' }} />
+
+          <label for="future-billing" class="switch-label">{{ __('Active') }}</label>
+        </div>
+      </div>
+
       <br>
       <h6>3. {{ __('Hacienda Data') }}</h6>
         <div class="row">

@@ -47,6 +47,8 @@ class BusinessLocationManager extends BaseComponent
   public $action = 'list';
   public $recordId = '';
 
+  public $listActives;
+
   public $economicActivities = [];
 
   // Propiedades públicas
@@ -161,6 +163,7 @@ class BusinessLocationManager extends BaseComponent
   public function mount($business_id)
   {
     $this->business_id = $business_id;
+    $this->listActives = [['id' => 1, 'name' => 'Activo'], ['id' => 0, 'name' => 'Inactivo']];
     $this->refresDatatable();
   }
 
@@ -221,7 +224,7 @@ class BusinessLocationManager extends BaseComponent
       'notes' => 'nullable|string',
       'numero_sucursal' => 'required|string|max:3',
       'numero_punto_venta' => 'required|string|max:5',
-      'active' => 'boolean',
+      'active' => 'required|integer|in:0,1',
     ];
   }
 
@@ -288,7 +291,7 @@ class BusinessLocationManager extends BaseComponent
   {
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
-
+    $this->active = 1;
     $this->action = 'create';
     $this->dispatch('scroll-to-top');
   }
@@ -366,6 +369,7 @@ class BusinessLocationManager extends BaseComponent
         'numero_sucursal' => $validatedData['numero_sucursal'] ?? null,
         'numero_punto_venta' => $validatedData['numero_punto_venta'] ?? null,
         'certificate_digital_file' => $validatedData['certificate_digital_file'] ?? null,
+        'active' => $validatedData['active'] ?? 1,
       ]);
 
       // Obtener los IDs de actividades económicas o un array vacío si no hay datos
@@ -552,6 +556,7 @@ class BusinessLocationManager extends BaseComponent
         'notes' => $validatedData['notes'] ?? null,
         'numero_sucursal' => $validatedData['numero_sucursal'] ?? null,
         'numero_punto_venta' => $validatedData['numero_punto_venta'] ?? null,
+        'active' => $validatedData['active'] ?? 1,
       ]);
 
       // Obtener los IDs de actividades económicas o un array vacío si no hay datos
@@ -887,6 +892,25 @@ class BusinessLocationManager extends BaseComponent
         'visible' => true,
       ],
       [
+        'field' => 'active',
+        'orderName' => 'active',
+        'label' => __('Active'),
+        'filter' => 'filter_active',
+        'filter_type' => 'select',
+        'filter_sources' => 'listActives',
+        'filter_source_field' => 'name',
+        'columnType' => 'string',
+        'columnAlign' => 'center',
+        'columnClass' => '',
+        'function' => 'getHtmlColumnActive',
+        'parameters' => [],
+        'sumary' => '',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
         'field' => 'action',
         'orderName' => '',
         'label' => __('Actions'),
@@ -922,6 +946,11 @@ class BusinessLocationManager extends BaseComponent
 
     // Llama al método de almacenamiento
     $this->store();
+  }
+
+  public function updatedActive($value)
+  {
+    $this->active = (int) $value;
   }
 
   public function updateAndClose()
