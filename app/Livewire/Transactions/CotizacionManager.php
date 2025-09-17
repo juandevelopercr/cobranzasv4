@@ -554,7 +554,6 @@ class CotizacionManager extends TransactionManager
       'document_type'         => 'tipo de documento',
       'currency_id'           => 'moneda',
       'condition_sale'        => 'condición de venta',
-      'department_id'         => 'departamento',
       'proforma_type'         => 'tipo de acto',
       'status'                => 'estado',
       'transaction_date'      => 'fecha de transacción',
@@ -678,7 +677,6 @@ class CotizacionManager extends TransactionManager
     $this->contact_economic_activity_id = $record->contact_economic_activity_id;
     $this->cuenta_id              = $record->cuenta_id;
     $this->currency_id            = $record->currency_id;
-    $this->department_id          = $record->department_id;
     $this->area_id                = $record->area_id;
     $this->bank_id                = $record->bank_id;
     $this->caso_id                = $record->caso_id;
@@ -773,7 +771,7 @@ class CotizacionManager extends TransactionManager
     // Se emite este evento para los componentes hijos
     $this->dispatch('updateTransactionContext', [
       'transaction_id'    => $record->id,
-      'department_id'     => $record->department_id,
+      'department_id'     => NULL,
       'bank_id'           => $record->bank_id,
       'type_notarial_act' => $record->proforma_type,
     ]);
@@ -869,7 +867,7 @@ class CotizacionManager extends TransactionManager
 
       $this->dispatch('updateTransactionContext', [
         'transaction_id'    => $record->id,
-        'department_id'     => $record->department_id,
+        'department_id'     => NULL,
         'bank_id'           => $record->bank_id,
         'type_notarial_act' => $record->proforma_type,
       ]);
@@ -975,7 +973,6 @@ class CotizacionManager extends TransactionManager
       'contact_id',
       'contact_economic_activity_id',
       'currency_id',
-      'department_id',
       'area_id',
       'bank_id',
       'codigo_contable_id',
@@ -1050,11 +1047,6 @@ class CotizacionManager extends TransactionManager
       if ($this->condition_sale !== '99') {
         $this->condition_sale_other = null;
       }
-    }
-
-    if ($propertyName == 'department_id') {
-      // emitir el evento para que actualice la info en las lineas
-      $this->dispatch('departmentChange', $this->department_id); // Enviar evento al frontend
     }
 
     if ($propertyName == 'bank_id') {

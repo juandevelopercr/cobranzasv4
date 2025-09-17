@@ -502,11 +502,6 @@ class InvoiceManager extends TransactionManager
       }
     }
 
-    if ($propertyName == 'department_id') {
-      // emitir el evento para que actualice la info en las lineas
-      $this->dispatch('departmentChange', $this->department_id); // Enviar evento al frontend
-    }
-
     if ($propertyName == 'bank_id') {
       // emitir el evento para que actualice la info en las lineas
       $this->dispatch('bankChange', $this->bank_id); // Enviar evento al frontend
