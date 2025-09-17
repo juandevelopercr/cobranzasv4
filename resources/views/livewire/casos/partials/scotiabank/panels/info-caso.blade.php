@@ -151,9 +151,6 @@
     @error('psaldo_dolarizado')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
-    <div class="form-text">
-      {{ __('The system generates it') }}
-    </div>
   </div>
 
   <div class="col-md-3 fv-plugins-icon-container">
@@ -575,6 +572,8 @@
     @enderror
   </div>
 
+  @php
+  /*
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pmonto_estimacion_demanda">{{ __('Monto Estimación Demanda') }}</label>
     <div
@@ -602,6 +601,20 @@
     </div>
     @error('pmonto_estimacion_demanda')
       <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+  */
+  @endphp
+  <div class="col-md-3 fv-plugins-icon-container">
+    <label class="form-label" for="pmonto_estimacion_demanda">{{ __('Monto Estimación Demanda') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <input type="text" wire:model="pmonto_estimacion_demanda" id="pmonto_estimacion_demanda"
+          class="form-control @error('pmonto_estimacion_demanda') is-invalid @enderror"
+          placeholder="{{ __('Monto Estimación Demanda') }}"
+          disabled>
+    </div>
+    @error('pmonto_estimacion_demanda')
+    <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
 
