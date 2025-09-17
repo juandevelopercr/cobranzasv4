@@ -128,7 +128,7 @@
           initialValue: '{{ $pay_term_number ?? '' }}',
           wireModelName: 'pay_term_number',
           postUpdate: true,
-          decimalScale: 0,          
+          decimalScale: 0,
         })"
         x-init="init($refs.cleaveInput)"
         x-effect="
@@ -301,7 +301,7 @@
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="proforma_status">{{ __('Status') }}</label>
       <div wire:ignore>
-        <select wire:model="proforma_status" id="proforma_status" class="select2 form-select @error('proforma_status') is-invalid @enderror" disabled>
+        <select wire:model="proforma_status" id="proforma_status" class="select2 form-select @error('proforma_status') is-invalid @enderror">
           <option value="">{{ __('Seleccione...') }}</option>
           @foreach ($this->statusOptions as $statu)
             <option value="{{ $statu['id'] }}">{{ $statu['name'] }}</option>
