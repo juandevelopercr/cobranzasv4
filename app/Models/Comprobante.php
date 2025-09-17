@@ -264,6 +264,7 @@ class Comprobante extends Model
     return $query;
   }
 
+
   public function getHtmlStatus()
   {
     $htmlData = '';
