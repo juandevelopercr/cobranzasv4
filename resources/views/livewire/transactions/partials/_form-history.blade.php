@@ -112,7 +112,7 @@
 
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="condition_sale">{{ __('Condition Sale') }}</label>
-        <select wire:model="condition_sale" id="condition_sale" class="select2 form-select @error('condition_sale') is-invalid @enderror" disabled>
+        <select wire:model="condition_sale" id="condition_sale" class="select2 form-select @error('condition_sale') is-invalid @enderror">
           <option value="">{{ __('Seleccione...') }}</option>
           @foreach ($this->conditionSales as $conditionSale)
             <option value="{{ $conditionSale->code }}">{{ $conditionSale->code .'-'. $conditionSale->name }}</option>
