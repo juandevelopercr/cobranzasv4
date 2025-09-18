@@ -2,8 +2,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="dnombre_notario">{{ __('Nombre del notario') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="dnombre_notario" id="dnombre_notario" class="form-control @error('dnombre_notario') is-invalid @enderror"
-        placeholder="{{ __('Nombre del notario') }}">
+      <input type="text" wire:model="dnombre_notario" id="dnombre_notario" class="form-control @error('dnombre_notario') is-invalid @enderror">
     </div>
     @error('dnombre_notario')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -12,8 +11,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="dnumero_carnet">{{ __('Nùmero de carnet') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="dnumero_carnet" id="dnumero_carnet" class="form-control @error('dnumero_carnet') is-invalid @enderror"
-        placeholder="{{ __('Nùmero de carnet') }}">
+      <input type="text" wire:model="dnumero_carnet" id="dnumero_carnet" class="form-control @error('dnumero_carnet') is-invalid @enderror">
     </div>
     @error('dnumero_carnet')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -22,8 +20,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="dcorreo_electronico">{{ __('Correo electrònico') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="dcorreo_electronico" id="dcorreo_electronico" class="form-control @error('dcorreo_electronico') is-invalid @enderror"
-        placeholder="{{ __('Correo electrònico') }}">
+      <input type="text" wire:model="dcorreo_electronico" id="dcorreo_electronico" class="form-control @error('dcorreo_electronico') is-invalid @enderror">
     </div>
     @error('dcorreo_electronico')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -32,8 +29,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="dnumero_telefonico">{{ __('Nùmero telèfonico') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="dnumero_telefonico" id="dnumero_telefonico" class="form-control @error('dnumero_telefonico') is-invalid @enderror"
-        placeholder="{{ __('Nùmero telèfonico') }}">
+      <input type="text" wire:model="dnumero_telefonico" id="dnumero_telefonico" class="form-control @error('dnumero_telefonico') is-invalid @enderror">
     </div>
     @error('dnumero_telefonico')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -63,9 +59,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('dfecha_interposicion_denuncia') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('dfecha_interposicion_denuncia') is-invalid @enderror">
     </div>
     @error('dfecha_interposicion_denuncia')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -90,8 +84,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="dnumero_expediente">{{ __('Nùmero de expediente') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="dnumero_expediente" id="dnumero_expediente" class="form-control @error('dnumero_expediente') is-invalid @enderror"
-        placeholder="{{ __('Nùmero de expediente') }}">
+      <input type="text" wire:model="dnumero_expediente" id="dnumero_expediente" class="form-control @error('dnumero_expediente') is-invalid @enderror">
     </div>
     @error('dnumero_expediente')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -173,12 +166,9 @@
   </div>
   <div class="col-md-12 fv-plugins-icon-container">
     <label class="form-label" for="aavance_cronologico">{{ __('Avance Cronológico') }}</label>
-    <textarea class="form-control" wire:model="aavance_cronologico" name="aavance_cronologico" id="aavance_cronologico" rows="5"
-              placeholder="{{ __('Avance Cronológico') }}"></textarea>
+    <textarea class="form-control" wire:model="aavance_cronologico" name="aavance_cronologico" id="aavance_cronologico" rows="5"></textarea>
     @error('aavance_cronologico')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
-
-
 </div>

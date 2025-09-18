@@ -399,10 +399,10 @@ class Transaction extends Model implements HasMedia
       'transactions.RefCodigo',
       'transactions.RefCodigoOtro',
       'transactions.RefRazon',
-      DB::raw("CONCAT_WS(' / ', 
-          NULLIF(casos.pnumero, ''), 
-          NULLIF(casos.pnumero_operacion1, ''), 
-          NULLIF(casos.pnombre_demandado, ''), 
+      DB::raw("CONCAT_WS(' / ',
+          NULLIF(casos.pnumero, ''),
+          NULLIF(casos.pnumero_operacion1, ''),
+          NULLIF(casos.pnombre_demandado, ''),
           NULLIF(casos.pnombre_apellidos_deudor, '')
       ) as caso_info"),
       DB::raw("(
@@ -482,8 +482,8 @@ class Transaction extends Model implements HasMedia
 
       // Nuevos joins optimizados para reference_id
       ->leftJoin(DB::raw('(
-            SELECT transaction_reference_id, MAX(id) as ref_id 
-            FROM transactions 
+            SELECT transaction_reference_id, MAX(id) as ref_id
+            FROM transactions
             WHERE proforma_type = "GASTO"
             GROUP BY transaction_reference_id
         ) ref_gasto'), 'ref_gasto.transaction_reference_id', '=', 'transactions.id')
@@ -501,8 +501,8 @@ class Transaction extends Model implements HasMedia
       */
 
       ->leftJoin(DB::raw('(
-            SELECT transactions.RefNumero, MAX(transactions.id) as ref_id 
-            FROM transactions 
+            SELECT transactions.RefNumero, MAX(transactions.id) as ref_id
+            FROM transactions
             WHERE transactions.proforma_type != "GASTO"
             GROUP BY transactions.RefNumero
         ) ref_other'), function ($join) {
@@ -1078,6 +1078,20 @@ class Transaction extends Model implements HasMedia
           </button>
       HTML;
     }
+
+    // XML comprobante electrónico
+    $html .= <<<HTML
+          <button type="button"
+              class="btn p-0 me-2 text-warning"
+              title="Descargar XML"
+              wire:click="downloadXML({$this->id})"
+              wire:loading.attr="disabled"
+              wire:target="downloadXML">
+              <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="downloadXML({$this->id})"></i>
+              <i class="bx bx-code-block {$iconSize}" wire:loading.remove wire:target="downloadXML({$this->id})"></i>
+          </button>
+      HTML;
+
 
     $html .= '</div>';
     return $html;
