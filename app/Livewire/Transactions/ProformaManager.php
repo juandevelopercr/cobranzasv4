@@ -554,7 +554,6 @@ class ProformaManager extends TransactionManager
 
   public function render()
   {
-    $this->resetPage();
     $query = $this->getFilteredQuery();
 
     $allowedRoles = User::ROLES_ALL_BANKS;

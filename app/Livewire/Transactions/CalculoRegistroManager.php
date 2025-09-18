@@ -430,7 +430,6 @@ class CalculoRegistroManager extends TransactionManager
 
   public function render()
   {
-    $this->resetPage();
     $query = $this->getFilteredQuery();
     Log::warning("Se ejecuta el render", [
       '$refreshCounter' => $this->refreshCounter
