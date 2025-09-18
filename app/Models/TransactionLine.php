@@ -847,7 +847,7 @@ class TransactionLine extends Model
 
   public function getSubTotal()
   {
-    $subtotal = $this->honorarios + $this->timbres - $this->discount;
+    $subtotal = ($this->honorarios + $this->timbres) * $this->quantity - $this->discount;
     return number_format($subtotal, 5, '.', '');
   }
 
