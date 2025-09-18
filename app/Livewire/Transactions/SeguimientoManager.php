@@ -625,6 +625,7 @@ class SeguimientoManager extends TransactionManager
 
   public function render()
   {
+    $this->resetPage();
     $query = $this->getFilteredQuery();
 
     // Ordenamiento y paginación final
