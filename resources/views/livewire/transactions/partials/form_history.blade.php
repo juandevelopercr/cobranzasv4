@@ -134,9 +134,9 @@ use App\Models\User;
                   @livewire('transactions-commissions.transaction-commission-manager', [
                     'transaction_id' => $this->recordId,
                     'canview'   => auth()->user()->can('view-comision-proformas'),
-                    'cancreate' => false,
+                    'cancreate' => auth()->user()->can('create-comision-proformas'),
                     'canedit'   => auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS),
-                    'candelete' => false,
+                    'candelete' => auth()->user()->can('delete-comision-proformas'),
                     'canexport' => auth()->user()->can('export-comision-proformas'),
                   ])
                 </div>
