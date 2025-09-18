@@ -601,26 +601,22 @@ class Transaction extends Model implements HasMedia
       $range = explode(' to ', $filters['filter_transaction_date']);
 
       if (count($range) === 2) {
-        try {
-          // Validar y convertir las fechas del rango
-          $start = Carbon::createFromFormat('d-m-Y', $range[0])->format('Y-m-d');
-          $end = Carbon::createFromFormat('d-m-Y', $range[1])->format('Y-m-d');
+          try {
+              $start = Carbon::createFromFormat('d-m-Y', $range[0])->startOfDay();
+              $end   = Carbon::createFromFormat('d-m-Y', $range[1])->endOfDay();
 
-          // Aplicar filtro si ambas fechas son válidas
-          $query->whereBetween('transaction_date', [$start, $end]);
-        } catch (\Exception $e) {
-          // Manejar el caso de fechas inválidas (opcional: log o ignorar)
-        }
+              $query->whereBetween('transaction_date', [$start, $end]);
+          } catch (\Exception $e) {
+              // log o ignorar
+          }
       } else {
-        try {
-          // Validar y convertir la fecha única
-          $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_transaction_date'])->format('Y-m-d');
+          try {
+              $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_transaction_date']);
 
-          // Aplicar filtro si la fecha es válida
-          $query->whereDate('transaction_date', $singleDate);
-        } catch (\Exception $e) {
-          // Manejar el caso de fecha inválida (opcional: log o ignorar)
-        }
+              $query->whereDate('transaction_date', $singleDate);
+          } catch (\Exception $e) {
+              // log o ignorar
+          }
       }
     }
 
