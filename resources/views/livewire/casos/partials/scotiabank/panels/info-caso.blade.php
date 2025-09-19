@@ -519,7 +519,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pnumero_expediente_judicial">{{ __('Número Expediente Judicial') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pnumero_expediente_judicial" id="pnumero_expediente_judicial" class="form-control @error('pnumero_expediente_judicial') is-invalid @enderror">
+      <input type="text" wire:model.live="pnumero_expediente_judicial" id="pnumero_expediente_judicial" class="form-control @error('pnumero_expediente_judicial') is-invalid @enderror">
     </div>
     @error('pnumero_expediente_judicial')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -529,7 +529,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pdespacho_judicial_juzgado">{{ __('Despacho Judicial Juzgado') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pdespacho_judicial_juzgado" id="pdespacho_judicial_juzgado" class="form-control @error('pdespacho_judicial_juzgado') is-invalid @enderror">
+      <input type="text" wire:model.live="pdespacho_judicial_juzgado" id="pdespacho_judicial_juzgado" class="form-control @error('pdespacho_judicial_juzgado') is-invalid @enderror">
     </div>
     @error('pdespacho_judicial_juzgado')
     <div class="text-danger mt-1">{{ $message }}</div>
