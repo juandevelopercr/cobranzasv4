@@ -8,9 +8,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('f1fecha_asignacion_capturador') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('f1fecha_asignacion_capturador') is-invalid @enderror">
     </div>
     @error('f1fecha_asignacion_capturador')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -20,8 +18,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="f1proveedor_servicio">{{ __('Proveedor del servicio') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="f1proveedor_servicio" id="f1proveedor_servicio" class="form-control @error('f1proveedor_servicio') is-invalid @enderror"
-        placeholder="{{ __('Proveedor del servicio') }}">
+      <input type="text" wire:model="f1proveedor_servicio" id="f1proveedor_servicio" class="form-control @error('f1proveedor_servicio') is-invalid @enderror">
     </div>
     @error('f1proveedor_servicio')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -105,8 +102,7 @@
 
   <div class="col-md-12 fv-plugins-icon-container">
     <label class="form-label" for="f1avance_cronologico">{{ __('Avance Cronológico') }}</label>
-    <textarea class="form-control" wire:model="f1avance_cronologico" name="f1avance_cronologico" id="f1avance_cronologico" rows="5"
-              placeholder="{{ __('Avance Cronológico') }}"></textarea>
+    <textarea class="form-control" wire:model="f1avance_cronologico" name="f1avance_cronologico" id="f1avance_cronologico" rows="5"></textarea>
     @error('f1avance_cronologico')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror

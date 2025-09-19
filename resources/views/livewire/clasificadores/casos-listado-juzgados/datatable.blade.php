@@ -2,7 +2,7 @@
   @if($action == 'list')
     <!-- DataTable with Buttons -->
     <div class="card">
-      <h4 class="card-header pb-0 text-md-start text-center ms-n2">{{ __('Juzgados') }}</h4>
+      <h4 class="card-header pb-0 text-md-start text-center ms-n2">{{ __('Listado de Juzgados') }}</h4>
       <div class="card-datatable text-nowrap">
         <div class="dataTables_wrapper dt-bootstrap5 no-footer">
           <div class="row">
@@ -29,7 +29,7 @@
                   @endcan
 
                   @can('export-classifiers')
-                    <livewire:clasificadores.casos-juzgados.caso-juzgado-datatable-export />
+                    <livewire:clasificadores.casos-listado-juzgados.caso-listado-juzgado-datatable-export />
                   @endcan
 
                   <div class="btn-group" role="group" aria-label="DataTable Actions">
@@ -44,11 +44,11 @@
 
                   <!-- Renderizar el componente Livewire -->
                   @livewire('components.datatable-settings', [
-                    'datatableName' => 'classifier-casos-juzgado-datatable',
+                    'datatableName' => 'classifier-casos-listado-juzgado-datatable',
                     'availableColumns' => $this->columns,
                     'perPage' => $this->perPage,
                   ],
-                  key('classifier-casos-juzgado-datatable-config'))
+                  key('classifier-casos-listado-juzgado-datatable-config'))
 
                 </div>
               </div>
@@ -57,7 +57,7 @@
 
           @can("view-classifiers")
             <div class="card-datatable table-responsive">
-                <table class="table table-sm mb-0 border-top table-hover dataTable no-footer" id="casos-juzgados-table" style="width: 100%;">
+                <table class="table table-sm mb-0 border-top table-hover dataTable no-footer" id="casos-listado-juzgados-table" style="width: 100%;">
                 <thead>
                   <tr>
                     <th class="control sorting_disabled dtr-hidden" rowspan="1" colspan="1"
@@ -104,7 +104,7 @@
   @endif
 
   @if($action == 'create' || $action == 'edit')
-    @include('livewire.clasificadores.casos-juzgados.partials.form')
+    @include('livewire.clasificadores.casos-listado-juzgados.partials.form')
   @endif
 </div>
 
@@ -112,7 +112,7 @@
 <script>
   function printTable() {
       // Selecciona el contenido que deseas imprimir. Ajusta `#table-content` según el ID de tu tabla.
-      const printContent = document.getElementById('casos-juzgados-table').innerHTML;
+      const printContent = document.getElementById('casos-listado-juzgados-table').innerHTML;
       const originalContent = document.body.innerHTML;
 
       document.body.innerHTML = printContent;

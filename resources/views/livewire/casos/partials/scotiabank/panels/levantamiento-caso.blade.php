@@ -119,8 +119,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="lproveedores_servicio">{{ __('Proveedores de servicios') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="lproveedores_servicio" id="lproveedores_servicio" class="form-control @error('lproveedores_servicio') is-invalid @enderror"
-        placeholder="{{ __('Proveedores de servicios') }}">
+      <input type="text" wire:model="lproveedores_servicio" id="lproveedores_servicio" class="form-control @error('lproveedores_servicio') is-invalid @enderror">
     </div>
     @error('lproveedores_servicio')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -129,8 +128,7 @@
 
   <div class="col-md-12 fv-plugins-icon-container">
     <label class="form-label" for="lavance_cronologico">{{ __('Avance Cronológico') }}</label>
-    <textarea class="form-control" wire:model="lavance_cronologico" name="lavance_cronologico" id="lavance_cronologico" rows="5"
-              placeholder="{{ __('Avance Cronológico') }}"></textarea>
+    <textarea class="form-control" wire:model="lavance_cronologico" name="lavance_cronologico" id="lavance_cronologico" rows="5"></textarea>
     @error('lavance_cronologico')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror

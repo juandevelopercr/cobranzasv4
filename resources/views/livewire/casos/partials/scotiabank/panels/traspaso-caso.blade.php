@@ -8,9 +8,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('tfecha_traspaso') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('tfecha_traspaso') is-invalid @enderror">
     </div>
     @error('tfecha_traspaso')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -86,9 +84,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('tfecha_envio_borrador_escritura') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('tfecha_envio_borrador_escritura') is-invalid @enderror">
     </div>
     @error('tfecha_envio_borrador_escritura')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -97,8 +93,7 @@
 
   <div class="col-md-12 fv-plugins-icon-container">
     <label class="form-label" for="tborrador_escritura">{{ __('Borrador de escritura') }}</label>
-    <textarea class="form-control" wire:model="tborrador_escritura" name="tborrador_escritura" id="tborrador_escritura" rows="2"
-              placeholder="{{ __('Borrador de escritura') }}"></textarea>
+    <textarea class="form-control" wire:model="tborrador_escritura" name="tborrador_escritura" id="tborrador_escritura" rows="2"></textarea>
     @error('tborrador_escritura')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
@@ -113,9 +108,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('tfecha_firma_escritura') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('tfecha_firma_escritura') is-invalid @enderror">
     </div>
     @error('tfecha_firma_escritura')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -131,9 +124,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('tfecha_presentacion_escritura') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('tfecha_presentacion_escritura') is-invalid @enderror">
     </div>
     @error('tfecha_presentacion_escritura')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -149,9 +140,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('tfecha_comunicacion') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('tfecha_comunicacion') is-invalid @enderror">
     </div>
     @error('tfecha_comunicacion')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -160,8 +149,7 @@
 
   <div class="col-md-12 fv-plugins-icon-container">
     <label class="form-label" for="tautorizacion_tercero">{{ __('Autorizaciòn a tercero') }}</label>
-    <textarea class="form-control" wire:model="tautorizacion_tercero" name="tautorizacion_tercero" id="tautorizacion_tercero" rows="2"
-              placeholder="{{ __('Autorizaciòn a tercero') }}"></textarea>
+    <textarea class="form-control" wire:model="tautorizacion_tercero" name="tautorizacion_tercero" id="tautorizacion_tercero" rows="2"></textarea>
     @error('tautorizacion_tercero')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
@@ -176,9 +164,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('tfecha_entrega_titulo_propiedad') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('tfecha_entrega_titulo_propiedad') is-invalid @enderror">
     </div>
     @error('tfecha_entrega_titulo_propiedad')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -194,9 +180,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('tfecha_exclusion') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('tfecha_exclusion') is-invalid @enderror">
     </div>
     @error('tfecha_exclusion')
     <div class="text-danger mt-1">{{ $message }}</div>

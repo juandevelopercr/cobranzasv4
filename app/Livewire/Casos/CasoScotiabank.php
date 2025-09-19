@@ -2,29 +2,30 @@
 
 namespace App\Livewire\Casos;
 
-use App\Helpers\Helpers;
-use App\Livewire\BaseComponent;
-use App\Livewire\Casos\CasoManager;
+use Carbon\Carbon;
 use App\Models\Bank;
 use App\Models\Caso;
+use App\Models\User;
+use App\Models\Contact;
+use App\Helpers\Helpers;
+use App\Models\Currency;
 use App\Models\CasoEstado;
-use App\Models\CasoExpectativa;
 use App\Models\CasoJuzgado;
 use App\Models\CasoProceso;
-use App\Models\CasoProducto;
-use App\Models\Contact;
-use App\Models\Currency;
-use App\Models\DataTableConfig;
-use App\Models\User;
-use App\Services\DocumentSequenceService;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
+use App\Models\CasoProducto;
 use Livewire\Attributes\Url;
-use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
+use App\Livewire\BaseComponent;
+use App\Models\CasoExpectativa;
+use App\Models\DataTableConfig;
+use Livewire\Attributes\Computed;
+use App\Models\CasoListadoJuzgado;
+use Illuminate\Support\Facades\DB;
+use App\Livewire\Casos\CasoManager;
+use Illuminate\Support\Facades\Auth;
+use App\Services\DocumentSequenceService;
 
 class CasoScotiabank extends CasoManager
 {
@@ -839,6 +840,11 @@ class CasoScotiabank extends CasoManager
     if ($propertyName == 'product_id') {
       $this->getPanelsProperty();
     }
+    if ($propertyName == 'pnumero_expediente_judicial'){
+      $listadoJuzgado = CasoListadoJuzgado::where('codigo', trim($this->pnumero_expediente_judicial))->first();
+      $this->pdespacho_judicial_juzgado = $listadoJuzgado ? $listadoJuzgado->name : '';
+    }
+
     $this->dispatch('select2');
   }
 

@@ -42,8 +42,7 @@
 
   <div class="col-md-12 fv-plugins-icon-container">
     <label class="form-label" for="rcausa">{{ __('Causa') }}</label>
-    <textarea class="form-control" wire:model="rcausa" name="rcausa" id="rcausa" rows="5"
-              placeholder="{{ __('Causa') }}"></textarea>
+    <textarea class="form-control" wire:model="rcausa" name="rcausa" id="rcausa" rows="5"></textarea>
     @error('rcausa')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
@@ -58,9 +57,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('rfecha_desinscripcion') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('rfecha_desinscripcion') is-invalid @enderror">
     </div>
     @error('rfecha_desinscripcion')
     <div class="text-danger mt-1">{{ $message }}</div>

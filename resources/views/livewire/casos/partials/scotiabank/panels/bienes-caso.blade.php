@@ -2,8 +2,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="bapersonamiento_formal">{{ __('Asesoramiento formal') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="bapersonamiento_formal" id="bapersonamiento_formal" class="form-control @error('bapersonamiento_formal') is-invalid @enderror"
-        placeholder="{{ __('Asesoramiento formal') }}">
+      <input type="text" wire:model="bapersonamiento_formal" id="bapersonamiento_formal" class="form-control @error('bapersonamiento_formal') is-invalid @enderror">
     </div>
     @error('bapersonamiento_formal')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -19,9 +18,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('bfecha_entrega_poder') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('bfecha_entrega_poder') is-invalid @enderror">
     </div>
     @error('bfecha_entrega_poder')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -31,8 +28,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="bsumaria">{{ __('Sumaria') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="bsumaria" id="bsumaria" class="form-control @error('bsumaria') is-invalid @enderror"
-        placeholder="{{ __('Sumaria') }}">
+      <input type="text" wire:model="bsumaria" id="bsumaria" class="form-control @error('bsumaria') is-invalid @enderror">
     </div>
     @error('bsumaria')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -67,9 +63,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('bfecha_levantamiento_gravamen') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('bfecha_levantamiento_gravamen') is-invalid @enderror">
     </div>
     @error('bfecha_levantamiento_gravamen')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -94,8 +88,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="bproveedores_servicios">{{ __('Proveedores de servicios') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="bproveedores_servicios" id="bproveedores_servicios" class="form-control @error('bproveedores_servicios') is-invalid @enderror"
-        placeholder="{{ __('Proveedores de servicios') }}">
+      <input type="text" wire:model="bproveedores_servicios" id="bproveedores_servicios" class="form-control @error('bproveedores_servicios') is-invalid @enderror">
     </div>
     @error('bproveedores_servicios')
     <div class="text-danger mt-1">{{ $message }}</div>

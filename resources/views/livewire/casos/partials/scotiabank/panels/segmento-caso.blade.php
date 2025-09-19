@@ -9,9 +9,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('efecha_visita') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('efecha_visita') is-invalid @enderror">
     </div>
     @error('efecha_visita')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -51,8 +49,7 @@
 
   <div class="col-md-12 fv-plugins-icon-container">
     <label class="form-label" for="savance_cronologico">{{ __('Avance Cronológico') }}</label>
-    <textarea class="form-control" wire:model="savance_cronologico" name="savance_cronologico" id="savance_cronologico" rows="2"
-              placeholder="{{ __('Avance Cronológico') }}"></textarea>
+    <textarea class="form-control" wire:model="savance_cronologico" name="savance_cronologico" id="savance_cronologico" rows="2"></textarea>
     @error('savance_cronologico')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror

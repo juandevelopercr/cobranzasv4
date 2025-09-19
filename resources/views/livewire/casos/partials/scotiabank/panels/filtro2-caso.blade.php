@@ -2,8 +2,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="f2causa_remate">{{ __('Causa de remate') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="f2causa_remate" id="f2causa_remate" class="form-control @error('f2causa_remate') is-invalid @enderror"
-        placeholder="{{ __('Causa de remate') }}">
+      <input type="text" wire:model="f2causa_remate" id="f2causa_remate" class="form-control @error('f2causa_remate') is-invalid @enderror">
     </div>
     @error('f2causa_remate')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -32,9 +31,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('f2fecha_publicacion_edicto') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('f2fecha_publicacion_edicto') is-invalid @enderror">
     </div>
     @error('f2fecha_publicacion_edicto')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -44,8 +41,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="f2tiempo_concedido_edicto">{{ __('Tiempo concedido en el edicto') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="f2tiempo_concedido_edicto" id="f2tiempo_concedido_edicto" class="form-control @error('f2tiempo_concedido_edicto') is-invalid @enderror"
-        placeholder="{{ __('Tiempo concedido en el edicto') }}">
+      <input type="text" wire:model="f2tiempo_concedido_edicto" id="f2tiempo_concedido_edicto" class="form-control @error('f2tiempo_concedido_edicto') is-invalid @enderror">
     </div>
     @error('f2tiempo_concedido_edicto')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -55,8 +51,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="f2preclusion_tiempo">{{ __('Preclusiòn del tiempo') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="f2preclusion_tiempo" id="f2preclusion_tiempo" class="form-control @error('f2preclusion_tiempo') is-invalid @enderror"
-        placeholder="{{ __('Preclusiòn del tiempo') }}">
+      <input type="text" wire:model="f2preclusion_tiempo" id="f2preclusion_tiempo" class="form-control @error('f2preclusion_tiempo') is-invalid @enderror">
     </div>
     @error('f2preclusion_tiempo')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -80,8 +75,7 @@
 
   <div class="col-md-12 fv-plugins-icon-container">
     <label class="form-label" for="f2avance_cronologico">{{ __('Avance Cronológico') }}</label>
-    <textarea class="form-control" wire:model="f2avance_cronologico" name="f2avance_cronologico" id="f2avance_cronologico" rows="5"
-              placeholder="{{ __('Avance Cronológico') }}"></textarea>
+    <textarea class="form-control" wire:model="f2avance_cronologico" name="f2avance_cronologico" id="f2avance_cronologico" rows="5"></textarea>
     @error('f2avance_cronologico')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror

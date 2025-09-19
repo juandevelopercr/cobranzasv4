@@ -8,9 +8,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('nfecha_traslado_juzgado') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('nfecha_traslado_juzgado') is-invalid @enderror">
     </div>
     @error('nfecha_traslado_juzgado')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -26,9 +24,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('nfecha_entrega_requerimiento_pago') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('nfecha_entrega_requerimiento_pago') is-invalid @enderror">
     </div>
     @error('nfecha_entrega_requerimiento_pago')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -44,9 +40,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('nfecha_entrega_orden_captura') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('nfecha_entrega_orden_captura') is-invalid @enderror">
     </div>
     @error('nfecha_entrega_orden_captura')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -62,9 +56,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('nfecha_notificacion_todas_partes') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('nfecha_notificacion_todas_partes') is-invalid @enderror">
     </div>
     @error('nfecha_notificacion_todas_partes')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -80,9 +72,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('nfecha_ultima_liquidacion') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('nfecha_ultima_liquidacion') is-invalid @enderror">
     </div>
     @error('nfecha_ultima_liquidacion')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -91,8 +81,7 @@
 
   <div class="col-md-9 fv-plugins-icon-container">
     <label class="form-label" for="npartes_notificadas">{{ __('Partes Notificadas') }}</label>
-    <textarea class="form-control" wire:model="npartes_notificadas" name="npartes_notificadas" id="npartes_notificadas" rows="2"
-              placeholder="{{ __('Partes Notificadas') }}"></textarea>
+    <textarea class="form-control" wire:model="npartes_notificadas" name="npartes_notificadas" id="npartes_notificadas" rows="2"></textarea>
     @error('npartes_notificadas')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
@@ -114,8 +103,7 @@
 
   <div class="col-md-9 fv-plugins-icon-container">
     <label class="form-label" for="nanotaciones">{{ __('Anotaciones') }}</label>
-    <textarea class="form-control" wire:model="nanotaciones" name="nanotaciones" id="nanotaciones" rows="2"
-              placeholder="{{ __('Anotaciones') }}"></textarea>
+    <textarea class="form-control" wire:model="nanotaciones" name="nanotaciones" id="nanotaciones" rows="2"></textarea>
     @error('nanotaciones')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
@@ -123,8 +111,7 @@
 
   <div class="col-md-6 fv-plugins-icon-container">
     <label class="form-label" for="nubicacion_garantia">{{ __('Ubicación de la garantía') }}</label>
-    <textarea class="form-control" wire:model="nubicacion_garantia" name="nubicacion_garantia" id="nubicacion_garantia" rows="2"
-              placeholder="{{ __('Ubicación de la garantía') }}"></textarea>
+    <textarea class="form-control" wire:model="nubicacion_garantia" name="nubicacion_garantia" id="nubicacion_garantia" rows="2"></textarea>
     @error('nubicacion_garantia')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
@@ -132,8 +119,7 @@
 
   <div class="col-md-6 fv-plugins-icon-container">
     <label class="form-label" for="ntalleres_situaciones">{{ __('Talleres o situaciones especiales') }}</label>
-    <textarea class="form-control" wire:model="ntalleres_situaciones" name="ntalleres_situaciones" id="ntalleres_situaciones" rows="2"
-              placeholder="{{ __('Talleres o situaciones especiales') }}"></textarea>
+    <textarea class="form-control" wire:model="ntalleres_situaciones" name="ntalleres_situaciones" id="ntalleres_situaciones" rows="2"></textarea>
     @error('ntalleres_situaciones')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
@@ -148,9 +134,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('nfecha_notificacion') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('nfecha_notificacion') is-invalid @enderror">
     </div>
     @error('nfecha_notificacion')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -159,8 +143,7 @@
 
   <div class="col-md-9 fv-plugins-icon-container">
     <label class="form-label" for="ncomentarios">{{ __('Comentarios') }}</label>
-    <textarea class="form-control" wire:model="ncomentarios" name="ncomentarios" id="ncomentarios" rows="2"
-              placeholder="{{ __('Comentarios') }}"></textarea>
+    <textarea class="form-control" wire:model="ncomentarios" name="ncomentarios" id="ncomentarios" rows="2"></textarea>
     @error('ncomentarios')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
@@ -249,9 +232,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('nfecha_pago') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('nfecha_pago') is-invalid @enderror">
     </div>
     @error('nfecha_pago')
     <div class="text-danger mt-1">{{ $message }}</div>

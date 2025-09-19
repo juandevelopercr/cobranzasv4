@@ -8,9 +8,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('sfecha_captura') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('sfecha_captura') is-invalid @enderror">
     </div>
     @error('sfecha_captura')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -26,9 +24,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('sfecha_sentencia') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('sfecha_sentencia') is-invalid @enderror">
     </div>
     @error('sfecha_sentencia')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -44,9 +40,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('sfecha_remate') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('sfecha_remate') is-invalid @enderror">
     </div>
     @error('sfecha_remate')
     <div class="text-danger mt-1">{{ $message }}</div>

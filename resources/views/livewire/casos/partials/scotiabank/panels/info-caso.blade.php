@@ -3,9 +3,7 @@
     <label class="form-label" for="pnumero">{{ __('Número') }}</label>
     <div class="input-group input-group-merge has-validation">
       <input type="text" wire:model="pnumero" id="pnumero"
-          class="form-control @error('pnumero') is-invalid @enderror"
-          placeholder="{{ __('Número') }}"
-          disabled>
+          class="form-control @error('pnumero') is-invalid @enderror" disabled>
     </div>
     @error('pnumero')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -24,9 +22,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('fecha_creacion') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('fecha_creacion') is-invalid @enderror">
     </div>
     @error('fecha_creacion')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -144,8 +140,7 @@
     <label class="form-label" for="psaldo_dolarizado">{{ __('Saldo Dolarizado') }}</label>
     <div class="input-group input-group-merge has-validation">
       <input type="text" wire:model="psaldo_dolarizado" id="psaldo_dolarizado"
-          class="form-control @error('psaldo_dolarizado') is-invalid @enderror"
-          placeholder="{{ __('Saldo Dolarizado') }}">
+          class="form-control @error('psaldo_dolarizado') is-invalid @enderror">
     </div>
     @error('psaldo_dolarizado')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -221,9 +216,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('pfecha_pago_multas_y_seguros') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('pfecha_pago_multas_y_seguros') is-invalid @enderror">
     </div>
     @error('pfecha_pago_multas_y_seguros')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -239,9 +232,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('pfecha_asignacion_caso') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('pfecha_asignacion_caso') is-invalid @enderror">
     </div>
     @error('pfecha_asignacion_caso')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -296,8 +287,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pdepartamento_solicitante">{{ __('Departamento Solicitante') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pdepartamento_solicitante" id="pdepartamento_solicitante" class="form-control @error('pdepartamento_solicitante') is-invalid @enderror"
-        placeholder="{{ __('Departamento Solicitante') }}">
+      <input type="text" wire:model="pdepartamento_solicitante" id="pdepartamento_solicitante" class="form-control @error('pdepartamento_solicitante') is-invalid @enderror">
     </div>
     @error('pdepartamento_solicitante')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -313,9 +303,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('pfecha_e_instruccion_levantamiento') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('pfecha_e_instruccion_levantamiento') is-invalid @enderror">
     </div>
     @error('pfecha_e_instruccion_levantamiento')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -325,8 +313,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pnumero_operacion1">{{ __('Número Operación #1') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pnumero_operacion1" id="pnumero_operacion1" class="form-control @error('pnumero_operacion1') is-invalid @enderror"
-        placeholder="{{ __('Número Operación #1') }}">
+      <input type="text" wire:model="pnumero_operacion1" id="pnumero_operacion1" class="form-control @error('pnumero_operacion1') is-invalid @enderror">
     </div>
     @error('pnumero_operacion1')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -336,8 +323,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pnumero_operacion2">{{ __('Número Operación #2') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pnumero_operacion2" id="pnumero_operacion2" class="form-control @error('pnumero_operacion2') is-invalid @enderror"
-        placeholder="{{ __('Número Operación #2') }}">
+      <input type="text" wire:model="pnumero_operacion2" id="pnumero_operacion2" class="form-control @error('pnumero_operacion2') is-invalid @enderror">
     </div>
     @error('pnumero_operacion2')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -347,8 +333,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pnumero_contrato">{{ __('Número de Contrato') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pnumero_contrato" id="pnumero_contrato" class="form-control @error('pnumero_contrato') is-invalid @enderror"
-        placeholder="{{ __('Número de Contrato') }}">
+      <input type="text" wire:model="pnumero_contrato" id="pnumero_contrato" class="form-control @error('pnumero_contrato') is-invalid @enderror">
     </div>
     @error('pnumero_contrato')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -358,8 +343,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pnombre_demandado">{{ __('Nombre del Demandado') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pnombre_demandado" id="pnombre_demandado" class="form-control @error('pnombre_demandado') is-invalid @enderror"
-        placeholder="{{ __('Nombre del Demandado') }}">
+      <input type="text" wire:model="pnombre_demandado" id="pnombre_demandado" class="form-control @error('pnombre_demandado') is-invalid @enderror">
     </div>
     @error('pnombre_demandado')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -369,8 +353,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pnumero_cedula">{{ __('Número de Cédula del demandado') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pnumero_cedula" id="pnumero_cedula" class="form-control @error('pnumero_cedula') is-invalid @enderror"
-        placeholder="{{ __('Número de Cédula del demandado') }}">
+      <input type="text" wire:model="pnumero_cedula" id="pnumero_cedula" class="form-control @error('pnumero_cedula') is-invalid @enderror">
     </div>
     @error('pnumero_cedula')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -380,8 +363,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pnombre_arrendatario">{{ __('Nombre del arrendatario') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pnombre_arrendatario" id="pnombre_arrendatario" class="form-control @error('pnombre_arrendatario') is-invalid @enderror"
-        placeholder="{{ __('Nombre del arrendatario') }}">
+      <input type="text" wire:model="pnombre_arrendatario" id="pnombre_arrendatario" class="form-control @error('pnombre_arrendatario') is-invalid @enderror">
     </div>
     @error('pnombre_arrendatario')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -391,8 +373,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pcedula_arrendatario">{{ __('Cèdula del arrendatario') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pcedula_arrendatario" id="pcedula_arrendatario" class="form-control @error('pcedula_arrendatario') is-invalid @enderror"
-        placeholder="{{ __('Nombre del arrendatario') }}">
+      <input type="text" wire:model="pcedula_arrendatario" id="pcedula_arrendatario" class="form-control @error('pcedula_arrendatario') is-invalid @enderror">
     </div>
     @error('pcedula_arrendatario')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -402,8 +383,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pcorreo_demandado_deudor_o_arrendatario">{{ __('Correo Demandado Deudor O Arrendatario') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pcorreo_demandado_deudor_o_arrendatario" id="pcorreo_demandado_deudor_o_arrendatario" class="form-control @error('pcorreo_demandado_deudor_o_arrendatario') is-invalid @enderror"
-        placeholder="{{ __('Correo Demandado Deudor O Arrendatario') }}">
+      <input type="text" wire:model="pcorreo_demandado_deudor_o_arrendatario" id="pcorreo_demandado_deudor_o_arrendatario" class="form-control @error('pcorreo_demandado_deudor_o_arrendatario') is-invalid @enderror">
     </div>
     @error('pcorreo_demandado_deudor_o_arrendatario')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -413,8 +393,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="ptelefono_demandado_deudor_o_arrendatario">{{ __('Teléfono Demandado Deudor O Arrendatario') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="ptelefono_demandado_deudor_o_arrendatario" id="ptelefono_demandado_deudor_o_arrendatario" class="form-control @error('ptelefono_demandado_deudor_o_arrendatario') is-invalid @enderror"
-        placeholder="{{ __('Teléfono Demandado Deudor O Arrendatario') }}">
+      <input type="text" wire:model="ptelefono_demandado_deudor_o_arrendatario" id="ptelefono_demandado_deudor_o_arrendatario" class="form-control @error('ptelefono_demandado_deudor_o_arrendatario') is-invalid @enderror">
     </div>
     @error('ptelefono_demandado_deudor_o_arrendatario')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -424,8 +403,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pnombre_contacto_o_arrendatario">{{ __('Nombre Contacto O Arrendatario') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pnombre_contacto_o_arrendatario" id="pnombre_contacto_o_arrendatario" class="form-control @error('pnombre_contacto_o_arrendatario') is-invalid @enderror"
-        placeholder="{{ __('Nombre Contacto O Arrendatario') }}">
+      <input type="text" wire:model="pnombre_contacto_o_arrendatario" id="pnombre_contacto_o_arrendatario" class="form-control @error('pnombre_contacto_o_arrendatario') is-invalid @enderror">
     </div>
     @error('pnombre_contacto_o_arrendatario')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -435,8 +413,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pnombre_coarrendatario">{{ __('Nombre Coarrendatario') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pnombre_coarrendatario" id="pnombre_coarrendatario" class="form-control @error('pnombre_coarrendatario') is-invalid @enderror"
-        placeholder="{{ __('Nombre Coarrendatario') }}">
+      <input type="text" wire:model="pnombre_coarrendatario" id="pnombre_coarrendatario" class="form-control @error('pnombre_coarrendatario') is-invalid @enderror">
     </div>
     @error('pnombre_coarrendatario')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -446,8 +423,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pcedula_coarrendatario">{{ __('Cédula Coarrendatario') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pcedula_coarrendatario" id="pcedula_coarrendatario" class="form-control @error('pcedula_coarrendatario') is-invalid @enderror"
-        placeholder="{{ __('Nombre Coarrendatario') }}">
+      <input type="text" wire:model="pcedula_coarrendatario" id="pcedula_coarrendatario" class="form-control @error('pcedula_coarrendatario') is-invalid @enderror">
     </div>
     @error('pcedula_coarrendatario')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -457,8 +433,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pcorreo_coarrendatario">{{ __('Correo Coarrendatario') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pcorreo_coarrendatario" id="pcorreo_coarrendatario" class="form-control @error('pcorreo_coarrendatario') is-invalid @enderror"
-        placeholder="{{ __('Correo Coarrendatario') }}">
+      <input type="text" wire:model="pcorreo_coarrendatario" id="pcorreo_coarrendatario" class="form-control @error('pcorreo_coarrendatario') is-invalid @enderror">
     </div>
     @error('pcorreo_coarrendatario')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -468,8 +443,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="ptelefono_coarrendatario">{{ __('Teléfono Coarrendatario') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="ptelefono_coarrendatario" id="ptelefono_coarrendatario" class="form-control @error('ptelefono_coarrendatario') is-invalid @enderror"
-        placeholder="{{ __('Teléfono Coarrendatario') }}">
+      <input type="text" wire:model="ptelefono_coarrendatario" id="ptelefono_coarrendatario" class="form-control @error('ptelefono_coarrendatario') is-invalid @enderror">
     </div>
     @error('ptelefono_coarrendatario')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -479,8 +453,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pdatos_codeudor1">{{ __('Datos Codeudor #1 (Bullet Point)') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pdatos_codeudor1" id="pdatos_codeudor1" class="form-control @error('pdatos_codeudor1') is-invalid @enderror"
-        placeholder="{{ __('Datos Codeudor #1 (Bullet Point)') }}">
+      <input type="text" wire:model="pdatos_codeudor1" id="pdatos_codeudor1" class="form-control @error('pdatos_codeudor1') is-invalid @enderror">
     </div>
     @error('pdatos_codeudor1')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -490,8 +463,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pdatos_codeudor2">{{ __('Datos Codeudor #2 (Bullet Point)') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pdatos_codeudor2" id="pdatos_codeudor2" class="form-control @error('pdatos_codeudor2') is-invalid @enderror"
-        placeholder="{{ __('Datos Codeudor #2 (Bullet Point)') }}">
+      <input type="text" wire:model="pdatos_codeudor2" id="pdatos_codeudor2" class="form-control @error('pdatos_codeudor2') is-invalid @enderror">
     </div>
     @error('pdatos_codeudor2')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -501,8 +473,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pdatos_anotantes">{{ __('Datos Anotantes (Bullet Point)') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pdatos_anotantes" id="pdatos_anotantes" class="form-control @error('pdatos_anotantes') is-invalid @enderror"
-        placeholder="{{ __('Datos Anotantes (Bullet Point)') }}">
+      <input type="text" wire:model="pdatos_anotantes" id="pdatos_anotantes" class="form-control @error('pdatos_anotantes') is-invalid @enderror">
     </div>
     @error('pdatos_anotantes')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -512,8 +483,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pdetalle_garantia">{{ __('Detalle Garantia') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pdetalle_garantia" id="pdetalle_garantia" class="form-control @error('pdetalle_garantia') is-invalid @enderror"
-        placeholder="{{ __('Detalle Garantia') }}">
+      <input type="text" wire:model="pdetalle_garantia" id="pdetalle_garantia" class="form-control @error('pdetalle_garantia') is-invalid @enderror">
     </div>
     @error('pdetalle_garantia')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -523,8 +493,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pubicacion_garantia">{{ __('Ubicación Garantia') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pubicacion_garantia" id="pubicacion_garantia" class="form-control @error('pubicacion_garantia') is-invalid @enderror"
-        placeholder="{{ __('Ubicación Garantia') }}">
+      <input type="text" wire:model="pubicacion_garantia" id="pubicacion_garantia" class="form-control @error('pubicacion_garantia') is-invalid @enderror">
     </div>
     @error('pubicacion_garantia')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -540,9 +509,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('pfecha_presentacion_demanda') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('pfecha_presentacion_demanda') is-invalid @enderror">
     </div>
     @error('pfecha_presentacion_demanda')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -552,8 +519,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pnumero_expediente_judicial">{{ __('Número Expediente Judicial') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pnumero_expediente_judicial" id="pnumero_expediente_judicial" class="form-control @error('pnumero_expediente_judicial') is-invalid @enderror"
-        placeholder="{{ __('Número Expediente Judicial') }}">
+      <input type="text" wire:model="pnumero_expediente_judicial" id="pnumero_expediente_judicial" class="form-control @error('pnumero_expediente_judicial') is-invalid @enderror">
     </div>
     @error('pnumero_expediente_judicial')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -563,8 +529,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pdespacho_judicial_juzgado">{{ __('Despacho Judicial Juzgado') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pdespacho_judicial_juzgado" id="pdespacho_judicial_juzgado" class="form-control @error('pdespacho_judicial_juzgado') is-invalid @enderror"
-        placeholder="{{ __('Despacho Judicial Juzgado') }}">
+      <input type="text" wire:model="pdespacho_judicial_juzgado" id="pdespacho_judicial_juzgado" class="form-control @error('pdespacho_judicial_juzgado') is-invalid @enderror">
     </div>
     @error('pdespacho_judicial_juzgado')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -608,8 +573,7 @@
     <label class="form-label" for="pmonto_estimacion_demanda">{{ __('Monto Estimación Demanda') }}</label>
     <div class="input-group input-group-merge has-validation">
       <input type="text" wire:model="pmonto_estimacion_demanda" id="pmonto_estimacion_demanda"
-          class="form-control @error('pmonto_estimacion_demanda') is-invalid @enderror"
-          placeholder="{{ __('Monto Estimación Demanda') }}">
+          class="form-control @error('pmonto_estimacion_demanda') is-invalid @enderror">
     </div>
     @error('pmonto_estimacion_demanda')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -640,9 +604,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('pfecha_informe') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('pfecha_informe') is-invalid @enderror">
     </div>
     @error('pfecha_informe')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -682,8 +644,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pcomentarios_bullet_point">{{ __('Comentarios (Bullet Point)') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pcomentarios_bullet_point" id="pcomentarios_bullet_point" class="form-control @error('pcomentarios_bullet_point') is-invalid @enderror"
-        placeholder="{{ __('Comentarios (Bullet Point)') }}">
+      <input type="text" wire:model="pcomentarios_bullet_point" id="pcomentarios_bullet_point" class="form-control @error('pcomentarios_bullet_point') is-invalid @enderror">
     </div>
     @error('pcomentarios_bullet_point')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -693,8 +654,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pplaca1">{{ __('Placa #1') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pplaca1" id="pplaca1" class="form-control @error('pplaca1') is-invalid @enderror"
-        placeholder="{{ __('Placa #1') }}">
+      <input type="text" wire:model="pplaca1" id="pplaca1" class="form-control @error('pplaca1') is-invalid @enderror">
     </div>
     @error('pplaca1')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -704,8 +664,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pplaca2">{{ __('Placa #2') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pplaca2" id="pplaca2" class="form-control @error('pplaca2') is-invalid @enderror"
-        placeholder="{{ __('Placa #2') }}">
+      <input type="text" wire:model="pplaca2" id="pplaca2" class="form-control @error('pplaca2') is-invalid @enderror">
     </div>
     @error('pplaca2')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -715,8 +674,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pcontrato_leasing">{{ __('Contrato de Leasing') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pcontrato_leasing" id="pcontrato_leasing" class="form-control @error('pcontrato_leasing') is-invalid @enderror"
-        placeholder="{{ __('Contrato de Leasing') }}">
+      <input type="text" wire:model="pcontrato_leasing" id="pcontrato_leasing" class="form-control @error('pcontrato_leasing') is-invalid @enderror">
     </div>
     @error('pcontrato_leasing')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -726,8 +684,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="ptitular_contrato">{{ __('Titular del contrato de Leasing') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="ptitular_contrato" id="ptitular_contrato" class="form-control @error('ptitular_contrato') is-invalid @enderror"
-        placeholder="{{ __('Titular del contrato de Leasing') }}">
+      <input type="text" wire:model="ptitular_contrato" id="ptitular_contrato" class="form-control @error('ptitular_contrato') is-invalid @enderror">
     </div>
     @error('ptitular_contrato')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -737,8 +694,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="pcedula_titular">{{ __('Cèdula del titular') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pcedula_titular" id="pcedula_titular" class="form-control @error('pcedula_titular') is-invalid @enderror"
-        placeholder="{{ __('Cèdula del titular') }}">
+      <input type="text" wire:model="pcedula_titular" id="pcedula_titular" class="form-control @error('pcedula_titular') is-invalid @enderror">
     </div>
     @error('pcedula_titular')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -784,9 +740,7 @@
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('pfecha_ultimo_giro') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
+        class="form-control date-picke @error('pfecha_ultimo_giro') is-invalid @enderror">
     </div>
     @error('pfecha_ultimo_giro')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -796,8 +750,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="user_create">{{ __('Usuario que creó el caso') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="user_create" id="user_create" class="form-control @error('user_create') is-invalid @enderror" readonly
-        placeholder="{{ __('Usuario que creó el caso') }}">
+      <input type="text" wire:model="user_create" id="user_create" class="form-control @error('user_create') is-invalid @enderror" readonly>
     </div>
     @error('user_create')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -807,8 +760,7 @@
   <div class="col-md-3 fv-plugins-icon-container">
     <label class="form-label" for="user_update">{{ __('Usuario que actualizó el caso') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="user_update" id="user_update" class="form-control @error('user_update') is-invalid @enderror" readonly
-        placeholder="{{ __('Usuario que creó el caso') }}">
+      <input type="text" wire:model="user_update" id="user_update" class="form-control @error('user_update') is-invalid @enderror" readonly>
     </div>
     @error('user_update')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -817,8 +769,7 @@
 
   <div class="col-md-9 fv-plugins-icon-container">
     <label class="form-label" for="pavance_cronologico">{{ __('Avance Cronológico') }}</label>
-    <textarea class="form-control" wire:model="pavance_cronologico" name="pavance_cronologico" id="pavance_cronologico" rows="5"
-              placeholder="{{ __('Avance Cronológico') }}"></textarea>
+    <textarea class="form-control" wire:model="pavance_cronologico" name="pavance_cronologico" id="pavance_cronologico" rows="5"></textarea>
     @error('pavance_cronologico')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror

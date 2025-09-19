@@ -489,6 +489,14 @@
               ]
             },
             {
+              "url": "classifiers/casos-listado-juzgados",
+              "name": "Listado de Juzgados",
+              "slug": "classifiers-casos-listado-juzgados",
+              "permissions": [
+                "view-classifiers"
+              ]
+            },
+            {
               "url": "classifiers/casos-poderdantes",
               "name": "Poderdantes",
               "slug": "classifiers-casos-poderdantes",
