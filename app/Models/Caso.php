@@ -409,6 +409,12 @@ class Caso extends Model
     return $this->belongsTo(Contact::class);
   }
 
+  // app/Models/Caso.php
+  public function fechasRemate()
+  {
+      return $this->hasMany(CasoFechaRemate::class);
+  }
+
   public function scopeSearch($query, $value, $filters = [])
   {
     $columns = [

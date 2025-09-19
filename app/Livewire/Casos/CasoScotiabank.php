@@ -426,7 +426,11 @@ class CasoScotiabank extends CasoManager
       'pnombre_demandado' => ['nullable', 'string', 'max:190'],
       'bgastos_proceso' => ['nullable', 'string', 'max:190'],
       'pdespacho_judicial_juzgado' => ['nullable', 'string', 'max:190'],
-      'pdatos_codeudor2' => ['nullable', 'string', 'max:190']
+      'pdatos_codeudor2' => ['nullable', 'string', 'max:190'],
+
+      'fechasRemate' => 'required|array|min:1',
+      'fechasRemate.*.fecha' => 'required|date|after_or_equal:today',
+      'fechasRemate.*.titulo' => 'required|string|max:100',
     ];
 
     return $rules;
@@ -448,6 +452,10 @@ class CasoScotiabank extends CasoManager
       'date' => 'El campo :attribute debe ser una fecha válida.',
       'boolean' => 'El campo :attribute debe ser verdadero o falso.',
       'integer' => 'El campo :attribute debe ser un número entero.',
+      'fechasRemate.required' => 'Debe agregar al menos una fecha de remate.',
+      'fechasRemate.*.fecha.required' => 'La fecha es obligatoria.',
+      'fechasRemate.*.fecha.after_or_equal' => 'La fecha no puede ser anterior a hoy.',
+      'fechasRemate.*.titulo.required' => 'El título es obligatorio.',
     ];
   }
 
@@ -736,6 +744,17 @@ class CasoScotiabank extends CasoManager
     DB::beginTransaction();
     try {
       $caso = Caso::create($validatedData);
+
+      // Eliminar fechas antiguas y volver a insertar
+      $caso->fechasRemate()->delete();
+
+      foreach ($this->fechasRemate as $fecha) {
+          $caso->fechasRemate()->create([
+              'fecha' => $this->normalizeDateForDB($fecha['fecha']),
+              'titulo' => $fecha['titulo'],
+              'actualizado_por' => Auth::user()->name ?? 'sistema',
+          ]);
+      }
       DB::commit();
 
       $this->resetControls();
@@ -767,6 +786,15 @@ class CasoScotiabank extends CasoManager
     // Asignación de campos → aquí puedes usar fill() para no escribir todo a mano
     $this->fill($record->toArray());
 
+    // Cargar datos existentes si el caso ya tiene fechas
+    $this->fechasRemate = $record->fechasRemate
+        ->map(fn ($f) => [
+            'id' => $f->id,
+            'fecha' => $f->fecha->format('d-m-Y'),
+            'titulo' => $f->titulo,
+        ])
+        ->toArray();
+
     //Campos de fecha
     $this->formatDateForView($record);
 
@@ -792,6 +820,17 @@ class CasoScotiabank extends CasoManager
       $record = Caso::findOrFail($this->recordId);
       $record->update($validatedData);
       DB::commit();
+
+      // Eliminar fechas antiguas y volver a insertar
+      $record->fechasRemate()->delete();
+
+      foreach ($this->fechasRemate as $fecha) {
+          $record->fechasRemate()->create([
+              'fecha' => $this->normalizeDateForDB($fecha['fecha']),
+              'titulo' => $fecha['titulo'],
+              'actualizado_por' => Auth::user()->name ?? 'sistema',
+          ]);
+      }
 
       $closeForm = $this->closeForm;
 
@@ -1343,5 +1382,19 @@ class CasoScotiabank extends CasoManager
     }
 
     return $panels;
+  }
+
+  public function addFechaRemate()
+  {
+      $this->fechasRemate[] = [
+          'fecha' => '',
+          'titulo' => '',
+      ];
+  }
+
+  public function removeFechaRemate($index)
+  {
+      unset($this->fechasRemate[$index]);
+      $this->fechasRemate = array_values($this->fechasRemate);
   }
 }

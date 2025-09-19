@@ -336,6 +336,9 @@
       <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
+  <br>
+  <h4 class="mb-0"><span class="badge bg-primary text-white">{{ __('Fecha de Remate') }}</span></h4>
+  @include('livewire.casos.partials.scotiabank.panels.repeater-fecha-remate')
 
   <!--
   insertar

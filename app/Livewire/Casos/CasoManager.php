@@ -47,6 +47,8 @@ class CasoManager extends BaseComponent
 
   public $document_type = 'CASO';
 
+  public $fechasRemate = [];
+
   // ====== Catálogos/auxiliares ======
   public $banks      = [];
   public $currencies = [];
@@ -506,6 +508,7 @@ class CasoManager extends BaseComponent
       'product_id',
       'currency_id',
       'fecha_creacion',
+      'fechasRemate',
 
       // === INTEGER FIELDS ===
       'abogado_id',
