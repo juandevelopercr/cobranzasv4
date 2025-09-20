@@ -885,7 +885,8 @@ class CasoScotiabank extends CasoManager
       $this->getPanelsProperty();
     }
     if ($propertyName == 'pnumero_expediente_judicial'){
-      $listadoJuzgado = CasoListadoJuzgado::where('codigo', trim($this->pnumero_expediente_judicial))->first();
+      //$listadoJuzgado = CasoListadoJuzgado::where('codigo', trim($this->pnumero_expediente_judicial))->first();
+      $listadoJuzgado = CasoListadoJuzgado::where(DB::raw('SUBSTRING(codigo, 11, 4)'), trim($this->pnumero_expediente_judicial))->first();
       /*
       $listadoJuzgado = CasoListadoJuzgado::whereRaw(
           "REPLACE(TRIM(LOWER(codigo)), ' ', '') = ?",

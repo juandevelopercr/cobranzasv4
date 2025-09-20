@@ -221,15 +221,17 @@ use App\Models\User;
 
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="location_id"><span class="badge bg-primary">{{ __('Issuer') }}</span></label>
-      <select wire:model="location_id" id="location_id" class="select2 form-select @error('location_id') is-invalid @enderror"
-        @if (!auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
-          disabled
-        @endif>
-        <option value="">{{ __('Seleccione...') }}</option>
-        @foreach ($this->issuers as $issuer)
-          <option value="{{ $issuer->id }}">{{ $issuer->name }}</option>
-        @endforeach
-      </select>
+      <div wire:ignore>
+        <select wire:model="location_id" id="location_id" class="select2 form-select @error('location_id') is-invalid @enderror"
+          @if (!auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
+            disabled
+          @endif>
+          <option value="">{{ __('Seleccione...') }}</option>
+          @foreach ($this->issuers as $issuer)
+            <option value="{{ $issuer->id }}">{{ $issuer->name }}</option>
+          @endforeach
+        </select>
+      </div>
       @error('location_id')
       <div class="text-danger mt-1">{{ $message }}</div>
       @enderror
