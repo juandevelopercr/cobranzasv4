@@ -24,12 +24,14 @@ use Livewire\Attributes\Computed;
 use App\Models\CasoListadoJuzgado;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Casos\CasoManager;
+use App\Models\CasoPoderdante;
 use Illuminate\Support\Facades\Auth;
 use App\Services\DocumentSequenceService;
 
 class CasoDavivienda extends CasoManager
 {
   public $titleNotification = 'Notificación - Public Edicto';
+  public $poderdantes = [];
 
   #[Computed]
   public function estados()
@@ -91,6 +93,7 @@ class CasoDavivienda extends CasoManager
 
     $this->juzgados = CasoJuzgado::where('activo', 1)->orderBy('nombre', 'ASC')->get();
 
+    $this->poderdantes = CasoPoderdante::orderBy('id', 'ASC')->get();
 
     $this->refresDatatable();
   }
