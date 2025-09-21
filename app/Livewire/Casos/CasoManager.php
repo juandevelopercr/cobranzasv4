@@ -249,6 +249,7 @@ class CasoManager extends BaseComponent
   public $nombre_cliente;
   public $empresa;
   public $email_cliente;
+  public $user_create;
   public $user_update;
   public $acontacto_telefonico;
   public $acorreo;

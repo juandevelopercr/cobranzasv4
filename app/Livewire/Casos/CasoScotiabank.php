@@ -1323,8 +1323,12 @@ class CasoScotiabank extends CasoManager
     switch ($this->product_id) {
       case CasoProducto::TARJETA_CREDITO:
       case CasoProducto::PYME:
-      case CasoProducto::PERSONAL:
         $panels['traspaso'] = true;
+        $panels['notificacion'] = true;
+        $panels['sentencia'] = true;
+        $panels['arreglo'] = true;
+        $panels['aprobacion'] = true;
+        $panels['terminacion'] = true;
         break;
 
       case CasoProducto::HIPOTECARIO:
@@ -1346,9 +1350,10 @@ class CasoScotiabank extends CasoManager
       case CasoProducto::LEASING_BIENES_CANCELADOS_NO_TRASPASADOS:
         $panels['notificacion'] = true;
         $panels['arreglo'] = true;
-        $panels['traspaso'] = ($this->product_id !== CasoProducto::LEASING);
+        $panels['traspaso'] = ((int)$this->product_id != CasoProducto::LEASING);
         $panels['terminacion'] = true;
         $panels['sentencia'] = true;
+        $panels['aprobacion'] = true;
         $this->titleNotification = 'Notificación y captura';
         break;
 
@@ -1369,6 +1374,7 @@ class CasoScotiabank extends CasoManager
         $panels['filtro2'] = true;
         $panels['terminacion'] = true;
         $panels['arreglo'] = true;
+        $panels['aprobacion'] = true;
         break;
 
       default:

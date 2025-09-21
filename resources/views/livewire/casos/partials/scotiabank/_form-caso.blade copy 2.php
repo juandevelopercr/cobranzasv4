@@ -8,7 +8,7 @@ use App\Models\CasoEstado;
     <h6>1. {{ __('1- Información del Caso') }}</h6>
 
     <div class="row g-6">
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pnumero">{{ __('Número') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -25,7 +25,7 @@ use App\Models\CasoEstado;
         </div>
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="fecha_creacion">{{ __('Fecha de creación') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-calendar"></i></span>
@@ -43,7 +43,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="contact_id">{{ __('Cliente') }}</label>
         <div wire:ignore>
           <select wire:model.live="contact_id" id="contact_id" class="select2 form-select @error('contact_id') is-invalid @enderror">
@@ -58,7 +58,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="bank_id">{{ __('Bank') }}</label>
           <select wire:model="bank_id" id="bank_id" class="select2 form-select @error('bank_id') is-invalid @enderror">
             <option value="">{{ __('Seleccione...') }}</option>
@@ -71,7 +71,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="product_id">{{ __('Producto') }}</label>
           <select wire:model="product_id" id="product_id" class="select2 form-select @error('product_id') is-invalid @enderror">
             <option value="">{{ __('Seleccione...') }}</option>
@@ -84,7 +84,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="proceso_id">{{ __('Proceso') }}</label>
           <select wire:model="proceso_id" id="proceso_id" class="select2 form-select @error('proceso_id') is-invalid @enderror">
             <option value="">{{ __('Seleccione...') }}</option>
@@ -97,7 +97,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="currency_id">{{ __('Currency') }}</label>
         <div wire:ignore>
           <select wire:model="currency_id" id="currency_id" class="select2 form-select @error('currency_id') is-invalid @enderror">
@@ -112,7 +112,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="psaldo_dolarizado">{{ __('Saldo Dolarizado') }}</label>
         <div
           x-data="cleaveLivewire({
@@ -142,7 +142,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="psaldo_de_seguros">{{ __('Saldo De Seguros') }}</label>
         <div
           x-data="cleaveLivewire({
@@ -172,7 +172,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="psaldo_de_multas">{{ __('Saldo De Multas') }}</label>
         <div
           x-data="cleaveLivewire({
@@ -202,7 +202,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pfecha_pago_multas_y_seguros">{{ __('Fecha Pago Multas Y Seguros') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-calendar"></i></span>
@@ -220,7 +220,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pfecha_asignacion_caso">{{ __('Fecha Asignación de Caso') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-calendar"></i></span>
@@ -238,7 +238,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="abogado_id">{{ __('Abogado') }}</label>
         <div wire:ignore>
           <select wire:model="abogado_id" id="abogado_id" class="select2 form-select @error('abogado_id') is-invalid @enderror">
@@ -253,7 +253,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="asistente1">{{ __('Asistente #1') }}</label>
         <div wire:ignore>
           <select wire:model="asistente1" id="asistente1" class="select2 form-select @error('asistente1') is-invalid @enderror">
@@ -268,7 +268,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="asistente2">{{ __('Asistente #2') }}</label>
         <div wire:ignore>
           <select wire:model="asistente2" id="asistente2" class="select2 form-select @error('asistente2') is-invalid @enderror">
@@ -283,7 +283,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pdepartamento_solicitante">{{ __('Departamento Solicitante') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -295,7 +295,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pfecha_e_instruccion_levantamiento">{{ __('Fecha e instrucciòn de levantamiento') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-calendar"></i></span>
@@ -313,7 +313,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pnumero_operacion1">{{ __('Número Operación #1') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -325,7 +325,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pnumero_operacion2">{{ __('Número Operación #2') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -337,7 +337,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pnumero_contrato">{{ __('Número de Contrato') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -349,7 +349,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pnombre_demandado">{{ __('Nombre del Demandado') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -361,7 +361,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pnumero_cedula">{{ __('Número de Cédula del demandado') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -373,7 +373,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pnombre_arrendatario">{{ __('Nombre del arrendatario') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -385,7 +385,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pcedula_arrendatario">{{ __('Cèdula del arrendatario') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -397,7 +397,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pcorreo_demandado_deudor_o_arrendatario">{{ __('Correo Demandado Deudor O Arrendatario') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -409,7 +409,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="ptelefono_demandado_deudor_o_arrendatario">{{ __('Teléfono Demandado Deudor O Arrendatario') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -421,7 +421,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pnombre_contacto_o_arrendatario">{{ __('Nombre Contacto O Arrendatario') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -433,7 +433,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pnombre_coarrendatario">{{ __('Nombre Coarrendatario') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -445,7 +445,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pcedula_coarrendatario">{{ __('Cédula Coarrendatario') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -457,7 +457,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pcorreo_coarrendatario">{{ __('Correo Coarrendatario') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -469,7 +469,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="ptelefono_coarrendatario">{{ __('Teléfono Coarrendatario') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -481,7 +481,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pdatos_codeudor1">{{ __('Datos Codeudor #1 (Bullet Point)') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -493,7 +493,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pdatos_codeudor2">{{ __('Datos Codeudor #2 (Bullet Point)') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -505,7 +505,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pdatos_anotantes">{{ __('Datos Anotantes (Bullet Point)') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -517,7 +517,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pdetalle_garantia">{{ __('Detalle Garantia') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -529,7 +529,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pubicacion_garantia">{{ __('Ubicación Garantia') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -541,7 +541,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pfecha_presentacion_demanda">{{ __('Fecha Presentación Demanda') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-calendar"></i></span>
@@ -559,7 +559,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pnumero_expediente_judicial">{{ __('Número Expediente Judicial') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -571,7 +571,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pdespacho_judicial_juzgado">{{ __('Despacho Judicial Juzgado') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -583,7 +583,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pmonto_estimacion_demanda">{{ __('Monto Estimación Demanda') }}</label>
         <div
           x-data="cleaveLivewire({
@@ -613,7 +613,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="pexpectativa_recuperacion_id">{{ __('Expectativa Recuperación') }}</label>
         <div wire:ignore>
           <select wire:model.live="pexpectativa_recuperacion_id" id="pexpectativa_recuperacion_id" class="select2 form-select @error('pexpectativa_recuperacion_id') is-invalid @enderror">
@@ -628,7 +628,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pfecha_informe">{{ __('Fecha de informe') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-calendar"></i></span>
@@ -646,7 +646,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pgastos_legales_caso">{{ __('Gastos Legales Caso') }}</label>
         <div
           x-data="cleaveLivewire({
@@ -676,7 +676,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pcomentarios_bullet_point">{{ __('Comentarios (Bullet Point)') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -688,7 +688,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pplaca1">{{ __('Placa #1') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -700,7 +700,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pplaca2">{{ __('Placa #2') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -712,7 +712,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pcontrato_leasing">{{ __('Contrato de Leasing') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -724,7 +724,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="ptitular_contrato">{{ __('Titular del contrato de Leasing') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -736,7 +736,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pcedula_titular">{{ __('Cèdula del titular') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -748,7 +748,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pretenciones">{{ __('Monto de retenciones') }}</label>
         <div
           x-data="cleaveLivewire({
@@ -778,7 +778,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pfecha_ultimo_giro">{{ __('Fecha de último giro') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-calendar"></i></span>
@@ -796,7 +796,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="user_create">{{ __('Usuario que creó el caso') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -808,7 +808,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="user_update">{{ __('Usuario que creó el caso') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -820,7 +820,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="pavance_cronologico">{{ __('Avance Cronológico') }}</label>
         <textarea class="form-control" wire:model="pavance_cronologico" name="pavance_cronologico" id="pavance_cronologico" rows="3"
                   placeholder="{{ __('Avance Cronológico') }}"></textarea>

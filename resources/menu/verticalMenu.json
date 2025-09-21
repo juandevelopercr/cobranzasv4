@@ -241,6 +241,70 @@
           "permissions": [
             "view-scotiabank-casos"
           ]
+        },
+        {
+          "url": "casos/scotiabank-bch",
+          "name": "Scotiabank BCH",
+          "slug": "casos-scotiabank-bch",
+          "permissions": [
+            "view-scotiabank-bch-casos"
+          ]
+        },
+        {
+          "url": "casos/bac",
+          "name": "Bac",
+          "slug": "casos-bac",
+          "permissions": [
+            "view-bac-casos"
+          ]
+        },
+        {
+          "url": "casos/banco-general",
+          "name": "Banco General",
+          "slug": "casos-banco-general",
+          "permissions": [
+            "view-banco-general-casos"
+          ]
+        },
+        {
+          "url": "casos/terceros",
+          "name": "Terceros",
+          "slug": "casos-terceros",
+          "permissions": [
+            "view-terceros-casos"
+          ]
+        },
+        {
+          "url": "casos/coocique",
+          "name": "Coocique",
+          "slug": "casos-coocique",
+          "permissions": [
+            "view-coocique-casos"
+          ]
+        },
+        {
+          "url": "casos/davivienda",
+          "name": "Davivienda",
+          "slug": "casos-davivienda",
+          "permissions": [
+            "view-davivienda-casos"
+          ]
+        },
+        {
+          "url": "casos/lafise",
+          "name": "Lafise",
+          "slug": "casos-lafise",
+          "permissions": [
+            "view-lafise-casos"
+          ]
+        },
+        {
+          "url": "casos/cafsa",
+          "name": "Cafsa",
+          "slug": "casos-cafsa",
+          "permissions": [
+            "view-cafsa-casos"
+          ]
         }
       ]
     },

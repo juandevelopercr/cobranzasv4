@@ -136,7 +136,7 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
   Route::get('billing/comprobantes', [InvoiceController::class, 'comprobante'])->name('billing-comprobantes-electronicos');
 
   // CRUD PRODUCTS
-  Route::get('casos', [CasoController::class, 'scotiabank'])->name('casos.index');         // Listar usuarios
+  //Route::get('casos', [CasoController::class, 'scotiabank'])->name('casos.index');         // Listar usuarios
 
   // CRUD PROFORMAS
   Route::get('settings/business', [SettingController::class, 'index'])->name('settings-business');
@@ -164,6 +164,14 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
 
   // CRUD Casos
   Route::get('casos/scotiabank', [CasoController::class, 'scotiabank'])->name('casos-scotiabank');
+  Route::get('casos/scotiabank-bch', [CasoController::class, 'scotiabankBch'])->name('casos-scotiabank-bch');
+  Route::get('casos/bac', [CasoController::class, 'bac'])->name('casos-bac');
+  Route::get('casos/banco-general', [CasoController::class, 'bancoGeneral'])->name('casos-banco-general');
+  Route::get('casos/terceros', [CasoController::class, 'terceros'])->name('casos-terceros');
+  Route::get('casos/coocique', [CasoController::class, 'coocique'])->name('casos-coocique');
+  Route::get('casos/davivienda', [CasoController::class, 'davivienda'])->name('casos-davivienda');
+  Route::get('casos/lafise', [CasoController::class, 'lafise'])->name('casos-lafise');
+  Route::get('casos/cafsa', [CasoController::class, 'cafsa'])->name('casos-cafsa');
 
   // CRUD MODULO BANCOS
   Route::get('banks/movements', [MovimientoController::class, 'index'])->name('banks-movements.index');

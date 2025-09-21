@@ -8,7 +8,7 @@ use App\Models\CasoEstado;
     <h6>1. {{ __('General Information') }}</h6>
 
     <div class="row g-6">
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="numero">{{ __('Número') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -34,7 +34,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="cedula_deudor">{{ __('Cédula deudor') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-barcode"></i></span>
@@ -46,7 +46,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="numero_tomo">{{ __('Número de tomo') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-barcode"></i></span>
@@ -59,7 +59,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="asiento_presentacion">{{ __('Asiento de presentación') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-barcode"></i></span>
@@ -72,7 +72,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="department_id">{{ __('Department') }}</label>
         <div wire:ignore>
           <select wire:model.live="department_id" id="department_id" class="select2 form-select @error('department_id') is-invalid @enderror">
@@ -89,7 +89,7 @@ use App\Models\CasoEstado;
 
       <br>
       <h6 class="mt-4">2. {{ __('Información de Fechas') }}</h6>
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="fecha_firma">{{ __('Fecha de firma') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-calendar"></i></span>
@@ -107,7 +107,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="fecha_presentacion">{{ __('Fecha de presentación') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-calendar"></i></span>
@@ -125,7 +125,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="fecha_inscripcion">{{ __('Fecha de Inscripción') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-calendar"></i></span>
@@ -143,7 +143,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="fecha_entrega">{{ __('Fecha de entrega') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-calendar"></i></span>
@@ -163,7 +163,7 @@ use App\Models\CasoEstado;
 
       <br>
       <h6 class="mt-4">3. {{ __('Información de abogados') }}</h6>
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="abogado_cargo_id">{{ __('Abogado a cargo') }}</label>
         <div wire:ignore>
           <select wire:model="abogado_cargo_id" id="abogado_cargo_id" class="select2 form-select @error('abogado_cargo_id') is-invalid @enderror"
@@ -179,7 +179,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="abogado_revisor_id">{{ __('Abogado revisor') }}</label>
         <div wire:ignore>
           <select wire:model="abogado_revisor_id" id="abogado_revisor_id" class="select2 form-select @error('abogado_revisor_id') is-invalid @enderror"
@@ -195,7 +195,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="abogado_formalizador_id">{{ __('Abogado formalizador') }}</label>
         <div wire:ignore>
           <select wire:model="abogado_formalizador_id" id="abogado_formalizador_id" class="select2 form-select @error('abogado_formalizador_id') is-invalid @enderror"
@@ -211,7 +211,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="asistente_id">{{ __('Asistente') }}</label>
         <div wire:ignore>
           <select wire:model="asistente_id" id="asistente_id" class="select2 form-select @error('asistente_id') is-invalid @enderror"
@@ -230,7 +230,7 @@ use App\Models\CasoEstado;
       <br>
       <h6>4. {{ __('Información complementaria') }}</h6>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="bank_id">{{ __('Bank') }}</label>
         <select wire:model="bank_id" id="bank_id" class="select2 form-select @error('bank_id') is-invalid @enderror"
           >
@@ -244,7 +244,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="sucursal">{{ __('Sucursal') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -258,7 +258,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="currency_id">{{ __('Currency') }}</label>
         <div wire:ignore>
           <select wire:model="currency_id" id="currency_id" class="select2 form-select @error('currency_id') is-invalid @enderror"
@@ -274,7 +274,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="monto">{{ __('Monto') }}</label>
         <div
           x-data="cleaveLivewire({
@@ -304,7 +304,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="caratula_id">{{ __('Tipo de Carátula') }}</label>
         <div wire:ignore>
           <select wire:model="caratula_id" id="caratula_id" class="select2 form-select @error('caratula_id') is-invalid @enderror"
@@ -320,7 +320,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="garantia_id">{{ __('Número Garantía') }}</label>
         <div wire:ignore>
           <select wire:model="garantia_id" id="garantia_id" class="select2 form-select @error('garantia_id') is-invalid @enderror"
@@ -336,7 +336,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="numero_garantia">{{ __('Número de garantía') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -350,7 +350,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="costo_caso_retiro">{{ __('Costo de caso por retiro') }}</label>
         <div
           x-data="cleaveLivewire({
@@ -380,7 +380,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="nombre_formalizo">{{ __('Ejecutivo a cargo') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -394,7 +394,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="fiduciaria">{{ __('Fiduciaria') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -408,7 +408,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="desarrollador">{{ __('Desarrollador') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-box"></i></span>
@@ -422,7 +422,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="diasFirma">{{ __('Días desde la firma') }}</label>
         <div
           x-data="cleaveLivewire({
@@ -451,7 +451,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="diasEntrega">{{ __('Días entrega') }}</label>
         <div
           x-data="cleaveLivewire({
@@ -480,7 +480,7 @@ use App\Models\CasoEstado;
         @enderror
       </div>
 
-      <div class="col-md-3 fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
         <label class="form-label" for="numero_gestion">{{ __('Número de gestión') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-barcode"></i></span>
@@ -498,7 +498,7 @@ use App\Models\CasoEstado;
 				  $this->estado_id = CasoEstado::EN_TRAMITE;
       @endphp
 
-      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="estado_id">{{ __('Estado') }}</label>
         <div wire:ignore>
           <select wire:model="estado_id" id="estado_id" class="select2 form-select @error('estado_id') is-invalid @enderror"

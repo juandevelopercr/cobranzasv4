@@ -46,11 +46,11 @@
 
                   <!-- Renderizar el componente Livewire -->
                   @livewire('components.datatable-settings', [
-                  'datatableName' => 'casos-scotiabank-datatable',
+                  'datatableName' => 'livewire.casos.scotiabanks-datatable',
                   'availableColumns' => $this->columns,
                   'perPage' => $this->perPage,
                   ],
-                  key('casos-scotiabank-datatable-config'))
+                  key('livewire.casos.scotiabanks-config'))
                 </div>
               </div>
             </div>
@@ -110,7 +110,7 @@
 <script>
   function printTable() {
       // Selecciona el contenido que deseas imprimir. Ajusta `#table-content` según el ID de tu tabla.
-      const printContent = document.getElementById('casos-table').innerHTML;
+      const printContent = document.getElementById('casos-scotiabank-table').innerHTML;
       const originalContent = document.body.innerHTML;
 
       document.body.innerHTML = printContent;
