@@ -72,13 +72,4 @@
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
-
-  <div class="col-md-12 fv-plugins-icon-container">
-    <label class="form-label" for="f2avance_cronologico">{{ __('Avance Cronológico') }}</label>
-    <textarea class="form-control" wire:model="f2avance_cronologico" name="f2avance_cronologico" id="f2avance_cronologico" rows="5"></textarea>
-    @error('f2avance_cronologico')
-    <div class="text-danger mt-1">{{ $message }}</div>
-    @enderror
-  </div>
-
 </div>

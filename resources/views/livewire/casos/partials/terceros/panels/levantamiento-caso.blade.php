@@ -11,24 +11,6 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="lfecha_entrega_poder">{{ __('Fecha de entrega del poder') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="lfecha_entrega_poder"
-        wire:model="lfecha_entrega_poder"
-        x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
-        x-init="init($el)"
-        wire:ignore
-        class="form-control date-picke @error('lfecha_entrega_poder') is-invalid @enderror"
-        placeholder="dd-mm-aaaa"
-        >
-    </div>
-    @error('lfecha_entrega_poder')
-    <div class="text-danger mt-1">{{ $message }}</div>
-    @enderror
-  </div>
-
-  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="lsumaria">{{ __('Sumaria') }}</label>
     <div class="input-group input-group-merge has-validation">
       <input type="text" wire:model="lsumaria" id="lsumaria" class="form-control @error('lsumaria') is-invalid @enderror"

@@ -1321,6 +1321,40 @@ class CasoCoocique extends CasoManager
     $this->titleNotification = 'Notificación - Public Edicto';
 
     switch ($this->product_id) {
+      case CasoProducto::CHEQUE:
+      case CasoProducto::COBRO_ADMINISTRATIVO:
+      case CasoProducto::FACTURAS:
+      case CasoProducto::FIDEICOMISO:
+      case CasoProducto::FRAUDE:
+      case CasoProducto::GARANTIA_MOBILIARIA:
+      case CasoProducto::HIPOTECARIO:
+      case CasoProducto::LETRA_CAMBIO:
+      case CasoProducto::MONITORIO:
+      case CasoProducto::NO_APLICA:
+      case CasoProducto::PAGARE:
+      case CasoProducto::PRENDA:
+      case CasoProducto::PRENDARIO:
+        $panels['notificacion'] = true;
+        $panels['sentencia'] = true;
+        $panels['aprobacion'] = true;
+        break;
+
+      case CasoProducto::LEVANTAMIENTO_GRAVAMENES:
+        $panels['levantamiento'] = true;
+        $panels['facturacion'] = true;
+        break;
+
+      default:
+        // Predeterminado (prendario/hipotecario)
+        $panels['notificacion'] = true;
+        $panels['sentencia'] = true;
+        $panels['arreglo'] = true;
+        $panels['aprobacion'] = true;
+        $panels['terminacion'] = true;
+        break;
+    }
+    /*
+    switch ($this->product_id) {
       case CasoProducto::TARJETA_CREDITO:
       case CasoProducto::PYME:
         $panels['traspaso'] = true;
@@ -1386,6 +1420,7 @@ class CasoCoocique extends CasoManager
         $panels['terminacion'] = true;
         break;
     }
+    */
 
     return $panels;
   }

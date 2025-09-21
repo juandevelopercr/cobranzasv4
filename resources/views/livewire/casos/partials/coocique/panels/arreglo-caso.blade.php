@@ -16,20 +16,14 @@
   </div>
 
   <div class="col-12 col-md-9 fv-plugins-icon-container">
-    <label class="form-label" for="acomentarios">{{ __('Comentarios') }}</label>
-    <textarea class="form-control" wire:model="acomentarios" name="acomentarios" id="acomentarios" rows="2"></textarea>
-    @error('acomentarios')
-    <div class="text-danger mt-1">{{ $message }}</div>
-    @enderror
-  </div>
-
-  <div class="col-12 col-md-9 fv-plugins-icon-container">
     <label class="form-label" for="aregistro_pago">{{ __('Registro de pago') }}</label>
     <textarea class="form-control" wire:model="aregistro_pago" name="aregistro_pago" id="aregistro_pago" rows="2"></textarea>
     @error('aregistro_pago')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
+
+
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="afecha_envio_cotizacion_gasto">{{ __('Fecha envio cotizaciòn gastos traspaso') }}</label>

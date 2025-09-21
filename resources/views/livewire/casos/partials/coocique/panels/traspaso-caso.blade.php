@@ -75,6 +75,14 @@
     @enderror
   </div>
 
+  <div class="col-md-12 fv-plugins-icon-container">
+    <label class="form-label" for="ttraspaso_favor_tercero">{{ __('Traspaso a favor de terceros') }}</label>
+    <textarea class="form-control" wire:model="ttraspaso_favor_tercero" name="ttraspaso_favor_tercero" id="ttraspaso_favor_tercero" rows="2"></textarea>
+    @error('ttraspaso_favor_tercero')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="tfecha_envio_borrador_escritura">{{ __('Fecha de envio borrador de escritura') }}</label>
     <div class="input-group input-group-merge has-validation">
