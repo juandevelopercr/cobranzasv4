@@ -59,7 +59,7 @@
   </div>
 
  <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
-    <label class="form-label" for="product_id">{{ __('Producto') }}</label>
+    <label class="form-label" for="product_id">{{ __('Tipo de Crédito') }}</label>
       <div wire:ignore>
       <select wire:model="product_id" id="product_id" class="select2 form-select @error('product_id') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>

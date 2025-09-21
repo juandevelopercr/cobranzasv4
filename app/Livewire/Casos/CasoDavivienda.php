@@ -1324,59 +1324,18 @@ class CasoDavivienda extends CasoManager
     $this->titleNotification = 'Notificación - Public Edicto';
 
     switch ($this->product_id) {
-      case CasoProducto::TARJETA_CREDITO:
-      case CasoProducto::PYME:
-        $panels['traspaso'] = true;
-        $panels['notificacion'] = true;
-        $panels['sentencia'] = true;
-        $panels['arreglo'] = true;
-        $panels['aprobacion'] = true;
-        $panels['terminacion'] = true;
-        break;
-
-      case CasoProducto::HIPOTECARIO:
-      case CasoProducto::PRENDARIO:
-      case CasoProducto::FIDEICOMISO:
-      case CasoProducto::TARJETA_CREDITO:
-      case CasoProducto::PERSONAL:
+      case CasoProducto::CREDITO_COMERCIAL:
       case CasoProducto::CREDITO_CONSUMO:
-      case CasoProducto::CUENTA_CORRIENTE:
-        $panels['notificacion'] = true;
-        $panels['sentencia'] = true;
-        $panels['arreglo'] = true;
-        $panels['aprobacion'] = true;
-        $panels['terminacion'] = true;
-        break;
-
+      case CasoProducto::CREDITO_CREDIFACIL:
+      case CasoProducto::CREDITO_HIPOTECARIO:
+      case CasoProducto::CREDITO_LIBRANZA:
+      case CasoProducto::CREDITO_PERSONAL:
+      case CasoProducto::CREDITO_PRENDARIO:
       case CasoProducto::LEASING:
-      case CasoProducto::LEASING_COBRO_ADMINISTRATIVO:
-      case CasoProducto::LEASING_BIENES_CANCELADOS_NO_TRASPASADOS:
+      case CasoProducto::NO_APLICA:
+      case CasoProducto::TARJETA_CREDITO:
         $panels['notificacion'] = true;
-        $panels['arreglo'] = true;
-        $panels['traspaso'] = ((int)$this->product_id != CasoProducto::LEASING);
-        $panels['terminacion'] = true;
         $panels['sentencia'] = true;
-        $panels['aprobacion'] = true;
-        $this->titleNotification = 'Notificación y captura';
-        break;
-
-      case CasoProducto::LEASING_LEVANTAMIENTO_GRAVAMEN:
-        $panels['levantamiento'] = true;
-        $panels['facturacion'] = true;
-        $panels['terminacion'] = true;
-        $panels['arreglo'] = true;
-        $panels['aprobacion'] = true;
-        break;
-
-      case CasoProducto::LEASING_MARCHAMOS:
-        $panels['segmento'] = true;
-        $panels['denuncia'] = true;
-        $panels['anotaciones'] = true;
-        $panels['bienes'] = true;
-        $panels['filtro1'] = true;
-        $panels['filtro2'] = true;
-        $panels['terminacion'] = true;
-        $panels['arreglo'] = true;
         $panels['aprobacion'] = true;
         break;
 
@@ -1384,12 +1343,9 @@ class CasoDavivienda extends CasoManager
         // Predeterminado (prendario/hipotecario)
         $panels['notificacion'] = true;
         $panels['sentencia'] = true;
-        $panels['arreglo'] = true;
         $panels['aprobacion'] = true;
-        $panels['terminacion'] = true;
         break;
     }
-
     return $panels;
   }
 

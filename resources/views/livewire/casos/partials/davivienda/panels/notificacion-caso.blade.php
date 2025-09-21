@@ -1,19 +1,160 @@
 <div class="row g-6">
-  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="nfecha_traslado_juzgado">{{ __('Fecha Traslado Juzgado') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="nfecha_traslado_juzgado"
-        wire:model="nfecha_traslado_juzgado"
-        x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
-        x-init="init($el)"
-        wire:ignore
-        class="form-control date-picke @error('nfecha_traslado_juzgado') is-invalid @enderror">
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
+    <label class="form-label" for="nestado_actual_primera_notificacion">{{ __('Estado actual primera notificación demandados') }}</label>
+    <div wire:ignore>
+      <select wire:model.live="nestado_actual_primera_notificacion" id="nestado_actual_primera_notificacion" class="select2 form-select @error('nestado_actual_primera_notificacion') is-invalid @enderror">
+        <option value="">{{ __('Seleccione...') }}</option>
+         <option value="TODOS NOTIFICADOS">TODOS NOTIFICADOS</option>
+         <option value="TODOS SIN NOTIFICAR">TODOS SIN NOTIFICAR</option>
+         <option value="ALGUNOS PENDIENTES DE NOTIFICAR">ALGUNOS PENDIENTES DE NOTIFICAR</option>
+      </select>
     </div>
-    @error('nfecha_traslado_juzgado')
+    @error('nestado_actual_primera_notificacion')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
+    <label class="form-label" for="noposicion_demanda">{{ __('Estado actual primera notificación demandados') }}</label>
+    <div wire:ignore>
+      <select wire:model.live="noposicion_demanda" id="noposicion_demanda" class="select2 form-select @error('noposicion_demanda') is-invalid @enderror">
+        <option value="">{{ __('Seleccione...') }}</option>
+         <option value="SI">SI</option>
+         <option value="NO">NO</option>
+      </select>
+    </div>
+    @error('noposicion_demanda')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
+    <label class="form-label" for="nfecha_audiencia">{{ __('Fecha de Audiencia') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+      <input type="text" id="nfecha_audiencia"
+        wire:model="nfecha_audiencia"
+        x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
+        x-init="init($el)"
+        wire:ignore
+        class="form-control date-picke @error('nfecha_audiencia') is-invalid @enderror">
+    </div>
+    @error('nfecha_audiencia')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
+    <label class="form-label" for="ntipo_garantia">{{ __('Tipo de Garantia') }}</label>
+    <div wire:ignore>
+      <select wire:model.live="ntipo_garantia" id="ntipo_garantia" class="select2 form-select @error('ntipo_garantia') is-invalid @enderror">
+        <option value="">{{ __('Seleccione...') }}</option>
+         <option value="Hipoteca">Hipoteca</option>
+         <option value="Prenda">Prenda</option>
+         <option value="Pagaré">Pagaré</option>
+         <option value="Letra de cambio">Letra de cambio</option>
+         <option value="Contrato de Fideicomiso">Contrato de Fideicomiso</option>
+         <option value="CPA">CPA</option>
+         <option value="Fianza">Fianza</option>
+      </select>
+    </div>
+    @error('ntipo_garantia')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-12 col-md-6 col-lg-6 fv-plugins-icon-container">
+    <label class="form-label" for="pdetalle_garantia">{{ __('Detalle Garantia') }}</label>
+    <textarea class="form-control" wire:model="pdetalle_garantia" name="pdetalle_garantia" id="pdetalle_garantia" rows="5"></textarea>
+    @error('pdetalle_garantia')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
+    <label class="form-label" for="nembargos_cuentas">{{ __('Embargos cuentas') }}</label>
+    <div wire:ignore>
+      <select wire:model.live="nembargos_cuentas" id="nembargos_cuentas" class="select2 form-select @error('nembargos_cuentas') is-invalid @enderror">
+        <option value="">{{ __('Seleccione...') }}</option>
+         <option value="SI">SI</option>
+         <option value="NO">NO</option>
+      </select>
+    </div>
+    @error('nembargos_cuentas')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
+    <label class="form-label" for="nembargos_salarios">{{ __('Embargos cuentas') }}</label>
+    <div wire:ignore>
+      <select wire:model.live="nembargos_salarios" id="nembargos_salarios" class="select2 form-select @error('nembargos_salarios') is-invalid @enderror">
+        <option value="">{{ __('Seleccione...') }}</option>
+         <option value="SI">SI</option>
+         <option value="NO">NO</option>
+      </select>
+    </div>
+    @error('nembargos_salarios')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
+    <label class="form-label" for="nembargos_muebles">{{ __('Embargos Muebles') }}</label>
+    <div wire:ignore>
+      <select wire:model.live="nembargos_muebles" id="nembargos_muebles" class="select2 form-select @error('nembargos_muebles') is-invalid @enderror">
+        <option value="">{{ __('Seleccione...') }}</option>
+         <option value="SI">SI</option>
+         <option value="NO">NO</option>
+      </select>
+    </div>
+    @error('nembargos_muebles')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
+    <label class="form-label" for="nembargos_inmuebles">{{ __('Embargos Inmuebles') }}</label>
+    <div wire:ignore>
+      <select wire:model.live="nembargos_inmuebles" id="nembargos_inmuebles" class="select2 form-select @error('nembargos_inmuebles') is-invalid @enderror">
+        <option value="">{{ __('Seleccione...') }}</option>
+         <option value="SI">SI</option>
+         <option value="NO">NO</option>
+      </select>
+    </div>
+    @error('nembargos_inmuebles')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
+    <label class="form-label" for="user_create">{{ __('Usuario que creó el caso') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <input type="text" wire:model="user_create" id="user_create" class="form-control @error('user_create') is-invalid @enderror" readonly>
+    </div>
+    @error('user_create')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
+    <label class="form-label" for="user_update">{{ __('Usuario que actualizó el caso') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <input type="text" wire:model="user_update" id="user_update" class="form-control @error('user_update') is-invalid @enderror" readonly>
+    </div>
+    @error('user_update')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-md-12 fv-plugins-icon-container">
+    <label class="form-label" for="navance_cronologico">{{ __('Avance Cronológico') }}</label>
+    <textarea class="form-control" wire:model="navance_cronologico" name="navance_cronologico" id="navance_cronologico" rows="5"></textarea>
+    @error('navance_cronologico')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+  aqui
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="nfecha_entrega_requerimiento_pago">{{ __('Fecha de entrega requerimiento pago') }}</label>
