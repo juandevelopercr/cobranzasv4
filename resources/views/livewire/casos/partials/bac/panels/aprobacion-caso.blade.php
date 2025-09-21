@@ -246,7 +246,7 @@
       <select wire:model.live="aestado_proceso_general_id" id="aestado_proceso_general_id" class="select2 form-select @error('aestado_proceso_general_id') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
         @foreach ($this->estados as $estado)
-          <option value="{{ $estado->id }}">{{ $estado->estado }}</option>
+          <option value="{{ $estado->id }}">{{ $estado->name }}</option>
         @endforeach
       </select>
     </div>

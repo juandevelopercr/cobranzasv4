@@ -107,7 +107,7 @@
       <select wire:model.live="lestado_levantamiento_id" id="lestado_levantamiento_id" class="select2 form-select @error('lestado_levantamiento_id') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
         @foreach ($this->estados as $estado)
-          <option value="{{ $estado->id }}">{{ $estado->estado }}</option>
+          <option value="{{ $estado->id }}">{{ $estado->name }}</option>
         @endforeach
       </select>
     </div>
