@@ -28,6 +28,8 @@
         {{ __('The system generates it') }}
       </div>
     </div>
+    @php
+    /*
     <div class="col-md-6 fv-plugins-icon-container">
       <label class="form-label" for="customer_name">{{ __('Customer Name') }}</label>
       <div class="input-group input-group-merge has-validation">
@@ -48,6 +50,18 @@
           </p>
         </blockquote>
       @endif
+    </div>
+    */
+    @endphp
+    <div class="col-md-3 select2-primary fv-plugins-icon-container">
+      <label class="form-label" for="contact_id">{{ __('Customer Name') }}</label>
+      <div wire:ignore>
+        <select id="contact_id" class="form-select select2-ajax" data-placeholder="Buscar Cliente">
+          @if($customer_text)
+              <option value="{{ $contact_id }}" selected>{{ $customer_text }}</option>
+          @endif
+        </select>
+      </div>
     </div>
 
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
@@ -628,6 +642,38 @@
       const val = $(this).val();
       if (typeof $wire !== 'undefined') {
         $wire.set('caso_id', val);
+      }
+    });
+
+    $('#contact_id').select2({
+      placeholder: $('#contact_id').data('placeholder'),
+      minimumInputLength: 2,
+      ajax: {
+        url: '/api/customers/search',
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+          return {
+            q: params.term,
+          };
+        },
+        processResults: function (data) {
+          return {
+            results: data.map(item => ({
+              id: item.id,
+              text: item.text
+            }))
+          };
+        },
+        cache: true
+      }
+    });
+
+    // Manejar selección y enviar a Livewire
+    $('#contact_id').on('change', function () {
+      const val = $(this).val();
+      if (typeof $wire !== 'undefined') {
+        $wire.set('contact_id', val);
       }
     });
 

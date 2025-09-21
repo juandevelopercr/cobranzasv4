@@ -2,27 +2,30 @@
 
 namespace App\Livewire\Transactions;
 
-use App\Helpers\Helpers;
-use App\Models\Bank;
-use App\Models\Currency;
-use App\Models\DataTableConfig;
-use App\Models\EconomicActivity;
-use App\Models\Transaction;
-use App\Models\TransactionLine;
-use App\Models\TransactionPayment;
-use App\Models\User;
-use App\Services\DocumentSequenceService;
-use App\Services\Hacienda\ApiHacienda;
-use App\Services\Hacienda\Login\AuthService;
 use Carbon\Carbon;
-use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
+use App\Models\Bank;
+use App\Models\User;
+use App\Models\Contact;
+use App\Helpers\Helpers;
+use App\Models\Currency;
+use App\Models\Transaction;
 use Livewire\Attributes\On;
+use App\Models\DataTableConfig;
+use App\Models\TransactionLine;
+use App\Models\EconomicActivity;
+use App\Models\TransactionPayment;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use App\Services\Hacienda\ApiHacienda;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Session;
+use App\Services\DocumentSequenceService;
+use App\Services\Hacienda\Login\AuthService;
 
 class ReciboPagoManager extends TransactionManager
 {
+  public $customer_text; // para mostrar el texto inicial
+
   public $filters = [
     'filter_proforma_no' => NULL,
     'filter_consecutivo' => NULL,
@@ -802,7 +805,6 @@ class ReciboPagoManager extends TransactionManager
     $this->contact_economic_activity_id = $record->contact_economic_activity_id;
     $this->cuenta_id              = $record->cuenta_id;
     $this->currency_id            = $record->currency_id;
-    $this->department_id          = $record->department_id;
     $this->area_id                = $record->area_id;
     $this->bank_id                = $record->bank_id;
     $this->caso_id                = $record->caso_id;
@@ -886,6 +888,16 @@ class ReciboPagoManager extends TransactionManager
 
     $this->show_transaction_date = Carbon::parse($record->transaction_date)->format('Y-m-d');
     $this->original_currency_id = $record->currency_id;
+
+    $contact = Contact::find($record->contact_id);
+    $this->tipoIdentificacion = $contact->identificationType->name;
+    $this->identificacion = $contact->identification;
+
+    if ($contact) {
+      $this->customer_text = $contact->name;
+      $text = $contact->name;
+      $this->dispatch('setSelect2Value', id: 'contact_id', value: $this->contact_id, text: $text);
+    }
 
     // Se emite este evento para los componentes hijos
     $this->dispatch('updateTransactionContext', [
@@ -1323,6 +1335,7 @@ class ReciboPagoManager extends TransactionManager
       'closeForm',
       'payments',
       'vuelto',
+      'customer_text'
     );
 
     $this->selectedIds = [];

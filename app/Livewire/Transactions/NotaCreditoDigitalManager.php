@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Session;
 
 class NotaCreditoDigitalManager extends TransactionManager
 {
+  public $customer_text; // para mostrar el texto inicial
+
   public $filters = [
     'filter_proforma_no' => NULL,
     'filter_consecutivo' => NULL,

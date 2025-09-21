@@ -51,6 +51,8 @@ class CalculoRegistroManager extends TransactionManager
 
   public array $lines = []; // ✅ Debe ser array para Livewire
 
+  public $customer_text; // para mostrar el texto inicial
+
   public $filters = [
     'filter_consecutivo' => NULL,
     'filter_proforma_no' => NULL,
@@ -1099,7 +1101,8 @@ class CalculoRegistroManager extends TransactionManager
       'closeForm',
       'payments',
       'vuelto',
-      'infoCaso'
+      'infoCaso',
+      'customer_text'
     );
 
     $this->selectedIds = [];

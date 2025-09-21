@@ -32,6 +32,7 @@ class HistoryManager extends TransactionManager
   public ?string $fechaDepositoModal = null;
   public ?string $numeroDepositoPagoModal = null;
   public bool $showDepositoModal = false;
+  public $customer_text; // para mostrar el texto inicial
 
   public $document_type = ['PR', 'FE', 'TE'];
 
@@ -880,6 +881,12 @@ class HistoryManager extends TransactionManager
     $this->tipoIdentificacion = $contact->identificationType->name;
     $this->identificacion = $contact->identification;
 
+    if ($contact) {
+      $this->customer_text = $contact->name;
+      $text = $contact->name;
+      $this->dispatch('setSelect2Value', id: 'contact_id', value: $this->contact_id, text: $text);
+    }
+
     // Se emite este evento para los componentes hijos
     $this->dispatch('updateTransactionContext', [
       'transaction_id'    => $record->id,
@@ -1091,7 +1098,8 @@ class HistoryManager extends TransactionManager
       'invoice_type',
       'tipoIdentificacion',
       'identificacion',
-      'document_type'
+      'document_type',
+      'customer_text'
     );
 
     $this->selectedIds = [];

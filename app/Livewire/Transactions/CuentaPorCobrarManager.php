@@ -32,6 +32,7 @@ class CuentaPorCobrarManager extends TransactionManager
   public $modalPayment = false;
   public $counter = 0;
   public $filter_cuenta_cobrar_type = 'PENDIENTE';
+  public $customer_text; // para mostrar el texto inicial
 
   public $filters = [
     'filter_customer_name' => NULL,
@@ -1162,6 +1163,7 @@ class CuentaPorCobrarManager extends TransactionManager
       'payments',
       'vuelto',
       'modalPayment',
+      'customer_text'
       //      'filter_cuenta_cobrar_type'
     );
 

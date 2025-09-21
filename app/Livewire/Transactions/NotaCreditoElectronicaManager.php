@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Session;
 
 class NotaCreditoElectronicaManager extends TransactionManager
 {
+  public $customer_text; // para mostrar el texto inicial
+
   public $filters = [
     'filter_consecutivo' => NULL,
     'filter_customer_name' => NULL,

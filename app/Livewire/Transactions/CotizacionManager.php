@@ -25,6 +25,8 @@ use Livewire\Attributes\On;
 
 class CotizacionManager extends TransactionManager
 {
+  public $customer_text; // para mostrar el texto inicial
+
   public $filters = [
     'filter_proforma_no' => NULL,
     'filter_customer_name' => NULL,
@@ -367,6 +369,7 @@ class CotizacionManager extends TransactionManager
 
   public function create()
   {
+    $this->customer_text = '';
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
 
@@ -768,6 +771,12 @@ class CotizacionManager extends TransactionManager
     $this->tipoIdentificacion = $contact->identificationType->name;
     $this->identificacion = $contact->identification;
 
+    if ($contact) {
+      $this->customer_text = $contact->name;
+      $text = $contact->name;
+      $this->dispatch('setSelect2Value', id: 'contact_id', value: $this->contact_id, text: $text);
+    }
+
     // Se emite este evento para los componentes hijos
     $this->dispatch('updateTransactionContext', [
       'transaction_id'    => $record->id,
@@ -1027,7 +1036,8 @@ class CotizacionManager extends TransactionManager
       'identificacion',
       'showModalCaso',
       'cotizacionId',
-      'bankCotizacionId'
+      'bankCotizacionId',
+      'customer_text'
     );
 
     $this->selectedIds = [];

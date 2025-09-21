@@ -44,6 +44,8 @@ class SeguimientoManager extends TransactionManager
 
   public $listaUsuarios;
 
+  public $customer_text; // para mostrar el texto inicial
+
   public $document_type = ['PR', 'FE', 'TE'];
 
   public $filters = [
@@ -831,7 +833,6 @@ class SeguimientoManager extends TransactionManager
     $this->contact_economic_activity_id = $record->contact_economic_activity_id;
     $this->cuenta_id              = $record->cuenta_id;
     $this->currency_id            = $record->currency_id;
-    $this->department_id          = $record->department_id;
     $this->area_id                = $record->area_id;
     $this->bank_id                = $record->bank_id;
     $this->caso_id                = $record->caso_id;
@@ -922,6 +923,12 @@ class SeguimientoManager extends TransactionManager
     $contact = Contact::find($record->contact_id);
     $this->tipoIdentificacion = $contact->identificationType->name;
     $this->identificacion = $contact->identification;
+
+    if ($contact) {
+      $this->customer_text = $contact->name;
+      $text = $contact->name;
+      $this->dispatch('setSelect2Value', id: 'contact_id', value: $this->contact_id, text: $text);
+    }
 
     // Se emite este evento para los componentes hijos
     $this->dispatch('updateTransactionContext', [
@@ -1135,7 +1142,8 @@ class SeguimientoManager extends TransactionManager
       'invoice_type',
       'tipoIdentificacion',
       'identificacion',
-      'document_type'
+      'document_type',
+      'customer_text'
     );
 
     $this->selectedIds = [];

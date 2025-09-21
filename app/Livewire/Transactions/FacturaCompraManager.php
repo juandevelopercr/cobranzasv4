@@ -27,6 +27,7 @@ class FacturaCompraManager extends TransactionManager
 {
   public $proforma_type = 'HONORARIO';
   public $document_type = ['PRC', 'FEC'];
+  public $customer_text; // para mostrar el texto inicial
 
   public $filters = [
     'filter_proforma_no' => NULL,
@@ -1126,6 +1127,7 @@ class FacturaCompraManager extends TransactionManager
       'closeForm',
       'payments',
       'vuelto',
+      'customer_text'
     );
 
     $this->selectedIds = [];

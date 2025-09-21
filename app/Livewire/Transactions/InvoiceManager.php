@@ -22,6 +22,7 @@ use Livewire\Attributes\On;
 
 class InvoiceManager extends TransactionManager
 {
+  public $customer_text; // para mostrar el texto inicial
 
   public $sortBy = 'transactions.consecutivo';
 

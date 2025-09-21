@@ -31,6 +31,7 @@ class ProformaManager extends TransactionManager
 {
   public $tiposFacturacion = [];
   public $caso_text; // para mostrar el texto inicial
+  public $customer_text; // para mostrar el texto inicial
 
   public $filters = [
     'filter_action' => NULL,
@@ -592,6 +593,7 @@ class ProformaManager extends TransactionManager
 
   public function create()
   {
+    $this->customer_text = '';
     $this->resetControls();
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
@@ -1013,6 +1015,12 @@ class ProformaManager extends TransactionManager
     $contact = Contact::find($record->contact_id);
     $this->tipoIdentificacion = $contact->identificationType->name;
     $this->identificacion = $contact->identification;
+
+    if ($contact) {
+      $this->customer_text = $contact->name;
+      $text = $contact->name;
+      $this->dispatch('setSelect2Value', id: 'contact_id', value: $this->contact_id, text: $text);
+    }
 
     // Se emite este evento para los componentes hijos
     $this->dispatch('updateTransactionContext', [
@@ -1468,7 +1476,8 @@ class ProformaManager extends TransactionManager
       'invoice_type',
       'tipoIdentificacion',
       'identificacion',
-      'document_type'
+      'document_type',
+      'customer_text'
     );
 
     $this->bank_id = null;
