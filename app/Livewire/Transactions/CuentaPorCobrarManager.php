@@ -363,9 +363,14 @@ class CuentaPorCobrarManager extends TransactionManager
 
   protected function getFilteredQuery()
   {
+    $document_type = $this->document_type;
+    if (!is_array($this->document_type)) {
+      $document_type = [$this->document_type];
+    }
+
     $query = Transaction::search($this->search, $this->filters)
       ->join('transactions_commissions', 'transactions_commissions.transaction_id', '=', 'transactions.id')
-      ->where('transactions.document_type', $this->document_type)
+      ->whereIn('transactions.document_type', $document_type)
       ->whereNotIn('transactions_commissions.centro_costo_id', [1, 12, 14, 15, 16, 17, 28, 31]);
 
     // Condiciones según el rol del usuario

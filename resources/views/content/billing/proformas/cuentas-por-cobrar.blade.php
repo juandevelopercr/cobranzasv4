@@ -41,5 +41,5 @@ $configData = Helper::appClasses();
 @endsection
 
 @section('content')
-@livewire('transactions.cuenta-por-cobrar-manager', ['document_type'=>'PR'])
+@livewire('transactions.proforma-manager', ['document_type'=>['PR', 'FE', 'TE', 'NCE', 'NDE']])
 @endsection
