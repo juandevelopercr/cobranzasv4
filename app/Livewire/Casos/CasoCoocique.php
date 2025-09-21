@@ -428,9 +428,14 @@ class CasoCoocique extends CasoManager
       'pdespacho_judicial_juzgado' => ['nullable', 'string', 'max:190'],
       'pdatos_codeudor2' => ['nullable', 'string', 'max:190'],
 
+      'fechasRemate' => 'nullable|array|min:0',
+      'fechasRemate.*.fecha' => 'nullable|date|after_or_equal:today',
+      'fechasRemate.*.titulo' => 'nullable|string|max:100',
+      /*
       'fechasRemate' => 'required|array|min:1',
       'fechasRemate.*.fecha' => 'required|date|after_or_equal:today',
       'fechasRemate.*.titulo' => 'required|string|max:100',
+      */
     ];
 
     return $rules;

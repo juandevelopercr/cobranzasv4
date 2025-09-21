@@ -8,6 +8,17 @@ $show = false;
 <!-- Formulario para productos -->
 <form wire:submit.prevent="{{ $action == 'edit' ? 'update' : 'store' }}">
 
+@if ($errors->any())
+<div class="alert alert-danger">
+    <strong>{{ __('Please fix the following errors:') }}</strong>
+    <ul>
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+
 @if ($this->panels['info'])
 <div class="card border-0 mb-7">
   <div class="card-body panel-card bg-light-blue">
