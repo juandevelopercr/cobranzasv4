@@ -32,52 +32,6 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="afecha_levantamiento">{{ __('Fecha aprobación levantamiento') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="afecha_levantamiento"
-        wire:model="afecha_levantamiento"
-        x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
-        x-init="init($el)"
-        wire:ignore
-        class="form-control date-picke @error('afecha_levantamiento') is-invalid @enderror">
-    </div>
-    @error('afecha_levantamiento')
-    <div class="text-danger mt-1">{{ $message }}</div>
-    @enderror
-  </div>
-
-  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="afecha_senalamiento_puesta_posesion">{{ __('Fecha Señalamiento Puesta Posesión') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="afecha_senalamiento_puesta_posesion"
-        wire:model="afecha_senalamiento_puesta_posesion"
-        x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
-        x-init="init($el)"
-        wire:ignore
-        class="form-control date-picke @error('afecha_senalamiento_puesta_posesion') is-invalid @enderror">
-    </div>
-    @error('afecha_senalamiento_puesta_posesion')
-    <div class="text-danger mt-1">{{ $message }}</div>
-    @enderror
-  </div>
-
-  <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
-    <label class="form-label" for="apuesta_posesion">{{ __('Puesta Posesión') }}</label>
-    <div wire:ignore>
-      <select wire:model.live="apuesta_posesion" id="apuesta_posesion" class="select2 form-select @error('apuesta_posesion') is-invalid @enderror">
-        <option value="">{{ __('Seleccione...') }}</option>
-         <option value="Si">Si</option>
-         <option value="No">No</option>
-      </select>
-    </div>
-    @error('apuesta_posesion')
-    <div class="text-danger mt-1">{{ $message }}</div>
-    @enderror
-  </div>
-
-  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="agastos_legales">{{ __('Gastos Legales') }}</label>
     <div class="input-group input-group-merge has-validation">
       <input type="text" wire:model="agastos_legales" id="agastos_legales" class="form-control @error('agastos_legales') is-invalid @enderror">
@@ -103,16 +57,6 @@
       <input type="text" wire:model="anumero_placa1" id="anumero_placa1" class="form-control @error('anumero_placa1') is-invalid @enderror">
     </div>
     @error('anumero_placa1')
-    <div class="text-danger mt-1">{{ $message }}</div>
-    @enderror
-  </div>
-
-  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="anumero_placa2">{{ __('Número Placa') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="anumero_placa2" id="anumero_placa2" class="form-control @error('anumero_placa2') is-invalid @enderror">
-    </div>
-    @error('anumero_placa2')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
@@ -162,22 +106,6 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="afecha_presentacion_protocolizacion">{{ __('Fecha Presentación Protocolización') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="afecha_presentacion_protocolizacion"
-        wire:model="afecha_presentacion_protocolizacion"
-        x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
-        x-init="init($el)"
-        wire:ignore
-        class="form-control date-picke @error('afecha_presentacion_protocolizacion') is-invalid @enderror">
-    </div>
-    @error('afecha_presentacion_protocolizacion')
-    <div class="text-danger mt-1">{{ $message }}</div>
-    @enderror
-  </div>
-
-  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="afecha_inscripcion">{{ __('Fecha de Inscripción') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
@@ -189,6 +117,22 @@
         class="form-control date-picke @error('afecha_inscripcion') is-invalid @enderror">
     </div>
     @error('afecha_inscripcion')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
+    <label class="form-label" for="afecha_terminacion">{{ __('Fecha de Terminación') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+      <input type="text" id="afecha_terminacion"
+        wire:model="afecha_terminacion"
+        x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
+        x-init="init($el)"
+        wire:ignore
+        class="form-control date-picke @error('afecha_terminacion') is-invalid @enderror">
+    </div>
+    @error('afecha_terminacion')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
@@ -218,6 +162,37 @@
     @enderror
   </div>
 
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
+    <label class="form-label" for="aestado_proceso_general_id">{{ __('Estado Proceso General') }}</label>
+    <div wire:ignore>
+      <select wire:model.live="aestado_proceso_general_id" id="aestado_proceso_general_id" class="select2 form-select @error('aestado_proceso_general_id') is-invalid @enderror">
+        <option value="">{{ __('Seleccione...') }}</option>
+        @foreach ($this->estados as $estado)
+          <option value="{{ $estado->id }}">{{ $estado->name }}</option>
+        @endforeach
+      </select>
+    </div>
+    @error('aestado_proceso_general_id')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
+    <label class="form-label" for="afecha_informe_ultima_gestion">{{ __('Fecha Informe última Gestión') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+      <input type="text" id="afecha_informe_ultima_gestion"
+        wire:model="afecha_informe_ultima_gestion"
+        x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
+        x-init="init($el)"
+        wire:ignore
+        class="form-control date-picke @error('afecha_informe_ultima_gestion') is-invalid @enderror">
+    </div>
+    @error('afecha_informe_ultima_gestion')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="atipo_expediente">{{ __('Tipo Expediente') }}</label>
     <div class="input-group input-group-merge has-validation">
@@ -239,114 +214,167 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="fecha_inicio_retenciones">{{ __('Fecha de inicio de retenciones') }}</label>
+    <label class="form-label" for="amonto_avaluo">{{ __('Monto avaluo') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="fecha_inicio_retenciones"
-        wire:model="fecha_inicio_retenciones"
-        x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
-        x-init="init($el)"
-        wire:ignore
-        class="form-control date-picke @error('fecha_inicio_retenciones') is-invalid @enderror">
+      <input type="text" wire:model="amonto_avaluo" id="amonto_avaluo" class="form-control @error('amonto_avaluo') is-invalid @enderror">
     </div>
-    @error('fecha_inicio_retenciones')
+    @error('amonto_avaluo')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="fecha_prescripcion">{{ __('Fecha de Prescripción') }}</label>
+    <label class="form-label" for="afecha_avaluo">{{ __('Fecha avaluo') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="fecha_prescripcion"
-        wire:model="fecha_prescripcion"
+      <input type="text" id="afecha_avaluo"
+        wire:model="afecha_avaluo"
         x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
         x-init="init($el)"
         wire:ignore
-        class="form-control date-picke @error('fecha_prescripcion') is-invalid @enderror">
+        class="form-control date-picke @error('afecha_avaluo') is-invalid @enderror">
     </div>
-    @error('fecha_prescripcion')
-    <div class="text-danger mt-1">{{ $message }}</div>
-    @enderror
-  </div>
-
-  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="fecha_pruebas">{{ __('Fecha de Pruebas') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-      <input type="text" id="fecha_pruebas"
-        wire:model="fecha_pruebas"
-        x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
-        x-init="init($el)"
-        wire:ignore
-        class="form-control date-picke @error('fecha_pruebas') is-invalid @enderror">
-    </div>
-    @error('fecha_pruebas')
+    @error('afecha_avaluo')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
-    <label class="form-label" for="motivo_terminacion">{{ __('Motivo de Terminación') }}</label>
+    <label class="form-label" for="aembargo_cuentas">{{ __('Embargos cuentas') }}</label>
     <div wire:ignore>
-      <select wire:model.live="motivo_terminacion" id="motivo_terminacion" class="select2 form-select @error('motivo_terminacion') is-invalid @enderror">
+      <select wire:model.live="aembargo_cuentas" id="aembargo_cuentas" class="select2 form-select @error('aembargo_cuentas') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
-         <option value="Mutuo">Mutuo</option>
-         <option value="Pago Cliente">Pago Cliente</option>
-         <option value="Por decisión del Banco">Por decisión del Banco</option>
-         <option value="Prescrito">Prescrito</option>
-         <option value="Adjudicación">Adjudicación</option>
-         <option value="Fallecido">Fallecido</option>
-         <option value="Concursales">Concursales</option>
-         <option value="Adjudicado por Tercero">Adjudicado por Tercero</option>
+         <option value="Si">Si</option>
+         <option value="No">No</option>
       </select>
     </div>
-    @error('motivo_terminacion')
+    @error('aembargo_cuentas')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
+    <label class="form-label" for="aembargo_salarios">{{ __('Embargos salarios') }}</label>
+    <div wire:ignore>
+      <select wire:model.live="aembargo_salarios" id="aembargo_salarios" class="select2 form-select @error('aembargo_salarios') is-invalid @enderror">
+        <option value="">{{ __('Seleccione...') }}</option>
+         <option value="Si">Si</option>
+         <option value="No">No</option>
+      </select>
+    </div>
+    @error('aembargo_salarios')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
+    <label class="form-label" for="aembargo_muebles">{{ __('Embargos Muebles') }}</label>
+    <div wire:ignore>
+      <select wire:model.live="aembargo_muebles" id="aembargo_muebles" class="select2 form-select @error('aembargo_muebles') is-invalid @enderror">
+        <option value="">{{ __('Seleccione...') }}</option>
+         <option value="SI">SI</option>
+         <option value="NO">NO</option>
+      </select>
+    </div>
+    @error('aembargo_muebles')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
+    <label class="form-label" for="aembargo_inmuebles">{{ __('Embargos Inmuebles') }}</label>
+    <div wire:ignore>
+      <select wire:model.live="aembargo_inmuebles" id="aembargo_inmuebles" class="select2 form-select @error('aembargo_inmuebles') is-invalid @enderror">
+        <option value="">{{ __('Seleccione...') }}</option>
+         <option value="SI">SI</option>
+         <option value="NO">NO</option>
+      </select>
+    </div>
+    @error('aembargo_inmuebles')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="honorarios_legales_dolares">{{ __('Honorarios Legales Dólares') }}</label>
-    <div
-      x-data="cleaveLivewire({
-        initialValue: '{{ $honorarios_legales_dolares ?? '' }}',
-        wireModelName: 'honorarios_legales_dolares',
-        postUpdate: false,
-        decimalScale: 2,
-        allowNegative: true,
-        rawValueCallback: (val) => {
-          //console.log('Callback personalizado:', val);
-          // lógica extra aquí si deseas
-          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
-          if (component) {
-            component.set('honorarios_legales_dolares', val); // <- Esto envía el valor sin comas
-          }
-        }
-      })"
-      x-init="init($refs.cleaveInput)"
-    >
-      <div class="input-group input-group-merge has-validation">
-        <input type="text" id="honorarios_legales_dolares" x-ref="cleaveInput" wire:ignore class="form-control js-input-honorarios_legales_dolares"
-        >
-      </div>
+    <label class="form-label" for="aretenciones_con_giro">{{ __('Retenciones con giro') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <input type="text" wire:model="aretenciones_con_giro" id="aretenciones_con_giro" class="form-control @error('aretenciones_con_giro') is-invalid @enderror">
     </div>
-    @error('honorarios_legales_dolares')
-      <div class="text-danger mt-1">{{ $message }}</div>
+    @error('aretenciones_con_giro')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
+    <label class="form-label" for="afecha_ultimo_giro">{{ __('Fecha de último giro') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+      <input type="text" id="afecha_ultimo_giro"
+        wire:model="afecha_ultimo_giro"
+        x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
+        x-init="init($el)"
+        wire:ignore
+        class="form-control date-picke @error('afecha_ultimo_giro') is-invalid @enderror">
+    </div>
+    @error('afecha_ultimo_giro')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
+    <label class="form-label" for="abienes_adjudicados">{{ __('Bienes Adjudicados') }}</label>
+    <div wire:ignore>
+      <select wire:model.live="abienes_adjudicados" id="abienes_adjudicados" class="select2 form-select @error('abienes_adjudicados') is-invalid @enderror">
+        <option value="">{{ __('Seleccione...') }}</option>
+         <option value="SI">SI</option>
+         <option value="NO">NO</option>
+      </select>
+    </div>
+    @error('abienes_adjudicados')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
+    <label class="form-label" for="afecha_senalamiento_puesta_posesion">{{ __('Fecha Señalamiento Puesta Posesión') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+      <input type="text" id="afecha_senalamiento_puesta_posesion"
+        wire:model="afecha_senalamiento_puesta_posesion"
+        x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
+        x-init="init($el)"
+        wire:ignore
+        class="form-control date-picke @error('afecha_senalamiento_puesta_posesion') is-invalid @enderror">
+    </div>
+    @error('afecha_senalamiento_puesta_posesion')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
+    <label class="form-label" for="apuesta_posesion">{{ __('Puesta Posesión') }}</label>
+    <div wire:ignore>
+      <select wire:model.live="apuesta_posesion" id="apuesta_posesion" class="select2 form-select @error('apuesta_posesion') is-invalid @enderror">
+        <option value="">{{ __('Seleccione...') }}</option>
+         <option value="Si">Si</option>
+         <option value="No">No</option>
+      </select>
+    </div>
+    @error('apuesta_posesion')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
+    <label class="form-label" for="abufete">{{ __('Bufete') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <input type="text" wire:model="abufete" id="abufete" class="form-control @error('abufete') is-invalid @enderror">
+    </div>
+    @error('abufete')
+    <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
   <br>
   <h4 class="mb-0"><span class="badge bg-primary text-white">{{ __('Fecha de Remate') }}</span></h4>
   @include('livewire.casos.partials.scotiabank.panels.repeater-fecha-remate')
-
-  <!--
-  insertar
-  dynamic_form_detalles_ejecucion
-  -->
-
-  <!--
-  insertar
-  dynamic_form_avances_fecha_remate
-  -->
-
 </div>

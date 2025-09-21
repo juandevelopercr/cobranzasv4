@@ -17,6 +17,7 @@ use App\Models\CasoProducto;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
+use App\Models\CasoPoderdante;
 use App\Livewire\BaseComponent;
 use App\Models\CasoExpectativa;
 use App\Models\DataTableConfig;
@@ -30,6 +31,7 @@ use App\Services\DocumentSequenceService;
 class CasoLafise extends CasoManager
 {
   public $titleNotification = 'Notificación - Public Edicto';
+  public $poderdantes = [];
 
   #[Computed]
   public function estados()
@@ -91,6 +93,7 @@ class CasoLafise extends CasoManager
 
     $this->juzgados = CasoJuzgado::where('activo', 1)->orderBy('nombre', 'ASC')->get();
 
+    $this->poderdantes = CasoPoderdante::orderBy('id', 'ASC')->get();
 
     $this->refresDatatable();
   }
@@ -1321,6 +1324,21 @@ class CasoLafise extends CasoManager
     $this->titleNotification = 'Notificación - Public Edicto';
 
     switch ($this->product_id) {
+      case CasoProducto::PYME:
+        $panels['notificacion'] = true;
+        $panels['sentencia'] = true;
+        $panels['aprobacion'] = true;
+        break;
+
+      default:
+        // Predeterminado (prendario/hipotecario)
+        $panels['notificacion'] = true;
+        $panels['sentencia'] = true;
+        $panels['aprobacion'] = true;
+        break;
+    }
+    /*
+    switch ($this->product_id) {
       case CasoProducto::TARJETA_CREDITO:
       case CasoProducto::PYME:
         $panels['traspaso'] = true;
@@ -1386,6 +1404,7 @@ class CasoLafise extends CasoManager
         $panels['terminacion'] = true;
         break;
     }
+    */
 
     return $panels;
   }
