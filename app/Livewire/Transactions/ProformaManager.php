@@ -1529,6 +1529,32 @@ class ProformaManager extends TransactionManager
       ]);
     }
 
+    if ($propertyName == 'contact_id') {
+      $contact = Contact::find($this->contact_id);
+      if ($contact){
+        $this->customer_name = $contact->name;
+        if (is_null($this->customer_comercial_name) || empty($this->customer_comercial_name))
+          $this->customer_comercial_name = $contact->commercial_name;
+        $this->invoice_type = $contact->invoice_type;
+        $this->condition_sale = $contact->conditionSale->code;
+        $this->pay_term_number = $contact->pay_term_number;
+        $this->email_cc = $contact->email_cc;
+      }
+
+      if ($this->contact_id == '' | is_null($this->contact_id))
+        $this->contact_economic_activity_id = null;
+      else{
+        $this->setcontactEconomicActivities();
+        if ($this->location_economic_activity_id) {
+          $activity = EconomicActivity::find($this->location_economic_activity_id);
+          if ($activity) {
+            $this->dispatch('setSelect2Value', id: 'location_economic_activity_id', value: $activity->id, text: $activity->name);
+          }
+        }
+      }
+      $this->dispatch('reinitSelect2Controls');
+    }
+
     if ($propertyName == 'email_cc') {
       $this->updatedEmails();
     }
