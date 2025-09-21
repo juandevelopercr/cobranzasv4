@@ -1304,7 +1304,18 @@ class CasoBac extends CasoManager
       'info' => true, // siempre se muestra
       'notificacion' => true,
       'sentencia' => true,
+      'arreglo' => false,
       'aprobacion' => true,
+      'traspaso' => false,
+      'terminacion' => false,
+      'levantamiento' => false,
+      'facturacion' => false,
+      'segmento' => false,
+      'denuncia' => false,
+      'anotaciones' => false,
+      'bienes' => false,
+      'filtro1' => false,
+      'filtro2' => false,
     ];
 
     $this->titleNotification = 'Notificación - Public Edicto';
