@@ -104,12 +104,14 @@ use App\Models\User;
 
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="bank_id">{{ __('Bank') }}</label>
-        <select wire:model="bank_id" id="bank_id" class="select2 form-select @error('bank_id') is-invalid @enderror" @if ($recordId) disabled @endif>
-          <option value="">{{ __('Seleccione...') }}</option>
-          @foreach ($this->banks as $bank)
-            <option value="{{ $bank->id }}">{{ $bank->name }}</option>
-          @endforeach
-        </select>
+        <div wire:ignore>
+          <select wire:model="bank_id" id="bank_id" class="select2 form-select @error('bank_id') is-invalid @enderror" @if ($recordId) disabled @endif>
+            <option value="">{{ __('Seleccione...') }}</option>
+            @foreach ($this->banks as $bank)
+              <option value="{{ $bank->id }}">{{ $bank->name }}</option>
+            @endforeach
+          </select>
+        </div>
       @error('bank_id')
       <div class="text-danger mt-1">{{ $message }}</div>
       @enderror
