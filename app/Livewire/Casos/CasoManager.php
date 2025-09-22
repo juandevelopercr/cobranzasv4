@@ -888,6 +888,7 @@ class CasoManager extends BaseComponent
     $this->afecha_inscripcion = $this->normalizeDateForDB($this->afecha_inscripcion);
     $this->afecha_suspencion_arreglo = $this->normalizeDateForDB($this->afecha_suspencion_arreglo);
     $this->afecha_terminacion = $this->normalizeDateForDB($this->afecha_terminacion);
+    $this->pultima_gestion_cobro_administrativo = $this->normalizeDateForDB($this->pultima_gestion_cobro_administrativo);
   }
 
   public function formatDateForView($record)
@@ -959,7 +960,7 @@ class CasoManager extends BaseComponent
     $this->afecha_inscripcion = $this->normalizeDateForView($record->afecha_inscripcion);
     $this->afecha_suspencion_arreglo = $this->normalizeDateForView($record->afecha_suspencion_arreglo);
     $this->afecha_terminacion = $this->normalizeDateForView($record->afecha_terminacion);
-
+    $this->pultima_gestion_cobro_administrativo = $this->normalizeDateForView($record->pultima_gestion_cobro_administrativo);
   }
 
   public function normalizeDateForDB($value)

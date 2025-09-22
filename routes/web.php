@@ -70,12 +70,6 @@ use App\Http\Controllers\classifiers\CasoListadoJuzgadoController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use App\Http\Controllers\classifiers\MovimientoNotificationController;
 
-
-
-
-
-
-
 // locale
 Route::get('/lang/{locale}', [LanguageController::class, 'swap']);
 Route::get('/pages/misc-error', [MiscError::class, 'index'])->name('pages-misc-error');
