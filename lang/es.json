@@ -494,5 +494,13 @@
   "Movement Notifications": "Notificaciones de movimientos",
   "View-buscador": "Ver buscador de proformas",
   "View-admin": "Ver gráficos en pantalla de inicio",
-  "View-scotiabank": "Ver Casos de Scotiabank"
+  "View-scotiabank": "Ver Casos de Scotiabank",
+  "View-scotiabank-bch": "Ver Casos de Scotiabank BCH",
+  "View-bac": "Ver Casos de Bac",
+  "View-banco-general": "Ver Casos de Banco General",
+  "View-terceros": "Ver Casos de Terceros",
+  "View-coocique": "Ver Casos de Coocique",
+  "View-davivienda": "Ver Casos de Davivienda",
+  "View-lafise": "Ver Casos de Lafise",
+  "View-cafsa": "Ver Casos de CAFSA"
 }

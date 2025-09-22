@@ -56,7 +56,7 @@
             </div>
           </div>
 
-          @can("view-scotiabank-casos")
+          @can("view-lafise-casos")
             <div class="card-datatable table-responsive">
               <table class="table table-sm mb-0 border-top table-hover dataTable no-footer" id="casos-lafise-table" style="width: 100%;">
                 <thead>
