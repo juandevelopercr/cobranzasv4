@@ -102,7 +102,7 @@
   @endif
 
   @if($action == 'create' || $action == 'edit')
-    @include('livewire.casos.partials.cafasa.form')
+    @include('livewire.casos.partials.cafsa.form')
   @endif
 </div>
 
