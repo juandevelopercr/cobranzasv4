@@ -711,6 +711,7 @@ class CasoScotiabank extends CasoManager
     $this->resetControls();
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
+    $this->cleanEmptyForeignKeys();
 
     // Obtener la fecha actual en formato Y-m-d
     $today = Carbon::now()->toDateString();
@@ -779,7 +780,8 @@ class CasoScotiabank extends CasoManager
   }
 
   public function edit($recordId)
-{
+  {
+    $this->cleanEmptyForeignKeys();
     $record = $this->getRecordActionReturnModel($recordId, Caso::class);
 
     if (!$record) {
