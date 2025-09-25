@@ -1131,15 +1131,15 @@ class TransactionLineManager extends BaseComponent
           break;
         case 2:
           $this->taxes[$index]['tax'] = 1;
-          $this->taxes[$index]['tax_amount'] = number_format((float)($honorarios * 1) / 100, 2, '.', '');
+          $this->taxes[$index]['tax_amount'] = (float)($honorarios * 1) / 100;
           break;
         case 3:
           $this->taxes[$index]['tax'] = 2;
-          $this->taxes[$index]['tax_amount'] = number_format((float)($honorarios * 2) / 100, 2, '.', '');
+          $this->taxes[$index]['tax_amount'] = (float)($honorarios * 2) / 100;
           break;
         case 4:
           $this->taxes[$index]['tax'] = 4;
-          $this->taxes[$index]['tax_amount'] = number_format((float)($honorarios * 4) / 100, 2, '.', '');
+          $this->taxes[$index]['tax_amount'] = (float)($honorarios * 4) / 100;
           break;
         case 5:
           $this->taxes[$index]['tax'] = 0;
@@ -1147,20 +1147,20 @@ class TransactionLineManager extends BaseComponent
           break;
         case 6:
           $this->taxes[$index]['tax'] = 4;
-          $this->taxes[$index]['tax_amount'] = number_format((float)($honorarios * 4) / 100, 2, '.', '');
+          $this->taxes[$index]['tax_amount'] = (float)($honorarios * 4) / 100;
           break;
         case 7:
           $this->taxes[$index]['tax'] = 8;
-          $this->taxes[$index]['tax_amount'] = number_format((float)($honorarios * 8) / 100, 2, '.', '');
+          $this->taxes[$index]['tax_amount'] = (float)($honorarios * 8) / 100;
           break;
         case 8:
           $this->taxes[$index]['tax'] = 13;
-          $this->taxes[$index]['tax_amount'] = number_format((float)($honorarios * 13) / 100, 2, '.', '');
+          $this->taxes[$index]['tax_amount'] = (float)($honorarios * 13) / 100;
           //$this->taxes[$index]['tax_amount'] = $honorarios;
           break;
         case 9:
           $this->taxes[$index]['tax'] = 0.5;
-          $this->taxes[$index]['tax_amount'] = number_format((float)($honorarios * 0.5) / 100, 2, '.', '');
+          $this->taxes[$index]['tax_amount'] = (float)($honorarios * 0.5) / 100;
           break;
         case 10:
           $this->taxes[$index]['tax'] = 0;
@@ -1194,15 +1194,15 @@ class TransactionLineManager extends BaseComponent
         break;
       case 2:
         $this->taxes[$index]['tax'] = 1;
-        $this->taxes[$index]['tax_amount'] = number_format((float)($this->honorarios * 1) / 100, 2, '.', '');
+        $this->taxes[$index]['tax_amount'] = (float)($this->honorarios * 1) / 100;
         break;
       case 3:
         $this->taxes[$index]['tax'] = 2;
-        $this->taxes[$index]['tax_amount'] = number_format((float)($this->honorarios * 2) / 100, 2, '.', '');
+        $this->taxes[$index]['tax_amount'] = (float)($this->honorarios * 2) / 100;
         break;
       case 4:
         $this->taxes[$index]['tax'] = 4;
-        $this->taxes[$index]['tax_amount'] = number_format((float)($this->honorarios * 4) / 100, 2, '.', '');
+        $this->taxes[$index]['tax_amount'] = (float)($this->honorarios * 4) / 100;
         break;
       case 5:
         $this->taxes[$index]['tax'] = 0;
@@ -1210,19 +1210,19 @@ class TransactionLineManager extends BaseComponent
         break;
       case 6:
         $this->taxes[$index]['tax'] = 4;
-        $this->taxes[$index]['tax_amount'] = number_format((float)($this->honorarios * 4) / 100, 2, '.', '');
+        $this->taxes[$index]['tax_amount'] = (float)($this->honorarios * 4) / 100;
         break;
       case 7:
         $this->taxes[$index]['tax'] = 8;
-        $this->taxes[$index]['tax_amount'] = number_format((float)($this->honorarios * 8) / 100, 2, '.', '');
+        $this->taxes[$index]['tax_amount'] = (float)($this->honorarios * 8) / 100;
         break;
       case 8:
         $this->taxes[$index]['tax'] = 13;
-        $this->taxes[$index]['tax_amount'] = number_format((float)($this->honorarios * 13) / 100, 2, '.', '');
+        $this->taxes[$index]['tax_amount'] = (float)($this->honorarios * 13) / 100;
         break;
       case 9:
         $this->taxes[$index]['tax'] = 0.5;
-        $this->taxes[$index]['tax_amount'] = number_format((float)($this->honorarios * 0.5) / 100, 2, '.', '');
+        $this->taxes[$index]['tax_amount'] = (float)($this->honorarios * 0.5) / 100;
         break;
       case 10:
         $this->taxes[$index]['tax'] = 0;
