@@ -1534,7 +1534,7 @@ class ProformaManager extends TransactionManager
       'totalIVADevuelto',
       'totalOtrosCargos',
       'totalComprobante',
-      'old_client_id'
+      'old_contact_id'
     );
 
     $this->bank_id = null;
