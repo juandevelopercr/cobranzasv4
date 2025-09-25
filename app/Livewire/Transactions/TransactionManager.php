@@ -532,6 +532,7 @@ abstract class TransactionManager extends BaseComponent
     $foreignKeys = [
       'location_id',
       'area_id',
+      'cuenta_id',
       'codigo_contable_id',
       'location_economic_activity_id',
       'contact_economic_activity_id',
