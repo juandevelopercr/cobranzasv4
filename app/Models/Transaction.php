@@ -706,6 +706,10 @@ class Transaction extends Model implements HasMedia
       $query->where('transactions.proforma_status', '=', $filters['filter_proforma_status']);
     }
 
+    if (!empty($filters['filter_status'])) {
+      $query->where('transactions.status', $filters['filter_status']);
+    }
+
     if (!empty($filters['filter_proforma_type'])) {
       $query->where('transactions.proforma_type', '=', $filters['filter_proforma_type']);
     }
