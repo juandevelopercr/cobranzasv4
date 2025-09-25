@@ -1029,6 +1029,8 @@ class ProformaManager extends TransactionManager
     $this->tipoIdentificacion = $contact->identificationType->name;
     $this->identificacion = $contact->identification;
 
+    $this->old_client_id = $record->cliente_id;
+
     if ($contact) {
       $this->customer_text = $contact->name;
       $text = $contact->name;
@@ -1531,7 +1533,8 @@ class ProformaManager extends TransactionManager
       'totalImpuesto',
       'totalIVADevuelto',
       'totalOtrosCargos',
-      'totalComprobante'
+      'totalComprobante',
+      'old_client_id'
     );
 
     $this->bank_id = null;
@@ -1583,7 +1586,8 @@ class ProformaManager extends TransactionManager
       ]);
     }
 
-    if ($propertyName == 'contact_id') {
+    if ($propertyName == 'contact_id' && $this->old_client_id != $this->cliente_id) {
+      $this->old_client_id = $this->cliente_id;
       $contact = Contact::find($this->contact_id);
       if ($contact){
         $this->customer_name = $contact->name;

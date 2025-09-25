@@ -223,6 +223,8 @@ abstract class TransactionManager extends BaseComponent
   // Esto para actualizar el tab de comisiones
   public $contador = 0;
 
+  public $old_client_id = NULL;
+
   public function setlocationEconomicActivities()
   {
     $activities = [];
