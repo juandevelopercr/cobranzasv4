@@ -12,39 +12,40 @@ use Livewire\Component;
 class TransactionTotals extends Component
 {
   public $transaction_id;
-  public $totalHonorarios;
-  public $totalTimbres;
-  public $totalDiscount;
-  public $totalTax;
-  public $totalAditionalCharge;
+  public $totalHonorarios = 0;
+  public $totalTimbres = 0;
+  public $totalDiscount = 0;
+  public $totalTax = 0;
+  public $totalAditionalCharge = 0;
 
-  public $totalServGravados;
-  public $totalServExentos;
-  public $totalServExonerado;
-  public $totalServNoSujeto;
+  public $totalServGravados = 0;
+  public $totalServExentos = 0;
+  public $totalServExonerado = 0;
+  public $totalServNoSujeto = 0;
 
-  public $totalMercGravadas;
-  public $totalMercExentas;
-  public $totalMercExonerada;
-  public $totalMercNoSujeta;
+  public $totalMercGravadas = 0;
+  public $totalMercExentas = 0;
+  public $totalMercExonerada = 0;
+  public $totalMercNoSujeta = 0;
 
-  public $totalGravado;
-  public $totalExento;
-  public $totalVenta;
-  public $totalVentaNeta;
-  public $totalExonerado;
-  public $totalNoSujeto;
-  public $totalImpAsumEmisorFabrica;
-  public $totalImpuesto;
-  public $totalIVADevuelto;
-  public $totalOtrosCargos;
-  public $totalComprobante;
+  public $totalGravado = 0;
+  public $totalExento = 0;
+  public $totalVenta = 0;
+  public $totalVentaNeta = 0;
+  public $totalExonerado = 0;
+  public $totalNoSujeto = 0;
+  public $totalImpAsumEmisorFabrica = 0;
+  public $totalImpuesto = 0;
+  public $totalIVADevuelto = 0;
+  public $totalOtrosCargos = 0;
+  public $totalComprobante = 0;
 
   public $currencyCode = '';
 
   #[On('updateTransactionContext')]
   public function handleUpdateContext($data)
   {
+    $this->resetControls();
     $this->transaction_id = $data['transaction_id'];
     $this->refreshTotal($this->transaction_id);
   }
@@ -91,6 +92,8 @@ class TransactionTotals extends Component
   #[On('chargeUpdated')]
   public function refreshTotal($transaction_id)
   {
+    $this->resetControls();
+  //  dd($this);
     $transaction = Transaction::where('id', $transaction_id)->first();
     if ($transaction) {
       $this->totalHonorarios = Helpers::formatDecimal($transaction->totalHonorarios ?? 0);
@@ -137,5 +140,40 @@ class TransactionTotals extends Component
   public function render()
   {
     return view('livewire.transactions.transaction-totals');
+  }
+
+  public function resetControls()
+  {
+    $this->transaction_id = null;
+
+    $this->totalHonorarios = 0;
+    $this->totalTimbres = 0;
+    $this->totalDiscount = 0;
+    $this->totalTax = 0;
+    $this->totalAditionalCharge = 0;
+
+    $this->totalServGravados = 0;
+    $this->totalServExentos = 0;
+    $this->totalServExonerado = 0;
+    $this->totalServNoSujeto = 0;
+
+    $this->totalMercGravadas = 0;
+    $this->totalMercExentas = 0;
+    $this->totalMercExonerada = 0;
+    $this->totalMercNoSujeta = 0;
+
+    $this->totalGravado = 0;
+    $this->totalExento = 0;
+    $this->totalVenta = 0;
+    $this->totalVentaNeta = 0;
+    $this->totalExonerado = 0;
+    $this->totalNoSujeto = 0;
+    $this->totalImpAsumEmisorFabrica = 0;
+    $this->totalImpuesto = 0;
+    $this->totalIVADevuelto = 0;
+    $this->totalOtrosCargos = 0;
+    $this->totalComprobante = 0;
+
+    $this->currencyCode = '';
   }
 }

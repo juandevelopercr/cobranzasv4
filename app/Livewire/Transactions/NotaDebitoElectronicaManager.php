@@ -639,7 +639,6 @@ class NotaDebitoElectronicaManager extends TransactionManager
     $this->contact_economic_activity_id = $record->contact_economic_activity_id;
     $this->cuenta_id              = $record->cuenta_id;
     $this->currency_id            = $record->currency_id;
-    $this->department_id          = $record->department_id;
     $this->area_id                = $record->area_id;
     $this->bank_id                = $record->bank_id;
     $this->caso_id                = $record->caso_id;

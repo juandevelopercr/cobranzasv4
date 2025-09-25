@@ -1035,6 +1035,16 @@ class ProformaManager extends TransactionManager
       $this->dispatch('setSelect2Value', id: 'contact_id', value: $this->contact_id, text: $text);
     }
 
+    // Almacenar en sesión Y emitir evento global
+    $contextData = [
+      'transaction_id'    => $record->id,
+      'bank_id'           => $record->bank_id,
+      'type_notarial_act' => $record->proforma_type,
+    ];
+
+    session()->forget('transaction_context');
+    session()->put('transaction_context', $contextData);
+
     // Se emite este evento para los componentes hijos
     $this->dispatch('updateTransactionContext', [
       'transaction_id'    => $record->id,
@@ -1497,7 +1507,31 @@ class ProformaManager extends TransactionManager
       'customer_text',
       'email_cc',
       'showInstruccionesPago',
-      'clientEmail'
+      'clientEmail',
+      'totalHonorarios',
+      'totalTimbres',
+      'totalDiscount',
+      'totalTax',
+      'totalAditionalCharge',
+      'totalServGravados',
+      'totalServExentos',
+      'totalServExonerado',
+      'totalServNoSujeto',
+      'totalMercGravadas',
+      'totalMercExentas',
+      'totalMercExonerada',
+      'totalMercNoSujeta',
+      'totalGravado',
+      'totalExento',
+      'totalVenta',
+      'totalVentaNeta',
+      'totalExonerado',
+      'totalNoSujeto',
+      'totalImpAsumEmisorFabrica',
+      'totalImpuesto',
+      'totalIVADevuelto',
+      'totalOtrosCargos',
+      'totalComprobante'
     );
 
     $this->bank_id = null;
