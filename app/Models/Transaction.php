@@ -533,6 +533,7 @@ class Transaction extends Model implements HasMedia
       $query->where('customer_name', 'like', '%' . $filters['filter_customer_name'] . '%');
     }
 
+    /*
     if (!empty($filters['filter_nombre_caso'])) {
       $query->whereRaw("
         CASE
@@ -540,6 +541,10 @@ class Transaction extends Model implements HasMedia
             THEN CONCAT(casos.numero, ' / ', casos.numero_gestion, ' / ', casos.deudor)
             ELSE CONCAT(casos.numero, ' / ', casos.deudor)
         END LIKE ?", ['%' . $filters['filter_nombre_caso'] . '%']);
+    }
+    */
+    if (!empty($filters['filter_nombre_caso'])) {
+      $query->where('transactions.nombre_caso', 'like', '%' . $filters['filter_nombre_caso'] . '%');
     }
 
     if (!empty($filters['filter_numero_caso'])) {
