@@ -68,6 +68,14 @@ use App\Models\User;
           @endif
         </select>
       </div>
+      @if ($this->tipoIdentificacion)
+        <blockquote class="blockquote mt-4">
+          <p class="mb-0">
+          <strong>{{ __('Identification Type') }}: </strong> {{ $this->tipoIdentificacion }}
+          <strong>{{ __('Identification') }}: </strong> {{ $this->identificacion }}
+          </p>
+        </blockquote>
+      @endif
     </div>
 
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
