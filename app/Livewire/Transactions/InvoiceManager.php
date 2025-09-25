@@ -26,6 +26,8 @@ class InvoiceManager extends TransactionManager
 
   public $sortBy = 'transactions.consecutivo';
 
+  public $document_type = ['FE', 'TE'];
+
   public $filters = [
     'filter_proforma_no',
     'filter_consecutivo' => NULL,
