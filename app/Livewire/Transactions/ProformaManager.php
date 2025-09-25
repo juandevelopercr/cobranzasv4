@@ -1598,6 +1598,8 @@ class ProformaManager extends TransactionManager
         $this->pay_term_number = $contact->pay_term_number;
         $this->email_cc = $contact->email_cc;
         $this->clientEmail = $contact->email;
+        $this->tipoIdentificacion = $contact->identificationType->name;
+        $this->identificacion = $contact->identification;
       }
 
       if ($this->contact_id == '' | is_null($this->contact_id))
