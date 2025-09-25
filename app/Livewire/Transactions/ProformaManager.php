@@ -1029,7 +1029,7 @@ class ProformaManager extends TransactionManager
     $this->tipoIdentificacion = $contact->identificationType->name;
     $this->identificacion = $contact->identification;
 
-    $this->old_client_id = $record->cliente_id;
+    $this->old_contact_id = $record->contact_id;
 
     if ($contact) {
       $this->customer_text = $contact->name;
@@ -1586,8 +1586,8 @@ class ProformaManager extends TransactionManager
       ]);
     }
 
-    if ($propertyName == 'contact_id' && $this->old_client_id != $this->cliente_id) {
-      $this->old_client_id = $this->cliente_id;
+    if ($propertyName == 'contact_id' && $this->old_contact_id != $this->contact_id) {
+      $this->old_contact_id = $this->contact_id;
       $contact = Contact::find($this->contact_id);
       if ($contact){
         $this->customer_name = $contact->name;
