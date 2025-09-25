@@ -1603,10 +1603,10 @@ class ProformaManager extends TransactionManager
         $this->contact_economic_activity_id = null;
       else{
         $this->setcontactEconomicActivities();
-        if ($this->location_economic_activity_id) {
-          $activity = EconomicActivity::find($this->location_economic_activity_id);
+        if ($this->contact_economic_activity_id) {
+          $activity = EconomicActivity::find($this->contact_economic_activity_id);
           if ($activity) {
-            $this->dispatch('setSelect2Value', id: 'location_economic_activity_id', value: $activity->id, text: $activity->name);
+            $this->dispatch('setSelect2Value', id: 'contact_economic_activity_id', value: $activity->id, text: $activity->name);
           }
         }
       }
