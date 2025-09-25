@@ -30,8 +30,8 @@ use Livewire\Attributes\On;
 class ProformaManager extends TransactionManager
 {
   public $tiposFacturacion = [];
-  public $caso_text; // para mostrar el texto inicial
-  public $customer_text; // para mostrar el texto inicial
+  public $caso_text = ''; // para mostrar el texto inicial
+  public $customer_text = ''; // para mostrar el texto inicial
 
   public $filters = [
     'filter_action' => NULL,
@@ -57,7 +57,7 @@ class ProformaManager extends TransactionManager
     'filter_total_crc' => NULL
   ];
 
-  public $listaUsuarios;
+  public $listaUsuarios = [];
 
   public $document_type = ['PR', 'FE', 'TE', 'NCE', 'NDE'];
 
@@ -65,7 +65,7 @@ class ProformaManager extends TransactionManager
   {
     parent::mount();
     $this->listaUsuarios = User::where('active', 1)->orderBy('name', 'ASC')->get();
-    $this->statusOptions = NULL;
+    $this->statusOptions = [];
     $this->statusOptions = Transaction::getStatusOptions(false);
     $this->tiposFacturacion = [
       ['id' => 1, 'name' => 'Individual'],
@@ -593,11 +593,17 @@ class ProformaManager extends TransactionManager
 
   public function create()
   {
-    $this->customer_text = '';
+    /*
+    $this->resetExcept(['business_id','currencies','conditionSales', 'pay_term_type','issuers', 'codigosContables', 'areas', 'users', 'cuentas',
+                        'proformaTypes', 'paymentStatus','paymentMethods','instruccionesPagos', 'listaUsuarios', 'statusOptions', 'tiposFacturacion']);
+    */
     $this->resetControls();
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
-    $this->cleanEmptyForeignKeys();
+    //$this->customer_text = '';
+    //$this->resetControls();
+
+    //$this->cleanEmptyForeignKeys();
 
     // Obtener la fecha actual en formato Y-m-d
     $today = Carbon::now()->toDateString();
@@ -620,6 +626,11 @@ class ProformaManager extends TransactionManager
       'medio_pago_otros' => '',
       'total_medio_pago' => '0',
     ]];
+
+    $text = '';
+    $this->dispatch('setSelect2Value', id: 'contact_id', value: '', text: $text);
+    $text = '';
+    $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: $text);
 
     $this->recalcularVuelto();
 
@@ -1462,9 +1473,13 @@ class ProformaManager extends TransactionManager
       'is_retencion',
       'message',
       'notes',
+      'oc',
+      'or',
       'migo',
+      'prebill',
       'detalle_adicional',
       'gln',
+      'cuenta_id',
       'transaction_date',
       'fecha_pago',
       'fecha_deposito_pago',
@@ -1479,7 +1494,10 @@ class ProformaManager extends TransactionManager
       'tipoIdentificacion',
       'identificacion',
       'document_type',
-      'customer_text'
+      'customer_text',
+      'email_cc',
+      'showInstruccionesPago',
+      'clientEmail'
     );
 
     $this->bank_id = null;
@@ -1563,6 +1581,12 @@ class ProformaManager extends TransactionManager
 
     if ($propertyName == 'bank_id') {
       //$this->setEnableControl();
+    }
+
+    if ($propertyName == 'tipo_facturacion'){
+      $this->dispatch('reinitSelect2Caso');
+      //$text = '';
+      //$this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: $text);
     }
 
     $this->dispatch('reinitSelect2Controls');

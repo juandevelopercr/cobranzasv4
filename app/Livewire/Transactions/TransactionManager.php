@@ -61,110 +61,110 @@ abstract class TransactionManager extends BaseComponent
   public $recordId = '';
 
   // listados
-  public $conditionSales;
-  public $currencies;
-  public $issuers;
-  public $codigosContables;
-  public $areas;
-  public $users;
+  public $conditionSales =[];
+  public $currencies = [];
+  public $issuers = [];
+  public $codigosContables = [];
+  public $areas = [];
+  public $users = [];
 
   //public $transaction;
-  public $business_id;
-  public $location_id;
-  public $location_economic_activity_id;
-  public $contact_id;
-  public $contact_economic_activity_id;
-  public $cuenta_id;
-  public $showInstruccionesPago;
-  public $currency_id;
-  public $area_id;
-  public $bank_id;
-  public $codigo_contable_id;
-  public $created_by;
-  public $document_type;
-  public $proforma_type;
-  public $proforma_status;
-  public $status;
-  public $payment_status;
-  public $pay_term_type;
-  public $customer_name;
-  public $customer_comercial_name;
-  public $customer_email;
-  public $proforma_no;
-  public $consecutivo;
-  public $key;
-  public $access_token;
-  public $response_xml;
-  public $filexml;
-  public $filepdf;
-  public $transaction_reference;
-  public $transaction_reference_id;
-  public $condition_sale;
-  public $condition_sale_other;
-  public $numero_deposito_pago;
-  public $numero_traslado_honorario;
-  public $numero_traslado_gasto;
-  public $contacto_banco;
-  public $pay_term_number;
-  public $proforma_change_type;
-  public $factura_change_type;
-  public $num_request_hacienda_set;
-  public $num_request_hacienda_get;
-  public $comision_pagada;
-  public $is_retencion;
-  public $message;
-  public $notes;
-  public $detalle_adicional;
-  public $tipo_facturacion;
-  public $oc;
-  public $migo;
-  public $or;
-  public $gln;
-  public $prebill;
-  public $email_cc;
-  public $transaction_date;
-  public $invoice_date;
-  public $fecha_pago;
-  public $fecha_deposito_pago;
-  public $fecha_traslado_honorario;
-  public $fecha_traslado_gasto;
-  public $fecha_solicitud_factura;
-  public $fecha_envio_email;
-  public $original_currency_id;
-  public $caso_id;
-  public $nombre_caso;
+  public $business_id = 1;
+  public $location_id = NULL;
+  public $location_economic_activity_id = NULL;
+  public $contact_id = NULL;
+  public $contact_economic_activity_id = NULL;
+  public $cuenta_id = NULL;
+  public $showInstruccionesPago = NULL;
+  public $currency_id = NULL;
+  public $area_id = NULL;
+  public $bank_id = NULL;
+  public $codigo_contable_id = NULL;
+  public $created_by = NULL;
+  public $document_type = NULL;
+  public $proforma_type = NULL;
+  public $proforma_status = NULL;
+  public $status = NULL;
+  public $payment_status = NULL;
+  public $pay_term_type = NULL;
+  public $customer_name = NULL;
+  public $customer_comercial_name = NULL;
+  public $customer_email = NULL;
+  public $proforma_no = NULL;
+  public $consecutivo = NULL;
+  public $key = NULL;
+  public $access_token = NULL;
+  public $response_xml = NULL;
+  public $filexml = NULL;
+  public $filepdf = NULL;
+  public $transaction_reference = NULL;
+  public $transaction_reference_id = NULL;
+  public $condition_sale = NULL;
+  public $condition_sale_other= NULL;
+  public $numero_deposito_pago = NULL;
+  public $numero_traslado_honorario = NULL;
+  public $numero_traslado_gasto = NULL;
+  public $contacto_banco = NULL;
+  public $pay_term_number = NULL;
+  public $proforma_change_type = NULL;
+  public $factura_change_type = NULL;
+  public $num_request_hacienda_set = NULL;
+  public $num_request_hacienda_get = NULL;
+  public $comision_pagada = NULL;
+  public $is_retencion = NULL;
+  public $message = NULL;
+  public $notes = NULL;
+  public $detalle_adicional = NULL;
+  public $tipo_facturacion = NULL;
+  public $oc = NULL;
+  public $migo = NULL;
+  public $or = NULL;
+  public $gln = NULL;
+  public $prebill = NULL;
+  public $email_cc = NULL;
+  public $transaction_date = NULL;
+  public $invoice_date = NULL;
+  public $fecha_pago = NULL;
+  public $fecha_deposito_pago = NULL;
+  public $fecha_traslado_honorario = NULL;
+  public $fecha_traslado_gasto = NULL;
+  public $fecha_solicitud_factura = NULL;
+  public $fecha_envio_email = NULL;
+  public $original_currency_id = NULL;
+  public $caso_id = NULL;
+  public $nombre_caso = NULL;
   public $invoice_type = 'FACTURA';
 
-  public $totalHonorarios;
-  public $totalTimbres;
-  public $totalDiscount;
-  public $totalTax;
-  public $totalAditionalCharge;
+  public $totalHonorarios = 0;
+  public $totalTimbres = 0;
+  public $totalDiscount = 0;
+  public $totalTax = 0;
+  public $totalAditionalCharge = 0;
 
-  public $totalServGravados;
-  public $totalServExentos;
-  public $totalServExonerado;
-  public $totalServNoSujeto;
+  public $totalServGravados = 0;
+  public $totalServExentos = 0;
+  public $totalServExonerado = 0;
+  public $totalServNoSujeto = 0;
 
-  public $totalMercGravadas;
-  public $totalMercExentas;
-  public $totalMercExonerada;
-  public $totalMercNoSujeta;
+  public $totalMercGravadas = 0;
+  public $totalMercExentas = 0;
+  public $totalMercExonerada = 0;
+  public $totalMercNoSujeta = 0;
 
-  public $totalGravado;
-  public $totalExento;
-  public $totalVenta;
-  public $totalVentaNeta;
-  public $totalExonerado;
-  public $totalNoSujeto;
-  public $totalImpAsumEmisorFabrica;
-  public $totalImpuesto;
-  public $totalIVADevuelto;
-  public $totalOtrosCargos;
-  public $totalComprobante;
+  public $totalGravado = 0;
+  public $totalExento = 0;
+  public $totalVenta = 0;
+  public $totalVentaNeta = 0;
+  public $totalExonerado = 0;
+  public $totalNoSujeto = 0;
+  public $totalImpAsumEmisorFabrica = 0;
+  public $totalImpuesto = 0;
+  public $totalIVADevuelto = 0;
+  public $totalOtrosCargos = 0;
+  public $totalComprobante = 0;
 
   public $cuentas = [];
-  public $paymentMethods;
+  public $paymentMethods = [];
   public $payments = [];
   public float $pendientePorPagar = 0.00;
   public float $totalPagado = 0.00;
@@ -172,29 +172,29 @@ abstract class TransactionManager extends BaseComponent
   public $is_old = 0;
 
   // Estadísticas para el Header
-  public $totalProceso;
-  public $totalPorAprobar;
-  public $totalUsdHonorario;
-  public $totalCrcHonorario;
-  public $totalUsdGasto;
-  public $totalCrcGasto;
+  public $totalProceso = 0;
+  public $totalPorAprobar = 0;
+  public $totalUsdHonorario = 0;
+  public $totalCrcHonorario = 0;
+  public $totalUsdGasto = 0;
+  public $totalCrcGasto = 0;
 
   public $validatedEmails = []; // Almacena correos válidos
   public $invalidEmails = []; // Almacena correos inválidos
 
-  public $enableoc;
-  public $enablemigo;
-  public $enableor;
-  public $enablegln;
-  public $enableprebill;
+  public $enableoc = NULL;
+  public $enablemigo = NULL;
+  public $enableor = NULL;
+  public $enablegln = NULL;
+  public $enableprebill = NULL;
 
-  public $statusOptions;
+  public $statusOptions = [];
   public $modalCustomerOpen = false; // Controla el estado del modal
   public $activeTab = 'invoice';
   public $closeForm = false;
-  public $columns;
-  public $defaultColumns;
-  public $proformaTypes;
+  public $columns = [];
+  public $defaultColumns = [];
+  public $proformaTypes = [];
   public $isLoadingEmailModal = false;
 
   public $locationsEconomicActivities = [];
@@ -202,21 +202,21 @@ abstract class TransactionManager extends BaseComponent
   public $paymentStatus = [];
   public $instruccionesPagos = [];
 
-  public $nombreDeudor;
-  public $tipoGarantia;
-  public $nombreCasoReferencia;
-  public $show_transaction_date;
+  public $nombreDeudor = NULL;
+  public $tipoGarantia = NULL;
+  public $nombreCasoReferencia = NULL;
+  public $show_transaction_date = NULL;
 
-  public $tipoIdentificacion;
-  public $identificacion;
+  public $tipoIdentificacion = NULL;
+  public $identificacion = NULL;
 
-  public $RefTipoDoc;
-  public $RefTipoDocOtro;
-  public $RefNumero;
-  public $RefFechaEmision;
-  public $RefCodigo;
-  public $RefCodigoOtro;
-  public $RefRazon;
+  public $RefTipoDoc = NULL;
+  public $RefTipoDocOtro = NULL;
+  public $RefNumero = NULL;
+  public $RefFechaEmision = NULL;
+  public $RefCodigo = NULL;
+  public $RefCodigoOtro = NULL;
+  public $RefRazon = NULL;
 
   public $clientEmail = '';
 
@@ -500,8 +500,8 @@ abstract class TransactionManager extends BaseComponent
       ['id' => 'AMBAS', 'name' => 'AMBAS']
     ];
     $this->payments = [];
-    $this->validatedEmails; // Almacena correos válidos
-    $this->invalidEmails; // Almacena correos inválidos
+    //$this->validatedEmails; // Almacena correos válidos
+    //$this->invalidEmails; // Almacena correos inválidos
     $this->proformaTypes = [
       ['id' => 'HONORARIO', 'name' => 'HONORARIO'],
       ['id' => 'GASTO', 'name' => 'GASTO']
