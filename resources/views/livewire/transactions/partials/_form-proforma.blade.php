@@ -72,14 +72,12 @@ use App\Models\User;
 
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="contact_economic_activity_id">{{ __('Contact Economic Activity') }}</label>
-      <div wire:ignore>
-        <select wire:model="contact_economic_activity_id" id="contact_economic_activity_id" class="select2 form-select @error('contact_economic_activity_id') is-invalid @enderror">
-          <option value="">{{ __('Seleccione...') }}</option>
-          @foreach ($this->contactEconomicActivities as $activity)
-            <option value="{{ $activity->id }}">{{ $activity->name }}</option>
-          @endforeach
-        </select>
-      </div>
+      <select wire:model="contact_economic_activity_id" id="contact_economic_activity_id" class="select2 form-select @error('contact_economic_activity_id') is-invalid @enderror">
+        <option value="">{{ __('Seleccione...') }}</option>
+        @foreach ($this->contactEconomicActivities as $activity)
+          <option value="{{ $activity->id }}">{{ $activity->name }}</option>
+        @endforeach
+      </select>
       @error('contact_economic_activity_id')
       <div class="text-danger mt-1">{{ $message }}</div>
       @enderror
