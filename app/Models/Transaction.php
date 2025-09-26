@@ -603,26 +603,26 @@ class Transaction extends Model implements HasMedia
     }
 
     if (!empty($filters['filter_transaction_date'])) {
-      $range = explode(' to ', $filters['filter_transaction_date']);
+        $range = explode(' to ', $filters['filter_transaction_date']);
 
-      if (count($range) === 2) {
-          try {
-              $start = Carbon::createFromFormat('d-m-Y', $range[0])->startOfDay();
-              $end   = Carbon::createFromFormat('d-m-Y', $range[1])->endOfDay();
+        if (count($range) === 2) {
+            try {
+                $start = Carbon::createFromFormat('d-m-Y', trim($range[0]))->startOfDay();
+                $end   = Carbon::createFromFormat('d-m-Y', trim($range[1]))->endOfDay();
 
-              $query->whereBetween('transaction_date', [$start, $end]);
-          } catch (\Exception $e) {
-              // log o ignorar
-          }
-      } else {
-          try {
-              $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_transaction_date']);
+                $query->whereBetween('transaction_date', [$start, $end]);
+            } catch (\Exception $e) {
+                // Manejo de error
+            }
+        } else {
+            try {
+                $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_transaction_date']);
 
-              $query->whereDate('transaction_date', $singleDate);
-          } catch (\Exception $e) {
-              // log o ignorar
-          }
-      }
+                $query->whereBetween('transaction_date', [$singleDate->startOfDay(), $singleDate->endOfDay()]);
+            } catch (\Exception $e) {
+                // Manejo de error
+            }
+        }
     }
 
     if (!empty($filters['filter_fecha_solicitud_factura'])) {
