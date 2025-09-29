@@ -288,14 +288,6 @@
     $select.trigger('change');
     console.log("Se dispara el change");
   });
-
-  // Re-ejecuta las inicializaciones después de actualizaciones de Livewire
-  Livewire.on('reinitSelect2Controls', () => {
-    console.log('Reinicializando controles después de Livewire update reinitFormControls');
-    setTimeout(() => {
-      initializeSelect2();
-    }, 300); // Retraso para permitir que el DOM se estabilice
-  });
 </script>
 @endscript
 @endif
