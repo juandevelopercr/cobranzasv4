@@ -537,6 +537,7 @@ abstract class TransactionManager extends BaseComponent
       'location_id',
       'area_id',
       'cuenta_id',
+      'caso_id',
       'codigo_contable_id',
       'location_economic_activity_id',
       'contact_economic_activity_id',
