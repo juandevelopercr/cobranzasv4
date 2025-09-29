@@ -70,7 +70,7 @@ class CasoScotiabankBch extends CasoManager
 
     $this->procesos = CasoProceso::where('bank_id', $this->bank_id)->orderBy('nombre', 'ASC')->get();
 
-    $this->currencies = Currency::orderBy('code', 'ASC')->get();
+    $this->currencies = Currency::whereIn('id', [1,16])->orderBy('code', 'ASC')->get();
 
     $this->abogados = User::where('active', 1)
       ->whereHas('roles', fn($q) => $q->whereIn('name', [User::ABOGADO, User::JEFE_AREA]))
@@ -90,7 +90,6 @@ class CasoScotiabankBch extends CasoManager
     $this->expectativas = CasoExpectativa::where('activo', 1)->orderBy('nombre', 'ASC')->get();
 
     $this->juzgados = CasoJuzgado::where('activo', 1)->orderBy('nombre', 'ASC')->get();
-
 
     $this->refresDatatable();
   }
@@ -770,7 +769,6 @@ class CasoScotiabankBch extends CasoManager
         $this->edit($caso->id);
       }
 
-      $this->action = 'list';
       $this->dispatch('show-notification', ['type' => 'success', 'message' => 'Caso creado correctamente.']);
     } catch (\Throwable $e) {
       DB::rollBack();
@@ -863,7 +861,7 @@ class CasoScotiabankBch extends CasoManager
   public function refresDatatable()
   {
     $config = DataTableConfig::where('user_id', Auth::id())
-      ->where('datatable_name', 'classifier-casos-scotiabanks-bch-datatable')
+      ->where('datatable_name', 'casos-scotiabanks-bch-datatable')
       ->first();
 
     if ($config) {
@@ -884,16 +882,19 @@ class CasoScotiabankBch extends CasoManager
     if ($propertyName == 'product_id') {
       $this->getPanelsProperty();
     }
-    if ($propertyName == 'pnumero_expediente_judicial'){
-      $listadoJuzgado = CasoListadoJuzgado::where('codigo', trim($this->pnumero_expediente_judicial))->first();
-      /*
-      $listadoJuzgado = CasoListadoJuzgado::whereRaw(
-          "REPLACE(TRIM(LOWER(codigo)), ' ', '') = ?",
-          [strtolower($this->pnumero_expediente_judicial)]
-      )->first();
-      */
-      $this->pdespacho_judicial_juzgado = $listadoJuzgado ? $listadoJuzgado->nombre : '';
 
+    if ($propertyName == 'pnumero_expediente_judicial') {
+        $codigo = trim($this->pnumero_expediente_judicial);
+
+        // Extraemos los 4 dígitos que necesitamos del input
+        $ultimosCuatro = substr($codigo, 10, 4); // substr empieza en 0
+
+        $listadoJuzgado = CasoListadoJuzgado::whereRaw(
+            "SUBSTRING(codigo, 11, 4) = ?", // posición 11 en MySQL
+            [$ultimosCuatro]
+        )->first();
+
+        $this->pdespacho_judicial_juzgado = $listadoJuzgado ? strtoupper($listadoJuzgado->nombre) : '';
     }
 
     $this->dispatch('select2');

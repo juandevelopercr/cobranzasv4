@@ -458,6 +458,10 @@ class Caso extends Model
       $query->where('casos.pnumero', $filters['filter_pnumero']);
     }
 
+    if (!empty($filters['filter_contact'])) {
+      $query->where('contacts.id', $filters['filter_contact']);
+    }
+
     if (!empty($filters['filter_pnumero_operacion1'])) {
       $query->where('casos.pnumero_operacion1', $filters['filter_pnumero_operacion1']);
     }

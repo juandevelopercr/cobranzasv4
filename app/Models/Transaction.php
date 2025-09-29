@@ -671,7 +671,7 @@ class Transaction extends Model implements HasMedia
       } else {
         try {
           // Validar y convertir la fecha única
-          $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_fecha_solicitud_factura'])->format('Y-m-d');
+          $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_fecha_envio_email'])->format('Y-m-d');
 
           // Aplicar filtro si la fecha es válida
           $query->whereDate('transactions.fecha_envio_email', $singleDate);

@@ -216,7 +216,7 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="afecha_suspencion_arreglo">{{ __('Fecha Suspención Arreglo') }}</label>
+    <label class="form-label" for="afecha_suspencion_arreglo">{{ __('Fecha de Arreglo de Pago') }}</label>
     <div class="input-group input-group-merge has-validation">
       <span class="input-group-text"><i class="bx bx-calendar"></i></span>
       <input type="text" id="afecha_suspencion_arreglo"

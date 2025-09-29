@@ -46,7 +46,7 @@
 
                   <!-- Renderizar el componente Livewire -->
                   @livewire('components.datatable-settings', [
-                  'datatableName' => 'livewire.casos.terceros-datatable',
+                  'datatableName' => 'casos-terceros-datatable',
                   'availableColumns' => $this->columns,
                   'perPage' => $this->perPage,
                   ],

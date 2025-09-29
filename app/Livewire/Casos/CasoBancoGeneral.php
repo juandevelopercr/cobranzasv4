@@ -25,6 +25,7 @@ use App\Models\CasoListadoJuzgado;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Casos\CasoManager;
 use Illuminate\Support\Facades\Auth;
+use App\Models\CasoEstadoNotificadores;
 use App\Services\DocumentSequenceService;
 
 class CasoBancoGeneral extends CasoManager
@@ -70,7 +71,7 @@ class CasoBancoGeneral extends CasoManager
 
     $this->procesos = CasoProceso::where('bank_id', $this->bank_id)->orderBy('nombre', 'ASC')->get();
 
-    $this->currencies = Currency::orderBy('code', 'ASC')->get();
+    $this->currencies = Currency::whereIn('id', [1,16])->orderBy('code', 'ASC')->get();
 
     $this->abogados = User::where('active', 1)
       ->whereHas('roles', fn($q) => $q->whereIn('name', [User::ABOGADO, User::JEFE_AREA]))
@@ -86,6 +87,8 @@ class CasoBancoGeneral extends CasoManager
       ->where('casos_estados_bancos.bank_id', $this->bank_id)
       ->orderBy('name', 'ASC')
       ->get();
+
+    $this->estadosNotificadores = CasoEstadoNotificadores::orderBy('nombre', 'ASC')->get();
 
     $this->expectativas = CasoExpectativa::where('activo', 1)->orderBy('nombre', 'ASC')->get();
 
@@ -770,7 +773,6 @@ class CasoBancoGeneral extends CasoManager
         $this->edit($caso->id);
       }
 
-      $this->action = 'list';
       $this->dispatch('show-notification', ['type' => 'success', 'message' => 'Caso creado correctamente.']);
     } catch (\Throwable $e) {
       DB::rollBack();
@@ -779,7 +781,7 @@ class CasoBancoGeneral extends CasoManager
   }
 
   public function edit($recordId)
-{
+  {
     $record = $this->getRecordActionReturnModel($recordId, Caso::class);
 
     if (!$record) {
@@ -863,7 +865,7 @@ class CasoBancoGeneral extends CasoManager
   public function refresDatatable()
   {
     $config = DataTableConfig::where('user_id', Auth::id())
-      ->where('datatable_name', 'classifier-casos-banco-genetral-datatable')
+      ->where('datatable_name', 'casos-banco-genetral-datatable')
       ->first();
 
     if ($config) {
@@ -884,17 +886,19 @@ class CasoBancoGeneral extends CasoManager
     if ($propertyName == 'product_id') {
       $this->getPanelsProperty();
     }
-    if ($propertyName == 'pnumero_expediente_judicial'){
-      //$listadoJuzgado = CasoListadoJuzgado::where('codigo', trim($this->pnumero_expediente_judicial))->first();
-      $listadoJuzgado = CasoListadoJuzgado::where(DB::raw('SUBSTRING(codigo, 11, 4)'), trim($this->pnumero_expediente_judicial))->first();
-      /*
-      $listadoJuzgado = CasoListadoJuzgado::whereRaw(
-          "REPLACE(TRIM(LOWER(codigo)), ' ', '') = ?",
-          [strtolower($this->pnumero_expediente_judicial)]
-      )->first();
-      */
-      $this->pdespacho_judicial_juzgado = $listadoJuzgado ? $listadoJuzgado->nombre : '';
 
+    if ($propertyName == 'pnumero_expediente_judicial') {
+        $codigo = trim($this->pnumero_expediente_judicial);
+
+        // Extraemos los 4 dígitos que necesitamos del input
+        $ultimosCuatro = substr($codigo, 10, 4); // substr empieza en 0
+
+        $listadoJuzgado = CasoListadoJuzgado::whereRaw(
+            "SUBSTRING(codigo, 11, 4) = ?", // posición 11 en MySQL
+            [$ultimosCuatro]
+        )->first();
+
+        $this->pdespacho_judicial_juzgado = $listadoJuzgado ? strtoupper($listadoJuzgado->nombre) : '';
     }
 
     $this->dispatch('select2');

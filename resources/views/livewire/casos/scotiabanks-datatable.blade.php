@@ -46,7 +46,7 @@
 
                   <!-- Renderizar el componente Livewire -->
                   @livewire('components.datatable-settings', [
-                  'datatableName' => 'livewire.casos.scotiabanks-datatable',
+                  'datatableName' => 'casos-scotiabanks-datatable',
                   'availableColumns' => $this->columns,
                   'perPage' => $this->perPage,
                   ],

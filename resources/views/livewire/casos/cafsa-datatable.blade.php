@@ -46,7 +46,7 @@
 
                   <!-- Renderizar el componente Livewire -->
                   @livewire('components.datatable-settings', [
-                  'datatableName' => 'livewire.casos.cafsa-datatable',
+                  'datatableName' => 'casos-cafsa-datatable',
                   'availableColumns' => $this->columns,
                   'perPage' => $this->perPage,
                   ],

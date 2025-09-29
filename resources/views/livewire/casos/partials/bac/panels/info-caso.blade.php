@@ -334,7 +334,7 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
-    <label class="form-label" for="pestatus_operacion">{{ __('Abogado') }}</label>
+    <label class="form-label" for="pestatus_operacion">{{ __('Estatus de Operaciòn') }}</label>
     <div wire:ignore>
       <select wire:model="pestatus_operacion" id="pestatus_operacion" class="select2 form-select @error('pestatus_operacion') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
@@ -439,6 +439,16 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
+    <label class="form-label" for="pinmueble">{{ __('Inmuebles') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <input type="text" wire:model.live="pinmueble" id="pinmueble" class="form-control @error('pinmueble') is-invalid @enderror">
+    </div>
+    @error('pinmueble')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="pvehiculo">{{ __('Vehículo') }}</label>
     <div class="input-group input-group-merge has-validation">
       <input type="text" wire:model="pvehiculo" id="pvehiculo" class="form-control @error('pvehiculo') is-invalid @enderror">
@@ -495,7 +505,7 @@
     @enderror
   </div>
 
-  <div class="col-12 col-sm-12 col-md-9 col-lg-9 fv-plugins-icon-container">
+  <div class="col-12 col-sm-12 col-md-12 col-lg-12 fv-plugins-icon-container">
     <label class="form-label" for="pavance_cronologico">{{ __('Avance Cronológico') }}</label>
     <textarea class="form-control" wire:model="pavance_cronologico" name="pavance_cronologico" id="pavance_cronologico" rows="5"></textarea>
     @error('pavance_cronologico')

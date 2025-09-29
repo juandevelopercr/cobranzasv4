@@ -46,7 +46,7 @@
 
                   <!-- Renderizar el componente Livewire -->
                   @livewire('components.datatable-settings', [
-                  'datatableName' => 'classifier-casos-scotiabanks-bch-datatable',
+                  'datatableName' => 'casos-scotiabanks-bch-datatable',
                   'availableColumns' => $this->columns,
                   'perPage' => $this->perPage,
                   ],

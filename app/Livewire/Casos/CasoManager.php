@@ -60,6 +60,7 @@ class CasoManager extends BaseComponent
   public $clientes   = [];
   public $expectativas   = [];
   public $juzgados = [];
+  public $estadosNotificadores = [];
 
   // =========  TODAS LAS COLUMNAS DE la tabla `casos`  =========
   public $contact_id;
@@ -1095,5 +1096,36 @@ class CasoManager extends BaseComponent
   {
     $this->reset('filters');
     $this->selectedIds = [];
+  }
+
+  protected function cleanEmptyForeignKeys()
+  {
+    // Lista de campos que pueden ser claves foráneas
+    $foreignKeys = [
+      'contact_id',
+      'bank_id',
+      'product_id',
+      'currency_id',
+      'abogado_id',
+      'pexpectativa_recuperacion_id',
+      'asistente1_id',
+      'asistente2_id',
+      'aestado_proceso_general_id',
+      'proceso_id',
+      'testado_proceso_id',
+      'lestado_levantamiento_id',
+      'ddespacho_judicial_juzgado_id',
+      'bestado_levantamiento_id',
+      'ldespacho_judicial_juzgado_id',
+      'ppoderdante_id',
+      'nestado_id',
+      'estado_id',
+    ];
+
+    foreach ($foreignKeys as $key) {
+      if (isset($this->$key) && $this->$key === '') {
+        $this->$key = null;
+      }
+    }
   }
 }

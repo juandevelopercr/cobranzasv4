@@ -46,7 +46,7 @@
 
                   <!-- Renderizar el componente Livewire -->
                   @livewire('components.datatable-settings', [
-                  'datatableName' => 'livewire.casos.banco-general-datatable',
+                  'datatableName' => 'casos-banco-genetral-datatable',
                   'availableColumns' => $this->columns,
                   'perPage' => $this->perPage,
                   ],
