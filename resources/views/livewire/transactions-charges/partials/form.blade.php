@@ -3,6 +3,7 @@
 <div class="card mb-6">
   <form wire:submit.prevent="{{ $action == 'edit' ? 'update' : 'store' }}" class="card-body">
     <h6>1. {{ __('General Information') }}</h6>
+    <input type="hidden" wire:model="bank_id" id="bank_id">
     @php
     /*
     @if ($errors->any())
