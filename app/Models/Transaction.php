@@ -548,18 +548,18 @@ class Transaction extends Model implements HasMedia
     }
 
     if (!empty($filters['filter_numero_caso'])) {
-      $searchTerm = '%' . $filters['filter_numero_caso'] . '%';
+        $searchTerm = '%' . $filters['filter_numero_caso'] . '%';
 
-      $query->where(function ($q) use ($searchTerm) {
-        $q->whereNotNull('casos.numero_gestion')
-          ->where('casos.numero_gestion', '<>', '')
-          ->whereRaw("CONCAT(casos.numero, ' / ', casos.numero_gestion, ' / ', casos.deudor) LIKE ?", [$searchTerm]);
-      })->orWhere(function ($q) use ($searchTerm) {
-        $q->where(function ($subQuery) {
-          $subQuery->whereNull('casos.numero_gestion')
-            ->orWhere('casos.numero_gestion', '');
-        })->whereRaw("CONCAT(casos.numero, ' / ', casos.deudor) LIKE ?", [$searchTerm]);
-      });
+        $query->where(function ($q) use ($searchTerm) {
+            $q->whereRaw("
+                CONCAT_WS(' / ',
+                    NULLIF(casos.pnumero, ''),
+                    NULLIF(casos.pnumero_operacion1, ''),
+                    NULLIF(casos.pnombre_demandado, ''),
+                    NULLIF(casos.pnombre_apellidos_deudor, '')
+                ) LIKE ?
+            ", [$searchTerm]);
+        });
     }
 
     if (isset($filters['filter_registro_change_type']) && !empty($filters['filter_registro_change_type'])) {
