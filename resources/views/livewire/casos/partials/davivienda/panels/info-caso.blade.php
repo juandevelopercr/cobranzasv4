@@ -44,6 +44,26 @@
     @enderror
   </div>
 
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
+    <label class="form-label" for="pnombre_apellidos_deudor">{{ __('Apellidos y Nombre del Deudor') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <input type="text" wire:model="pnombre_apellidos_deudor" id="pnombre_apellidos_deudor" class="form-control @error('pnombre_apellidos_deudor') is-invalid @enderror">
+    </div>
+    @error('pnombre_apellidos_deudor')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
+    <label class="form-label" for="pcedula_deudor">{{ __('Cèdula deudor') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <input type="text" wire:model="pcedula_deudor" id="pcedula_deudor" class="form-control @error('pcedula_deudor') is-invalid @enderror">
+    </div>
+    @error('pcedula_deudor')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
     <label class="form-label" for="bank_id">{{ __('Bank') }}</label>
       <div wire:ignore>
@@ -104,6 +124,22 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
+    <label class="form-label" for="pfecha_asignacion_caso">{{ __('Fecha Asignación de Caso') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+      <input type="text" id="pfecha_asignacion_caso"
+        wire:model="pfecha_asignacion_caso"
+        x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
+        x-init="init($el)"
+        wire:ignore
+        class="form-control date-picke @error('pfecha_asignacion_caso') is-invalid @enderror">
+    </div>
+    @error('pfecha_asignacion_caso')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="pnumero_operacion1">{{ __('Número Operación #1') }}</label>
     <div class="input-group input-group-merge has-validation">
       <input type="text" wire:model="pnumero_operacion1" id="pnumero_operacion1" class="form-control @error('pnumero_operacion1') is-invalid @enderror">
@@ -139,7 +175,7 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
-    <label class="form-label" for="pestatus_operacion">{{ __('Abogado') }}</label>
+    <label class="form-label" for="pestatus_operacion">{{ __('Estatus de Operaciòn') }}</label>
     <div wire:ignore>
       <select wire:model="pestatus_operacion" id="pestatus_operacion" class="select2 form-select @error('pestatus_operacion') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>

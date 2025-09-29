@@ -36,8 +36,8 @@
     <div wire:ignore>
       <select wire:model.live="nestado_id" id="nestado_id" class="select2 form-select @error('nestado_id') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
-        @foreach ($this->estados as $estado)
-          <option value="{{ $estado->id }}">{{ $estado->name }}</option>
+        @foreach ($this->estadosNotificadores as $estado)
+          <option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
         @endforeach
       </select>
     </div>

@@ -25,6 +25,7 @@ use App\Models\CasoListadoJuzgado;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Casos\CasoManager;
 use Illuminate\Support\Facades\Auth;
+use App\Models\CasoEstadoNotificadores;
 use App\Services\DocumentSequenceService;
 
 class CasoCafsa extends CasoManager
@@ -80,12 +81,13 @@ class CasoCafsa extends CasoManager
       ->whereHas('roles', fn($q) => $q->where('name', User::ASISTENTE))
       ->orderBy('name')->get();
 
-
     // Estados de casos
     $this->estados = CasoEstado::join('casos_estados_bancos', 'casos_estados_bancos.estado_id', '=', 'casos_estados.id')
       ->where('casos_estados_bancos.bank_id', $this->bank_id)
       ->orderBy('name', 'ASC')
       ->get();
+
+    $this->estadosNotificadores = CasoEstadoNotificadores::orderBy('nombre', 'ASC')->get();
 
     $this->expectativas = CasoExpectativa::where('activo', 1)->orderBy('nombre', 'ASC')->get();
 

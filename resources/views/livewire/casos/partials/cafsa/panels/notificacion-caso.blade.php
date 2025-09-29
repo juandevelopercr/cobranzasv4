@@ -31,25 +31,25 @@
     @enderror
   </div>
 
-  <div class="col-md-9 fv-plugins-icon-container">
-    <label class="form-label" for="npartes_notificadas">{{ __('Partes Notificadas') }}</label>
-    <textarea class="form-control" wire:model="npartes_notificadas" name="npartes_notificadas" id="npartes_notificadas" rows="2"></textarea>
-    @error('npartes_notificadas')
-    <div class="text-danger mt-1">{{ $message }}</div>
-    @enderror
-  </div>
-
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
     <label class="form-label" for="nestado_id">{{ __('Estado') }}</label>
     <div wire:ignore>
       <select wire:model.live="nestado_id" id="nestado_id" class="select2 form-select @error('nestado_id') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
-        @foreach ($this->estados as $estado)
-          <option value="{{ $estado->id }}">{{ $estado->name }}</option>
+        @foreach ($this->estadosNotificadores as $estado)
+          <option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
         @endforeach
       </select>
     </div>
     @error('nestado_id')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-md-12 fv-plugins-icon-container">
+    <label class="form-label" for="npartes_notificadas">{{ __('Partes Notificadas') }}</label>
+    <textarea class="form-control" wire:model="npartes_notificadas" name="npartes_notificadas" id="npartes_notificadas" rows="2"></textarea>
+    @error('npartes_notificadas')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>

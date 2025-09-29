@@ -91,7 +91,7 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="asaldo_capital_operacion">{{ __('Saldo Capital Operación') }}</label>
+    <label class="form-label" for="asaldo_capital_operacion">{{ __('Saldo Capital de la Operación Colones') }}</label>
     <div class="input-group input-group-merge has-validation">
       <input type="text" wire:model="asaldo_capital_operacion" id="asaldo_capital_operacion" class="form-control @error('asaldo_capital_operacion') is-invalid @enderror">
     </div>
@@ -101,7 +101,7 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="asaldo_capital_operacion_usd">{{ __('Saldo Capital de la Operación USD') }}</label>
+    <label class="form-label" for="asaldo_capital_operacion_usd">{{ __('Saldo Capital de la Operación Dólares') }}</label>
     <div class="input-group input-group-merge has-validation">
       <input type="text" wire:model="asaldo_capital_operacion_usd" id="asaldo_capital_operacion_usd" class="form-control @error('asaldo_capital_operacion_usd') is-invalid @enderror">
     </div>
@@ -111,7 +111,7 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="aestimacion_demanda_en_presentacion">{{ __('Estimación Demanda Presentación') }}</label>
+    <label class="form-label" for="aestimacion_demanda_en_presentacion">{{ __('Estimación Demanda en la Presentación Colones') }}</label>
     <div class="input-group input-group-merge has-validation">
       <input type="text" wire:model="aestimacion_demanda_en_presentacion" id="aestimacion_demanda_en_presentacion" class="form-control @error('aestimacion_demanda_en_presentacion') is-invalid @enderror">
     </div>
@@ -121,7 +121,7 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="aestimacion_demanda_en_presentacion_usd">{{ __('Estimación Demanda Presentación USD') }}</label>
+    <label class="form-label" for="aestimacion_demanda_en_presentacion_usd">{{ __('Estimación Demanda en la Presentación Dólares') }}</label>
     <div class="input-group input-group-merge has-validation">
       <input type="text" wire:model="aestimacion_demanda_en_presentacion_usd" id="aestimacion_demanda_en_presentacion_usd" class="form-control @error('aestimacion_demanda_en_presentacion_usd') is-invalid @enderror">
     </div>

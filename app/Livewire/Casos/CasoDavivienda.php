@@ -72,7 +72,7 @@ class CasoDavivienda extends CasoManager
 
     $this->procesos = CasoProceso::where('bank_id', $this->bank_id)->orderBy('nombre', 'ASC')->get();
 
-    $this->currencies = Currency::whereIn('id', [1,16])->orderBy('code', 'ASC')->get();
+    $this->currencies = Currency::orderBy('code', 'ASC')->get();
 
     $this->abogados = User::where('active', 1)
       ->whereHas('roles', fn($q) => $q->whereIn('name', [User::ABOGADO, User::JEFE_AREA]))

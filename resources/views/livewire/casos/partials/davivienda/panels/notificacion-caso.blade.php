@@ -15,7 +15,7 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
-    <label class="form-label" for="noposicion_demanda">{{ __('Estado actual primera notificación demandados') }}</label>
+    <label class="form-label" for="noposicion_demanda">{{ __('Oposición de Demanda') }}</label>
     <div wire:ignore>
       <select wire:model.live="noposicion_demanda" id="noposicion_demanda" class="select2 form-select @error('noposicion_demanda') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
@@ -86,7 +86,7 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
-    <label class="form-label" for="nembargos_salarios">{{ __('Embargos cuentas') }}</label>
+    <label class="form-label" for="nembargos_salarios">{{ __('Embargos Salarios') }}</label>
     <div wire:ignore>
       <select wire:model.live="nembargos_salarios" id="nembargos_salarios" class="select2 form-select @error('nembargos_salarios') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>

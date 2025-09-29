@@ -26,6 +26,7 @@ use App\Models\CasoListadoJuzgado;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Casos\CasoManager;
 use Illuminate\Support\Facades\Auth;
+use App\Models\CasoEstadoNotificadores;
 use App\Services\DocumentSequenceService;
 
 class CasoLafise extends CasoManager
@@ -88,6 +89,8 @@ class CasoLafise extends CasoManager
       ->where('casos_estados_bancos.bank_id', $this->bank_id)
       ->orderBy('name', 'ASC')
       ->get();
+
+    $this->estadosNotificadores = CasoEstadoNotificadores::orderBy('nombre', 'ASC')->get();
 
     $this->expectativas = CasoExpectativa::where('activo', 1)->orderBy('nombre', 'ASC')->get();
 
