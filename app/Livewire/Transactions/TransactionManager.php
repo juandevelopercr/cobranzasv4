@@ -489,7 +489,7 @@ abstract class TransactionManager extends BaseComponent
   {
     // Ejemplo de datos comunes que se podrían necesitar en todos los managers
     $this->business_id = Session::get('user.business_id');
-    $this->currencies = Currency::orderBy('code', 'ASC')->get();
+    $this->currencies = Currency::whereIn('id', [1,16])->orderBy('code', 'ASC')->get();
     $this->conditionSales = ConditionSale::where('active', 1)->orderBy('code', 'ASC')->get();
     $this->pay_term_type = 'days';
     $this->issuers = BusinessLocation::where('active', 1)->orderBy('id', 'ASC')->get();
