@@ -91,7 +91,7 @@ $show = false;
 {{-- Levantamiento --}}
 @if ($this->panels['levantamiento'])
 <div class="card border-0 mb-7">
-  <div class="card-body panel-card bg-light-lavender">
+  <div class="card-body panel-card bg-light-green">
     <h4 class="mb-0">{{ __('Proceso de levantamiento') }}</h4>
     @include('livewire.casos.partials.cafsa.panels.levantamiento-caso')
   </div>
