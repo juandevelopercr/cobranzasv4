@@ -148,17 +148,13 @@
         @enderror
       </div>
 
-      <div class="col-md-7 fv-plugins-icon-container">
-        <label class="form-label" for="detail">{{ __('Detail of the Notarial Act') }}</label>
-        <div class="input-group input-group-merge has-validation">
-          <span id="spandetail" class="input-group-text"><i class="bx bx-receipt"></i></span>
-          <input type="text" wire:model="detail" name="detail" id="detail"
-            class="form-control @error('detail') is-invalid @enderror"
-            placeholder="{{ __('Detail of the Notarial Act') }}" aria-label="{{ __('Detail of the Notarial Act') }}"
-            aria-describedby="spandetail">
-        </div>
+      <div class="col mb-3">
+        <label for="detail" class="form-label">{{ __('Detail of the Notarial Act') }}</label>
+        <textarea class="form-control @error('detail') is-invalid @enderror" wire:model="detail" rows="6"
+          placeholder="{{ __('Detail of the Notarial Act') }}">
+        </textarea>
         @error('detail')
-        <div class="text-danger mt-1">{{ $message }}</div>
+        <div class="text-danger mt-1">{{ $detail }}</div>
         @enderror
       </div>
     </div>

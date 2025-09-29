@@ -18,6 +18,7 @@ use DateTime;
 use DOMDocument;
 use DOMElement;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 
 /**
  * Class representing ComprobanteElectronico
@@ -434,18 +435,14 @@ class ComprobanteElectronico extends ComprobanteElectronico\ComprobanteElectroni
           $nodoLineaDetalle->appendChild($this->createElement($dom, 'TipoTransaccion', $line->getTipoTransaccion()));
         }
 
-        // Convertir caracteres especiales a entidades numéricas (seguro para XML)
-        $convmap = array(0x80, 0xff, 0, 0xff);
-        $cleanDetail = mb_encode_numericentity($line->getDetalle(), $convmap, "UTF-8");
+        $str = $line->getDetalle();
 
-        // Verificar longitud con mb_strlen() para manejar caracteres multibyte correctamente
-        if (mb_strlen($cleanDetail, "UTF-8") > 200) {
-          // Truncar la cadena manteniendo palabras completas
-          $cleanDetail = mb_substr($cleanDetail, 0, 197, "UTF-8") . '...'; // Agrega puntos suspensivos si es necesario
-        }
+        // Sanitizar
+        $str = htmlspecialchars(trim($str), ENT_QUOTES, 'UTF-8');
 
-        // Aplicar htmlspecialchars después de truncar la cadena
-        $cleanDetail = htmlspecialchars($cleanDetail, ENT_XML1, "UTF-8");
+        // Asegurar que no pase de 200 caracteres, sin cortar palabras
+        $cleanDetail = Str::limit($str, 200, '');
+
         $nodoLineaDetalle->appendChild($this->createElement($dom, 'Detalle', $cleanDetail));
 
         // Agregar RegistroMedicamento

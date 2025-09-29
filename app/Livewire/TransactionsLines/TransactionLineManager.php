@@ -267,7 +267,7 @@ class TransactionLineManager extends BaseComponent
       'product_id' => 'required|exists:products,id',
       'codigo' => 'required|string|max:13',
       'codigocabys' => 'required|string|max:13',
-      'detail' => 'required|string|max:200',
+      'detail' => 'required|string',
       'quantity' => 'required|numeric|min:1',
       'price' => 'required|numeric|min:0',
       'porcientoDescuento' => 'numeric|min:0',
