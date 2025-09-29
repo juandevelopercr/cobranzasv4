@@ -2,27 +2,29 @@
 
 namespace App\Livewire\TransactionsCharges;
 
-use App\Livewire\BaseComponent;
-use App\Models\AdditionalChargeType;
-use App\Models\DataTableConfig;
-use App\Models\IdentificationType;
+use App\Models\Caso;
+use Livewire\Component;
 use App\Models\Transaction;
-use App\Models\TransactionOtherCharge;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
+use Livewire\Attributes\On;
 use Illuminate\Http\Request;
+use Livewire\Attributes\Url;
+use Livewire\WithPagination;
+use Livewire\WithFileUploads;
+use App\Livewire\BaseComponent;
+use App\Models\DataTableConfig;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Livewire\Attributes\Computed;
+use App\Models\IdentificationType;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Log;
+use App\Models\AdditionalChargeType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Livewire\Attributes\Computed;
-use Livewire\Attributes\On;
-use Livewire\Attributes\Url;
-use Livewire\Component;
-use Livewire\WithFileUploads;
-use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
-use Spatie\Permission\Models\Role;
+use App\Models\TransactionOtherCharge;
+use Illuminate\Support\Facades\Storage;
 
 class TransactionChargeManager extends BaseComponent
 {
@@ -46,6 +48,7 @@ class TransactionChargeManager extends BaseComponent
 
   // Variables públicas
   public $transaction_id;
+  public $caso_id = NULL;
   public $additional_charge_type_id;
   public $additional_charge_other;
   public $third_party_identification_type;
@@ -55,6 +58,11 @@ class TransactionChargeManager extends BaseComponent
   public $percent;
   public $quantity;
   public $amount;
+
+  public $bank_id = NULL;
+  public $type_notarial_act = NULL;
+  public $caso_text = NULL;
+  public $tipo_facturacion = NULL;
 
   public $closeForm = false;
 
@@ -86,7 +94,9 @@ class TransactionChargeManager extends BaseComponent
   public function handleUpdateContext($data)
   {
     $this->transaction_id = $data['transaction_id'];
-    // Aquí puedes recargar los datos si es necesario
+    $this->bank_id = $data['bank_id'];
+    $this->type_notarial_act = $data['type_notarial_act'];
+    $this->tipo_facturacion = $data['tipo_facturacion'];
   }
 
   public function mount($transaction_id, $canview, $cancreate, $canedit, $candelete, $canexport)
@@ -142,6 +152,8 @@ class TransactionChargeManager extends BaseComponent
     $this->quantity = 1;
 
     $this->action = 'create';
+    $text = '';
+    $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: $text);
     $this->dispatch('scroll-to-top');
   }
 
@@ -150,6 +162,7 @@ class TransactionChargeManager extends BaseComponent
   {
     return [
       'transaction_id' => 'required|exists:transactions,id',
+      'caso_id' => 'nullable|integer|exists:casos,id',
       'additional_charge_type_id' => 'required|exists:additional_charge_types,id',
       'additional_charge_other' => 'nullable|required_if:additional_charge_type_id,99|string|max:100',
       'third_party_identification_type' => 'nullable|required_if:additional_charge_type_id,4|string|size:2',
@@ -265,6 +278,7 @@ class TransactionChargeManager extends BaseComponent
 
     // Asignar valores del registro a las variables públicas
     $this->transaction_id = $record->transaction_id;
+    $this->caso_id = $record->caso_id;
     $this->additional_charge_type_id = $record->additional_charge_type_id;
     $this->additional_charge_other = $record->additional_charge_other;
     $this->third_party_identification_type = $record->third_party_identification_type;
@@ -274,6 +288,27 @@ class TransactionChargeManager extends BaseComponent
     $this->percent = $record->percent;
     $this->quantity = $record->quantity;
     $this->amount = $record->amount;
+
+    if ($this->caso_id) {
+      $caso = Caso::select(
+          'casos.*',
+          DB::raw("CONCAT_WS(' / ',
+              CONCAT_WS(' / ', pnumero, pnumero_operacion1),
+              TRIM(CONCAT_WS(' ', pnombre_demandado, pnombre_apellidos_deudor))
+          ) AS pnumero_text")
+      )
+      ->where('id', $this->caso_id)
+      ->first();
+
+      if ($caso) {
+        $this->caso_text = $caso->pnumero_text;
+        $this->dispatch('setSelect2Value', id: 'caso_id', value: $this->caso_id, text: $this->caso_text);
+      }
+    }
+    else{
+      $this->caso_text = '';
+      $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: $this->caso_text);
+    }
 
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
@@ -426,6 +461,8 @@ class TransactionChargeManager extends BaseComponent
       'quantity',
       'amount',
       'closeForm',
+      'caso_text',
+      'caso_id'
     );
 
     $this->selectedIds = [];

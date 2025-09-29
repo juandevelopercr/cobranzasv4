@@ -2,38 +2,40 @@
 
 namespace App\Livewire\TransactionsLines;
 
-use App\Helpers\Helpers;
-use App\Livewire\BaseComponent;
-use App\Models\Currency;
-use App\Models\DataTableConfig;
-use App\Models\DiscountType;
-use App\Models\ExonerationType;
-use App\Models\Institution;
+use Exception;
+use App\Models\Caso;
 use App\Models\Product;
-use App\Models\ProductTax;
 use App\Models\TaxRate;
 use App\Models\TaxType;
+use Livewire\Component;
+use App\Helpers\Helpers;
+use App\Models\Currency;
+use App\Models\ProductTax;
+use App\Models\Institution;
 use App\Models\Transaction;
-use App\Models\TransactionLine;
-use App\Models\TransactionLineDiscount;
-use App\Models\TransactionLineTax;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Exception;
+use Illuminate\Support\Str;
+use Livewire\Attributes\On;
+use App\Models\DiscountType;
 use Illuminate\Http\Request;
+use Livewire\Attributes\Url;
+use Livewire\WithPagination;
+use Livewire\WithFileUploads;
+use App\Livewire\BaseComponent;
+use App\Models\DataTableConfig;
+use App\Models\ExonerationType;
+use App\Models\TransactionLine;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Livewire\Attributes\Computed;
+use App\Models\TransactionLineTax;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\TransactionLineDiscount;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Livewire\Attributes\Computed;
-use Livewire\Attributes\On;
-use Livewire\Attributes\Url;
-use Livewire\Component;
-use Livewire\WithFileUploads;
-use Livewire\WithPagination;
-use Maatwebsite\Excel\Facades\Excel;
-use Spatie\Permission\Models\Role;
 
 class TransactionLineManager extends BaseComponent
 {
@@ -59,6 +61,7 @@ class TransactionLineManager extends BaseComponent
   public $transaction_id;
   public $transaction;
   public $product_id = NULL;
+  public $caso_id = NULL;
   public $codigo = NULL;
   public $codigocabys = NULL;
   public $detail = NULL;
@@ -108,6 +111,8 @@ class TransactionLineManager extends BaseComponent
   //Propiedades de la transaction
   public $bank_id = NULL;
   public $type_notarial_act = NULL;
+  public $caso_text = NULL;
+  public $tipo_facturacion = NULL;
 
   //Listados
   public $taxes = [];
@@ -201,6 +206,7 @@ class TransactionLineManager extends BaseComponent
     $this->transaction_id = $data['transaction_id'];
     $this->bank_id = $data['bank_id'];
     $this->type_notarial_act = $data['type_notarial_act'];
+    $this->tipo_facturacion = $data['tipo_facturacion'];
     // Aquí puedes recargar los datos si es necesario
 
     $this->search = '';
@@ -250,6 +256,9 @@ class TransactionLineManager extends BaseComponent
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
     $this->action = 'create';
     $this->quantity = 1;
+    $text = '';
+    $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: $text);
+
     $this->dispatch('scroll-to-top');
   }
 
@@ -265,6 +274,7 @@ class TransactionLineManager extends BaseComponent
     $rules = [
       'transaction_id' => 'required|exists:transactions,id',
       'product_id' => 'required|exists:products,id',
+      'caso_id'   => 'nullable|integer|exists:casos,id',
       'codigo' => 'required|string|max:13',
       'codigocabys' => 'required|string|max:13',
       'detail' => 'required|string',
@@ -568,6 +578,7 @@ class TransactionLineManager extends BaseComponent
     // Asignar valores del registro a las variables públicas
     $this->transaction_id = $record->transaction_id;
     $this->product_id = $record->product_id;
+    $this->caso_id = $record->caso_id;
     $this->codigo = $record->codigo;
     $this->codigocabys = $record->codigocabys;
     $this->detail = $record->detail;
@@ -651,6 +662,27 @@ class TransactionLineManager extends BaseComponent
         'nature_discount' => $discount->nature_discount ?? null,
       ];
     })->toArray();
+
+    if ($this->caso_id) {
+      $caso = Caso::select(
+          'casos.*',
+          DB::raw("CONCAT_WS(' / ',
+              CONCAT_WS(' / ', pnumero, pnumero_operacion1),
+              TRIM(CONCAT_WS(' ', pnombre_demandado, pnombre_apellidos_deudor))
+          ) AS pnumero_text")
+      )
+      ->where('id', $this->caso_id)
+      ->first();
+
+      if ($caso) {
+        $this->caso_text = $caso->pnumero_text;
+        $this->dispatch('setSelect2Value', id: 'caso_id', value: $this->caso_id, text: $this->caso_text);
+      }
+    }
+    else{
+      $this->caso_text = '';
+      $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: $this->caso_text);
+    }
 
     $this->calcularDesglose();
 
@@ -915,7 +947,9 @@ class TransactionLineManager extends BaseComponent
       'mercNoSujeta',
       'exoneration',
       'closeForm',
-      'degloseHtml'
+      'degloseHtml',
+      'caso_text',
+      'caso_id'
     );
 
     $this->selectedIds = [];

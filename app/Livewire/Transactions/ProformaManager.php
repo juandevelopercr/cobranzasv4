@@ -978,19 +978,6 @@ class ProformaManager extends TransactionManager
     $this->showInstruccionesPago   = $record->showInstruccionesPago;
     $this->invoice_type            = $record->invoice_type;
 
-    //dd($record->tipo_facturacion);
-    if ($record->caso) {
-      $this->caso_text = strtoupper(
-        implode(' / ', array_filter([
-          $record->caso->pnumero,
-          $record->caso->pnumero_operacion1,
-          ($record->caso->pnombre_demandado || $record->caso->pnombre_apellidos_deudor)
-            ? trim($record->caso->pnombre_demandado . ' ' . $record->caso->pnombre_apellidos_deudor)
-            : null
-        ], fn($value) => $value !== null && $value !== ''))
-      );
-    }
-
     // Totales
     $this->totalHonorarios = $record->totalHonorarios;
     $this->totalTimbres = $record->totalTimbres;
@@ -1042,6 +1029,7 @@ class ProformaManager extends TransactionManager
       'transaction_id'    => $record->id,
       'bank_id'           => $record->bank_id,
       'type_notarial_act' => $record->proforma_type,
+      'tipo_facturacion' => $record->tipo_facturacion,
     ];
 
     session()->forget('transaction_context');
@@ -1052,6 +1040,7 @@ class ProformaManager extends TransactionManager
       'transaction_id'    => $record->id,
       'bank_id'           => $record->bank_id,
       'type_notarial_act' => $record->proforma_type,
+      'tipo_facturacion' => $record->tipo_facturacion,
     ]);
 
     $this->payments = $record->payments->map(fn($p) => [
@@ -1095,8 +1084,19 @@ class ProformaManager extends TransactionManager
     }
 
     if ($record->caso) {
-      $text = $record->caso->numero . ' - ' . $record->caso->deudor;
-      $this->dispatch('setSelect2Value', id: 'caso_id', value: $this->caso_id, text: $text);
+      $this->caso_text = strtoupper(
+        implode(' / ', array_filter([
+          $record->caso->pnumero,
+          $record->caso->pnumero_operacion1,
+          ($record->caso->pnombre_demandado || $record->caso->pnombre_apellidos_deudor)
+            ? trim($record->caso->pnombre_demandado . ' ' . $record->caso->pnombre_apellidos_deudor)
+            : null
+        ], fn($value) => $value !== null && $value !== ''))
+      );
+      $this->dispatch('setSelect2Value', id: 'caso_id', value: $this->caso_id, text: $this->caso_text);
+    }
+    else{
+      $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: '');
     }
 
     $this->setInfoCaso();
@@ -1143,11 +1143,11 @@ class ProformaManager extends TransactionManager
       // Actualizar
       $record->update($validatedData);
 
-
       $this->dispatch('updateTransactionContext', [
         'transaction_id'    => $record->id,
         'bank_id'           => $record->bank_id,
         'type_notarial_act' => $record->proforma_type,
+        'tipo_facturacion'  => $record->tipo_facturacion,
       ]);
 
       // --- Sincronizar pagos ---
@@ -1534,7 +1534,7 @@ class ProformaManager extends TransactionManager
       'totalIVADevuelto',
       'totalOtrosCargos',
       'totalComprobante',
-      'old_contact_id'
+      'old_contact_id',
     );
 
     $this->bank_id = null;
@@ -1573,8 +1573,14 @@ class ProformaManager extends TransactionManager
       }
     }
 
-    if ($propertyName == 'bank_id') {
-      //$this->setDefaultValues();
+    if ($propertyName == 'bank_id' || $propertyName == 'tipo_facturacion') {
+      // Se emite este evento para los componentes hijos
+      $this->dispatch('updateTransactionContext', [
+        'transaction_id'    => $this->recordId,
+        'bank_id'           => $this->bank_id,
+        'type_notarial_act' => $this->proforma_type,
+        'tipo_facturacion' => $this->tipo_facturacion,
+      ]);
     }
 
     if ($propertyName == 'proforma_type' && $this->recordId > 0) {
@@ -1583,6 +1589,7 @@ class ProformaManager extends TransactionManager
         'transaction_id'    => $this->recordId,
         'bank_id'           => $this->bank_id,
         'type_notarial_act' => $this->proforma_type,
+        'tipo_facturacion' => $this->tipo_facturacion,
       ]);
     }
 

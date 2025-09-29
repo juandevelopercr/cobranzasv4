@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Caso;
 use App\Helpers\Helpers;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TransactionOtherCharge extends Model
 {
@@ -14,6 +15,7 @@ class TransactionOtherCharge extends Model
 
   protected $fillable = [
     'transaction_id',
+    'caso_id',
     'additional_charge_type_id',
     'additional_charge_other',
     'third_party_identification_type',
@@ -34,6 +36,11 @@ class TransactionOtherCharge extends Model
   public function transactionLine()
   {
     return $this->belongsTo(TransactionLine::class, 'transaction_line_id');
+  }
+
+  public function caso()
+  {
+    return $this->belongsTo(Caso::class);
   }
 
   // Relación con el tipo de cargo adicional

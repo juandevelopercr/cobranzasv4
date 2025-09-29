@@ -200,12 +200,24 @@
           @enderror
         </div>
       </div>
+
+      @if ($this->tipo_facturacion == 2)
+      <br>
+      <div class="col-md-3 select2-primary fv-plugins-icon-container">
+        <label class="form-label" for="caso_id">{{ __('Caso') }}</label>
+        <div wire:ignore>
+          <select id="caso_id" class="form-select select2-ajax" data-placeholder="Buscar caso por número o deudor">
+            @if($caso_text)
+              <option value="{{ $caso_id }}" selected>{{ $caso_text }}</option>
+            @endif
+          </select>
+        </div>
+      </div>
+      @endif
     </div>
 
     <div class="row g-6">
       <div class="pt-6">
-
-
         {{-- Incluye botones de guardar y guardar y cerrar --}}
         @include('livewire.includes.button-saveAndSaveAndClose')
 
@@ -223,3 +235,75 @@
     </div>
   </form>
 </div>
+
+@if($action == 'create' || $action == 'edit')
+@script()
+<script>
+  $(document).ready(function() {
+    $('#caso_id').select2({
+      placeholder: $('#caso_id').data('placeholder'),
+      minimumInputLength: 2,
+      ajax: {
+        url: '/api/casos/search',
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+          return {
+            q: params.term,
+            bank_id: $("#bank_id").val()
+          };
+        },
+        processResults: function (data) {
+          return {
+            results: data.map(item => ({
+              id: item.id,
+              text: item.text
+            }))
+          };
+        },
+        cache: true
+      }
+    });
+
+    // Manejar selección y enviar a Livewire
+    $('#caso_id').on('change', function () {
+      const val = $(this).val();
+      if (typeof $wire !== 'undefined') {
+        $wire.set('caso_id', val);
+      }
+    });
+
+  })
+
+  Livewire.on('setSelect2Value', ({ id, value, text }) => {
+    const option = new Option(text, value, true, true);
+    console.log("Entró al setSelect2Value con option: " + option);
+    $('#' + id).append(option).trigger('change');
+  });
+
+  Livewire.on('updateSelect2Options', ({ id, options }) => {
+    const $select = $('#' + id);
+    $select.empty(); // Limpiar opciones
+
+    console.log("Se limpia el select2 " + id);
+
+    options.forEach(opt => {
+        const option = new Option(opt.text, opt.id, false, false);
+        $select.append(option);
+        console.log("Se adiciona el valor " + option);
+    });
+
+    $select.trigger('change');
+    console.log("Se dispara el change");
+  });
+
+  // Re-ejecuta las inicializaciones después de actualizaciones de Livewire
+  Livewire.on('reinitSelect2Controls', () => {
+    console.log('Reinicializando controles después de Livewire update reinitFormControls');
+    setTimeout(() => {
+      initializeSelect2();
+    }, 300); // Retraso para permitir que el DOM se estabilice
+  });
+</script>
+@endscript
+@endif

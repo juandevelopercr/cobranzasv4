@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
-use App\Models\Currency;
-use App\Models\HonorarioReceta;
+use App\Models\Caso;
 use App\Models\Product;
-use App\Models\ProductHonorariosTimbre;
+use App\Models\Currency;
 use App\Models\Transaction;
-use App\Models\TransactionLineDiscount;
+use App\Models\HonorarioReceta;
 use App\Models\TransactionLineTax;
-use App\Models\Hacienda\ComprobanteElectronico\ImpuestoType\DatosImpuestoEspecificoAType;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\ProductHonorariosTimbre;
+use App\Models\TransactionLineDiscount;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Hacienda\ComprobanteElectronico\ImpuestoType\DatosImpuestoEspecificoAType;
 
 class TransactionLine extends Model
 {
@@ -25,6 +26,7 @@ class TransactionLine extends Model
   protected $fillable = [
     'transaction_id',
     'product_id',
+    'caso_id',
     'codigo',
     'codigocabys',
     'detail',
@@ -114,6 +116,11 @@ class TransactionLine extends Model
   public function discounts()
   {
     return $this->hasMany(TransactionLineDiscount::class, 'transaction_line_id');
+  }
+
+  public function caso()
+  {
+    return $this->belongsTo(Caso::class);
   }
 
   public function scopeSearch($query, $value, $filters = [])
