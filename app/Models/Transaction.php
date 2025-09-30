@@ -1207,6 +1207,7 @@ class Transaction extends Model implements HasMedia
     return $html;
   }
 
+  /*
   public function getHistoryHtmlColumnAction(): string
   {
     $user = auth()->user();
@@ -1298,6 +1299,164 @@ class Transaction extends Model implements HasMedia
           HTML;
         }
       }
+    }
+
+    // Enviar Email
+    if ($user->can('send-email-documenthistory')) {
+      $html .= <<<HTML
+            <button type="button"
+                class="btn p-0 me-2 text-success"
+                title="Enviar Email"
+                wire:click="openEmailModal({$this->id})"
+                wire:loading.attr="disabled"
+                wire:target="openEmailModal">
+                <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="openEmailModal({$this->id})"></i>
+                <i class="bx bx-envelope {$iconSize}" wire:loading.remove wire:target="openEmailModal({$this->id})"></i>
+            </button>
+        HTML;
+    }
+
+    $html .= '</div>';
+
+    return $html;
+  }
+  */
+  public function getHistoryHtmlColumnAction(): string
+  {
+    $user = auth()->user();
+    $iconSize = 'bx-md';
+
+    $html = '<div class="d-flex align-items-center flex-nowrap">';
+
+    // PDF sencilla y detallada
+    if ($user->can('download-pdf-documenthistory')) {
+      $html .= <<<HTML
+            <button type="button"
+                class="btn p-0 me-2"
+                title="Proforma Sencilla"
+                wire:click="downloadProformaSencilla({$this->id})"
+                wire:loading.attr="disabled"
+                wire:target="downloadProformaSencilla">
+                <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="downloadProformaSencilla({$this->id})"></i>
+                <i class="bx bxs-file-pdf {$iconSize}" wire:loading.remove wire:target="downloadProformaSencilla({$this->id})"></i>
+            </button>
+
+            <button type="button"
+                class="btn p-0 me-2"
+                title="Proforma Detallada"
+                wire:click="downloadProformaDetallada({$this->id})"
+                wire:loading.attr="disabled"
+                wire:target="downloadProformaDetallada">
+                <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="downloadProformaDetallada({$this->id})"></i>
+                <i class="bx bxs-file-pdf {$iconSize}" wire:loading.remove wire:target="downloadProformaDetallada({$this->id})"></i>
+            </button>
+        HTML;
+    }
+
+    // Recibos
+    if (
+      $user->can('download-pdf-documenthistory') && in_array($this->proforma_status, [self::FACTURADA, self::ANULADA]) && $this->proforma_type === 'GASTO'
+    ) {
+      $html .= <<<HTML
+            <button type="button"
+                class="btn p-0 me-2 text-secondary"
+                title="Recibo Sencillo"
+                wire:click="downloadReciboSencillo({$this->id})"
+                wire:loading.attr="disabled"
+                wire:target="downloadReciboSencillo">
+                <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="downloadReciboSencillo({$this->id})"></i>
+                <i class="bx bxs-receipt {$iconSize}" wire:loading.remove wire:target="downloadReciboSencillo({$this->id})"></i>
+            </button>
+
+            <button type="button"
+                class="btn p-0 me-2 text-secondary"
+                title="Recibo Detallado"
+                wire:click="downloadReciboDetallado({$this->id})"
+                wire:loading.attr="disabled"
+                wire:target="downloadReciboDetallado">
+                <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="downloadReciboDetallado({$this->id})"></i>
+                <i class="bx bxs-receipt {$iconSize}" wire:loading.remove wire:target="downloadReciboDetallado({$this->id})"></i>
+            </button>
+        HTML;
+    }
+
+    if ($user->can('download-pdf-documenthistory') && in_array($this->proforma_status, [self::ANULADA, self::RECHAZADA])) {
+      // Mostrar el icono de la nota de crédito
+      if ($this->reference_id) {
+        if ($this->proforma_type == 'GASTO') {
+          $title = 'Nota de crédito';
+          $html .= <<<HTML
+              <button type="button"
+                  class="btn btn-link p-0 me-2 text-danger"
+                  title= "{$title}"
+                  wire:click="downloadProformaDetallada({$this->reference_id})"
+                  wire:loading.attr="disabled"
+                  wire:target="downloadProformaDetallada">
+                  <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="downloadProformaDetallada({$this->reference_id})"></i>
+                  <i class="bx bxs-file-pdf {$iconSize}" wire:loading.remove wire:target="downloadProformaDetallada({$this->reference_id})"></i>
+              </button>
+          HTML;
+        } else {
+          $title = 'Nota de crédito electrónica';
+          //dd($this->reference_id);
+          $html .= <<<HTML
+              <button type="button"
+                  class="btn p-0 me-2 text-danger"
+                  title="{$title}"
+                  wire:click="downloadInvoice({$this->reference_id})"
+                  wire:loading.attr="disabled"
+                  wire:target="downloadInvoice">
+                  <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="downloadInvoice({$this->reference_id})"></i>
+                  <i class="bx bxs-file-pdf {$iconSize}" wire:loading.remove wire:target="downloadInvoice({$this->reference_id})"></i>
+              </button>
+          HTML;
+        }
+      }
+    }
+
+    // PDF comprobante electrónico
+    if ($user->can('download-pdf-documenthistory') && in_array($this->status, [self::ACEPTADA, self::RECHAZADA])) {
+      $html .= <<<HTML
+            <button type="button"
+                class="btn p-0 me-2 text-danger"
+                title="Descargar PDF-FE"
+                wire:click="downloadInvoice({$this->id})"
+                wire:loading.attr="disabled"
+                wire:target="downloadInvoice">
+                <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="downloadInvoice({$this->id})"></i>
+                <i class="bx bxs-file-pdf {$iconSize}" wire:loading.remove wire:target="downloadInvoice({$this->id})"></i>
+            </button>
+        HTML;
+    }
+
+    // XML comprobante electrónico
+    if ($user->can('download-pdf-documenthistory') && in_array($this->status, [self::ACEPTADA, self::RECHAZADA])) {
+      $html .= <<<HTML
+            <button type="button"
+                class="btn p-0 me-2 text-warning"
+                title="Descargar XML-FE"
+                wire:click="downloadXML({$this->id})"
+                wire:loading.attr="disabled"
+                wire:target="downloadXML">
+                <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="downloadXML({$this->id})"></i>
+                <i class="bx bx-code-block {$iconSize}" wire:loading.remove wire:target="downloadXML({$this->id})"></i>
+            </button>
+        HTML;
+    }
+
+    // Respuesta de hacienda XML
+    if ($user->can('download-pdf-documenthistory') && !in_array($this->status, [Transaction::PENDIENTE, Transaction::RECIBIDA])) {
+      $html .= <<<HTML
+            <button type="button"
+                class="btn p-0 me-2 text-danger"
+                title="Descargar XML respuesta de hacienda"
+                wire:click="downloadHaciendaResponsaXML({$this->id})"
+                wire:loading.attr="disabled"
+                wire:target="downloadHaciendaResponsaXML">
+                <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="downloadHaciendaResponsaXML({$this->id})"></i>
+                <i class="bx bx-code-block {$iconSize}" wire:loading.remove wire:target="downloadHaciendaResponsaXML({$this->id})"></i>
+            </button>
+        HTML;
     }
 
     // Enviar Email
