@@ -1012,15 +1012,15 @@ class ProformaManager extends TransactionManager
     $this->show_transaction_date = Carbon::parse($record->transaction_date)->format('d-m-Y');
     $this->original_currency_id = $record->currency_id;
 
-    $this->clientEmail = $record->contact->email;
-
-    $contact = Contact::find($record->contact_id);
-    $this->tipoIdentificacion = $contact->identificationType->name;
-    $this->identificacion = $contact->identification;
-
     $this->old_contact_id = $record->contact_id;
 
+    $contact = Contact::find($record->contact_id);
+
     if ($contact) {
+      $this->tipoIdentificacion = $contact->identificationType->name;
+      $this->identificacion = $contact->identification;
+      $this->clientEmail = $record->contact ? $record->contact->email: '';
+
       $this->customer_text = $contact->name;
       $text = $contact->name;
       $this->dispatch('setSelect2Value', id: 'contact_id', value: $this->contact_id, text: $text);
