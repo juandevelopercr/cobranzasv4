@@ -48,6 +48,8 @@ class SeguimientoManager extends TransactionManager
 
   public $document_type = ['PR', 'FE', 'TE'];
 
+  public $documentTypes = [];
+
   public $filters = [
     'filter_action' => NULL,
     'filter_consecutivo' => NULL,
@@ -83,6 +85,7 @@ class SeguimientoManager extends TransactionManager
     parent::mount();
     $this->listaUsuarios = User::where('active', 1)->orderBy('name', 'ASC')->get();
     // Aquí puedes agregar lógica específica para proformas
+    $this->documentTypes = [['id'=>'PR', 'name'=>'PROFORMA'], ['id'=>'FE', 'name'=>'FACTURA'], ['id'=>'TE', 'name'=>'TIQUETE']];
   }
 
   public function refresDatatable()

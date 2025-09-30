@@ -36,6 +36,8 @@ class HistoryManager extends TransactionManager
 
   public $document_type = ['PR', 'FE', 'TE'];
 
+  public $documentTypes = [];
+
   public $filters = [
     'filter_action' => NULL,
     'filter_consecutivo' => NULL,
@@ -73,6 +75,7 @@ class HistoryManager extends TransactionManager
     // Aquí puedes agregar lógica específica para proformas
     $this->listActives = [['id' => 1, 'name' => 'Con Retención'], ['id' => 0, 'name' => 'Sin Retención']];
     $this->listaUsuarios = User::where('active', 1)->orderBy('name', 'ASC')->get();
+    $this->documentTypes = [['id'=>'PR', 'name'=>'PROFORMA'], ['id'=>'FE', 'name'=>'FACTURA'], ['id'=>'TE', 'name'=>'TIQUETE']];
   }
 
   public function refresDatatable()
