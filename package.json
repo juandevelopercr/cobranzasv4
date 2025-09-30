@@ -171,7 +171,7 @@
     "pdfmake": "0.2.10",
     "perfect-scrollbar": "1.5.5",
     "plyr": "3.7.8",
-    "puppeteer": "^24.2.0",
+    "puppeteer": "^24.22.3",
     "quill": "^2.0.2",
     "rateyo": "2.3.5",
     "select2": "4.0.13",

@@ -347,7 +347,7 @@ class AreaPracticaManager extends BaseComponent
       [
         'field' => 'active',
         'orderName' => 'active',
-        'label' => __('Favorite'),
+        'label' => __('Active'),
         'filter' => 'filter_active',
         'filter_type' => 'select',
         'filter_sources' => 'listActives',

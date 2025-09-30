@@ -2,40 +2,41 @@
 
 namespace App\Livewire\Transactions;
 
+use Throwable;
 use \Exception;
-use App\Helpers\Helpers;
-use App\Livewire\BaseComponent;
+use Carbon\Carbon;
 use App\Models\Area;
 use App\Models\Bank;
-use App\Models\BusinessLocation;
-use App\Models\CodigoContable;
-use App\Models\ConditionSale;
-use App\Models\Cuenta;
-use App\Models\Currency;
-use App\Models\DataTableConfig;
-use App\Models\EconomicActivity;
-use App\Models\PaymentMethod;
-use App\Models\Transaction;
-use App\Models\TransactionLine;
-use App\Models\TransactionPayment;
 use App\Models\User;
-use App\Services\DocumentSequenceService;
-use App\Services\Hacienda\ApiHacienda;
-use App\Services\Hacienda\Login\AuthService;
-use Carbon\Carbon;
-use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Cuenta;
+use Livewire\Component;
+use App\Helpers\Helpers;
+use App\Models\Currency;
+use App\Models\Transaction;
+use Livewire\Attributes\On;
+use App\Models\AreaPractica;
+use Livewire\Attributes\Url;
+use Livewire\WithPagination;
+use App\Models\ConditionSale;
+use App\Models\PaymentMethod;
+use Livewire\WithFileUploads;
+use App\Models\CodigoContable;
+use App\Livewire\BaseComponent;
+use App\Models\DataTableConfig;
+use App\Models\TransactionLine;
+use App\Models\BusinessLocation;
+use App\Models\EconomicActivity;
+use Livewire\Attributes\Computed;
+use App\Models\TransactionPayment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use App\Services\Hacienda\ApiHacienda;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
-use Livewire\Attributes\Computed;
-use Livewire\Attributes\On;
-use Livewire\Attributes\Url;
-use Livewire\Component;
-use Livewire\WithFileUploads;
-use Livewire\WithPagination;
-use Throwable;
+use App\Services\DocumentSequenceService;
+use App\Services\Hacienda\Login\AuthService;
 
 abstract class TransactionManager extends BaseComponent
 {
@@ -494,7 +495,7 @@ abstract class TransactionManager extends BaseComponent
     $this->pay_term_type = 'days';
     $this->issuers = BusinessLocation::where('active', 1)->orderBy('id', 'ASC')->get();
     $this->codigosContables = CodigoContable::orderBy('descrip', 'ASC')->get();
-    $this->areas = Area::orderBy('name', 'ASC')->get();
+    $this->areas = AreaPractica::orderBy('name', 'ASC')->get();
     $this->users = User::where('active', 1)->orderBy('name', 'ASC')->get();
     $this->cuentas = Cuenta::orderBy('nombre_cuenta', 'ASC')->get();
 
