@@ -650,6 +650,7 @@ class ProformaManager extends TransactionManager
       'location_economic_activity_id'  => 'nullable|integer|exists:economic_activities,id',
       'cuenta_id'             => 'nullable|integer|exists:cuentas,id',
       'contact_id'            => 'required|integer|exists:contacts,id',
+      'department_id'         => 'required|integer|exists:departments,id',
       'contact_economic_activity_id' => 'nullable|integer|exists:economic_activities,id',
       'currency_id'           => 'required|integer|exists:currencies,id',
       'area_id'               => 'nullable|integer|exists:areas,id',
@@ -920,6 +921,7 @@ class ProformaManager extends TransactionManager
     $this->contact_id             = $record->contact_id;
     $this->contact_economic_activity_id = $record->contact_economic_activity_id;
     $this->cuenta_id              = $record->cuenta_id;
+    $this->department_id          = $record->department_id;
     $this->currency_id            = $record->currency_id;
     $this->area_id                = $record->area_id;
     $this->bank_id                = $record->bank_id;
@@ -1446,6 +1448,7 @@ class ProformaManager extends TransactionManager
       'contact_id',
       'contact_economic_activity_id',
       'currency_id',
+      'department_id',
       'caso_text',
       'area_id',
       'bank_id',

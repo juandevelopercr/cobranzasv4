@@ -127,7 +127,7 @@
           initialValue: '{{ $pay_term_number ?? '' }}',
           wireModelName: 'pay_term_number',
           postUpdate: true,
-          decimalScale: 0,          
+          decimalScale: 0,
         })"
         x-init="init($refs.cleaveInput)"
         x-effect="
@@ -381,16 +381,16 @@
     </div>
 
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
-      <label class="form-label" for="area_id">{{ __('Area') }}</label>
+      <label class="form-label" for="department_id">{{ __('Department') }}</label>
       <div wire:ignore>
-        <select wire:model="area_id" id="area_id" class="select2 form-select @error('area_id') is-invalid @enderror" disabled>
+        <select wire:model="department_id" id="department_id" class="select2 form-select @error('department_id') is-invalid @enderror">
           <option value="">{{ __('Seleccione...') }}</option>
-          @foreach ($this->areas as $area)
-            <option value="{{ $area->id }}">{{ $area->name }}</option>
+          @foreach ($this->departments as $department)
+            <option value="{{ $department->id }}">{{ $department->name }}</option>
           @endforeach
         </select>
       </div>
-      @error('area_id')
+      @error('department_id')
       <div class="text-danger mt-1">{{ $message }}</div>
       @enderror
     </div>

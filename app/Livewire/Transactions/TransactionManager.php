@@ -25,6 +25,7 @@ use App\Livewire\BaseComponent;
 use App\Models\DataTableConfig;
 use App\Models\TransactionLine;
 use App\Models\BusinessLocation;
+use App\Models\Department;
 use App\Models\EconomicActivity;
 use Livewire\Attributes\Computed;
 use App\Models\TransactionPayment;
@@ -68,6 +69,7 @@ abstract class TransactionManager extends BaseComponent
   public $codigosContables = [];
   public $areas = [];
   public $users = [];
+  public $departments = [];
 
   //public $transaction;
   public $business_id = 1;
@@ -76,6 +78,7 @@ abstract class TransactionManager extends BaseComponent
   public $contact_id = NULL;
   public $contact_economic_activity_id = NULL;
   public $cuenta_id = NULL;
+  public $department_id = NULL;
   public $showInstruccionesPago = NULL;
   public $currency_id = NULL;
   public $area_id = NULL;
@@ -495,7 +498,7 @@ abstract class TransactionManager extends BaseComponent
     $this->pay_term_type = 'days';
     $this->issuers = BusinessLocation::where('active', 1)->orderBy('id', 'ASC')->get();
     $this->codigosContables = CodigoContable::orderBy('descrip', 'ASC')->get();
-    $this->areas = AreaPractica::orderBy('name', 'ASC')->get();
+    $this->departments = Department::orderBy('name', 'ASC')->get();
     $this->users = User::where('active', 1)->orderBy('name', 'ASC')->get();
     $this->cuentas = Cuenta::orderBy('nombre_cuenta', 'ASC')->get();
 
@@ -538,6 +541,7 @@ abstract class TransactionManager extends BaseComponent
       'location_id',
       'area_id',
       'cuenta_id',
+      'department_id',
       'caso_id',
       'codigo_contable_id',
       'location_economic_activity_id',

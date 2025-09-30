@@ -94,6 +94,7 @@ class Transaction extends Model implements HasMedia
     'location_id',
     'location_economic_activity_id',
     'cuenta_id',
+    'department_id',
     'showInstruccionesPago',
     'document_type',
     'proforma_type',
