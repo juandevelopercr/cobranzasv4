@@ -256,6 +256,9 @@ class TransactionLineManager extends BaseComponent
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
     $this->action = 'create';
     $this->quantity = 1;
+
+    $this->dispatch('reinitFormControls');
+
     $text = '';
     $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: $text);
 
@@ -489,6 +492,7 @@ class TransactionLineManager extends BaseComponent
 
   public function store()
   {
+    $this->cleanEmptyForeignKeys();
     $transaction = Transaction::find($this->transaction_id);
     $product = Product::where('id', $this->product_id)->first();
     if ($product) {
@@ -565,6 +569,7 @@ class TransactionLineManager extends BaseComponent
 
   public function edit($recordId)
   {
+    $this->cleanEmptyForeignKeys();
     $recordId = $this->getRecordAction($recordId);
 
     if (!$recordId) {
@@ -696,6 +701,8 @@ class TransactionLineManager extends BaseComponent
   public function update()
   {
     $recordId = $this->recordId;
+    // Limpia las claves foráneas antes de validar
+    $this->cleanEmptyForeignKeys();
 
     $transaction = Transaction::find($this->transaction_id);
     $product = Product::where('id', $this->product_id)->first();
@@ -1331,6 +1338,7 @@ class TransactionLineManager extends BaseComponent
   public $filters = [
     'filter_codigocabys' => NULL,
     'filter_detail' => NULL,
+    'filter_numero_caso' => NULL,
     'filter_price' => NULL,
     'filter_quantity' => NULL,
     'filter_timbres' => NULL,
@@ -1376,6 +1384,25 @@ class TransactionLineManager extends BaseComponent
         'columnType' => 'string',
         'columnAlign' => '',
         'columnClass' => 'wrap-col-400',
+        'function' => '',
+        'parameters' => [],
+        'sumary' => '',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'caso_info',
+        'orderName' => '',
+        'label' => __('Case Number'),
+        'filter' => 'filter_numero_caso',
+        'filter_type' => 'input',
+        'filter_sources' => '',
+        'filter_source_field' => '',
+        'columnType' => 'string',
+        'columnAlign' => '',
+        'columnClass' => '',
         'function' => '',
         'parameters' => [],
         'sumary' => '',
@@ -1818,6 +1845,22 @@ class TransactionLineManager extends BaseComponent
               </tfoot>
           </table>
           HTML;
+      }
+    }
+  }
+
+  protected function cleanEmptyForeignKeys()
+  {
+    // Lista de campos que pueden ser claves foráneas
+    $foreignKeys = [
+      'product_id',
+      'caso_id',
+      // Agrega otros campos aquí
+    ];
+
+    foreach ($foreignKeys as $key) {
+      if (isset($this->$key) && $this->$key === '') {
+        $this->$key = null;
       }
     }
   }

@@ -232,61 +232,73 @@
 @script()
 <script>
   $(document).ready(function() {
-    $('#caso_id').select2({
-      placeholder: $('#caso_id').data('placeholder'),
-      minimumInputLength: 2,
-      ajax: {
-        url: '/api/casos/search',
-        dataType: 'json',
-        delay: 250,
-        data: function (params) {
-          return {
-            q: params.term,
-            bank_id: $("#bank_id").val()
-          };
-        },
-        processResults: function (data) {
-          return {
-            results: data.map(item => ({
-              id: item.id,
-              text: item.text
-            }))
-          };
-        },
-        cache: true
-      }
+    function initSelect2() {
+      $('#caso_id').select2({
+        placeholder: $('#caso_id').data('placeholder'),
+        minimumInputLength: 2,
+        ajax: {
+          url: '/api/casos/search',
+          dataType: 'json',
+          delay: 250,
+          data: function (params) {
+            return {
+              q: params.term,
+              bank_id: $("#bank_id").val()
+            };
+          },
+          processResults: function (data) {
+            return {
+              results: data.map(item => ({
+                id: item.id,
+                text: item.text
+              }))
+            };
+          },
+          cache: true
+        }
+      });
+
+      // Enviar cambios a Livewire
+      $('#caso_id').on('change', function () {
+        const val = $(this).val();
+        if (typeof $wire !== 'undefined') {
+          $wire.set('caso_id', val);
+        }
+      });
+    }
+
+    initSelect2();
+
+    Livewire.on('setSelect2Value', ({ id, value, text }) => {
+      const option = new Option(text, value, true, true);
+      console.log("Entró al setSelect2Value con option: " + option);
+      $('#' + id).append(option).trigger('change');
     });
 
-    // Manejar selección y enviar a Livewire
-    $('#caso_id').on('change', function () {
-      const val = $(this).val();
-      if (typeof $wire !== 'undefined') {
-        $wire.set('caso_id', val);
-      }
+    Livewire.on('updateSelect2Options', ({ id, options }) => {
+      const $select = $('#' + id);
+      $select.empty(); // Limpiar opciones
+
+      console.log("Se limpia el select2 " + id);
+
+      options.forEach(opt => {
+          const option = new Option(opt.text, opt.id, false, false);
+          $select.append(option);
+          console.log("Se adiciona el valor " + option);
+      });
+
+      $select.trigger('change');
+      console.log("Se dispara el change");
     });
 
-  })
-
-  Livewire.on('setSelect2Value', ({ id, value, text }) => {
-    const option = new Option(text, value, true, true);
-    console.log("Entró al setSelect2Value con option: " + option);
-    $('#' + id).append(option).trigger('change');
-  });
-
-  Livewire.on('updateSelect2Options', ({ id, options }) => {
-    const $select = $('#' + id);
-    $select.empty(); // Limpiar opciones
-
-    console.log("Se limpia el select2 " + id);
-
-    options.forEach(opt => {
-        const option = new Option(opt.text, opt.id, false, false);
-        $select.append(option);
-        console.log("Se adiciona el valor " + option);
+    // Re-ejecuta las inicializaciones después de actualizaciones de Livewire
+    Livewire.on('reinitFormControls', () => {
+      console.log('Reinicializando controles después de Livewire update reinitFormControls');
+      setTimeout(() => {
+        initSelect2();
+      }, 300); // Retraso para permitir que el DOM se estabilice
     });
 
-    $select.trigger('change');
-    console.log("Se dispara el change");
   });
 </script>
 @endscript

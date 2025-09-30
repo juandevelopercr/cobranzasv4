@@ -8,6 +8,7 @@ use App\Models\Currency;
 use App\Models\Transaction;
 use App\Models\HonorarioReceta;
 use App\Models\TransactionLineTax;
+use Illuminate\Support\Facades\DB;
 use App\Models\ProductHonorariosTimbre;
 use App\Models\TransactionLineDiscount;
 use Illuminate\Database\Eloquent\Model;
@@ -128,64 +129,71 @@ class TransactionLine extends Model
     // Definir las columnas que quieres seleccionar
     $columns = [
       'transactions_lines.id',
-      'transaction_id',
-      'product_id',
-      'codigo',
-      'codigocabys',
-      'detail',
-      'quantity',
+      'transactions_lines.transaction_id',
+      'transactions_lines.product_id',
+      'transactions_lines.codigo',
+       DB::raw("CONCAT_WS(' / ',
+          NULLIF(casos.pnumero, ''),
+          NULLIF(casos.pnumero_operacion1, ''),
+          NULLIF(casos.pnombre_demandado, ''),
+          NULLIF(casos.pnombre_apellidos_deudor, '')
+      ) as caso_info"),
+      'transactions_lines.codigocabys',
+      'transactions_lines.detail',
+      'transactions_lines.quantity',
       'transactions_lines.price',
-      'discount',
-      'tax',
-      'fecha_reporte_gasto',
-      'fecha_pago_registro',
-      'numero_pago_registro',
-      'honorarios',
-      'timbres',
-      'desglose_timbre_formula',
-      'desglose_tabla_abogados',
-      'desglose_calculos_fijos',
-      'desglose_calculo_monto_timbre_manual',
-      'desglose_honorarios',
-      'desglose_calculo_monto_honorario_manual',
-      'registro_currency_id',
-      'registro_change_type',
-      'registro_monto_escritura',
-      'registro_valor_fiscal',
-      'registro_cantidad',
-      'monto_cargo_adicional',
-      'calculo_registro_normal',
-      'calculo_registro_iva',
-      'calculo_registro_no_iva',
-      'exoneration',
-      'subtotal',
-      'total',
-      'servGravados',
-      'mercGravadas',
-      'impuestoServGravados',
-      'impuestoMercGravadas',
-      'impuestoServExonerados',
-      'impuestoMercExoneradas',
-      'impuestoNeto',
-      'servExentos',
-      'mercExentas',
-      'partida_arancelaria',
+      'transactions_lines.discount',
+      'transactions_lines.tax',
+      'transactions_lines.fecha_reporte_gasto',
+      'transactions_lines.fecha_pago_registro',
+      'transactions_lines.numero_pago_registro',
+      'transactions_lines.honorarios',
+      'transactions_lines.timbres',
+      'transactions_lines.desglose_timbre_formula',
+      'transactions_lines.desglose_tabla_abogados',
+      'transactions_lines.desglose_calculos_fijos',
+      'transactions_lines.desglose_calculo_monto_timbre_manual',
+      'transactions_lines.desglose_honorarios',
+      'transactions_lines.desglose_calculo_monto_honorario_manual',
+      'transactions_lines.registro_currency_id',
+      'transactions_lines.registro_change_type',
+      'transactions_lines.registro_monto_escritura',
+      'transactions_lines.registro_valor_fiscal',
+      'transactions_lines.registro_cantidad',
+      'transactions_lines.monto_cargo_adicional',
+      'transactions_lines.calculo_registro_normal',
+      'transactions_lines.calculo_registro_iva',
+      'transactions_lines.calculo_registro_no_iva',
+      'transactions_lines.exoneration',
+      'transactions_lines.subtotal',
+      'transactions_lines.total',
+      'transactions_lines.servGravados',
+      'transactions_lines.mercGravadas',
+      'transactions_lines.impuestoServGravados',
+      'transactions_lines.impuestoMercGravadas',
+      'transactions_lines.impuestoServExonerados',
+      'transactions_lines.impuestoMercExoneradas',
+      'transactions_lines.impuestoNeto',
+      'transactions_lines.servExentos',
+      'transactions_lines.mercExentas',
+      'transactions_lines.partida_arancelaria',
 
-      'baseImponible',
-      'impuestosEspeciales',
-      'impuestoAsumidoEmisorFabrica',
-      'hasRegaliaOrBonificacion',
-      'hasImpuestoEspecifico',
-      'servNoSujeto',
-      'mercNoSujeta',
+      'transactions_lines.baseImponible',
+      'transactions_lines.impuestosEspeciales',
+      'transactions_lines.impuestoAsumidoEmisorFabrica',
+      'transactions_lines.hasRegaliaOrBonificacion',
+      'transactions_lines.hasImpuestoEspecifico',
+      'transactions_lines.servNoSujeto',
+      'transactions_lines.mercNoSujeta',
 
-      'servExonerados',
-      'mercExoneradas',
-      'porcientoDescuento'
+      'transactions_lines.servExonerados',
+      'transactions_lines.mercExoneradas',
+      'transactions_lines.porcientoDescuento'
     ];
 
     $query->select($columns)
       ->join('products', 'transactions_lines.product_id', '=', 'products.id')
+      ->leftJoin('casos', 'transactions_lines.caso_id', '=', 'casos.id')
       ->where(function ($q) use ($value) {
         $q->where('codigocabys', 'like', "%{$value}%")
           ->orWhere('detail', 'like', "%{$value}%")
@@ -205,6 +213,20 @@ class TransactionLine extends Model
       $query->where('detail', 'like', '%' . $filters['filter_detail'] . '%');
     }
 
+    if (!empty($filters['filter_numero_caso'])) {
+        $searchTerm = '%' . $filters['filter_numero_caso'] . '%';
+
+        $query->where(function ($q) use ($searchTerm) {
+            $q->whereRaw("
+                CONCAT_WS(' / ',
+                    NULLIF(casos.pnumero, ''),
+                    NULLIF(casos.pnumero_operacion1, ''),
+                    NULLIF(casos.pnombre_demandado, ''),
+                    NULLIF(casos.pnombre_apellidos_deudor, '')
+                ) LIKE ?
+            ", [$searchTerm]);
+        });
+    }
 
     if (!empty($filters['filter_price'])) {
       $query->where('transactions_lines.price', 'like', '%' . $filters['filter_price'] . '%');

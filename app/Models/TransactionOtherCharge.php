@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Models\Caso;
+use App\Models\Product;
 use App\Helpers\Helpers;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -16,6 +18,7 @@ class TransactionOtherCharge extends Model
   protected $fillable = [
     'transaction_id',
     'caso_id',
+    'product_id',
     'additional_charge_type_id',
     'additional_charge_other',
     'third_party_identification_type',
@@ -43,6 +46,11 @@ class TransactionOtherCharge extends Model
     return $this->belongsTo(Caso::class);
   }
 
+  public function product()
+  {
+    return $this->belongsTo(Product::class);
+  }
+
   // Relación con el tipo de cargo adicional
   public function additionalChargeType()
   {
@@ -55,6 +63,14 @@ class TransactionOtherCharge extends Model
     $columns = [
       'transactions_other_charges.id',
       'transaction_id',
+      'transactions_other_charges.product_id',
+       DB::raw("CONCAT_WS(' / ',
+          NULLIF(casos.pnumero, ''),
+          NULLIF(casos.pnumero_operacion1, ''),
+          NULLIF(casos.pnombre_demandado, ''),
+          NULLIF(casos.pnombre_apellidos_deudor, '')
+      ) as caso_info"),
+      'products.name as product_name',
       'additional_charge_type_id',
       'additional_charge_types.code as charge_code',
       'additional_charge_types.name as charge_name',
@@ -71,7 +87,9 @@ class TransactionOtherCharge extends Model
 
     $query->select($columns)
       ->join('additional_charge_types', 'transactions_other_charges.additional_charge_type_id', '=', 'additional_charge_types.id')
+      ->join('products', 'transactions_other_charges.product_id', '=', 'products.id')
       ->leftJoin('identification_types', 'transactions_other_charges.third_party_identification_type', '=', 'identification_types.code')
+      ->leftJoin('casos', 'transactions_other_charges.caso_id', '=', 'casos.id')
       ->where(function ($q) use ($value) {
         $q->where('additional_charge_other', 'like', "%{$value}%")
           ->orWhere('third_party_identification_type', 'like', "%{$value}%")
@@ -91,12 +109,31 @@ class TransactionOtherCharge extends Model
       $query->where('detail', 'like', '%' . $filters['filter_detail'] . '%');
     }
 
+    if (!empty($filters['filter_product'])) {
+      $query->where('transactions_other_charges.product_id', '=', $filters['filter_product']);
+    }
+
     if (!empty($filters['filter_quantity'])) {
       $query->where('quantity', 'like', '%' . $filters['filter_quantity'] . '%');
     }
 
     if (!empty($filters['filter_amount'])) {
       $query->where('amount', 'like', '%' . $filters['filter_amount'] . '%');
+    }
+
+    if (!empty($filters['filter_numero_caso'])) {
+        $searchTerm = '%' . $filters['filter_numero_caso'] . '%';
+
+        $query->where(function ($q) use ($searchTerm) {
+            $q->whereRaw("
+                CONCAT_WS(' / ',
+                    NULLIF(casos.pnumero, ''),
+                    NULLIF(casos.pnumero_operacion1, ''),
+                    NULLIF(casos.pnombre_demandado, ''),
+                    NULLIF(casos.pnombre_apellidos_deudor, '')
+                ) LIKE ?
+            ", [$searchTerm]);
+        });
     }
 
     /*

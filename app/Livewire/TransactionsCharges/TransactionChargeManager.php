@@ -3,6 +3,7 @@
 namespace App\Livewire\TransactionsCharges;
 
 use App\Models\Caso;
+use App\Models\Product;
 use Livewire\Component;
 use App\Models\Transaction;
 use Illuminate\Support\Str;
@@ -49,6 +50,7 @@ class TransactionChargeManager extends BaseComponent
   // Variables públicas
   public $transaction_id;
   public $caso_id = NULL;
+  public $product_id = NULL;
   public $additional_charge_type_id;
   public $additional_charge_other;
   public $third_party_identification_type;
@@ -80,6 +82,9 @@ class TransactionChargeManager extends BaseComponent
   public $canedit;
   public $candelete;
   public $canexport;
+  public $oldproduct_id = NULL;
+
+  public $products = [];
 
   protected $listeners = [
     'datatableSettingChange' => 'refresDatatable',
@@ -117,6 +122,16 @@ class TransactionChargeManager extends BaseComponent
     $this->candelete = $candelete;
     $this->canexport = $canexport;
 
+    $this->products = Product::query()
+      ->select(['products.id as id', 'products.name as name'])
+      ->join('product_honorarios_timbres', 'product_honorarios_timbres.product_id', '=', 'products.id')
+      ->where(function ($q) {
+        // Siempre filtra por type_notarial_act principal
+        $q->where('products.type_notarial_act', '=', 'GASTO');
+      })
+      ->orderBy('products.name', 'asc')
+      ->get();
+
     $this->refresDatatable();
   }
 
@@ -152,6 +167,9 @@ class TransactionChargeManager extends BaseComponent
     $this->quantity = 1;
 
     $this->action = 'create';
+
+    $this->dispatch('reinitFormControls');
+
     $text = '';
     $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: $text);
     $this->dispatch('scroll-to-top');
@@ -163,6 +181,7 @@ class TransactionChargeManager extends BaseComponent
     return [
       'transaction_id' => 'required|exists:transactions,id',
       'caso_id' => 'nullable|integer|exists:casos,id',
+      'product_id' => 'required|integer|exists:products,id',
       'additional_charge_type_id' => 'required|exists:additional_charge_types,id',
       'additional_charge_other' => 'nullable|required_if:additional_charge_type_id,99|string|max:100',
       'third_party_identification_type' => 'nullable|required_if:additional_charge_type_id,4|string|size:2',
@@ -235,6 +254,9 @@ class TransactionChargeManager extends BaseComponent
 
   public function store()
   {
+    // Limpia las claves foráneas antes de validar
+    $this->cleanEmptyForeignKeys();
+
     // Validar
     if ($this->additional_charge_type_id == 99) {
       $this->additional_charge_other = $this->detail;
@@ -267,6 +289,7 @@ class TransactionChargeManager extends BaseComponent
 
   public function edit($recordId)
   {
+    $this->cleanEmptyForeignKeys();
     $recordId = $this->getRecordAction($recordId);
 
     if (!$recordId) {
@@ -288,6 +311,9 @@ class TransactionChargeManager extends BaseComponent
     $this->percent = $record->percent;
     $this->quantity = $record->quantity;
     $this->amount = $record->amount;
+    $this->product_id = $record->product_id;
+
+    $this->oldproduct_id = $this->product_id;
 
     if ($this->caso_id) {
       $caso = Caso::select(
@@ -319,6 +345,8 @@ class TransactionChargeManager extends BaseComponent
   public function update()
   {
     $recordId = $this->recordId;
+    // Limpia las claves foráneas antes de validar
+    $this->cleanEmptyForeignKeys();
 
     // Validar
     if ($this->additional_charge_type_id == 99) {
@@ -462,7 +490,9 @@ class TransactionChargeManager extends BaseComponent
       'amount',
       'closeForm',
       'caso_text',
-      'caso_id'
+      'caso_id',
+      'product_id',
+      'oldproduct_id'
     );
 
     $this->selectedIds = [];
@@ -490,6 +520,11 @@ class TransactionChargeManager extends BaseComponent
   public function updated($property)
   {
     // $property: The name of the current property that was updated
+    if ($property == 'product_id'){
+      $product = Product::find($this->product_id);
+      if ($product && $this->oldproduct_id != $this->product_id)
+         $this->detail = $product->name;
+    }
 
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
@@ -514,9 +549,11 @@ class TransactionChargeManager extends BaseComponent
 
   public $filters = [
     'filter_additional_charge_types' => NULL,
+    'filter_product' => NULL,
     'filter_detail' => NULL,
     'filter_quantity' => NULL,
     'filter_amount' => NULL,
+    'filter_numero_caso' => NULL,
     'filter_total' => NULL,
     'filter_third_party_name' => NULL,
     'filter_third_party_identification_type' => NULL,
@@ -542,6 +579,25 @@ class TransactionChargeManager extends BaseComponent
         'sumary' => '',
         'openHtmlTab' => '<span class="emp_name text-truncate">',
         'closeHtmlTab' => '</span>',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'product_name',
+        'orderName' => 'products.name',
+        'label' => __('Product'),
+        'filter' => 'filter_product',
+        'filter_type' => 'select',
+        'filter_sources' => 'products',
+        'filter_source_field' => 'name',
+        'columnType' => 'string',
+        'columnAlign' => '',
+        'columnClass' => '',
+        'function' => '',
+        'parameters' => [],
+        'sumary' => '',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
         'width' => NULL,
         'visible' => true,
       ],
@@ -599,6 +655,25 @@ class TransactionChargeManager extends BaseComponent
         'sumary' => '',
         'openHtmlTab' => '<span class="emp_name text-truncate">',
         'closeHtmlTab' => '</span>',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'caso_info',
+        'orderName' => '',
+        'label' => __('Case Number'),
+        'filter' => 'filter_numero_caso',
+        'filter_type' => 'input',
+        'filter_sources' => '',
+        'filter_source_field' => '',
+        'columnType' => 'string',
+        'columnAlign' => '',
+        'columnClass' => '',
+        'function' => '',
+        'parameters' => [],
+        'sumary' => '',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
         'width' => NULL,
         'visible' => true,
       ],
@@ -729,5 +804,22 @@ class TransactionChargeManager extends BaseComponent
   public function dateRangeSelected($id, $range)
   {
     $this->filters[$id] = $range;
+  }
+
+  protected function cleanEmptyForeignKeys()
+  {
+    // Lista de campos que pueden ser claves foráneas
+    $foreignKeys = [
+      'product_id',
+      'caso_id',
+      'additional_charge_type_id',
+      // Agrega otros campos aquí
+    ];
+
+    foreach ($foreignKeys as $key) {
+      if (isset($this->$key) && $this->$key === '') {
+        $this->$key = null;
+      }
+    }
   }
 }
