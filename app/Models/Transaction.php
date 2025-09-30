@@ -632,58 +632,53 @@ class Transaction extends Model implements HasMedia
     }
 
     if (!empty($filters['filter_fecha_solicitud_factura'])) {
-      $range = explode(' to ', $filters['filter_fecha_solicitud_factura']);
+        $range = explode(' to ', $filters['filter_fecha_solicitud_factura']);
 
-      if (count($range) === 2) {
-        try {
-          // Validar y convertir las fechas del rango
-          $start = Carbon::createFromFormat('d-m-Y', $range[0])->format('Y-m-d');
-          $end = Carbon::createFromFormat('d-m-Y', $range[1])->format('Y-m-d');
+        if (count($range) === 2) {
+            try {
+                $start = Carbon::createFromFormat('d-m-Y', trim($range[0]))->startOfDay();
+                $end   = Carbon::createFromFormat('d-m-Y', trim($range[1]))->endOfDay();
 
-          // Aplicar filtro si ambas fechas son válidas
-          $query->whereBetween('transactions.fecha_solicitud_factura', [$start, $end]);
-        } catch (\Exception $e) {
-          // Manejar el caso de fechas inválidas (opcional: log o ignorar)
+                $query->whereBetween('transactions.fecha_solicitud_factura', [$start, $end]);
+            } catch (\Exception $e) {
+                // Manejo de error
+            }
+        } else {
+            try {
+                // Validar y convertir la fecha única
+                $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_fecha_solicitud_factura'])->format('Y-m-d');
+
+                // Aplicar filtro si la fecha es válida
+                $query->whereDate('transactions.fecha_solicitud_factura', $singleDate);
+            } catch (\Exception $e) {
+                // Manejo de error
+            }
         }
-      } else {
-        try {
-          // Validar y convertir la fecha única
-          $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_fecha_solicitud_factura'])->format('Y-m-d');
-
-          // Aplicar filtro si la fecha es válida
-          $query->whereDate('transactions.fecha_solicitud_factura', $singleDate);
-        } catch (\Exception $e) {
-          // Manejar el caso de fecha inválida (opcional: log o ignorar)
-        }
-      }
     }
 
     if (!empty($filters['filter_fecha_envio_email'])) {
-      $range = explode(' to ', $filters['filter_fecha_envio_email']);
+        $range = explode(' to ', $filters['filter_fecha_envio_email']);
 
-      if (count($range) === 2) {
-        try {
-          // Validar y convertir las fechas del rango
-          $start = Carbon::createFromFormat('d-m-Y', $range[0])->format('Y-m-d');
-          $end = Carbon::createFromFormat('d-m-Y', $range[1])->format('Y-m-d');
+        if (count($range) === 2) {
+            try {
+                $start = Carbon::createFromFormat('d-m-Y', trim($range[0]))->startOfDay();
+                $end   = Carbon::createFromFormat('d-m-Y', trim($range[1]))->endOfDay();
 
-          // Aplicar filtro si ambas fechas son válidas
-          $query->whereBetween('transactions.fecha_envio_email', [$start, $end]);
-        } catch (\Exception $e) {
-          // Manejar el caso de fechas inválidas (opcional: log o ignorar)
+                $query->whereBetween('transactions.fecha_envio_email', [$start, $end]);
+            } catch (\Exception $e) {
+                // Manejo de error
+            }
+        } else {
+            try {
+                // Validar y convertir la fecha única
+                $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_fecha_envio_email'])->format('Y-m-d');
+
+                // Aplicar filtro si la fecha es válida
+                $query->whereDate('transactions.fecha_envio_email', $singleDate);
+            } catch (\Exception $e) {
+                // Manejo de error
+            }
         }
-      } else {
-        try {
-          // Validar y convertir la fecha única
-          $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_fecha_envio_email'])->format('Y-m-d');
-
-          // Aplicar filtro si la fecha es válida
-          $query->whereDate('transactions.fecha_envio_email', $singleDate);
-
-        } catch (\Exception $e) {
-          // Manejar el caso de fecha inválida (opcional: log o ignorar)
-        }
-      }
     }
 
     if (!empty($filters['filter_issuer_name'])) {
