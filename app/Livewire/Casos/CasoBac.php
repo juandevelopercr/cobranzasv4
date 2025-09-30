@@ -49,7 +49,7 @@ class CasoBac extends CasoManager
     $CONCURSALES   = 78;
     $LETRADECAMBIO = 31;
     $PAGARE        = 32;
-
+    /*
     if (auth()->user()->hasAnyRole(['ASIGNACIONES'])) {
       $this->productos = CasoProducto::join('casos_productos_bancos', 'casos_productos_bancos.product_id', '=', 'casos_productos.id')
         ->where('casos_productos_bancos.bank_id', '=', $this->bank_id)
@@ -63,6 +63,11 @@ class CasoBac extends CasoManager
         ->orderBy('nombre', 'ASC')
         ->get();
     }
+    */
+    $this->productos = CasoProducto::join('casos_productos_bancos', 'casos_productos_bancos.product_id', '=', 'casos_productos.id')
+        ->where('casos_productos_bancos.bank_id', '=', $this->bank_id)
+        ->orderBy('nombre', 'ASC')
+        ->get();
 
     $this->clientes = Contact::where('active', 1)->orderby('name', 'ASC')->get();
 
@@ -882,8 +887,6 @@ class CasoBac extends CasoManager
       $this->getPanelsProperty();
     }
 
-    dd($this->perPage);
-
     if ($propertyName == 'pnumero_expediente_judicial') {
         $codigo = trim($this->pnumero_expediente_judicial);
 
@@ -930,6 +933,7 @@ class CasoBac extends CasoManager
     'filter_pdespacho_judicial_juzgado' => NULL,
     'filter_pnombre_demandado' => NULL,
     'filter_pnumero_cedula' => NULL,
+    'filter_pnumero_expediente_judicial' => NULL,
     'filter_pfecha_presentacion_demanda' => NULL,
     'filter_nfecha_traslado_juzgado' => NULL,
     'filter_nfecha_notificacion_todas_partes' => NULL,
@@ -1154,6 +1158,25 @@ class CasoBac extends CasoManager
         'orderName' => 'pnumero_cedula',
         'label' => __('Número de Cédula del demandado'),
         'filter' => 'filter_pnumero_cedula',
+        'filter_type' => 'input',
+        'filter_sources' => '',
+        'filter_source_field' => '',
+        'columnType' => 'string',
+        'columnAlign' => '',
+        'columnClass' => '',
+        'function' => '',
+        'parameters' => [],
+        'sumary' => '',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'pnumero_expediente_judicial',
+        'orderName' => 'casos.pnumero_expediente_judicial',
+        'label' => __('Número de Expediente Judicial'),
+        'filter' => 'filter_pnumero_expediente_judicial',
         'filter_type' => 'input',
         'filter_sources' => '',
         'filter_source_field' => '',

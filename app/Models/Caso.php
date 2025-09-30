@@ -424,6 +424,7 @@ class Caso extends Model
       'casos.pfecha_asignacion_caso',
       'banks.name as bank_name',
       'casos.pnumero_contrato',
+      'casos.pnumero_expediente_judicial',
       'casos.pdespacho_judicial_juzgado',
       'casos.pnombre_demandado',
       'casos.pnumero_cedula',
@@ -520,6 +521,10 @@ class Caso extends Model
 
     if (!empty($filters['filter_pdespacho_judicial_juzgado'])) {
       $query->where('casos.pdespacho_judicial_juzgado', 'like', '%' . $filters['filter_pdespacho_judicial_juzgado'] . '%');
+    }
+
+    if (!empty($filters['filter_pnumero_expediente_judicial'])) {
+      $query->where('casos.pnumero_expediente_judicial', 'like', '%' . $filters['filter_pnumero_expediente_judicial'] . '%');
     }
 
     if (!empty($filters['filter_pnombre_demandado'])) {
