@@ -650,7 +650,7 @@ class ProformaManager extends TransactionManager
       'location_economic_activity_id'  => 'nullable|integer|exists:economic_activities,id',
       'cuenta_id'             => 'nullable|integer|exists:cuentas,id',
       'contact_id'            => 'required|integer|exists:contacts,id',
-      'department_id'         => 'required|integer|exists:departments,id',
+      'department_id'         => 'nullable|integer|exists:departments,id',
       'contact_economic_activity_id' => 'nullable|integer|exists:economic_activities,id',
       'currency_id'           => 'required|integer|exists:currencies,id',
       'area_id'               => 'nullable|integer|exists:areas,id',
