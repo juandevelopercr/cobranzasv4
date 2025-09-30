@@ -457,8 +457,9 @@ class InvoiceManager extends TransactionManager
 
   protected function getFilteredQuery()
   {
+    $documentType = ['FE', 'TE'];
     $query = Transaction::search($this->search, $this->filters)
-      ->where('document_type', $this->document_type);
+      ->whereIn('document_type', $documentType);
 
     // Condiciones según el rol del usuario
     $allowedRoles = User::ROLES_ALL_BANKS;

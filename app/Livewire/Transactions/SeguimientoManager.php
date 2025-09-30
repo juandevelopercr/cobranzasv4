@@ -597,15 +597,19 @@ class SeguimientoManager extends TransactionManager
   protected function getFilteredQuery()
   {
     $business = Business::find(1);
+    //$document_type = $this->document_type;
+    $documentType = ['PR', 'FE', 'TE'];
 
+    /*
     $document_type = $this->document_type;
     if (!is_array($this->document_type)) {
       $document_type = [$this->document_type];
     }
+      */
 
     $query = Transaction::search($this->search, $this->filters)
       ->join('transactions_commissions', 'transactions_commissions.transaction_id', '=', 'transactions.id')
-      ->whereIn('document_type', $document_type)
+      ->whereIn('document_type', $documentType)
       ->where('transactions_commissions.centro_costo_id', $business->centro_costo_calculo_registro_id);
 
     // Condiciones según el rol del usuario

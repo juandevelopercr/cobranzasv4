@@ -561,12 +561,15 @@ class HistoryManager extends TransactionManager
 
   protected function getFilteredQuery()
   {
-    $document_type = $this->document_type;
+    //$document_type = $this->document_type;
+    $documentType = ['PR', 'FE', 'TE'];
+    /*
     if (!is_array($this->document_type)) {
       $document_type = [$this->document_type];
     }
+      */
     $query = Transaction::search($this->search, $this->filters)
-      ->whereIn('document_type', $document_type);
+      ->whereIn('document_type', $documentType);
 
     // Condiciones según el rol del usuario
     $allowedRoles = User::ROLES_ALL_BANKS;
