@@ -72,6 +72,13 @@
                 @if ($this->documentType != 'FE' && $this->documentType != 'TE')
                 <option value="PRS">{{ __('Proforma Sencilla') }}</option>
                 <option value="PRD">{{ __('Proforma Detallada') }}</option>
+                  @if ($this->proforma_type == 'GASTO')
+                  <option value="RGS">{{ __('Recibo Sencillo') }}</option>
+                  <option value="RGD">{{ __('Recibo Detallado') }}</option>
+                  @endif
+                  @if ($this->proforma_type == 'HONORARIO' && in_array($this->status, ['ACEPTADA', 'RECHAZADA', 'ANULADA']))
+                  <option value="FE">{{ __('Factura Electrónica / Tiquete Electrónico') }}</option>
+                  @endif
                 @endif
                 @if ($this->documentType == 'FE' || $this->documentType == 'TE')
                 <option value="FE">{{ __('Factura Electrónica') }}</option>

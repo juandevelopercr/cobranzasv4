@@ -36,6 +36,8 @@ class SendEmailModal extends Component
   public $canexport;
   public $documentType;
   public $has_documents = false;
+  public $proforma_type;
+  public $status;
 
   protected $listeners = ['openEmailModal'];
 
@@ -61,7 +63,8 @@ class SendEmailModal extends Component
       $this->recipientEmail = $transaction->contact->email;
       $this->recipientName = $transaction->contact->name;
       $this->ccEmails = $transaction->email_cc;
-
+      $this->proforma_type = $transaction->proforma_type;
+      $this->status = $transaction->status;
       $this->has_documents = $transaction->documents->isNotEmpty();
 
       $prefijo_nombre = '';
@@ -145,27 +148,62 @@ class SendEmailModal extends Component
     $attachments = [];
 
     if ($this->documentType == 'PROFORMA') {
-      if ($this->type == 'PRS' || $this->type == 'PRD') {
-        if ($this->type == 'PRS')
-          $type = 'sencillo';
-        else
-        if ($this->type == 'PRD')
-          $type = 'detallado';
+      if (in_array($this->type, ['PRS', 'RGS']))
+        $type = 'sencillo';
+      else
+        $type = 'detallado';
 
+      if (in_array($this->type, ['PRS', 'PRD'])) {
         $filePdf = Helpers::generateProformaPdf($this->transactionId, $type, 'file');
         $attachments[] = [
           'path' => $filePdf, // Ruta del archivo
           'name' => $this->filename, // Nombre del archivo
           'mime' => 'application/pdf', // Tipo MIME
         ];
-      } else {
-        // Asociar documentos de factura electrónica
-        $filePdf = Helpers::generateComprobanteElectronicoPdf($this->transactionId, 'file');
+      } else
+      if (in_array($this->type, ['RGS', 'RGD'])) {
+        $filePdf = Helpers::generateReciboPdf($this->transactionId, $type, 'file');
         $attachments[] = [
           'path' => $filePdf, // Ruta del archivo
           'name' => $this->filename, // Nombre del archivo
           'mime' => 'application/pdf', // Tipo MIME
         ];
+      } else
+      if (in_array($this->type, ['FE'])) {
+        //FACTURA ELECTRONICA
+        // 1. Adjuntar PDF de factura
+        $transaction = Transaction::find($this->transactionId);
+        $filePathPdf = Helpers::generateComprobanteElectronicoPdf($this->transactionId, 'file');
+        $attachments[] = [
+          'path' => $filePathPdf,
+          'name' => $transaction->key . '.pdf',
+          'mime' => 'application/pdf',
+        ];
+
+        $transaction = Transaction::find($this->transactionId);
+
+        // 2. Adjuntar XML de factura
+        $filePathXml = Helpers::generateComprobanteElectronicoXML($transaction, false, 'file');
+        $attachments[] = [
+          'path' => $filePathXml,
+          'name' => $transaction->key . '.xml',
+          'mime' => 'application/xml',
+        ];
+
+        // 3. Adjuntar XML de respuesta de Hacienda (CORRECCIÓN)
+        $xmlDirectory = storage_path("app/public/");
+        $xmlResponsePath = $xmlDirectory . $transaction->response_xml;
+
+        if (file_exists($xmlResponsePath)) {
+          $filenameResponse = $transaction->key . '_respuesta.xml';
+
+          // CORRECCIÓN: Usar la ruta del archivo directamente
+          $attachments[] = [
+            'path' => $xmlResponsePath,
+            'name' => $filenameResponse,
+            'mime' => 'application/xml', // MIME type corregido
+          ];
+        }
       }
     } else {
       //FACTURA ELECTRONICA
