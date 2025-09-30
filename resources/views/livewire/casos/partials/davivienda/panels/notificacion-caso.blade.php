@@ -154,7 +154,6 @@
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
-  aqui
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="nfecha_entrega_requerimiento_pago">{{ __('Fecha de entrega requerimiento pago') }}</label>

@@ -1401,7 +1401,6 @@ class CasoTerceros extends CasoManager
         $panels['sentencia'] = true;
         $panels['arreglo'] = true;
         $panels['aprobacion'] = true;
-        $panels['terminacion'] = true;
         break;
     }
 
