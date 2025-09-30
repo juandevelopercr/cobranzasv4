@@ -729,6 +729,7 @@ class NotaDebitoElectronicaManager extends TransactionManager
       'transaction_id'    => $record->id,
       'bank_id'           => $record->bank_id,
       'type_notarial_act' => $record->proforma_type,
+      'tipo_facturacion'  => $record->tipo_facturacion
     ]);
 
     // Almacenar en sesión Y emitir evento global
@@ -823,6 +824,7 @@ class NotaDebitoElectronicaManager extends TransactionManager
         'transaction_id'    => $record->id,
         'bank_id'           => $record->bank_id,
         'type_notarial_act' => $record->proforma_type,
+        'tipo_facturacion'  => $record->tipo_facturacion
       ]);
 
       // --- Sincronizar pagos ---

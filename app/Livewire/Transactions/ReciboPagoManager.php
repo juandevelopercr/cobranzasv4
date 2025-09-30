@@ -904,6 +904,7 @@ class ReciboPagoManager extends TransactionManager
       'transaction_id'    => $record->id,
       'bank_id'           => $record->bank_id,
       'type_notarial_act' => $record->proforma_type,
+      'tipo_facturacion'  => $record->tipo_facturacion
     ]);
 
     $this->payments = $record->payments->map(fn($p) => [
@@ -991,6 +992,7 @@ class ReciboPagoManager extends TransactionManager
         'transaction_id'    => $record->id,
         'bank_id'           => $record->bank_id,
         'type_notarial_act' => $record->proforma_type,
+        'tipo_facturacion'  => $record->tipo_facturacion
       ]);
 
       // --- Sincronizar pagos ---
