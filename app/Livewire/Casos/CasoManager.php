@@ -1128,4 +1128,9 @@ class CasoManager extends BaseComponent
       }
     }
   }
+
+  public function updatedPerPage($value)
+  {
+    $this->resetPage(); // Resetea la página a la primera cada vez que se actualiza $perPage
+  }
 }

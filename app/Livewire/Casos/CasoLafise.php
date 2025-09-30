@@ -103,7 +103,6 @@ class CasoLafise extends CasoManager
 
   public function render()
   {
-    $this->resetPage(); // Resetea la página a la primera cada vez que se actualiza $perPage
     $query = Caso::search($this->search, $this->filters ?? [])
       ->where('casos.bank_id', $this->bank_id);
 
