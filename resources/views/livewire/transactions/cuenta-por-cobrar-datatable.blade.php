@@ -18,7 +18,7 @@
               </div>
             </div>
             <div class="col-md-10">
-              <div class="dt-action-buttons text-xl-end text-lg-start text-md-end text-start d-flex align-items-center 
+              <div class="dt-action-buttons text-xl-end text-lg-start text-md-end text-start d-flex align-items-center
                             justify-content-end flex-md-row flex-column mb-6 mb-md-0 mt-n6 mt-md-0">
 
                   <div class="col-md-3 select2-primary mt-5 justify-content-left"
@@ -150,19 +150,21 @@
                   @endforeach
                 </tbody>
                 <tfoot>
-                  <tr>
-                    <td></td>
-                    @foreach ($this->columns as $index => $column)
-                      @if ($column['visible'])
-                        @php
-                        $value = !empty($column['sumary']) ? (${$column['sumary']} ?? '') : '';
-                        @endphp
-                      <td align="right">
-                        <strong>{{ Helper::formatDecimal($value) }}</strong>
-                      </td>
-                      @endif
-                    @endforeach
-                  </tr>
+                    <tr>
+                        <td></td>
+                        @foreach ($this->columns as $index => $column)
+                            @if ($column['visible'])
+                                @php
+                                    $value = !empty($column['sumary']) ? (${$column['sumary']} ?? '') : '';
+                                @endphp
+                                <td class="text-end">
+                                    <strong>
+                                        {{ $column['sumary'] == 'tpax' ? (int)$value : Helper::formatDecimal($value) }}
+                                    </strong>
+                                </td>
+                            @endif
+                        @endforeach
+                    </tr>
                 </tfoot>
               </table>
               <div class="row overflow-y-scroll" wire:scroll>
