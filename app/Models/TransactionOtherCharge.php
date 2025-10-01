@@ -6,6 +6,7 @@ use App\Models\Caso;
 use App\Models\Product;
 use App\Helpers\Helpers;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -62,7 +63,7 @@ class TransactionOtherCharge extends Model
     // Definir las columnas que quieres seleccionar
     $columns = [
       'transactions_other_charges.id',
-      'transaction_id',
+      'transactions_other_charges.transaction_id',
       'transactions_other_charges.product_id',
        DB::raw("CONCAT_WS(' / ',
           NULLIF(casos.pnumero, ''),
@@ -87,18 +88,10 @@ class TransactionOtherCharge extends Model
 
     $query->select($columns)
       ->join('additional_charge_types', 'transactions_other_charges.additional_charge_type_id', '=', 'additional_charge_types.id')
-      ->join('products', 'transactions_other_charges.product_id', '=', 'products.id')
+      ->leftJoin('products', 'transactions_other_charges.product_id', '=', 'products.id')
       ->leftJoin('identification_types', 'transactions_other_charges.third_party_identification_type', '=', 'identification_types.code')
-      ->leftJoin('casos', 'transactions_other_charges.caso_id', '=', 'casos.id')
-      ->where(function ($q) use ($value) {
-        $q->where('additional_charge_other', 'like', "%{$value}%")
-          ->orWhere('third_party_identification_type', 'like', "%{$value}%")
-          ->orWhere('third_party_identification', 'like', "%{$value}%")
-          ->orWhere('third_party_name', 'like', "%{$value}%")
-          ->orWhere('detail', 'like', "%{$value}%")
-          ->orWhere('percent', 'like', "%{$value}%")
-          ->orWhere('amount', 'like', "%{$value}%");
-      });
+      ->leftJoin('casos', 'transactions_other_charges.caso_id', '=', 'casos.id');
+
 
     // Aplica filtros adicionales si están definidos
     if (!empty($filters['filter_additional_charge_types'])) {
@@ -153,6 +146,9 @@ class TransactionOtherCharge extends Model
     if (!empty($filters['filter_third_party_identification'])) {
       $query->where('third_party_identification', 'like', '%' . $filters['filter_third_party_identification'] . '%');
     }
+
+    //Log::debug("SQL RAW: " . $query->toSql());
+    //Log::debug("Bindings: ", $query->getBindings());
 
     return $query;
   }

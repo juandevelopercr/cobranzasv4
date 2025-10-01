@@ -48,7 +48,7 @@ class TransactionChargeManager extends BaseComponent
   public $recordId = '';
 
   // Variables públicas
-  public $transaction_id;
+  public $transaction_id = NULL;
   public $caso_id = NULL;
   public $product_id = NULL;
   public $additional_charge_type_id;
@@ -102,7 +102,9 @@ class TransactionChargeManager extends BaseComponent
     $this->bank_id = $data['bank_id'];
     $this->type_notarial_act = $data['type_notarial_act'];
     $this->tipo_facturacion = $data['tipo_facturacion'];
+    //Log::debug('handleUpdateContext transaction_id', [$this->transaction_id]);
   }
+
 
   public function mount($transaction_id, $canview, $cancreate, $canedit, $candelete, $canexport)
   {
@@ -110,7 +112,6 @@ class TransactionChargeManager extends BaseComponent
     if (session()->has('transaction_context')) {
       $this->handleUpdateContext(session()->get('transaction_context'));
     }
-
     $this->transaction_id = $transaction_id;
 
     $this->chargeTypes = AdditionalChargeType::orderBy('code', 'ASC')->get();
@@ -121,6 +122,8 @@ class TransactionChargeManager extends BaseComponent
     $this->canedit = $canedit;
     $this->candelete = $candelete;
     $this->canexport = $canexport;
+
+    //Log::debug('MOUNT transaction_id', [$this->transaction_id]);
 
     $this->products = Product::query()
       ->select(['products.id as id', 'products.name as name'])
@@ -137,10 +140,16 @@ class TransactionChargeManager extends BaseComponent
 
   public function render()
   {
+    //DB::enableQueryLog();
+
     $records = TransactionOtherCharge::search($this->search, $this->filters) // Utiliza el scopeSearch para la búsqueda
-      ->where('transaction_id', '=', $this->transaction_id)
+      ->where('transaction_id', '=', (int)$this->transaction_id)
       ->orderBy($this->sortBy, $this->sortDir)
       ->paginate($this->perPage);
+
+    //Log::debug('RENDER transaction_id', [$this->transaction_id]);
+
+    //Log::debug(DB::getQueryLog());
 
     return view('livewire.transactions-charges.datatable', [
       'records' => $records,
