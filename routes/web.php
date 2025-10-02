@@ -138,7 +138,7 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
   Route::get('classifiers/honorarios', [HonorarioController::class, 'index'])->name('classifiers-honorarios');
   Route::get('classifiers/timbres', [TimbreController::class, 'index'])->name('classifiers-timbres');
   Route::get('classifiers/banks', [BankController::class, 'index'])->name('classifiers-banks');
-  Route::get('classifiers/cuentas', [CuentaController::class, 'index'])->name('classifiers-cuentas');
+  //Route::get('classifiers/cuentas', [CuentaController::class, 'index'])->name('classifiers-cuentas');
   Route::get('classifiers/catalogo-cuentas', [CatalogoCuentaController::class, 'index'])->name('classifiers-catalogo-cuentas');
   Route::get('classifiers/centro-costos', [CentroCostoController::class, 'index'])->name('classifiers-centro-costos');
   Route::get('classifiers/departments', [DepartmentController::class, 'index'])->name('classifiers-departments');
@@ -171,6 +171,7 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
   Route::get('banks/movements', [MovimientoController::class, 'index'])->name('banks-movements.index');
   Route::get('banks/revisions', [RevisionController::class, 'index'])->name('banks-revisions.index');
   Route::get('banks/movements-notifications', [MovimientoNotificationController::class, 'index'])->name('banks-movements-notifications');
+  Route::get('banks/cuentas', [CuentaController::class, 'index'])->name('banks-cuentas');
 
   // DASHBOARD
   Route::get('dashboard/firmas', [GraficoController::class, 'firmas'])->name('dashboard-firmas.index');

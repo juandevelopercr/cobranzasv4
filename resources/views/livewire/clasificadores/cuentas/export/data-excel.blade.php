@@ -1,26 +1,40 @@
-<table>
+<html xmlns:o='urn:schemas-microsoft-com:office:office'
+      xmlns:x='urn:schemas-microsoft-com:office:excel'
+      xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+  <meta http-equiv='Content-Type' content='text/html;charset=utf-8' />
+</head>
+
+<body class="kv-wrap">
+  <table class="kv-grid-table table table-bordered kv-table-wrap">
     <thead>
-        <tr>
-            <th>ID</th>
-            <th>{{ __('Numero de cuenta') }}</th>
-            <th>{{ __('Cuenta') }}</th>
-            <th>{{ __('Moneda') }}</th>
-            <th>{{ __('Balance') }}</th>
-            <th>{{ __('Saldo') }}</th>
-            <th>{{ __('Último cheque') }}</th>
-        </tr>
+      <tr>
+        <th style="width: 30px;">#</th>
+        <th style="width: 400px;">{{ __('Banco') }}</th>
+        <th style="width: 200px;">{{ __('Número de Cuenta') }}</th>
+        <th style="width: 250px;">{{ __('Persona o Sociedad') }}</th>
+        <th style="width: 100px;">{{ __('Moneda') }}</th>
+        <th style="width: 200px;">{{ __('Saldo Actual') }}</th>
+        <th style="width: 100px;">{{ __('Último cheque') }}</th>
+      </tr>
     </thead>
     <tbody>
-        @foreach($records as $record)
-        <tr>
-            <td>{{ $record->id }}</td>
-            <td>{{ $record->numero_cuenta }}</td>
-            <td>{{ $record->nombre_cuenta }}</td>
-            <td>{{ $record->currency->code }}</td>
-            <td>{{ $record->balance }}</td>
-            <td>{{ $record->saldo }}</td>
-            <td>{{ $record->ultimo_cheque }}</td>
-        </tr>
+      {{--@foreach ($query->cursor() as $key => $dato) --}}
+      @foreach ($chunks as $chunk)
+        @foreach ($chunk as $key => $dato)
+          {{-- tu lógica actual --}}
+          <tr>
+            <td>{{ $key + 1 }}</td>
+            <td>{{ $dato->nombre_cuenta ?? '' }}</td>
+            <td>{{ $dato->numero_cuenta }}</td>
+            <td>{{ $dato->perosna_sociedad }}</td>
+            <td>{{ $dato->moneda }}</td>
+            <td style="mso-number-format:'#,##0.00'; text-align:right;">{{ $dato->getBalance() ?? 0 }}</td>
+            <td>{{ $dato->ultimo_cheque }}</td>
+          </tr>
         @endforeach
+      @endforeach
     </tbody>
-</table>
+  </table>
+</body>
+</html>

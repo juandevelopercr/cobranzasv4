@@ -209,11 +209,11 @@
           ]
         },
         {
-          "url": "classifiers/cuentas",
+          "url": "banks/cuentas",
           "name": "Cuentas",
-          "slug": "classifiers-cuentas",
+          "slug": "banks-cuentas",
           "permissions": [
-            "view-classifiers"
+            "view-movimientos"
           ]
         },
         {
