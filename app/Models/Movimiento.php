@@ -126,6 +126,8 @@ class Movimiento extends Model implements HasMedia
       'concepto',
       'email_destinatario',
       'clonando',
+      DB::raw('"" as codigo_contable'),
+      DB::raw('"" as centro_costo'),
     ];
 
     $query->select($columns)
@@ -143,7 +145,8 @@ class Movimiento extends Model implements HasMedia
     }
 
     if (!empty($filters['filter_numero'])) {
-      $query->where('numero', '=', $filters['filter_numero']);
+      $query->where('movimientos.numero', 'like', '%' . $filters['filter_numero'] . '%');
+      //$query->where('numero', '=', $filters['filter_numero']);
     }
 
     if (!empty($filters['filterFecha'])) {
@@ -156,7 +159,7 @@ class Movimiento extends Model implements HasMedia
           $end = Carbon::createFromFormat('d-m-Y', $range[1])->format('Y-m-d');
 
           // Aplicar filtro si ambas fechas son válidas
-          $query->whereBetween('fecha', [$start, $end]);
+          $query->whereBetween('movimientos.fecha', [$start, $end]);
         } catch (\Exception $e) {
           // Manejar el caso de fechas inválidas (opcional: log o ignorar)
         }
@@ -166,7 +169,7 @@ class Movimiento extends Model implements HasMedia
           $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filterFecha'])->format('Y-m-d');
 
           // Aplicar filtro si la fecha es válida
-          $query->whereDate('fecha', $singleDate);
+          $query->whereDate('movimientos.fecha', $singleDate);
         } catch (\Exception $e) {
           // Manejar el caso de fecha inválida (opcional: log o ignorar)
         }
@@ -174,7 +177,7 @@ class Movimiento extends Model implements HasMedia
     }
 
     if (!empty($filters['filter_beneficiario'])) {
-      $query->where('beneficiario', 'like', '%' . $filters['filter_beneficiario'] . '%');
+      $query->where('movimientos.beneficiario', 'like', '%' . $filters['filter_beneficiario'] . '%');
     }
 
     if (!empty($filters['filter_currency'])) {
@@ -182,15 +185,15 @@ class Movimiento extends Model implements HasMedia
     }
 
     if (!empty($filters['filter_monto'])) {
-      $query->where('monto', '=', $filters['filter_monto']);
+      $query->where('movimientos.monto', '=', $filters['filter_monto']);
     }
 
     if (!empty($filters['filter_type'])) {
-      $query->where('tipo_movimiento', 'like', '%' . $filters['filter_type'] . '%');
+      $query->where('movimientos.tipo_movimiento', 'like', '%' . $filters['filter_type'] . '%');
     }
 
     if (!empty($filters['filter_description'])) {
-      $query->where('descripcion', 'like', '%' . $filters['filter_description'] . '%');
+      $query->where('movimientos.descripcion', 'like', '%' . $filters['filter_description'] . '%');
     }
 
     /*
@@ -202,21 +205,21 @@ class Movimiento extends Model implements HasMedia
     }
     */
     if (!empty($filters['filter_status'])) {
-      $query->where('status', $filters['filter_status']);
+      $query->where('movimientos.status', $filters['filter_status']);
     } elseif (!empty($defaultStatus)) {
-      $query->whereIn('status', $defaultStatus);
+      $query->whereIn('movimientos.status', $defaultStatus);
     }
 
     if (isset($filters['filter_bloqueo_fondos']) && !is_null($filters['filter_bloqueo_fondos'])  && $filters['filter_bloqueo_fondos'] !== '') {
-      $query->where('bloqueo_fondos', '=', $filters['filter_bloqueo_fondos']);
+      $query->where('movimientos.bloqueo_fondos', '=', $filters['filter_bloqueo_fondos']);
     }
 
     if (isset($filters['filter_clonando']) && !is_null($filters['filter_clonando'])  && $filters['filter_clonando'] !== '') {
-      $query->where('clonando', '=', $filters['filter_clonando']);
+      $query->where('movimientos.clonando', '=', $filters['filter_clonando']);
     }
 
     if (isset($filters['filter_comprobante_pendiente']) && !is_null($filters['filter_comprobante_pendiente'])  && $filters['filter_comprobante_pendiente'] !== '') {
-      $query->where('comprobante_pendiente', '=', $filters['filter_comprobante_pendiente']);
+      $query->where('movimientos.comprobante_pendiente', '=', $filters['filter_comprobante_pendiente']);
     }
 
     return $query;
@@ -303,8 +306,8 @@ class Movimiento extends Model implements HasMedia
           <a href="#"
             x-bind:class="{ 'disabled pointer-events-none opacity-50': loading }"
             x-on:click.prevent="
-                loading = true; 
-                \$dispatch('print-cheque', { id: {$this->id} }); 
+                loading = true;
+                \$dispatch('print-cheque', { id: {$this->id} });
                 setTimeout(() => loading = false, 1000);
             "
             title="Imprimir Cheque">

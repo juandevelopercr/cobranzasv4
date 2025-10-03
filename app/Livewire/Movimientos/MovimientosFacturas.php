@@ -23,7 +23,6 @@ class MovimientosFacturas extends TransactionManager
     'filter_proforma_no' => NULL,
     'filter_consecutivo' => NULL,
     'filter_customer_name' => NULL,
-    'filter_department_name' => NULL,
     'filter_user_name' => NULL,
     'filter_fecha_solicitud_factura' => NULL,
     'filter_issuer_name' => NULL,
@@ -160,25 +159,6 @@ class MovimientosFacturas extends TransactionManager
         'sumary' => '',
         'openHtmlTab' => '<span class="emp_name text-truncate">',
         'closeHtmlTab' => '</span>',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'department_name',
-        'orderName' => 'departments.name',
-        'label' => __('Department'),
-        'filter' => 'filter_department_name',
-        'filter_type' => 'select',
-        'filter_sources' => 'departments',
-        'filter_source_field' => 'name',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => '',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
         'width' => NULL,
         'visible' => true,
       ],
@@ -477,25 +457,13 @@ class MovimientosFacturas extends TransactionManager
     $query = Transaction::search($this->search, $this->filters)
       ->whereIn('document_type', $this->document_type)
       ->whereIn('transactions.id', function ($subquery) {
-        $subquery->select('transaction_id')
-          ->from('movimientos_facturas')
-          ->where('movimiento_id', $this->movimientoId);
-      });
-
-    // Condiciones según el rol del usuario
-    $allowedRoles = User::ROLES_ALL_BANKS;
-    $user = auth()->user();
-    if ($user->hasAnyRole($allowedRoles)) {
-      $query->whereIn('proforma_status', [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA]);
-    } else {
-      //Obtener bancos
-      $allowedBanks = $user->banks->pluck('id');
-      if (!empty($allowedBanks)) {
-        $query->whereIn('transactions.bank_id', $allowedBanks);
-      }
+          $subquery->select('transaction_id')
+              ->from('movimientos_facturas')
+              ->where('movimiento_id', $this->movimientoId);
+      })
+      ->distinct('transactions.id');
 
       $query->whereIn('proforma_status', [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA]);
-    }
 
     return $query;
   }

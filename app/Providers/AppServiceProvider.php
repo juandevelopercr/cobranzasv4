@@ -73,7 +73,7 @@ class AppServiceProvider extends ServiceProvider
       return $user->hasRole('SuperAdmin') ? true : null;
     });
 
-    //Movimiento::observe(MovimientoObserver::class);
+    Movimiento::observe(MovimientoObserver::class);
 
     /*
     Validator::extend('unique_combo', function ($attribute, $value, $parameters, $validator) {

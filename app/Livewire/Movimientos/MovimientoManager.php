@@ -227,13 +227,6 @@ class MovimientoManager extends BaseComponent
 
   public function create()
   {
-    /*
-    $cuentas = Cuenta::get();
-    foreach ($cuentas as $cuenta){
-      Helpers::initSaldosCuentas($cuenta->id);
-    }
-    */
-
     $this->resetControls();
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
@@ -1039,7 +1032,7 @@ class MovimientoManager extends BaseComponent
         'field' => 'codigo_contable',
         'orderName' => '',
         'label' => __('Código contable'),
-        'filter' => 'filter_codigo_contable',
+        'filter' => '',
         'filter_type' => 'input',
         'filter_sources' => '',
         'filter_source_field' => '',
@@ -1058,7 +1051,7 @@ class MovimientoManager extends BaseComponent
         'field' => 'centro_costo',
         'orderName' => '',
         'label' => __('Centro de costo'),
-        'filter' => 'filter_centro_costo',
+        'filter' => '',
         'filter_type' => 'input',
         'filter_sources' => '',
         'filter_source_field' => '',
@@ -1305,6 +1298,7 @@ class MovimientoManager extends BaseComponent
       $cloned->numero = $original->numero;
       $cloned->fecha = Carbon::today(); // Solo la fecha, sin hora
       $cloned->diferencia = 0;
+      $cloned->saldo_cancelar = 0;
       $cloned->email_destinatario = '';
       $cloned->clonando = 1;
 

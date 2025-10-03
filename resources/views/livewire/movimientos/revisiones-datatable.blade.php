@@ -124,11 +124,11 @@
 
                   <!-- Renderizar el componente Livewire -->
                   @livewire('components.datatable-settings', [
-                  'datatableName' => 'movimientos-datatable',
+                  'datatableName' => 'revisiones-datatable',
                   'availableColumns' => $this->columns,
                   'perPage' => $this->perPage,
                   ],
-                  key('movimientos-datatable-config'))
+                  key('revisiones-datatable-config'))
                 </div>
               </div>
 

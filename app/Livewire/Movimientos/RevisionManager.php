@@ -786,7 +786,7 @@ class RevisionManager extends BaseComponent
   public function refresDatatable()
   {
     $config = DataTableConfig::where('user_id', Auth::id())
-      ->where('datatable_name', 'movimientos-datatable')
+      ->where('datatable_name', 'revisiones-datatable')
       ->first();
 
     if ($config) {
@@ -855,7 +855,7 @@ class RevisionManager extends BaseComponent
         'columnType' => 'string',
         'columnAlign' => '',
         'columnClass' => '',
-        'function' => 'getHtmlColumnNumeroCuenta',
+        'function' => '',
         'parameters' => [],
         'sumary' => '',
         'openHtmlTab' => '<span class="emp_name text-truncate">',
@@ -1016,7 +1016,7 @@ class RevisionManager extends BaseComponent
         'visible' => true,
       ],
       [
-        'field' => '',
+        'field' => 'codigo_contable',
         'orderName' => '',
         'label' => __('Código contable'),
         'filter' => 'filter_codigo_contable',
@@ -1035,7 +1035,7 @@ class RevisionManager extends BaseComponent
         'visible' => true,
       ],
       [
-        'field' => '',
+        'field' => 'centro_costo',
         'orderName' => '',
         'label' => __('Centro de costo'),
         'filter' => 'filter_centro_costo',
@@ -1610,6 +1610,7 @@ class RevisionManager extends BaseComponent
       $cloned->numero = $original->numero;
       $cloned->fecha = Carbon::today(); // Solo la fecha, sin hora
       $cloned->diferencia = 0;
+      $cloned->saldo_cancelar = 0;
       $cloned->email_destinatario = '';
       $cloned->clonando = 1;
 

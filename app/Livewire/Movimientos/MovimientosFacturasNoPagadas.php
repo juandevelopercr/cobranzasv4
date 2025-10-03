@@ -24,7 +24,6 @@ class MovimientosFacturasNoPagadas extends TransactionManager
     'filter_proforma_no' => NULL,
     'filter_consecutivo' => NULL,
     'filter_customer_name' => NULL,
-    'filter_department_name' => NULL,
     'filter_user_name' => NULL,
     'filter_fecha_solicitud_factura' => NULL,
     'filter_issuer_name' => NULL,
@@ -307,55 +306,39 @@ class MovimientosFacturasNoPagadas extends TransactionManager
     $movimiento = Movimiento::findOrFail($this->movimientoId);
     $cuenta = $movimiento->cuenta;
 
-    // Usamos las relaciones definidas con belongsToMany
     $bancos        = $cuenta->banks->pluck('id')->toArray();
-    $departamentos = $cuenta->departments->pluck('id')->toArray();
     $emisores      = $cuenta->locations->pluck('id')->toArray();
 
-    // Subquery para transacciones asociadas al movimiento actual
     $subquery = DB::table('movimientos_facturas')
-      ->select('transaction_id')
-      ->where('movimiento_id', $this->movimientoId);
+        ->select('transaction_id')
+        ->where('movimiento_id', $this->movimientoId);
 
-    // Query principal
     $query = Transaction::search($this->search, $this->filters)
-      ->whereIn('document_type', $this->document_type)
-      ->join('transactions_commissions', 'transactions_commissions.transaction_id', '=', 'transactions.id')
-      ->whereIn('proforma_status', [Transaction::FACTURADA])
-      ->where(function ($q) {
-        $q->whereNull('transactions.numero_deposito_pago')
-          ->orWhere('transactions.numero_deposito_pago', '');
-      })
-      ->whereNotIn('transactions.id', $subquery);
+        ->select('transactions.*', 'c.name as contact_name')
+        ->join('transactions_commissions', 'transactions_commissions.transaction_id', '=', 'transactions.id')
+        ->leftJoin('contacts as c', 'c.id', '=', 'transactions.contact_id')
+        ->whereIn('document_type', $this->document_type)
+        ->whereIn('proforma_status', [Transaction::FACTURADA])
+        ->where(function ($q) {
+            $q->whereNull('transactions.numero_deposito_pago')
+              ->orWhere('transactions.numero_deposito_pago', '');
+        })
+        ->whereNotIn('transactions.id', $subquery)
+        ->distinct(); // ⚡ evita duplicados sin groupBy
 
-    // Filtros dinámicos según la cuenta del movimiento
+    // Filtros dinámicos
     if (!empty($bancos)) {
-      $query->whereIn('transactions.bank_id', $bancos);
-    }
-
-    if (!empty($departamentos)) {
-      $query->whereIn('transactions.department_id', $departamentos);
+        $query->whereIn('transactions.bank_id', $bancos);
     }
 
     if (!empty($emisores)) {
-      $query->whereIn('transactions.location_id', $emisores);
+        $query->whereIn('transactions.location_id', $emisores);
     }
 
-    // Condiciones según el rol del usuario
-    $allowedRoles = User::ROLES_ALL_BANKS;
-    $user = auth()->user();
-    if (!$user->hasAnyRole($allowedRoles)) {
-      //Obtener bancos
-      $allowedBanks = $user->banks->pluck('id');
-      if (!empty($allowedBanks)) {
-        $query->whereIn('transactions.bank_id', $allowedBanks);
-      }
-    }
-
-    // Orden final
+    // Orden final: usar alias 'c.name' en lugar de 'contacts.name'
     return $query->orderByDesc('transactions.transaction_date')
-      ->orderByDesc('transactions.consecutivo')
-      ->orderBy('contacts.name');
+                 ->orderByDesc('transactions.consecutivo')
+                 ->orderBy('contact_name');
   }
 
   public function render()

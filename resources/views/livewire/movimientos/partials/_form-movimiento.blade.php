@@ -253,80 +253,6 @@
           @enderror
         </div>
       @endif
-      @endphp
-
-      @php
-      /*
-      <div class="col-md-3 fv-plugins-icon-container"
-          x-data="{
-            ...cleaveLivewire({
-              initialValue: '{{ $impuesto ?? '' }}',
-              wireModelName: 'impuesto',
-              postUpdate: false,
-              decimalScale: 2,
-              allowNegative: true,
-              rawValueCallback: (val) => {
-                //console.log('Callback personalizado:', val);
-                // lógica extra aquí si deseas
-              }
-            }),
-            tipoMovimiento: @entangle('tipo_movimiento')
-          }"
-          x-init="init($refs.cleaveInput)"
-          x-show="tipoMovimiento != 'DEPOSITO'"
-          style="display: none;">
-        <label class="form-label" for="impuesto">{{ __('Tax') }}</label>
-        <div class="input-group input-group-merge has-validation">
-          <span class="input-group-text"><i class="bx bx-transfer"></i></span>
-
-          <!-- oculto y sincronizado con Livewire -->
-          <input type="hidden" wire:model.defer="impuesto" x-ref="inputHiddenImpuesto" />
-
-          <input id="impuesto"
-                x-ref="cleaveInput"
-                class="form-control js-input-saldo-cancelar numeral-mask cleave-init"
-                type="text"
-                wire:model="impuesto"/>
-        </div>
-        @error('impuesto')
-          <div class="text-danger mt-1">{{ $message }}</div>
-        @enderror
-      </div>
-      */
-      @endphp
-      @php
-      /*
-      <div class="col-md-3 fv-plugins-icon-container">
-        <label class="form-label" for="impuesto">{{ __('Tax') }}</label>
-        <div
-          x-data="cleaveLivewire({
-            initialValue: '{{ $impuesto ?? '' }}',
-            wireModelName: 'impuesto',
-            postUpdate: false,
-            decimalScale: 2,
-            allowNegative: true,
-            rawValueCallback: (val) => {
-              //console.log('Callback personalizado:', val);
-              // lógica extra aquí si deseas
-              const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
-              if (component) {
-                component.set('impuesto', val); // <- Esto envía el valor sin comas
-              }
-            }
-          })"
-          x-init="init($refs.cleaveInput)"
-        >
-          <div class="input-group input-group-merge has-validation">
-            <span class="input-group-text"><i class="bx bx-dollar"></i></span>
-            <input type="text" id="impuesto" x-ref="cleaveInput" wire:ignore class="form-control js-input-impuesto" />
-          </div>
-        </div>
-        @error('impuesto')
-          <div class="text-danger mt-1">{{ $message }}</div>
-        @enderror
-      </div>
-      */
-      @endphp
 
       <div class="col-md-3 fv-plugins-icon-container"
           x-data="{
@@ -636,7 +562,9 @@
 
       const inputSaldoCancelar = document.getElementById('saldo_cancelar');
       const inputHiddenSaldoCancelar = document.querySelector('[x-ref="inputHiddenSaldoCancelar"]');
-      const inputHiddenImpuesto = document.querySelector('[x-ref="inputHiddenImpuesto"]');
+      //const inputHiddenImpuesto = document.querySelector('[x-ref="inputHiddenImpuesto"]');
+      const inputHiddenImpuesto = document.getElementById('impuesto');
+
 
       const monto = limpiarNumero(inputMonto?.value);
       const impuesto = limpiarNumero(inputImpuesto?.value);
