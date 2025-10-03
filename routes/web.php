@@ -49,26 +49,35 @@ use App\Http\Controllers\classifiers\CasoEstadoController;
 use App\Http\Controllers\classifiers\DepartmentController;
 use App\Http\Controllers\movimientos\MovimientoController;
 use App\Http\Controllers\reports\ReportProformaController;
+use App\Http\Controllers\reports\ReportRegistroController;
 use App\Http\Controllers\billing\CalculoRegistroController;
 use App\Http\Controllers\classifiers\CasoJuzgadoController;
 use App\Http\Controllers\classifiers\CasoProcesoController;
 use App\Http\Controllers\classifiers\CasoProductController;
 use App\Http\Controllers\classifiers\CentroCostoController;
+use App\Http\Controllers\reports\CustomersReportController;
+use App\Http\Controllers\reports\ReportGeneralesController;
+use App\Http\Controllers\reports\ReportRetencionController;
 use App\Http\Controllers\Auth\DepartmentSelectionController;
 use App\Http\Controllers\classifiers\AreaPracticaController;
 use App\Http\Controllers\classifiers\ComisionistaController;
 use App\Http\Controllers\classifiers\ProductoCasoController;
+use App\Http\Controllers\reports\ReportAntiguedadController;
+use App\Http\Controllers\reports\ReportComisionesController;
 use App\Http\Controllers\reports\ReportMovimientoController;
 use App\Http\Controllers\rolesPersmissions\AccessPermission;
+use App\Http\Controllers\reports\ReportFacturacionController;
 use App\Http\Controllers\reports\ReportTransactionController;
 use App\Livewire\Movimientos\Export\MovimientoExportFromView;
 use App\Http\Controllers\classifiers\CasoPoderdanteController;
 use App\Http\Controllers\classifiers\CatalogoCuentaController;
+use App\Http\Controllers\reports\ReportEstadoCuentaController;
 use App\Http\Controllers\classifiers\CasoExpectativaController;
 use App\Http\Controllers\classifiers\GrupoEmpresarialController;
 use App\Http\Controllers\classifiers\CasoListadoJuzgadoController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use App\Http\Controllers\classifiers\MovimientoNotificationController;
+use App\Http\Controllers\reports\ReportFacturacionDetalladaController;
 
 // locale
 Route::get('/lang/{locale}', [LanguageController::class, 'swap']);
@@ -245,6 +254,58 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
 
   Route::get('/descargar-exportacion-caso-pendientes/{filename}', [ReportCasoController::class, 'descargarExportacionCasoPendiente'])
     ->name('exportacion.caso.pendiente.descargar');
+
+
+  // Reportes generales
+  Route::prefix('reports')->name('reports.')->group(function () {
+    // Reporte de facturación
+    Route::get('/facturacion', [ReportFacturacionController::class, 'index'])
+      ->name('facturacion.index');
+
+    //Route::get('/facturacion/export', [ReportFacturacionController::class, 'export'])
+    //  ->name('facturacion.export');
+
+    // Reporte de facturación detallada
+    Route::get('/facturacion-detallada', [ReportFacturacionDetalladaController::class, 'index'])
+      ->name('facturacion-detallada.index');
+
+    //Route::get('/facturacion-detallada/export', [ReportFacturacionDetalladaController::class, 'export'])
+    //  ->name('facturacion-detallada.export');
+
+    // Reporte de clientes
+    Route::get('/customers', [CustomersReportController::class, 'index'])
+      ->name('customers.index');
+
+    //Route::get('/customers/export', [CustomersReportController::class, 'export'])
+    //  ->name('customers.export');
+
+    // Reporte de comisiones
+    Route::get('/comisiones', [ReportComisionesController::class, 'index'])
+      ->name('comisiones.index');
+
+    //Route::get('/comisiones/export', [ReportComisionesController::class, 'export'])
+    //  ->name('comisiones.export');
+
+    // Reporte Generales
+    Route::get('/generales', [ReportGeneralesController::class, 'index'])
+      ->name('generales.index');
+
+    // Reporte de Registro
+    Route::get('/registro', [ReportRegistroController::class, 'index'])
+      ->name('registro.index');
+
+    // Reporte de Retención
+    Route::get('/retencion', [ReportRetencionController::class, 'index'])
+      ->name('retencion.index');
+
+    // Reporte de Retención
+    Route::get('/antiguedad-saldo', [ReportAntiguedadController::class, 'index'])
+      ->name('antiguedad-saldo.index');
+
+    // Reporte estado de cuenta
+    Route::get('/estado-cuenta', [ReportEstadoCuentaController::class, 'index'])
+      ->name('estado-cuenta.index');
+  });
 });
 
 //Route::get('/usuarios', [UserCrud::class, 'index'])->name('usuarios.index');

@@ -426,6 +426,88 @@
       ]
     },
     {
+      "name": "Reports",
+      "icon": "menu-icon tf-icons bx bx-bar-chart-alt-2",
+      "slug": "reports",
+      "permissions": [
+        "view-classifiers"
+      ],
+      "submenu": [
+        {
+          "url": "reports/generales",
+          "name": "Generales",
+          "slug": "reports.generales.index",
+          "permissions": [
+            "view-generales-reports"
+          ]
+        },
+        {
+          "url": "reports/registro",
+          "name": "Registro",
+          "slug": "reports.registro.index",
+          "permissions": [
+            "view-registro-reports"
+          ]
+        },
+        {
+          "url": "reports/facturacion",
+          "name": "Facturación General",
+          "slug": "reports.facturacion.index",
+          "permissions": [
+            "view-facturacion-reports"
+          ]
+        },
+        {
+          "url": "reports/facturacion-detallada",
+          "name": "Facturación Detallada",
+          "slug": "reports.facturacion-detallada.index",
+          "permissions": [
+            "view-facturacion-general-reports"
+          ]
+        },
+        {
+          "url": "reports/customers",
+          "name": "Clientes",
+          "slug": "reports.customers.index",
+          "permissions": [
+            "view-cliente-reports"
+          ]
+        },
+        {
+          "url": "reports/comisiones",
+          "name": "Comisiones",
+          "slug": "reports.comisiones.index",
+          "permissions": [
+            "view-comisiones-reports"
+          ]
+        },
+        {
+          "url": "reports/retencion",
+          "name": "Facturación 2% retención",
+          "slug": "reports.retencion.index",
+          "permissions": [
+            "view-retencion-reports"
+          ]
+        },
+        {
+          "url": "reports/antiguedad-saldo",
+          "name": "Antiguedad de Saldo",
+          "slug": "reports.antiguedad-saldo.index",
+          "permissions": [
+            "view-antiguedad-reports"
+          ]
+        },
+        {
+          "url": "reports/estado-cuenta",
+          "name": "Estado de cuenta",
+          "slug": "reports.estado-cuenta.index",
+          "permissions": [
+            "view-estado-cuenta-reports"
+          ]
+        }
+      ]
+    },
+    {
       "name": "Classifiers",
       "icon": "menu-icon tf-icons bx bx-table",
       "slug": "classifiers",

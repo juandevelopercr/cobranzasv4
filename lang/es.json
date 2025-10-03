@@ -504,5 +504,14 @@
   "View-lafise": "Ver Casos de Lafise",
   "View-cafsa": "Ver Casos de CAFSA",
   "Recalcular-cuentas": "Recalcular saldo final de cuentas",
-  "Reiniciar-saldo-inicial-cuentas": "Recalcular saldo inicial de cuentas"
+  "Reiniciar-saldo-inicial-cuentas": "Recalcular saldo inicial de cuentas",
+  "View-cliente": "Ver reporte de clientes",
+  "View-facturacion": "Ver reporte de facturación general",
+  "View-facturacion-general": "Ver reporte de facturación detallada",
+  "View-comisiones": "Ver reporte de comisiones",
+  "View-generales": "Ver reporte general",
+  "View-registro": "Ver reporte de registro",
+  "Saldo-cuentas": "Saldo cuentas",
+  "View-retencion": "Ver reporte de retención del 2%",
+  "View-antiguedad": "Ver reporte de antiguedad de saldo"
 }
