@@ -30,14 +30,14 @@ class CuentaDatatableExport extends Component
 
   public function prepareExportExcel()
   {
-    $dataQuery = Cuenta::search($this->search);
+    $query = Cuenta::search($this->search);
 
     // Aplica la selección de usuarios, si existen seleccionados
     if (!empty($this->selectedIds)) {
-      $dataQuery->whereIn('cuentas.id', $this->selectedIds);
+      $query->whereIn('cuentas.id', $this->selectedIds);
     }
     // Genera y descarga el archivo Excel desde la vista Blade
-    return Excel::download(new CuentaExportFromView($dataQuery->get()), 'cuentas.xlsx');
+    return Excel::download(new CuentaExportFromView($query), 'cuentas.xlsx');
   }
 
   public function exportCsv()
