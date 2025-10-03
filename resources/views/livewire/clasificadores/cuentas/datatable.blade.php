@@ -28,6 +28,14 @@
                     @include('livewire.includes.button-delete', ['textButton'=>null])
                   @endcan
 
+                  @can("reiniciar-saldo-inicial-cuentas-movimientos")
+                    @include('livewire.includes.button-reiniciar-saldo-inicial-cuentas', ['textButton'=>null])
+                  @endcan
+
+                  @can("recalcular-cuentas-movimientos")
+                    @include('livewire.includes.button-recalcular-cuentas', ['textButton'=>null])
+                  @endcan
+
                   @can('export-classifiers')
                     <livewire:clasificadores.cuentas.cuenta-datatable-export />
                   @endcan

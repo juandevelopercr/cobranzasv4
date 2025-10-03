@@ -2629,4 +2629,60 @@ class Helpers
 
     return $sent;
   }
+
+  // Obtiene el saldo inicial de cada cuenta basado en el saldo final
+  public static function recalcularSaldoInicialDesdeFinal($cuentaId)
+  {
+    $cuenta = Cuenta::find($cuentaId);
+
+    if (!$cuenta) {
+        return;
+    }
+
+    $saldoAnterior = $cuenta->saldo;
+
+    // Partimos del saldo actual registrado en la cuenta
+    $saldoActual = round(Helpers::getSaldoMesCuenta($cuentaId, now()->format('Y-m-d')), 2);
+
+    // Obtenemos todos los movimientos de la cuenta en orden descendente
+    $movimientos = Movimiento::where('cuenta_id', $cuentaId)
+        ->where('bloqueo_fondos', '!=', 1)
+        ->where('clonando', 0)
+        ->orderBy('fecha', 'desc')
+        ->get();
+
+    // Recorrer y revertir operaciones
+    foreach ($movimientos as $mov) {
+        $monto = ($mov->monto ?? 0) + ($mov->impuesto ?? 0);
+
+        // Status
+        $status = $mov->status;
+
+        if ($mov->tipo_movimiento === 'ELECTRONICO' || $mov->tipo_movimiento === 'CHEQUE') {
+            if ($status === 'REGISTRADO') {
+                // Débito → en forward restaste, aquí sumas
+                $saldoActual += $monto;
+            } elseif ($status === 'REVISION' && $mov->tipo_movimiento === 'CHEQUE') {
+                // Tránsito → en forward restaste, aquí sumas
+                $saldoActual += $monto;
+            }
+        } elseif ($mov->tipo_movimiento === 'DEPOSITO' && $status === 'REGISTRADO') {
+            // Crédito → en forward sumaste, aquí restas
+            $saldoActual -= $monto;
+        }
+    }
+
+    // Registrar en log el cambio
+    Log::info("Recalculo de saldo inicial de cuenta {$cuenta->id}", [
+        'cuenta' => $cuenta->nombre_cuenta,
+        'saldo_anterior' => number_format($saldoAnterior, 2, '.', ''),
+        'saldo_calculado' => number_format($saldoActual, 2, '.', ''),
+        'diferencia' => number_format($saldoActual - $saldoAnterior, 2, '.', ''),
+    ]);
+
+    // Ahora $saldoActual representa el saldo inicial
+    $cuenta->saldo = $saldoActual;
+    $cuenta->save();
+  }
+
 }

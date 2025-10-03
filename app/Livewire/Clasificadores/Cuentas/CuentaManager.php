@@ -2,27 +2,28 @@
 
 namespace App\Livewire\Clasificadores\Cuentas;
 
-use App\Livewire\BaseComponent;
 use App\Models\Bank;
-use App\Models\BusinessLocation;
 use App\Models\Cuenta;
+use Livewire\Component;
+use App\Helpers\Helpers;
 use App\Models\Currency;
-use App\Models\DataTableConfig;
 use App\Models\Department;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
+use Livewire\Attributes\On;
 use Illuminate\Http\Request;
+use Livewire\Attributes\Url;
+use Livewire\WithPagination;
+use Livewire\WithFileUploads;
+use App\Livewire\BaseComponent;
+use App\Models\DataTableConfig;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\BusinessLocation;
+use Livewire\Attributes\Computed;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Livewire\Attributes\Computed;
-use Livewire\Attributes\On;
-use Livewire\Attributes\Url;
-use Livewire\Component;
-use Livewire\WithFileUploads;
-use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
-use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Storage;
 
 class CuentaManager extends BaseComponent
 {
@@ -401,6 +402,80 @@ class CuentaManager extends BaseComponent
 
         // Puedes emitir un evento para redibujar el datatable o actualizar la lista
         $this->dispatch('show-notification', ['type' => 'success', 'message' => __('The record has been deleted')]);
+      }
+    } catch (\Exception $e) {
+      // Registrar el error y mostrar un mensaje de error al usuario
+      $this->dispatch('show-notification', ['type' => 'error', 'message' => __('An error occurred while deleting the registro') . ' ' . $e->getMessage()]);
+    }
+  }
+
+  public function beforerecalcularcuentas()
+  {
+    $this->confirmarAccionRecalcular(
+      null,
+      'recalcularCuentas',
+      '¿Está seguro que desea recalcular el saldo de todas las cuentas?',
+      'Después de confirmar, el saldo de todas las cuentas será recalculado',
+      __('Sí, proceed')
+    );
+  }
+
+  public function confirmarAccionRecalcular($recordId, $metodo, $titulo, $mensaje, $textoBoton)
+  {
+    // static::getName() devuelve automáticamente el nombre del componente Livewire actual, útil para dispatchTo.
+    $this->dispatch('show-confirmation-dialog', [
+      'recordId' => $recordId,
+      'componentName' => static::getName(), // o puedes pasarlo como string
+      'methodName' => $metodo,
+      'title' => $titulo,
+      'message' => $mensaje,
+      'confirmText' => $textoBoton,
+    ]);
+  }
+
+  #[On('recalcularCuentas')]
+  public function recalcularCuentas($recordId)
+  {
+    try {
+      $cuentas = Cuenta::get();
+
+      if ($cuentas->count() > 0) {
+        foreach ($cuentas as $cuenta){
+          Helpers::initSaldosCuentas($cuenta->id);
+        }
+        // Puedes emitir un evento para redibujar el datatable o actualizar la lista
+        $this->dispatch('show-notification', ['type' => 'success', 'message' => __('Se han actualizado los saldos de todas las cuentas según los movimientos registrados')]);
+      }
+    } catch (\Exception $e) {
+      // Registrar el error y mostrar un mensaje de error al usuario
+      $this->dispatch('show-notification', ['type' => 'error', 'message' => __('An error occurred while deleting the registro') . ' ' . $e->getMessage()]);
+    }
+  }
+
+
+  public function beforerecalcularsaldoinicial()
+  {
+    $this->confirmarAccionRecalcular(
+      null,
+      'recalcularSaldoInicialCuentas',
+      '¿Está seguro que desea recalcular el saldo inicial de todas las cuentas?',
+      'Después de confirmar, el saldo inicial de todas las cuentas será recalculado',
+      __('Sí, proceed')
+    );
+  }
+
+  #[On('recalcularSaldoInicialCuentas')]
+  public function recalcularSaldoInicialCuentas($recordId)
+  {
+    try {
+      $cuentas = Cuenta::get();
+
+      if ($cuentas->count() > 0) {
+        foreach ($cuentas as $cuenta){
+          Helpers::recalcularSaldoInicialDesdeFinal($cuenta->id);
+        }
+        // Puedes emitir un evento para redibujar el datatable o actualizar la lista
+        $this->dispatch('show-notification', ['type' => 'success', 'message' => __('Se han actualizado los saldos iniciales de todas las cuentas según los movimientos registrados')]);
       }
     } catch (\Exception $e) {
       // Registrar el error y mostrar un mensaje de error al usuario
