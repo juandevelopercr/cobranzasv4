@@ -187,8 +187,8 @@
 
       <div class="col-md-3 fv-plugins-icon-container"
           x-data="{
-            ...cleaveLivewire({ 
-              initialValue: '{{ $saldo_cancelar ?? '' }}', 
+            ...cleaveLivewire({
+              initialValue: '{{ $saldo_cancelar ?? '' }}',
               wireModelName: 'saldo_cancelar',
               postUpdate: false,
               decimalScale: 2,
@@ -330,8 +330,8 @@
 
       <div class="col-md-3 fv-plugins-icon-container"
           x-data="{
-            ...cleaveLivewire({ 
-              initialValue: '{{ $total_general ?? '' }}', 
+            ...cleaveLivewire({
+              initialValue: '{{ $total_general ?? '' }}',
               wireModelName: 'total_general',
               postUpdate: false,
               decimalScale: 2,

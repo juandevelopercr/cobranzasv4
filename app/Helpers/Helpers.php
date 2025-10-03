@@ -1635,13 +1635,12 @@ class Helpers
 
     // Paso 2: Recalcular balances por mes para cada cuenta
     foreach ($cuentas as $cuenta) {
-      $movimientos = Movimiento::selectRaw('YEAR(fecha) AS anno, MONTH(fecha) AS mes, fecha')
-        ->where('cuenta_id', $cuenta->id)
-        ->where('bloqueo_fondos', '!=', 1)
-        ->groupBy('anno', 'mes')
-        ->orderByRaw('anno ASC, mes ASC')
-        ->get();
-
+      $movimientos = Movimiento::selectRaw('YEAR(fecha) AS anno, MONTH(fecha) AS mes, MAX(fecha) as fecha')
+          ->where('cuenta_id', $cuenta->id)
+          ->where('bloqueo_fondos', '!=', 1)
+          ->groupBy('anno', 'mes')
+          ->orderByRaw('anno ASC, mes ASC')
+          ->get();
       foreach ($movimientos as $mov) {
         self::recalcularBalancesMensuales($cuenta->id, $mov->fecha);
       }

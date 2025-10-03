@@ -651,7 +651,7 @@ class CuentaManager extends BaseComponent
       [
         'field' => 'saldo',
         'orderName' => 'saldo',
-        'label' => __('Saldo'),
+        'label' => __('Saldo Inicial'),
         'filter' => 'filter_saldo',
         'filter_type' => 'input',
         'filter_sources' => '',
@@ -670,7 +670,7 @@ class CuentaManager extends BaseComponent
       [
         'field' => 'balance',
         'orderName' => 'balance',
-        'label' => __('Balance'),
+        'label' => __('Saldo Actual'),
         'filter' => 'filter_balance',
         'filter_type' => 'input',
         'filter_sources' => '',

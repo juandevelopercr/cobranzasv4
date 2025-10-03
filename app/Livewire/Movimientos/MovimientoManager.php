@@ -227,6 +227,13 @@ class MovimientoManager extends BaseComponent
 
   public function create()
   {
+    /*
+    $cuentas = Cuenta::get();
+    foreach ($cuentas as $cuenta){
+      Helpers::initSaldosCuentas($cuenta->id);
+    }
+    */
+
     $this->resetControls();
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
