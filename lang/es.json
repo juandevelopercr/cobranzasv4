@@ -502,5 +502,7 @@
   "View-coocique": "Ver Casos de Coocique",
   "View-davivienda": "Ver Casos de Davivienda",
   "View-lafise": "Ver Casos de Lafise",
-  "View-cafsa": "Ver Casos de CAFSA"
+  "View-cafsa": "Ver Casos de CAFSA",
+  "Recalcular-cuentas": "Recalcular saldo final de cuentas",
+  "Reiniciar-saldo-inicial-cuentas": "Recalcular saldo inicial de cuentas"
 }
