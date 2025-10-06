@@ -275,7 +275,6 @@ class GeneralReport extends BaseReport
         ->leftJoin('business_locations as emisor', 't.location_id', '=', 'emisor.id')
         ->leftJoin('users as u', 't.created_by', '=', 'u.id')
         ->join('contacts as c', 't.contact_id', '=', 'c.id')
-        ->join('departments as d', 't.department_id', '=', 'd.id')
         ->join('banks as b', 't.bank_id', '=', 'b.id')
         ->leftJoin('casos as ca', 't.caso_id', '=', 'ca.id')
         ->join('currencies as cu', 't.currency_id', '=', 'cu.id')
@@ -341,9 +340,6 @@ class GeneralReport extends BaseReport
       $query->whereIn('cc.id', $this->filters['filter_centroCosto']);
     }
 
-    if (!empty($this->filters['filter_department'])) {
-      $query->where('t.department_id', '=', $this->filters['filter_department']);
-    }
     return $query;
   }
 
@@ -369,7 +365,6 @@ class GeneralReport extends BaseReport
               ['label' => 'Monto I.V.A', 'field' => 'totalTax', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
               ['label' => 'Total', 'field' => 'totalComprobante', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
               ['label' => 'Banco', 'field' => 'banco', 'type' => 'string', 'align' => 'left', 'width' => 25],
-              ['label' => 'Departamento', 'field' => 'departamento', 'type' => 'string', 'align' => 'left', 'width' => 25],
               ['label' => 'Emisor', 'field' => 'nombreEmisor', 'type' => 'string', 'align' => 'left', 'width' => 40],
               ['label' => 'Mensaje', 'field' => 'message', 'type' => 'string', 'align' => 'left', 'width' => 90],
               ['label' => 'Notas', 'field' => 'message', 'type' => 'string', 'align' => 'left', 'width' => 90],
@@ -397,7 +392,6 @@ class GeneralReport extends BaseReport
               ['label' => 'Monto I.V.A', 'field' => 'totalTax', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
               ['label' => 'Total', 'field' => 'totalComprobante', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
               ['label' => 'Banco', 'field' => 'banco', 'type' => 'string', 'align' => 'left', 'width' => 25],
-              ['label' => 'Departamento', 'field' => 'departamento', 'type' => 'string', 'align' => 'left', 'width' => 25],
               ['label' => 'Emisor', 'field' => 'nombreEmisor', 'type' => 'string', 'align' => 'left', 'width' => 40],
               ['label' => 'Mensaje', 'field' => 'message', 'type' => 'string', 'align' => 'left', 'width' => 90],
               ['label' => 'Notas', 'field' => 'message', 'type' => 'string', 'align' => 'left', 'width' => 90],
@@ -424,7 +418,6 @@ class GeneralReport extends BaseReport
               ['label' => 'Otros Gastos', 'field' => 'totalOtrosCargos', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
               ['label' => 'Total', 'field' => 'totalComprobante', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
               ['label' => 'Banco', 'field' => 'banco', 'type' => 'string', 'align' => 'left', 'width' => 25],
-              ['label' => 'Departamento', 'field' => 'departamento', 'type' => 'string', 'align' => 'left', 'width' => 25],
               ['label' => 'Emisor', 'field' => 'nombreEmisor', 'type' => 'string', 'align' => 'left', 'width' => 40],
               ['label' => 'Mensaje', 'field' => 'message', 'type' => 'string', 'align' => 'left', 'width' => 90],
               ['label' => 'Notas', 'field' => 'message', 'type' => 'string', 'align' => 'left', 'width' => 90],
@@ -447,7 +440,6 @@ class GeneralReport extends BaseReport
               ['label' => 'T.C', 'field' => 'proforma_change_type', 'type' => 'decimal', 'align' => 'right', 'width' => 15],
               ['label' => 'Monto de Gastos', 'field' => 'gastos', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
               ['label' => 'Banco', 'field' => 'banco', 'type' => 'string', 'align' => 'left', 'width' => 25],
-              ['label' => 'Departamento', 'field' => 'departamento', 'type' => 'string', 'align' => 'left', 'width' => 25],
               ['label' => 'Emisor', 'field' => 'nombreEmisor', 'type' => 'string', 'align' => 'left', 'width' => 40],
               ['label' => 'Mensaje', 'field' => 'message', 'type' => 'string', 'align' => 'left', 'width' => 90],
               ['label' => 'Notas', 'field' => 'message', 'type' => 'string', 'align' => 'left', 'width' => 90],

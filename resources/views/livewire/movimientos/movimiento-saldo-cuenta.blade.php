@@ -1,235 +1,247 @@
 <div class="card">
-  <div class="card-body">
-    <h5 class="mb-3">Saldo de Cuentas</h5>
-    <div x-data="{
-          tipoCambioLocal: '{{ $tipo_cambio }}',
-          totalDolarizadoLocal: '{{ number_format($totalDolarizado, 2) }}',
+    <div class="card-body">
+        <h5 class="mb-3">Saldo de Cuentas</h5>
 
-          // Totales footer que se van a actualizar
-          totalColones301Local: '{{ number_format($totalColones301, 2) }}',
-          totalDolares301Local: '{{ number_format($totalDolares301, 2) }}',
-          otrasCuentasColonesLocal: '{{ number_format($otrasCuentasColones, 2) }}',
-          otrasCuentasDolaresLocal: '{{ number_format($otrasCuentasDolares, 2) }}',
-          totalDisponibleColonesLocal: '{{ number_format($totalDisponibleColones, 2) }}',
-          totalDisponibleDolaresLocal: '{{ number_format($totalDisponibleDolares, 2) }}',
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th width="26%">Cuenta</th>
+                    <th width="9%">Saldo Sistema</th>
+                    <th width="9%">Pendiente</th>
+                    <th width="9%">Gastos</th>
+                    <th width="9%">Honorarios</th>
+                    <th width="9%">Karla</th>
+                    <th width="9%">Certifondo</th>
+                    <th width="9%">Colchón</th>
+                    <th width="9%">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach($cuentas301 as $key => $cuenta)
+                <tr>
+                    <td>{{ $key + 1 }}</td>
+                    <td>{{ $cuenta['nombre_cuenta'] }}</td>
 
-          formatNumber(value) {
-              let number = parseFloat(value.toString().replace(/,/g, ''));
-              if (isNaN(number)) number = 0;
-              return number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-          },
+                    {{-- Columnas solo lectura --}}
+                    @php
+                        $lectura = [
+                            'saldo_sistema',
+                            'pendiente_registro',
+                            'traslados_gastos.total_timbres',
+                            'traslados_honorarios.total_honorarios',
+                        ];
+                    @endphp
 
-          parseInput(value) {
-              return value.toString().replace(/,/g, '');
-          },
-
-          updateWire(localVar, fieldPath, index) {
-              $wire.set(`cuentas301.${index}.${fieldPath}`, parseFloat(this[localVar]) || 0);
-          },
-
-          getTextClass(value) {
-              return parseFloat(value) < 0 ? 'text-danger text-end' : 'text-end';
-          },
-
-          calcularTotalDolarizado() {
-              let totalColones = 0;
-              @foreach($cuentas301 as $key => $cuenta)
-                  totalColones += parseFloat('{{ $cuenta['saldo_sistema'] ?? 0 }}')
-                                  - parseFloat('{{ $cuenta['pendiente_registro'] ?? 0 }}')
-                                  - parseFloat('{{ $cuenta['traslados_gastos']['total_timbres'] ?? 0 }}')
-                                  - parseFloat('{{ $cuenta['traslados_honorarios']['total_honorarios'] ?? 0 }}')
-                                  - parseFloat('{{ $cuenta['traslados_karla'] ?? 0 }}')
-                                  - parseFloat('{{ $cuenta['certifondo_bnfa'] ?? 0 }}')
-                                  - parseFloat('{{ $cuenta['colchon'] ?? 0 }}');
-              @endforeach
-
-              totalColones += parseFloat('{{ $otrasCuentasColones }}');
-
-              return totalColones / (parseFloat(this.tipoCambioLocal.replace(/,/g,'')) || 1);
-          },
-
-          init() {
-              // Inicializar total dolarizado
-              this.totalDolarizadoLocal = this.formatNumber(this.calcularTotalDolarizado());
-          }
-      }" x-init="init()">
-
-      <table class="table table-bordered">
-          <thead>
-              <tr>
-                  <th>#</th>
-                  <th width="26%">Cuenta</th>
-                  <th width="9%">Saldo Sistema</th>
-                  <th width="9%">Pendiente</th>
-                  <th width="9%">Gastos</th>
-                  <th width="9%">Honorarios</th>
-                  <th width="9%">Karla</th>
-                  <th width="9%">Certifondo</th>
-                  <th width="9%">Colchón</th>
-                  <th width="9%">Total</th>
-              </tr>
-          </thead>
-          <tbody>
-              @foreach($cuentas301 as $key => $cuenta)
-                  <tr x-data="{
-                      localSaldo: '{{ number_format($cuenta['saldo_sistema'] ?? 0, 2) }}',
-                      localPendiente: '{{ number_format($cuenta['pendiente_registro'] ?? 0, 2) }}',
-                      localGastos: '{{ number_format($cuenta['traslados_gastos']['total_timbres'] ?? 0, 2) }}',
-                      localHonorarios: '{{ number_format($cuenta['traslados_honorarios']['total_honorarios'] ?? 0, 2) }}',
-                      localKarla: '{{ number_format($cuenta['traslados_karla'] ?? 0, 2) }}',
-                      localCertifondo: '{{ number_format($cuenta['certifondo_bnfa'] ?? 0, 2) }}',
-                      localColchon: '{{ number_format($cuenta['colchon'] ?? 0, 2) }}'
-                  }">
-                      <td>{{ $key + 1 }}</td>
-                      <td>{{ $cuenta['nombre_cuenta'] }}</td>
-
-                      @foreach([
-                          ['field' => 'saldo_sistema', 'local' => 'localSaldo'],
-                          ['field' => 'pendiente_registro', 'local' => 'localPendiente'],
-                          ['field' => 'traslados_gastos.total_timbres', 'local' => 'localGastos'],
-                          ['field' => 'traslados_honorarios.total_honorarios', 'local' => 'localHonorarios'],
-                          ['field' => 'traslados_karla', 'local' => 'localKarla'],
-                          ['field' => 'certifondo_bnfa', 'local' => 'localCertifondo'],
-                          ['field' => 'colchon', 'local' => 'localColchon'],
-                      ] as $col)
-                        <td :class="getTextClass({{ $col['local'] }})">
-                            <input type="text" class="form-control text-end" style="width: 140px;"
-                                x-model="{{ $col['local'] }}"
-                                x-on:input="
-                                    {{ $col['local'] }} = $el.value.replace(/,/g,'');
-                                    updateWire('{{ $col['local'] }}','{{ $col['field'] }}',{{ $key }});
-                                    $el.value = formatNumber({{ $col['local'] }});
-                                    totalDolarizadoLocal = formatNumber(calcularTotalDolarizado());
-                                "
-                                x-on:blur="
-                                    {{ $col['local'] }} = $el.value.replace(/,/g,'');
-                                    updateWire('{{ $col['local'] }}','{{ $col['field'] }}',{{ $key }});
-                                    $el.value = formatNumber({{ $col['local'] }});
-                                    totalDolarizadoLocal = formatNumber(calcularTotalDolarizado());
-                                "
-                            >
+                    @foreach($lectura as $field)
+                        @php
+                            $value = data_get($cuenta, $field, 0);
+                        @endphp
+                        <td class="{{ $value < 0 ? 'text-danger text-end' : 'text-end' }}">
+                            {{ number_format($value, 2) }}
                         </td>
-                      @endforeach
+                    @endforeach
 
-                      <td :class="getTextClass({{ $cuenta['saldo_sistema'] - $cuenta['pendiente_registro'] - $cuenta['traslados_gastos']['total_timbres'] - $cuenta['traslados_honorarios']['total_honorarios'] - $cuenta['traslados_karla'] - $cuenta['certifondo_bnfa'] - $cuenta['colchon'] }})">
-                          <b x-text="formatNumber({{ $cuenta['saldo_sistema'] - $cuenta['pendiente_registro'] - $cuenta['traslados_gastos']['total_timbres'] - $cuenta['traslados_honorarios']['total_honorarios'] - $cuenta['traslados_karla'] - $cuenta['certifondo_bnfa'] - $cuenta['colchon'] }})"></b>
-                      </td>
-                  </tr>
-              @endforeach
-          </tbody>
+                    {{-- Columnas editables con Cleave.js --}}
+                    @php
+                        $editable = [
+                            ['field' => 'traslados_karla', 'wire' => "cuentas301.{$key}.traslados_karla"],
+                            ['field' => 'certifondo_bnfa', 'wire' => "cuentas301.{$key}.certifondo_bnfa"],
+                            ['field' => 'colchon', 'wire' => "cuentas301.{$key}.colchon"],
+                        ];
+                    @endphp
 
+                    @foreach($editable as $col)
+                        @php
+                            $value = data_get($cuenta, $col['field'], 0);
+                        @endphp
+                        <td class="{{ $value < 0 ? 'text-danger text-end' : 'text-end' }}">
+                            <div
+                                x-data="cleaveLivewire({
+                                    initialValue: '{{ $value }}',
+                                    wireModelName: '{{ $col['wire'] }}',
+                                    postUpdate: true,
+                                    decimalScale: 2
+                                })"
+                                x-init="init($refs.cleaveInput)"
+                            >
+                                <div class="input-group input-group-merge has-validation">
+                                    <input x-ref="cleaveInput" class="form-control integer-mask" type="text" wire:ignore />
+                                </div>
+                            </div>
+                        </td>
+                    @endforeach
+
+                    {{-- Total calculado --}}
+                    @php
+                        $total = ($cuenta['saldo_sistema'] ?? 0)
+                                - ($cuenta['pendiente_registro'] ?? 0)
+                                - ($cuenta['traslados_gastos']['total_timbres'] ?? 0)
+                                - ($cuenta['traslados_honorarios']['total_honorarios'] ?? 0)
+                                - ($cuenta['traslados_karla'] ?? 0)
+                                - ($cuenta['certifondo_bnfa'] ?? 0)
+                                - ($cuenta['colchon'] ?? 0);
+                    @endphp
+                    <td class="{{ $total < 0 ? 'text-danger text-end' : 'text-end' }}">
+                        <b>{{ number_format($total, 2) }}</b>
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
           <tfoot>
-              <!-- TOTAL COLONES Y DÓLARES -->
               <tr>
-                  <td colspan="7"></td>
-                  <td class="text-end"><b>TOTAL COLONES</b></td>
+                  <td colspan="8"></td>
+                  <td><b>TOTAL COLONES</b></td>
+                  <td><b>TOTAL DOLARES</b></td>
+              </tr>
+
+              <tr>
+                  <td colspan="6"></td>
+                  <td class="text-end" colspan="2"><b>SALDO DE CUENTAS 3-101 Y BAC CDF</b></td>
                   <td class="text-end">
-                      <input type="text" class="form-control text-end fw-bold"
-                          readonly
-                          value="{{ number_format($totalColones301, 2) }}"
-                          :class="parseFloat('{{ $totalColones301 }}') < 0 ? 'text-danger' : ''"
-                          style="width: 160px;">
+                      <input type="text"
+                            class="form-control text-end fw-bold {{ $totalColones301 < 0 ? 'text-danger' : '' }}"
+                            readonly
+                            wire:model="totalColones301"
+                            style="width: 160px;">
                   </td>
                   <td class="text-end">
-                      <input type="text" class="form-control text-end fw-bold"
-                          readonly
-                          value="{{ number_format($totalDolares301, 2) }}"
-                          :class="parseFloat('{{ $totalDolares301 }}') < 0 ? 'text-danger' : ''"
-                          style="width: 160px;">
+                      <input type="text"
+                            class="form-control text-end fw-bold {{ $totalDolares301 < 0 ? 'text-danger' : '' }}"
+                            readonly
+                            wire:model="totalDolares301"
+                            style="width: 160px;">
                   </td>
               </tr>
 
-              <!-- SALDO DE LAS DEMÁS CUENTAS -->
               <tr>
-                  <td colspan="7"></td>
-                  <td class="text-end"><b>SALDO DE LAS DEMAS CUENTAS</b></td>
+                  <td colspan="6"></td>
+                  <td class="text-end" colspan="2"><b>SALDO DE LAS DEMAS CUENTAS</b></td>
                   <td class="text-end">
-                      <input type="text" class="form-control text-end fw-bold"
-                          readonly
-                          value="{{ number_format($otrasCuentasColones, 2) }}"
-                          :class="parseFloat('{{ $otrasCuentasColones }}') < 0 ? 'text-danger' : ''"
-                          style="width: 160px;">
+                      <input type="text"
+                            class="form-control text-end fw-bold {{ $otrasCuentasColones < 0 ? 'text-danger' : '' }}"
+                            readonly
+                            wire:model="otrasCuentasColones"
+                            style="width: 160px;">
                   </td>
                   <td class="text-end">
-                      <input type="text" class="form-control text-end fw-bold"
-                          readonly
-                          value="{{ number_format($otrasCuentasDolares, 2) }}"
-                          :class="parseFloat('{{ $otrasCuentasDolares }}') < 0 ? 'text-danger' : ''"
-                          style="width: 160px;">
+                      <input type="text"
+                            class="form-control text-end fw-bold {{ $otrasCuentasDolares < 0 ? 'text-danger' : '' }}"
+                            readonly
+                            wire:model="otrasCuentasDolares"
+                            style="width: 160px;">
                   </td>
               </tr>
 
-              <!-- TOTAL DISPONIBLE -->
               <tr>
-                  <td colspan="7"></td>
-                  <td class="text-end"><b>TOTAL DISPONIBLE</b></td>
+                  <td colspan="6"></td>
+                  <td class="text-end" colspan="2"><b>TOTAL DISPONIBLE</b></td>
                   <td class="text-end">
-                      <input type="text" class="form-control text-end fw-bold"
-                          readonly
-                          value="{{ number_format($totalDisponibleColones, 2) }}"
-                          :class="parseFloat('{{ $totalDisponibleColones }}') < 0 ? 'text-danger' : ''"
-                          style="width: 160px;">
+                      <input type="text"
+                            class="form-control text-end fw-bold {{ $totalDisponibleColones < 0 ? 'text-danger' : '' }}"
+                            readonly
+                            wire:model="totalDisponibleColones"
+                            style="width: 160px;">
                   </td>
                   <td class="text-end">
-                      <input type="text" class="form-control text-end fw-bold"
-                          readonly
-                          value="{{ number_format($totalDisponibleDolares, 2) }}"
-                          :class="parseFloat('{{ $totalDisponibleDolares }}') < 0 ? 'text-danger' : ''"
-                          style="width: 160px;">
+                      <input type="text"
+                            class="form-control text-end fw-bold {{ $totalDisponibleDolares < 0 ? 'text-danger' : '' }}"
+                            readonly
+                            wire:model="totalDisponibleDolares"
+                            style="width: 160px;">
                   </td>
               </tr>
 
-              <!-- TIPO DE CAMBIO -->
               <tr>
-                  <td colspan="7"></td>
-                  <td class="text-end"><b>TIPO DE CAMBIO</b></td>
+                  <td colspan="6"></td>
+                  <td class="text-end" colspan="2"><b>TIPO DE CAMBIO</b></td>
                   <td class="text-end">
-                      <input type="text" class="form-control text-end fw-bold"
-                          x-model="tipoCambioLocal"
-                          x-on:input="
-                              $el.value = $el.value.replace(/[^0-9.-]/g, '');
-                              tipoCambioLocal = $el.value;
-                              $wire.set('tipo_cambio', parseFloat(tipoCambioLocal) || 0);
-                              totalDolarizadoLocal = formatNumber(calcularTotalDolarizado());
-                          "
-                          x-on:blur="
-                              tipoCambioLocal = formatNumber(tipoCambioLocal);
-                              $wire.set('tipo_cambio', parseFloat(tipoCambioLocal.replace(/,/g,'')) || 0);
-                              totalDolarizadoLocal = formatNumber(calcularTotalDolarizado());
-                              $el.value = tipoCambioLocal;
-                          "
-                          style="width: 160px;"
+                      <div
+                          x-data="cleaveLivewire({
+                              initialValue: '{{ $tipo_cambio ?? '' }}',
+                              wireModelName: 'tipo_cambio',
+                              postUpdate: true,
+                              decimalScale: 2
+                          })"
+                          x-init="init($refs.cleaveInput)"
                       >
+                          <div class="input-group input-group-merge has-validation">
+                              <input
+                                  x-ref="cleaveInput"
+                                  class="form-control text-end fw-bold"
+                                  type="text"
+                                  style="width: 160px;"
+                                  wire:ignore
+                              />
+                          </div>
+                      </div>
                   </td>
                   <td></td>
               </tr>
 
-              <!-- TOTAL GENERAL DOLARIZADO -->
               <tr>
-                  <td colspan="7"></td>
-                  <td class="text-end"><b>TOTAL GENERAL DOLARIZADO</b></td>
+                  <td colspan="6"></td>
+                  <td class="text-end" colspan="2"><b>TOTAL GENERAL DOLARIZADO</b></td>
                   <td class="text-end">
-                      <input type="text" class="form-control text-end fw-bold"
-                          readonly
-                          x-model="totalDolarizadoLocal"
-                          :class="parseFloat(totalDolarizadoLocal.replace(/,/g,'')) < 0 ? 'text-danger' : ''"
-                          style="width: 160px;"
-                      >
+                      <input type="text"
+                            class="form-control text-end fw-bold {{ $totalDolarizado < 0 ? 'text-danger' : '' }}"
+                            readonly
+                            wire:model="totalDolarizado"
+                            style="width: 160px;">
                   </td>
                   <td></td>
               </tr>
           </tfoot>
 
-      </table>
+        </table>
 
-      <div class="mt-3">
-          <button wire:click="guardarDatos" class="btn btn-primary">Guardar</button>
-          <button wire:click="exportarExcel" class="btn btn-success">Exportar a Excel</button>
-      </div>
+        <div class="mt-3">
+            <button wire:click="guardarDatos" class="btn btn-primary">Guardar</button>
+            <button wire:click="exportarExcel" class="btn btn-success">Exportar a Excel</button>
+        </div>
 
-      @if(session()->has('message'))
-          <div class="alert alert-success mt-2">{{ session('message') }}</div>
-      @endif
+        @if(session()->has('message'))
+            <div class="alert alert-success mt-2">{{ session('message') }}</div>
+        @endif
     </div>
-  </div>
 </div>
+
+@script()
+<script>
+  $(document).ready(function() {
+    function initCleave() {
+        console.log("initCleave");
+        document.querySelectorAll('.cleave-number').forEach(function(el) {
+            if (!el.cleave) { // evitar reinicializar
+                el.cleave = new Cleave(el, {
+                    numeral: true,
+                    numeralThousandsGroupStyle: 'thousand',
+                    numeralDecimalMark: '.',
+                    delimiter: ',',
+                    numeralDecimalScale: 2
+                });
+            }
+        });
+    }
+
+    // Re-inicializar cada vez que Livewire actualice el DOM
+    Livewire.hook('message.processed', (message, component) => {
+        console.log("message.processed");
+        initCleave();
+    });
+
+    Livewire.on('reinitCleaveControls', () => {
+      console.log('Reinicializando controles reinitCleaveControls');
+      setTimeout(() => {
+        initCleave();
+      }, 300); // Retraso para permitir que el DOM se estabilice
+    });
+
+    setTimeout(() => {
+      initCleave();
+    }, 300); // Retraso para permitir que el DOM se estabilice
+
+});
+
+</script>
+@endscript

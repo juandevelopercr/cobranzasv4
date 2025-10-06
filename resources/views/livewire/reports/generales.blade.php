@@ -4,21 +4,6 @@
     <div class="dataTables_wrapper dt-bootstrap5 no-footer">
       <form wire:submit.prevent="exportExcel">
         <div class="row g-6">
-          <div class="col-md-3 select2-primary fv-plugins-icon-container">
-            <label class="form-label" for="filter_department">{{ __('Department') }}</label>
-            <div wire:ignore>
-              <select wire:model="filter_department" id="filter_department" class="select2 form-select @error('filter_department') is-invalid @enderror">
-                <option value="">{{ __('Seleccione...') }}</option>
-                @foreach ($this->departments as $department)
-                  <option value="{{ $department->id }}">{{ $department->name }}</option>
-                @endforeach
-              </select>
-            </div>
-            @error('filter_department')
-            <div class="text-danger mt-1">{{ $message }}</div>
-            @enderror
-          </div>
-
           <div class="col-md-3 fv-plugins-icon-container">
             <label class="form-label" for="filter_date">{{ __('Fecha de emisión') }}</label>
             <div class="input-group input-group-merge has-validation">

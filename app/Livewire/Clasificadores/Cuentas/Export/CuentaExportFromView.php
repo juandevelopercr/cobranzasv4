@@ -20,7 +20,7 @@ class CuentaExportFromView implements FromView, WithColumnFormatting, ShouldAuto
   public function columnFormats(): array
   {
     return [
-      'F' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1
+      'F' => '#,##0.00'
     ];
   }
 

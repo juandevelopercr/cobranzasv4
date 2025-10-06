@@ -15,7 +15,7 @@ class Antiguedad extends Component
   public $filter_date;
   public $filter_contact;
   public $filter_department;
-  public $filter_centroCosto = [1, 18, 15, 16, 17];
+  public $filter_centroCosto = [1, 18, 15, 16, 17, 28, 14,24,31,10];
   public $filter_currency;
   public $departments;
   public $currencies;

@@ -3,7 +3,6 @@
 namespace App\Livewire\Reports;
 
 use Livewire\Component;
-use App\Models\Department;
 use App\Models\CentroCosto;
 use App\Models\Transaction;
 use App\Exports\GeneralReport;
@@ -14,9 +13,7 @@ class General extends Component
 {
   public $filter_date;
   public $filter_centroCosto;
-  public $filter_department;
   public $filter_type;
-  public $departments;
   public $centrosCosto;
   //public $document_type;
   public $loading = false;
@@ -28,11 +25,6 @@ class General extends Component
 
   public function mount()
   {
-    $this->departments = Department::whereIn('id', session('current_department'))
-      ->where('active', 1)
-      ->orderBy('name', 'ASC')
-      ->get();
-
     $this->filter_type = 1;
 
     $this->centrosCosto = CentroCosto::orderBy('descrip', 'ASC')->get();
@@ -78,7 +70,6 @@ class General extends Component
       [
         'filter_date' => $this->filter_date,
         'filter_centroCosto' => $this->filter_centroCosto,
-        'filter_department' => $this->filter_department,
         'filter_type' => $this->filter_type
       ],
       'REPORTE GENERAL ' .$title .' '. $this->filter_date

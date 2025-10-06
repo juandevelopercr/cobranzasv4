@@ -296,7 +296,7 @@ class FacturacionDetalladaReport extends BaseReport implements WithEvents
         ->leftJoin('casos as ca', 't.caso_id', '=', 'ca.id')
         ->join('currencies as cu', 't.currency_id', '=', 'cu.id')
         ->whereNull('t.deleted_at')
-        //->whereIn('t.id', [75946])
+        ->whereIn('t.id', [76270])
         ->whereIn('t.document_type', ['PR','FE','TE'])
         ->whereIn('t.proforma_status', ['FACTURADA','ANULADA'])
         ->orderBy('t.transaction_date', 'DESC')

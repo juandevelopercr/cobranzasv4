@@ -118,30 +118,40 @@ class AntiguedadReport extends BaseReport
         "),
     ])
     ->join('contacts', 'transactions.contact_id', '=', 'contacts.id')
+    // LEFT JOIN para calcular porcentaje total
     ->leftJoin(
         DB::raw("(SELECT transaction_id, SUM(percent) as percent
                   FROM transactions_commissions
-                  ".(!empty($centrosExcluyentes)
-                      ? "WHERE centro_costo_id NOT IN (".implode(',', $centrosExcluyentes).")"
-                      : "")."
                   GROUP BY transaction_id) AS cc_sum"),
         'cc_sum.transaction_id', '=', 'transactions.id'
     )
     ->whereIn('transactions.proforma_status', ['FACTURADA'])
     ->whereIn('transactions.document_type', ['PR','FE','TE'])
+    ->whereNull('transactions.numero_deposito_pago')
     ->groupBy('contacts.id', 'contacts.name')
     ->orderBy('contacts.name');
 
+    // Filtro para excluir transacciones con centros de costo no permitidos
+    if (!empty($centrosExcluyentes)) {
+        $query->whereNotExists(function ($q) use ($centrosExcluyentes) {
+            $q->select(DB::raw(1))
+              ->from('transactions_commissions')
+              ->whereRaw('transactions_commissions.transaction_id = transactions.id')
+              ->whereIn('transactions_commissions.centro_costo_id', $centrosExcluyentes);
+        });
+    }
+
+    // Otros filtros opcionales
     if (!empty($this->filters['filter_contact'])) {
-      $query->where('transactions.contact_id', '=', $this->filters['filter_contact']);
+        $query->where('transactions.contact_id', '=', $this->filters['filter_contact']);
     }
 
     if (!empty($this->filters['filter_department'])) {
-      $query->where('transactions.department_id', '=', $this->filters['filter_department']);
+        $query->where('transactions.department_id', '=', $this->filters['filter_department']);
     }
 
     if (!empty($this->filters['filter_currency'])) {
-      $query->where('transactions.currency_id', '=', $this->filters['filter_currency']);
+        $query->where('transactions.currency_id', '=', $this->filters['filter_currency']);
     }
 
     if (!empty($this->filters['filter_date'])) {
@@ -149,11 +159,8 @@ class AntiguedadReport extends BaseReport
 
         if (count($range) === 2) {
             try {
-                // Convertir fechas a Carbon
                 $start = Carbon::createFromFormat('d-m-Y', trim($range[0]))->startOfDay();
                 $end   = Carbon::createFromFormat('d-m-Y', trim($range[1]))->endOfDay();
-
-                // Filtro de rango (incluye todas las horas del día)
                 $query->whereBetween('transactions.transaction_date', [$start, $end]);
             } catch (\Exception $e) {
                 // manejar error
@@ -161,14 +168,13 @@ class AntiguedadReport extends BaseReport
         } else {
             try {
                 $singleDate = Carbon::createFromFormat('d-m-Y', trim($this->filters['filter_date']));
-
-                // Comparar solo por la fecha, ignorando horas
                 $query->whereDate('transactions.transaction_date', $singleDate->format('Y-m-d'));
             } catch (\Exception $e) {
                 // manejar error
             }
         }
     }
+
     return $query;
   }
 }

@@ -92,7 +92,7 @@
     const initializeSelect2 = () => {
       const selects = [
         'filter_department',
-        'filter_status'
+        'filter_currency'
       ];
 
       selects.forEach((id) => {
@@ -125,8 +125,6 @@
         const currentValue = @this.get(id);
         $(`#${id}`).val(currentValue).trigger('change');
       });
-
-
 
       $('#filter_contact').select2({
         placeholder: $('#filter_contact').data('placeholder'),

@@ -24,6 +24,7 @@ class MovimientosFacturasNoPagadas extends TransactionManager
     'filter_proforma_no' => NULL,
     'filter_consecutivo' => NULL,
     'filter_customer_name' => NULL,
+    'filter_department_name' => NULL,
     'filter_user_name' => NULL,
     'filter_fecha_solicitud_factura' => NULL,
     'filter_issuer_name' => NULL,
@@ -307,8 +308,27 @@ class MovimientosFacturasNoPagadas extends TransactionManager
     $cuenta = $movimiento->cuenta;
 
     $bancos        = $cuenta->banks->pluck('id')->toArray();
+    $departamentos = $cuenta->departments->pluck('id')->toArray();
     $emisores      = $cuenta->locations->pluck('id')->toArray();
 
+    /*
+    $subquery = DB::table('movimientos_facturas')
+        ->select('transaction_id')
+        ->where('movimiento_id', $this->movimientoId);
+
+    $query = Transaction::search($this->search, $this->filters)
+        ->select('transactions.*', 'c.name as contact_name')
+        ->join('transactions_commissions', 'transactions_commissions.transaction_id', '=', 'transactions.id')
+        ->leftJoin('contacts as c', 'c.id', '=', 'transactions.contact_id')
+        ->whereIn('document_type', $this->document_type)
+        ->whereIn('proforma_status', [Transaction::FACTURADA])
+        ->where(function ($q) {
+            $q->whereNull('transactions.numero_deposito_pago')
+              ->orWhere('transactions.numero_deposito_pago', '');
+        })
+        ->whereNotIn('transactions.id', $subquery)
+        ->groupBy('transactions.id'); // evita duplicados
+        */
     $subquery = DB::table('movimientos_facturas')
         ->select('transaction_id')
         ->where('movimiento_id', $this->movimientoId);
@@ -331,8 +351,20 @@ class MovimientosFacturasNoPagadas extends TransactionManager
         $query->whereIn('transactions.bank_id', $bancos);
     }
 
+    if (!empty($departamentos)) {
+        $query->whereIn('transactions.department_id', $departamentos);
+    }
+
     if (!empty($emisores)) {
         $query->whereIn('transactions.location_id', $emisores);
+    }
+
+    $allowedRoles = User::ROLES_ALL_DEPARTMENTS;
+    if (!in_array(Session::get('current_role_name'), $allowedRoles)) {
+        $departments = Session::get('current_department', []);
+        if (!empty($departments)) {
+            $query->whereIn('transactions.department_id', $departments);
+        }
     }
 
     // Orden final: usar alias 'c.name' en lugar de 'contacts.name'

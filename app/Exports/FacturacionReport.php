@@ -277,7 +277,7 @@ class FacturacionReport extends BaseReport
                     ELSE (COALESCE(t.totalOtrosCargos,0) * COALESCE(tc.percent,0)/100) * NULLIF(COALESCE(t.proforma_change_type,1),0)
                 END
             END,
-        0) AS totalOtrosCargosUSD,
+        0) AS totalOtrosCargosCRC,
 
         COALESCE(
             CASE
@@ -287,7 +287,7 @@ class FacturacionReport extends BaseReport
                     ELSE (COALESCE(t.totalComprobante,0) * COALESCE(tc.percent,0)/100) * NULLIF(COALESCE(t.proforma_change_type,1),0)
                 END
             END,
-        0) AS totalComprobanteUSD,
+        0) AS totalComprobanteCRC,
 
         t.proforma_status,
 
