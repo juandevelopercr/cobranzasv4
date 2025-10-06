@@ -5,7 +5,6 @@ namespace App\Livewire\Reports;
 use App\Models\User;
 use Livewire\Component;
 use App\Models\Currency;
-use App\Models\Department;
 use App\Models\Transaction;
 use App\Exports\ComisionReport;
 use App\Models\Comisionista;
@@ -15,11 +14,9 @@ class Comision extends Component
 {
   public $filter_date;
   public $filter_abogado;
-  public $filter_department;
   public $filter_currency;
   public $filter_type;
   public $filter_pagar;
-  public $departments;
   public $status;
   public $comisionistas;
   public $currencies;
@@ -34,10 +31,6 @@ class Comision extends Component
   public function mount()
   {
     $this->filter_type = 1;
-    $this->departments = Department::whereIn('id', session('current_department'))
-      ->where('active', 1)
-      ->orderBy('name', 'ASC')
-      ->get();
 
     $this->comisionistas = Comisionista::where('active', 1)
         ->orderBy('nombre', 'ASC')
@@ -79,7 +72,6 @@ class Comision extends Component
       [
         'filter_date' => $this->filter_date,
         'filter_abogado' => $this->filter_abogado,
-        'filter_department' => $this->filter_department,
         'filter_currency' => $this->filter_currency,
         'filter_type' => $this->filter_type,
         'filter_pagar' => $this->filter_pagar

@@ -72,8 +72,7 @@ class FacturacionDetalladaReport extends BaseReport implements WithEvents
       ['label' => 'Fecha de Depósito', 'field' => 'fecha_deposito_pago', 'type' => 'string', 'align' => 'left', 'width' => 35],
       ['label' => 'Número de Depósito', 'field' => 'numero_deposito_pago', 'type' => 'string', 'align' => 'left', 'width' => 35],
       ['label' => 'Mensaje', 'field' => 'message', 'type' => 'string', 'align' => 'left', 'width' => 90],
-      ['label' => 'Número de Proforma', 'field' => 'proforma_no', 'type' => 'string', 'align' => 'left', 'width' => 30],
-      ['label' => 'Deudor', 'field' => 'deudor', 'type' => 'string', 'align' => 'left', 'width' => 35],
+      ['label' => 'Número de Proforma', 'field' => 'proforma_no', 'type' => 'string', 'align' => 'left', 'width' => 30]
     ];
   }
 
@@ -133,10 +132,7 @@ class FacturacionDetalladaReport extends BaseReport implements WithEvents
 
             -- Nombre emisor
             (SELECT em.name FROM business_locations em WHERE em.id = t.location_id) AS nombreEmisor,
-
-            d.name as departamento,
             b.name as banco,
-            ca.numero,
             cu.code as moneda,
             cu.symbol as monedasymbolo,
             t.proforma_change_type,
@@ -287,16 +283,12 @@ class FacturacionDetalladaReport extends BaseReport implements WithEvents
 
             t.numero_deposito_pago,
             t.message AS message,
-            t.proforma_no,
-            ca.deudor
+            t.proforma_no
         ")
         ->leftJoin('contacts as c', 't.contact_id', '=', 'c.id')
-        ->leftJoin('departments as d', 't.department_id', '=', 'd.id')
         ->leftJoin('banks as b', 't.bank_id', '=', 'b.id')
-        ->leftJoin('casos as ca', 't.caso_id', '=', 'ca.id')
         ->join('currencies as cu', 't.currency_id', '=', 'cu.id')
         ->whereNull('t.deleted_at')
-        ->whereIn('t.id', [76270])
         ->whereIn('t.document_type', ['PR','FE','TE'])
         ->whereIn('t.proforma_status', ['FACTURADA','ANULADA'])
         ->orderBy('t.transaction_date', 'DESC')
@@ -323,10 +315,6 @@ class FacturacionDetalladaReport extends BaseReport implements WithEvents
 
     if (!empty($this->filters['filter_contact'])) {
       $query->where('t.contact_id', '=', $this->filters['filter_contact']);
-    }
-
-    if (!empty($this->filters['filter_department'])) {
-      $query->where('t.department_id', '=', $this->filters['filter_department']);
     }
 
     if (!empty($this->filters['filter_status'])) {
@@ -698,83 +686,6 @@ class FacturacionDetalladaReport extends BaseReport implements WithEvents
               $mapped[] = $rowDetail;
           }
         }
-
-        // Distribuir otros cargos según comisiones (centros de costo)
-        // No quieren incluir otros gastos
-        /*
-        foreach ($transaction->commisions ?? [] as $commision) {
-            $percentFactor = $commision->percent / 100;
-
-            // --- Generar codcont ---
-            $codcont = '-';
-            if (!empty($commision->centroCosto->codigo) && !empty($transaction->codigoContable->codigo)) {
-                $codcont = str_replace('XX', $commision->centroCosto->codigo, $transaction->codigoContable->codigo);
-                $codcont = str_replace('YYY', $transaction->location->code ?? '', $codcont);
-            }
-
-            foreach ($transaction->otherCharges ?? [] as $cargo) {
-                // --- Valor base ---
-                $amountBase = $cargo->amount * $percentFactor;
-
-                // --- USD ---
-                $usdAmount = $transaction->currency_id == 1
-                            ? $amountBase
-                            : $amountBase / $transaction->proforma_change_type;
-
-                // --- CRC ---
-                $crcAmount = $transaction->currency_id == 16
-                            ? $amountBase
-                            : $amountBase * $transaction->proforma_change_type;
-
-                // --- Fila detallada ---
-                $rowDetail = [
-                  $transaction->id,
-                  $transaction->consecutivo,
-                  $codcont,
-                  $transaction->transaction_date ? Carbon::parse($transaction->transaction_date)->format('d-m-Y') : '',
-                  $transaction->customer_name,
-                  $transaction->contact->identification,
-                  $transaction->location->name,
-                  $cargo->detail,
-                  $transaction->currency->code,
-                  $transaction->proforma_change_type,
-                  $timbresBase,
-                  $honorariosBase,
-                  $taxBase,
-                  $honorariosSumBase,
-                  $amountBase,
-                  $totalComprobanteBase,
-
-                  $usdTimbres,
-                  $usdHonorarios,
-                  $usdTax,
-                  $usdHonorariosSum,
-                  $usdAmount,
-                  $usdTotal,
-                  $crcTimbres,
-                  $crcHonorarios,
-                  $crcTax,
-                  $crcHonorariosSum,
-                  $crcAmount,
-                  $crcTotal,
-                  '',
-                  '',
-                  '',
-                  '',
-                  '',
-                  '',
-                  '',
-                  '',
-                  '',
-                  '',
-                  '',
-                  'N' // columna is_main
-                ];
-
-                $mapped[] = $rowDetail;
-            }
-        }
-        */
     }
 
     return $mapped;

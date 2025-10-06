@@ -146,10 +146,6 @@ class AntiguedadReport extends BaseReport
         $query->where('transactions.contact_id', '=', $this->filters['filter_contact']);
     }
 
-    if (!empty($this->filters['filter_department'])) {
-        $query->where('transactions.department_id', '=', $this->filters['filter_department']);
-    }
-
     if (!empty($this->filters['filter_currency'])) {
         $query->where('transactions.currency_id', '=', $this->filters['filter_currency']);
     }

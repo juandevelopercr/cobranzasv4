@@ -2483,4 +2483,23 @@ class Transaction extends Model implements HasMedia
     $htmlData = "<span class=\"badge bg-primary\">$name</span>";
     return $htmlData;
   }
+
+  public static function getStatusOptionsforReports($is_invoice = false)
+  {
+    // Retornar los estados
+    if ($is_invoice)
+      $status = [
+        ['id' => 'ACEPTADA', 'name' => __('FACTURADA')],
+        ['id' => 'RECHAZADA', 'name' => __('RECHAZADA')],
+        ['id' => 'ANULADA', 'name' => __('ANULADA')],
+      ];
+    else
+      $status = [
+        ['id' => 'FACTURADA', 'name' => __('FACTURADA')],
+        ['id' => 'RECHAZADA', 'name' => __('RECHAZADA')],
+        ['id' => 'ANULADA', 'name' => __('ANULADA')],
+      ];
+
+    return collect($status);
+  }
 }

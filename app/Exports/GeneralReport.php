@@ -33,10 +33,7 @@ class GeneralReport extends BaseReport
             t.customer_name,
             CAST(c.identification AS CHAR) AS identification,
             emisor.name as nombreEmisor,
-            d.name as departamento,
             b.name as banco,
-            ca.numero,
-            ca.deudor,
             cc.descrip as centroCosto,
             cu.code as moneda,
             cu.symbol as monedasymbolo,
@@ -266,8 +263,7 @@ class GeneralReport extends BaseReport
             t.message AS message,
             t.notes AS notes,
             t.proforma_no,
-            u.name as usuario,
-            ca.deudor
+            u.name as usuario
         ")
         ->join('transactions as t', 'tc.transaction_id', '=', 't.id')
         ->leftJoin('centro_costos as cc', 'tc.centro_costo_id', '=', 'cc.id')
@@ -276,7 +272,6 @@ class GeneralReport extends BaseReport
         ->leftJoin('users as u', 't.created_by', '=', 'u.id')
         ->join('contacts as c', 't.contact_id', '=', 'c.id')
         ->join('banks as b', 't.bank_id', '=', 'b.id')
-        ->leftJoin('casos as ca', 't.caso_id', '=', 'ca.id')
         ->join('currencies as cu', 't.currency_id', '=', 'cu.id')
         ->whereIn('t.document_type', ['PR','FE','TE']);
 
@@ -354,9 +349,6 @@ class GeneralReport extends BaseReport
               ['label' => 'Consecutivo', 'field' => 'consecutivo', 'type' => 'string', 'align' => 'center', 'width' => 25],
               ['label' => 'Fecha de emisión', 'field' => 'transaction_date', 'type' => 'string', 'align' => 'center', 'width' => 25],
               ['label' => 'Cliente', 'field' => 'customer_name', 'type' => 'string', 'align' => 'left', 'width' => 45],
-              ['label' => 'Deudor', 'field' => 'deudor', 'type' => 'string', 'align' => 'left', 'width' => 45],
-              ['label' => 'O.C', 'field' => 'oc', 'type' => 'string', 'align' => 'left', 'width' => 40],
-              ['label' => 'MIGO', 'field' => 'migo', 'type' => 'string', 'align' => 'left', 'width' => 40],
               ['label' => 'Centro de Costo', 'field' => 'centroCosto', 'type' => 'string', 'align' => 'left', 'width' => 40],
               ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 15],
               ['label' => 'T.C', 'field' => 'proforma_change_type', 'type' => 'decimal', 'align' => 'right', 'width' => 15],
@@ -381,9 +373,6 @@ class GeneralReport extends BaseReport
               ['label' => 'Consecutivo', 'field' => 'consecutivo', 'type' => 'string', 'align' => 'center', 'width' => 25],
               ['label' => 'Fecha de emisión', 'field' => 'transaction_date', 'type' => 'string', 'align' => 'center', 'width' => 25],
               ['label' => 'Cliente', 'field' => 'customer_name', 'type' => 'string', 'align' => 'left', 'width' => 45],
-              ['label' => 'Deudor', 'field' => 'deudor', 'type' => 'string', 'align' => 'left', 'width' => 45],
-              ['label' => 'O.C', 'field' => 'oc', 'type' => 'string', 'align' => 'left', 'width' => 40],
-              ['label' => 'MIGO', 'field' => 'migo', 'type' => 'string', 'align' => 'left', 'width' => 40],
               ['label' => 'Centro de Costo', 'field' => 'centroCosto', 'type' => 'string', 'align' => 'left', 'width' => 40],
               ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 15],
               ['label' => 'T.C', 'field' => 'proforma_change_type', 'type' => 'decimal', 'align' => 'right', 'width' => 15],
@@ -406,9 +395,6 @@ class GeneralReport extends BaseReport
               ['label' => 'Consecutivo', 'field' => 'consecutivo', 'type' => 'string', 'align' => 'center', 'width' => 25],
               ['label' => 'Fecha de emisión', 'field' => 'transaction_date', 'type' => 'string', 'align' => 'center', 'width' => 25],
               ['label' => 'Cliente', 'field' => 'customer_name', 'type' => 'string', 'align' => 'left', 'width' => 45],
-              ['label' => 'Deudor', 'field' => 'deudor', 'type' => 'string', 'align' => 'left', 'width' => 45],
-              ['label' => 'O.C', 'field' => 'oc', 'type' => 'string', 'align' => 'left', 'width' => 40],
-              ['label' => 'MIGO', 'field' => 'migo', 'type' => 'string', 'align' => 'left', 'width' => 40],
               ['label' => 'Centro de Costo', 'field' => 'centroCosto', 'type' => 'string', 'align' => 'left', 'width' => 40],
               ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 15],
               ['label' => 'T.C', 'field' => 'proforma_change_type', 'type' => 'decimal', 'align' => 'right', 'width' => 15],
@@ -432,9 +418,6 @@ class GeneralReport extends BaseReport
               ['label' => 'Consecutivo', 'field' => 'consecutivo', 'type' => 'string', 'align' => 'center', 'width' => 25],
               ['label' => 'Fecha de emisión', 'field' => 'transaction_date', 'type' => 'string', 'align' => 'center', 'width' => 25],
               ['label' => 'Cliente', 'field' => 'customer_name', 'type' => 'string', 'align' => 'left', 'width' => 45],
-              ['label' => 'Deudor', 'field' => 'deudor', 'type' => 'string', 'align' => 'left', 'width' => 45],
-              ['label' => 'O.C', 'field' => 'oc', 'type' => 'string', 'align' => 'left', 'width' => 40],
-              ['label' => 'MIGO', 'field' => 'migo', 'type' => 'string', 'align' => 'left', 'width' => 40],
               ['label' => 'Centro de Costo', 'field' => 'centroCosto', 'type' => 'string', 'align' => 'left', 'width' => 40],
               ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 15],
               ['label' => 'T.C', 'field' => 'proforma_change_type', 'type' => 'decimal', 'align' => 'right', 'width' => 15],

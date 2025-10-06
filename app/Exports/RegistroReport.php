@@ -41,7 +41,6 @@ class RegistroReport extends BaseReport implements WithEvents
       ['label' => 'Monto Honorarios Menos Descuento', 'field' => 'honorariosConDescuento', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
       ['label' => 'Total', 'field' => 'totalComprobante', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
       ['label' => 'Banco', 'field' => 'banco', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Departamento', 'field' => 'departamento', 'type' => 'string', 'align' => 'left', 'width' => 25],
       ['label' => 'Emisor', 'field' => 'nombreEmisor', 'type' => 'string', 'align' => 'left', 'width' => 40],
       ['label' => 'Mensaje', 'field' => 'message', 'type' => 'string', 'align' => 'left', 'width' => 90],
       ['label' => 'Notas', 'field' => 'message', 'type' => 'string', 'align' => 'left', 'width' => 90],

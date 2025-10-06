@@ -14,8 +14,7 @@ class Antiguedad extends Component
 {
   public $filter_date;
   public $filter_contact;
-  public $filter_department;
-  public $filter_centroCosto = [1, 18, 15, 16, 17, 28, 14,24,31,10];
+  public $filter_centroCosto = [1, 18, 15, 16, 17];
   public $filter_currency;
   public $departments;
   public $currencies;
@@ -30,11 +29,6 @@ class Antiguedad extends Component
 
   public function mount()
   {
-    $this->departments = Department::whereIn('id', session('current_department'))
-      ->where('active', 1)
-      ->orderBy('name', 'ASC')
-      ->get();
-
     $this->currencies = Currency::orderBy('code', 'ASC')->get();
 
     $this->centrosCosto = CentroCosto::orderBy('descrip', 'ASC')->get();
@@ -80,7 +74,6 @@ class Antiguedad extends Component
       [
         'filter_date' => $this->filter_date,
         'filter_contact' => $this->filter_contact,
-        'filter_department' => $this->filter_department,
         'filter_centroCosto' => $this->filter_centroCosto,
         'filter_currency' => $this->filter_currency,
       ],

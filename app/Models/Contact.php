@@ -2,20 +2,21 @@
 
 namespace App\Models;
 
-use App\Models\Business;
-use App\Models\BusinessCustomerCalculoRegistro;
+use Carbon\Carbon;
 use App\Models\Canton;
-use App\Models\ConditionSale;
 use App\Models\Country;
-use App\Models\CustomerGroup;
+use App\Models\Business;
 use App\Models\District;
+use App\Models\Province;
+use App\Models\ConditionSale;
+use App\Models\CustomerGroup;
 use App\Models\EconomicActivity;
 use App\Models\IdentificationType;
-use App\Models\Province;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\BusinessCustomerCalculoRegistro;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
 class Contact extends Model
@@ -155,6 +156,18 @@ class Contact extends Model
     $lastCode = Contact::max('code'); // Obtiene el último valor de 'code'
     $newCode = str_pad((int)$lastCode + 1, 4, '0', STR_PAD_LEFT); // Genera el nuevo código de 4 dígitos
     return $newCode;
+  }
+
+  public function transactionsEstadoCuenta(): HasMany
+  {
+      return $this->hasMany(Transaction::class, 'contact_id', 'id')
+          ->whereIn('document_type', ['PR','FE','TE'])
+          ->whereIn('proforma_status', ['FACTURADA'])
+          ->whereNull('deleted_at')
+          ->whereNull('numero_deposito_pago')
+          ->whereHas('commisions', function($q) {
+              $q->whereNotIn('centro_costo_id', [1,12,14,15,16,17]);
+          });
   }
 
   public function scopeSearch($query, $value, $filters = [])

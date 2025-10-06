@@ -2,9 +2,7 @@
 
 namespace App\Livewire\Reports;
 
-use App\Exports\FacturacionReport;
 use App\Exports\RetencionReport;
-use App\Models\Department;
 use App\Models\Transaction;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
@@ -13,9 +11,7 @@ class Retencion extends Component
 {
   public $filter_date;
   public $filter_contact;
-  public $filter_department;
   public $filter_status;
-  public $departments;
   public $status;
   //public $document_type;
   public $loading = false;
@@ -28,10 +24,6 @@ class Retencion extends Component
   public function mount()
   {
     $this->filter_status = Transaction::FACTURADA;
-    $this->departments = Department::whereIn('id', session('current_department'))
-      ->where('active', 1)
-      ->orderBy('name', 'ASC')
-      ->get();
 
     $this->status = $this->getStatusOptions();
 
@@ -67,7 +59,6 @@ class Retencion extends Component
       [
         'filter_date' => $this->filter_date,
         'filter_contact' => $this->filter_contact,
-        'filter_department' => $this->filter_department,
         'filter_status' => $this->filter_status
       ],
       'REPORTE DE FACTURACIÓN CON RETENCION DEL 2% ' . $this->filter_date

@@ -3,7 +3,8 @@
   <div class="card-datatable text-nowrap">
     <div class="dataTables_wrapper dt-bootstrap5 no-footer">
       <form wire:submit.prevent="exportExcel">
-        <div class="row g-6">
+        <div class="row g-3 align-items-end">
+          <!-- Fecha de emisión -->
           <div class="col-md-3 fv-plugins-icon-container">
             <label class="form-label" for="filter_date">{{ __('Fecha de emisión') }}</label>
             <div class="input-group input-group-merge has-validation">
@@ -16,12 +17,11 @@
                 class="form-control range-picker @error('filter_date') is-invalid @enderror"
                 placeholder="dd-mm-aaaa">
             </div>
-            @error('filter_date')
-            <div class="text-danger mt-1">{{ $message }}</div>
-            @enderror
+            @error('filter_date')<div class="text-danger mt-1">{{ $message }}</div>@enderror
           </div>
 
-          <div class="col-md-6 fv-plugins-icon-container"
+          <!-- Centro de Costo -->
+          <div class="col-md-5 fv-plugins-icon-container"
               x-data="select2LivewireMultipleWithToggle({
                 wireModelName: 'filter_centroCosto',
                 postUpdate: true
@@ -36,28 +36,26 @@
                   <option value="{{ $centro->id }}"> {{ $centro->descrip }} </option>
                 @endforeach
               </select>
-              @error('filter_centroCosto')
-                <div class="text-danger mt-1">{{ $message }}</div>
-              @enderror
-            </div>
+              @error('filter_centroCosto')<div class="text-danger mt-1">{{ $message }}</div>@enderror
           </div>
-          <br>
+
+          <!-- Tipo -->
           <div class="col-md-3 select2-primary fv-plugins-icon-container">
             <label class="form-label" for="filter_type">{{ __('Tipo') }}</label>
             <div wire:ignore>
-              <select wire:model="filter_type" id="filter_type" class="select2 form-select @error('filter_type') is-invalid @enderror"
-                @if (!in_array(session('current_role_name'), ['SuperAdmin', 'Administrador', 'AdminFacturacion', 'AdminContabilidad', 'AdminPagos', 'AdminCXC'])) ? disabled @endif>
+              <select wire:model="filter_type" id="filter_type"
+                class="select2 form-select @error('filter_type') is-invalid @enderror">
                 <option value="1">Con Depósito</option>
                 <option value="2">Sin Depósito</option>
                 <option value="3">Honorarios</option>
                 <option value="4">Gastos</option>
               </select>
             </div>
-            @error('filter_type')
-            <div class="text-danger mt-1">{{ $message }}</div>
-            @enderror
+            @error('filter_type')<div class="text-danger mt-1">{{ $message }}</div>@enderror
           </div>
+        </div>
 
+        <div class="row g-3 align-items-end">
           <!-- Botones de acción -->
           <div class="col-md-3 d-flex align-items-end">
             {{-- Incluye botones de guardar y guardar y cerrar --}}
@@ -83,6 +81,7 @@
     </div>
   </div>
 </div>
+
 
 @script()
 <script>

@@ -5,21 +5,6 @@
       <form wire:submit.prevent="exportExcel">
         <div class="row g-6">
           <div class="col-md-3 select2-primary fv-plugins-icon-container">
-            <label class="form-label" for="filter_department">{{ __('Department') }}</label>
-            <div wire:ignore>
-              <select wire:model="filter_department" id="filter_department" class="select2 form-select @error('filter_department') is-invalid @enderror">
-                <option value="">{{ __('Seleccione...') }}</option>
-                @foreach ($this->departments as $department)
-                  <option value="{{ $department->id }}">{{ $department->name }}</option>
-                @endforeach
-              </select>
-            </div>
-            @error('filter_department')
-            <div class="text-danger mt-1">{{ $message }}</div>
-            @enderror
-          </div>
-
-          <div class="col-md-3 select2-primary fv-plugins-icon-container">
             <label class="form-label" for="filter_contact">{{ __('Cliente') }}</label>
             <div wire:ignore>
               <select id="filter_contact" class="form-select select2-ajax" data-placeholder="Buscar cliente">
@@ -47,8 +32,7 @@
           <div class="col-md-3 select2-primary fv-plugins-icon-container">
             <label class="form-label" for="filter_status">{{ __('Status') }}</label>
             <div wire:ignore>
-              <select wire:model="filter_status" id="filter_status" class="select2 form-select @error('filter_status') is-invalid @enderror"
-                @if (!in_array(session('current_role_name'), ['SuperAdmin', 'Administrador', 'AdminFacturacion', 'AdminContabilidad', 'AdminPagos', 'AdminCXC'])) ? disabled @endif>
+              <select wire:model="filter_status" id="filter_status" class="select2 form-select @error('filter_status') is-invalid @enderror">
                 <option value="">{{ __('Seleccione...') }}</option>
                 @foreach ($this->status as $statu)
                   <option value="{{ $statu['id'] }}">{{ $statu['name'] }}</option>
@@ -92,7 +76,6 @@
     // Función para inicializar Select2
     const initializeSelect2 = () => {
       const selects = [
-        'filter_department',
         'filter_status'
       ];
 

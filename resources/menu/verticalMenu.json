@@ -442,14 +442,6 @@
           ]
         },
         {
-          "url": "reports/registro",
-          "name": "Registro",
-          "slug": "reports.registro.index",
-          "permissions": [
-            "view-registro-reports"
-          ]
-        },
-        {
           "url": "reports/facturacion",
           "name": "Facturación General",
           "slug": "reports.facturacion.index",

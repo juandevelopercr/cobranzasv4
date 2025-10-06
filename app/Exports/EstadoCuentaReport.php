@@ -81,10 +81,6 @@ class EstadoCuentaReport implements FromView, ShouldAutoSize, WithColumnFormatti
                     }
                 }
 
-                if (!empty($this->filters['filter_department'])) {
-                    $q->where('department_id', $this->filters['filter_department']);
-                }
-
                 if (!empty($this->filters['filter_currency'])) {
                     $q->where('currency_id', $this->filters['filter_currency']);
                 }

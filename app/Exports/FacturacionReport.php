@@ -19,9 +19,7 @@ class FacturacionReport extends BaseReport
       ['label' => 'Cédula del cliente', 'field' => 'identification', 'type' => 'string', 'align' => 'left', 'width' => 15],
       ['label' => 'Emisor', 'field' => 'nombreEmisor', 'type' => 'string', 'align' => 'left', 'width' => 40],
 
-      ['label' => 'Departamento', 'field' => 'departamento', 'type' => 'string', 'align' => 'left', 'width' => 25],
       ['label' => 'Banco', 'field' => 'banco', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Número de caso', 'field' => 'numero', 'type' => 'string', 'align' => 'left', 'width' => 15],
 
       ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'T.C', 'field' => 'proforma_change_type', 'type' => 'decimal', 'align' => 'right', 'width' => 15],
@@ -55,8 +53,7 @@ class FacturacionReport extends BaseReport
       ['label' => 'Fecha de Depósito', 'field' => 'fecha_deposito_pago', 'type' => 'string', 'align' => 'left', 'width' => 35],
       ['label' => 'Número de Depósito', 'field' => 'numero_deposito_pago', 'type' => 'string', 'align' => 'left', 'width' => 35],
       ['label' => 'Mensaje', 'field' => 'message', 'type' => 'string', 'align' => 'left', 'width' => 90],
-      ['label' => 'Número de Proforma', 'field' => 'proforma_no', 'type' => 'string', 'align' => 'left', 'width' => 30],
-      ['label' => 'Deudor', 'field' => 'deudor', 'type' => 'string', 'align' => 'left', 'width' => 35],
+      ['label' => 'Número de Proforma', 'field' => 'proforma_no', 'type' => 'string', 'align' => 'left', 'width' => 30]
     ];
   }
 
@@ -82,9 +79,7 @@ class FacturacionReport extends BaseReport
         END AS customer_name,
         CAST(c.identification AS CHAR) AS identification,
         emisor.name as nombreEmisor,
-        d.name as departamento,
         b.name as banco,
-        ca.numero,
         cu.code as moneda,
         cu.symbol as monedasymbolo,
         t.proforma_change_type,
@@ -307,17 +302,14 @@ class FacturacionReport extends BaseReport
         END AS fecha_deposito_pago,
         t.numero_deposito_pago,
         t.message AS message,
-        t.proforma_no,
-        ca.deudor
+        t.proforma_no
     ")
     ->join('transactions as t', 'tc.transaction_id', '=', 't.id')
     ->leftJoin('centro_costos as cc', 'tc.centro_costo_id', '=', 'cc.id')
     ->leftJoin('codigo_contables as codcontable', 't.codigo_contable_id', '=', 'codcontable.id')
     ->leftJoin('business_locations as emisor', 't.location_id', '=', 'emisor.id')
     ->join('contacts as c', 't.contact_id', '=', 'c.id')
-    ->join('departments as d', 't.department_id', '=', 'd.id')
     ->join('banks as b', 't.bank_id', '=', 'b.id')
-    ->leftJoin('casos as ca', 't.caso_id', '=', 'ca.id')
     ->join('currencies as cu', 't.currency_id', '=', 'cu.id')
     ->whereIn('t.document_type', ['PR','FE','TE'])
     ->whereIn('t.proforma_status', ['FACTURADA','ANULADA'])
@@ -352,10 +344,6 @@ class FacturacionReport extends BaseReport
 
     if (!empty($this->filters['filter_contact'])) {
       $query->where('t.contact_id', '=', $this->filters['filter_contact']);
-    }
-
-    if (!empty($this->filters['filter_department'])) {
-      $query->where('t.department_id', '=', $this->filters['filter_department']);
     }
 
     if (!empty($this->filters['filter_status'])) {

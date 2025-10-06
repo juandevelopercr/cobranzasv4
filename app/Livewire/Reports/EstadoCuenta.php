@@ -5,7 +5,6 @@ namespace App\Livewire\Reports;
 use Carbon\Carbon;
 use Livewire\Component;
 use App\Models\Currency;
-use App\Models\Department;
 use App\Models\Transaction;
 use App\Exports\EstadoCuentaReport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -14,9 +13,7 @@ class EstadoCuenta extends Component
 {
   public $filter_date;
   public $filter_contact;
-  public $filter_department;
   public $filter_currency;
-  public $departments;
   public $currencies;
   //public $document_type;
   public $loading = false;
@@ -28,11 +25,6 @@ class EstadoCuenta extends Component
 
   public function mount()
   {
-    $this->departments = Department::whereIn('id', session('current_department'))
-      ->where('active', 1)
-      ->orderBy('name', 'ASC')
-      ->get();
-
     $this->currencies = Currency::orderBy('code', 'ASC')->get();
 
     $this->dispatch('reinitFormControls');
@@ -79,7 +71,6 @@ class EstadoCuenta extends Component
       [
         'filter_date' => $this->filter_date,
         'filter_contact' => $this->filter_contact,
-        'filter_department' => $this->filter_department,
         'filter_currency' => $this->filter_currency,
       ],
       'REPORTE DE ESTADO DE CUENTA' . $this->filter_date

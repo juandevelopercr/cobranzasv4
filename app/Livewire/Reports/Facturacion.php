@@ -3,7 +3,6 @@
 namespace App\Livewire\Reports;
 
 use App\Exports\FacturacionReport;
-use App\Models\Department;
 use App\Models\Transaction;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
@@ -12,7 +11,6 @@ class Facturacion extends Component
 {
   public $filter_date;
   public $filter_contact;
-  public $filter_department;
   public $filter_status;
   public $departments;
   public $status;
@@ -27,10 +25,6 @@ class Facturacion extends Component
   public function mount()
   {
     $this->filter_status = Transaction::FACTURADA;
-    $this->departments = Department::whereIn('id', session('current_department'))
-      ->where('active', 1)
-      ->orderBy('name', 'ASC')
-      ->get();
 
     $this->status = $this->getStatusOptions();
 
@@ -66,7 +60,6 @@ class Facturacion extends Component
       [
         'filter_date' => $this->filter_date,
         'filter_contact' => $this->filter_contact,
-        'filter_department' => $this->filter_department,
         'filter_status' => $this->filter_status
       ],
       'REPORTE DE FACTURACIÓN ' . $this->filter_date

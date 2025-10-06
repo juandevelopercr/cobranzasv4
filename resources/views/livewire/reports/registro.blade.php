@@ -43,7 +43,7 @@
               })"
               x-init="init($refs.select)"
               wire:ignore>
-              <label class="form-label d-block" for="filter_centroCosto">{{ __('Centro de Costo') }}</label>
+              <label class="form-label d-block" for="filter_centroCosto">{{ __('Centro de Costo Excluyente') }}</label>
               <select x-ref="select" id="filter_centroCosto"
                       class="form-select"
                       multiple>

@@ -56,8 +56,7 @@ class RetencionReport extends BaseReport
       ['label' => 'Fecha de Depósito', 'field' => 'fecha_deposito_pago', 'type' => 'string', 'align' => 'left', 'width' => 35],
       ['label' => 'Número de Depósito', 'field' => 'numero_deposito_pago', 'type' => 'string', 'align' => 'left', 'width' => 35],
       ['label' => 'Mensaje', 'field' => 'message', 'type' => 'string', 'align' => 'left', 'width' => 90],
-      ['label' => 'Número de Proforma', 'field' => 'proforma_no', 'type' => 'string', 'align' => 'left', 'width' => 30],
-      ['label' => 'Deudor', 'field' => 'deudor', 'type' => 'string', 'align' => 'left', 'width' => 35],
+      ['label' => 'Número de Proforma', 'field' => 'proforma_no', 'type' => 'string', 'align' => 'left', 'width' => 30]
     ];
   }
 
@@ -83,9 +82,7 @@ class RetencionReport extends BaseReport
         END AS customer_name,
         CAST(c.identification AS CHAR) AS identification,
         emisor.name as nombreEmisor,
-        d.name as departamento,
         b.name as banco,
-        ca.numero,
         cu.code as moneda,
         cu.symbol as monedasymbolo,
         t.proforma_change_type,
@@ -346,17 +343,14 @@ class RetencionReport extends BaseReport
         END AS fecha_deposito_pago,
         t.numero_deposito_pago,
         t.message AS message,
-        t.proforma_no,
-        ca.deudor
+        t.proforma_no
     ")
     ->join('transactions as t', 'tc.transaction_id', '=', 't.id')
     ->leftJoin('centro_costos as cc', 'tc.centro_costo_id', '=', 'cc.id')
     ->leftJoin('codigo_contables as codcontable', 't.codigo_contable_id', '=', 'codcontable.id')
     ->leftJoin('business_locations as emisor', 't.location_id', '=', 'emisor.id')
     ->join('contacts as c', 't.contact_id', '=', 'c.id')
-    ->join('departments as d', 't.department_id', '=', 'd.id')
     ->join('banks as b', 't.bank_id', '=', 'b.id')
-    ->leftJoin('casos as ca', 't.caso_id', '=', 'ca.id')
     ->join('currencies as cu', 't.currency_id', '=', 'cu.id')
     ->whereIn('t.document_type', ['PR','FE','TE'])
     ->whereIn('t.proforma_status', ['FACTURADA','ANULADA'])
@@ -397,278 +391,10 @@ class RetencionReport extends BaseReport
       $query->where('t.contact_id', '=', $this->filters['filter_contact']);
     }
 
-    if (!empty($this->filters['filter_department'])) {
-      $query->where('t.department_id', '=', $this->filters['filter_department']);
-    }
-
     if (!empty($this->filters['filter_status'])) {
       $query->where('t.proforma_status', '=', $this->filters['filter_status']);
     }
 
     return $query;
   }
-
-/*
-  public function query(): \Illuminate\Database\Eloquent\Builder
-  {
-    $query = Transaction::withoutGlobalScopes()
-        ->from('transactions as t')
-        ->selectRaw("
-            t.id,
-
-            -- Código contable con centro de costo y emisor
-            CASE
-                WHEN (SELECT cc.codigo
-                      FROM transactions_commissions tc
-                      JOIN centro_costos cc ON tc.centro_costo_id = cc.id
-                      WHERE tc.transaction_id = t.id
-                      LIMIT 1) IS NULL
-                OR (SELECT codcontable.codigo
-                    FROM codigo_contables codcontable
-                    WHERE codcontable.id = t.codigo_contable_id) IS NULL
-                THEN '-'
-                ELSE REPLACE(
-                        REPLACE(
-                            (SELECT codcontable.codigo
-                            FROM codigo_contables codcontable
-                            WHERE codcontable.id = t.codigo_contable_id),
-                            'XX',
-                            (SELECT cc.codigo
-                            FROM transactions_commissions tc
-                            JOIN centro_costos cc ON tc.centro_costo_id = cc.id
-                            WHERE tc.transaction_id = t.id
-                            LIMIT 1)
-                        ),
-                        'YYY',
-                        (SELECT em.code
-                        FROM business_locations em
-                        WHERE em.id = t.location_id)
-                    )
-            END AS codcont,
-
-            t.consecutivo,
-
-            -- Fecha transacción
-            CASE
-                WHEN t.transaction_date IS NULL THEN ''
-                ELSE DATE_FORMAT(t.transaction_date, '%d-%m-%Y')
-            END AS transaction_date,
-
-            -- Nombre cliente + caso
-            CASE
-                WHEN t.nombre_caso IS NULL OR t.nombre_caso = ''
-                THEN t.customer_name
-                ELSE CONCAT(t.customer_name, ' - ', t.nombre_caso)
-            END AS customer_name,
-
-            CAST(c.identification AS CHAR) AS identification,
-
-            -- Nombre emisor
-            (SELECT em.name FROM business_locations em WHERE em.id = t.location_id) AS nombreEmisor,
-
-            d.name as departamento,
-            b.name as banco,
-            ca.numero,
-            cu.code as moneda,
-            cu.symbol as monedasymbolo,
-            t.proforma_change_type,
-
-            -- Lineas detalle concatenadas
-            (
-                SELECT GROUP_CONCAT(tl.detail SEPARATOR ' - ')
-                FROM transactions_lines tl
-                WHERE tl.transaction_id = t.id
-            ) AS lineaDetalle,
-
-            -- Totales
-            CASE WHEN t.proforma_status = 'ANULADA' THEN 0 ELSE COALESCE(t.totalTimbres,0) END AS gastos,
-            CASE WHEN t.proforma_status = 'ANULADA' THEN 0 ELSE (COALESCE(t.totalHonorarios,0) - COALESCE(t.totalDiscount,0)) END AS honorariosConDescuento,
-            CASE WHEN t.proforma_status = 'ANULADA' THEN 0 ELSE COALESCE(t.totalTax,0) END AS totalTax,
-            CASE WHEN t.proforma_status = 'ANULADA' THEN 0 ELSE COALESCE(t.totalHonorarios,0) - COALESCE(t.totalDiscount,0) + COALESCE(t.totalTax,0) END AS honorariosConIva,
-            CASE WHEN t.proforma_status = 'ANULADA' THEN 0 ELSE COALESCE(t.totalOtrosCargos,0) END AS totalOtrosCargos,
-            CASE WHEN t.proforma_status = 'ANULADA' THEN 0 ELSE COALESCE(t.totalComprobante,0) END AS totalComprobante,
-
-            -- Totales USD
-            COALESCE(
-                CASE
-                    WHEN t.proforma_status = 'ANULADA' THEN 0
-                    ELSE CASE t.currency_id
-                        WHEN 1 THEN COALESCE(t.totalTimbres,0)
-                        ELSE COALESCE(t.totalTimbres,0) / NULLIF(COALESCE(t.proforma_change_type,1),0)
-                    END
-                END, 0) AS gastosUSD,
-
-            COALESCE(
-                CASE
-                    WHEN t.proforma_status = 'ANULADA' THEN 0
-                    ELSE CASE t.currency_id
-                        WHEN 1 THEN COALESCE(t.totalHonorarios,0) - COALESCE(t.totalDiscount,0)
-                        ELSE (COALESCE(t.totalHonorarios,0) - COALESCE(t.totalDiscount,0)) / NULLIF(COALESCE(t.proforma_change_type,1),0)
-                    END
-                END, 0) AS honorariosConDescuentoUSD,
-
-            COALESCE(
-                CASE
-                    WHEN t.proforma_status = 'ANULADA' THEN 0
-                    ELSE CASE t.currency_id
-                        WHEN 1 THEN COALESCE(t.totalTax,0)
-                        ELSE COALESCE(t.totalTax,0) / NULLIF(COALESCE(t.proforma_change_type,1),0)
-                    END
-                END, 0) AS totalTaxUSD,
-
-            COALESCE(
-                CASE
-                    WHEN t.proforma_status = 'ANULADA' THEN 0
-                    ELSE CASE t.currency_id
-                        WHEN 1 THEN COALESCE(t.totalHonorarios,0) - COALESCE(t.totalDiscount,0) + COALESCE(t.totalTax,0)
-                        ELSE (COALESCE(t.totalHonorarios,0) - COALESCE(t.totalDiscount,0) + COALESCE(t.totalTax,0)) / NULLIF(COALESCE(t.proforma_change_type,1),0)
-                    END
-                END, 0) AS honorariosConIvaUSD,
-
-            COALESCE(
-                CASE
-                    WHEN t.proforma_status = 'ANULADA' THEN 0
-                    ELSE CASE t.currency_id
-                        WHEN 1 THEN COALESCE(t.totalOtrosCargos,0)
-                        ELSE COALESCE(t.totalOtrosCargos,0) / NULLIF(COALESCE(t.proforma_change_type,1),0)
-                    END
-                END, 0) AS totalOtrosCargosUSD,
-
-            COALESCE(
-                CASE
-                    WHEN t.proforma_status = 'ANULADA' THEN 0
-                    ELSE CASE t.currency_id
-                        WHEN 1 THEN COALESCE(t.totalComprobante,0)
-                        ELSE COALESCE(t.totalComprobante,0) / NULLIF(COALESCE(t.proforma_change_type,1),0)
-                    END
-                END, 0) AS totalComprobanteUSD,
-
-            -- Totales CRC
-            COALESCE(
-                CASE
-                    WHEN t.proforma_status = 'ANULADA' THEN 0
-                    ELSE CASE t.currency_id
-                        WHEN 16 THEN COALESCE(t.totalTimbres,0)
-                        ELSE COALESCE(t.totalTimbres,0) * COALESCE(t.proforma_change_type,1)
-                    END
-                END, 0) AS gastosCRC,
-
-            COALESCE(
-                CASE
-                    WHEN t.proforma_status = 'ANULADA' THEN 0
-                    ELSE CASE t.currency_id
-                        WHEN 16 THEN COALESCE(t.totalHonorarios,0) - COALESCE(t.totalDiscount,0)
-                        ELSE (COALESCE(t.totalHonorarios,0) - COALESCE(t.totalDiscount,0)) * COALESCE(t.proforma_change_type,1)
-                    END
-                END, 0) AS honorariosConDescuentoCRC,
-
-            COALESCE(
-                CASE
-                    WHEN t.proforma_status = 'ANULADA' THEN 0
-                    ELSE CASE t.currency_id
-                        WHEN 16 THEN COALESCE(t.totalTax,0)
-                        ELSE COALESCE(t.totalTax,0) * COALESCE(t.proforma_change_type,1)
-                    END
-                END, 0) AS totalTaxCRC,
-
-            COALESCE(
-                CASE
-                    WHEN t.proforma_status = 'ANULADA' THEN 0
-                    ELSE CASE t.currency_id
-                        WHEN 16 THEN COALESCE(t.totalHonorarios,0) - COALESCE(t.totalDiscount,0) + COALESCE(t.totalTax,0)
-                        ELSE (COALESCE(t.totalHonorarios,0) - COALESCE(t.totalDiscount,0) + COALESCE(t.totalTax,0)) * COALESCE(t.proforma_change_type,1)
-                    END
-                END, 0) AS honorariosConIvaCRC,
-
-            COALESCE(
-                CASE
-                    WHEN t.proforma_status = 'ANULADA' THEN 0
-                    ELSE CASE t.currency_id
-                        WHEN 16 THEN COALESCE(t.totalOtrosCargos,0)
-                        ELSE COALESCE(t.totalOtrosCargos,0) * COALESCE(t.proforma_change_type,1)
-                    END
-                END, 0) AS totalOtrosCargosCRC,
-
-            COALESCE(
-                CASE
-                    WHEN t.proforma_status = 'ANULADA' THEN 0
-                    ELSE CASE t.currency_id
-                        WHEN 16 THEN COALESCE(t.totalComprobante,0)
-                        ELSE COALESCE(t.totalComprobante,0) * COALESCE(t.proforma_change_type,1)
-                    END
-                END, 0) AS totalComprobanteCRC,
-
-            t.proforma_status,
-
-            CASE WHEN t.proforma_status = 'ANULADA' THEN (
-                SELECT t1.consecutivo
-                FROM transactions t1
-                WHERE t1.RefCodigo = t.key
-                LIMIT 1
-            ) ELSE '' END AS numeroNotaCredito,
-
-            t.oc AS ordenCompra,
-            t.migo AS migo,
-            t.or AS ordenRequisicion,
-            t.prebill AS prebill,
-
-            CASE
-                WHEN t.fecha_deposito_pago IS NULL THEN ''
-                ELSE DATE_FORMAT(t.fecha_deposito_pago, '%d-%m-%Y')
-            END AS fecha_deposito_pago,
-
-            t.numero_deposito_pago,
-            t.message AS message,
-            t.proforma_no,
-            ca.deudor
-        ")
-        ->leftJoin('contacts as c', 't.contact_id', '=', 'c.id')
-        ->leftJoin('departments as d', 't.department_id', '=', 'd.id')
-        ->leftJoin('banks as b', 't.bank_id', '=', 'b.id')
-        ->leftJoin('casos as ca', 't.caso_id', '=', 'ca.id')
-        ->join('currencies as cu', 't.currency_id', '=', 'cu.id')
-        ->whereNull('t.deleted_at')
-        ->where('t.is_retencion', 1)
-        ->whereNotNull('t.fecha_deposito_pago')
-        ->whereNotNull('t.numero_deposito_pago')
-        //->whereIn('t.id', [75946])
-        ->whereIn('t.document_type', ['PR','FE','TE'])
-        ->whereIn('t.proforma_status', ['FACTURADA','ANULADA'])
-        ->orderBy('t.fecha_deposito_pago', 'DESC')
-        ->orderBy('c.name', 'ASC');
-
-    if (!empty($this->filters['filter_date'])) {
-        $range = explode(' to ', $this->filters['filter_date']);
-
-        try {
-            if (count($range) === 2) {
-                $start = Carbon::createFromFormat('d-m-Y', trim($range[0]))->startOfDay();
-                $end   = Carbon::createFromFormat('d-m-Y', trim($range[1]))->endOfDay();
-
-                $query->whereBetween('t.fecha_deposito_pago', [$start, $end]);
-            } else {
-                $singleDate = Carbon::createFromFormat('d-m-Y', trim($this->filters['filter_date']));
-                $query->whereDate('t.fecha_deposito_pago', $singleDate->format('Y-m-d'));
-            }
-        } catch (\Exception $e) {
-            // Opcional: podrías registrar el error para depurar
-            //\Log::error("Error en filtro de fechas: ".$e->getMessage());
-        }
-    }
-
-    if (!empty($this->filters['filter_contact'])) {
-      $query->where('t.contact_id', '=', $this->filters['filter_contact']);
-    }
-
-    if (!empty($this->filters['filter_department'])) {
-      $query->where('t.department_id', '=', $this->filters['filter_department']);
-    }
-
-    if (!empty($this->filters['filter_status'])) {
-      $query->where('t.proforma_status', '=', $this->filters['filter_status']);
-    }
-
-    return $query;
-  }
-  */
 }

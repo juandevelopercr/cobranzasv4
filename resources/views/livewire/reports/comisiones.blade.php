@@ -5,21 +5,6 @@
       <form wire:submit.prevent="exportExcel">
         <div class="row g-6">
           <div class="col-md-3 select2-primary fv-plugins-icon-container">
-            <label class="form-label" for="filter_department">{{ __('Department') }}</label>
-            <div wire:ignore>
-              <select wire:model="filter_department" id="filter_department" class="select2 form-select @error('filter_department') is-invalid @enderror">
-                <option value="">{{ __('Seleccione...') }}</option>
-                @foreach ($this->departments as $department)
-                  <option value="{{ $department->id }}">{{ $department->name }}</option>
-                @endforeach
-              </select>
-            </div>
-            @error('filter_department')
-            <div class="text-danger mt-1">{{ $message }}</div>
-            @enderror
-          </div>
-
-          <div class="col-md-3 select2-primary fv-plugins-icon-container">
             <label class="form-label" for="filter_abogado">{{ __('Abogado') }}</label>
             <div wire:ignore>
               <select wire:model="filter_abogado" id="filter_abogado" class="select2 form-select @error('filter_abogado') is-invalid @enderror">
@@ -121,7 +106,6 @@
     // Función para inicializar Select2
     const initializeSelect2 = () => {
       const selects = [
-        'filter_department',
         'filter_abogado',
         'filter_currency',
         'filter_type'

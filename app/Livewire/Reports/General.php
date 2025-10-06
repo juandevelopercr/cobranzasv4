@@ -30,7 +30,7 @@ class General extends Component
     $this->centrosCosto = CentroCosto::orderBy('descrip', 'ASC')->get();
 
     //Banca Retail Normal
-    $this->filter_centroCosto = 1;
+    $this->filter_centroCosto = [26];
 
     $this->dispatch('reinitFormControls');
   }
