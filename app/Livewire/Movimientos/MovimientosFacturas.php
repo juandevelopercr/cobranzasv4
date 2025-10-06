@@ -483,19 +483,7 @@ class MovimientosFacturas extends TransactionManager
       })
       ->distinct('transactions.id');
 
-    $allowedRoles = User::ROLES_ALL_DEPARTMENTS;
-    if (in_array(Session::get('current_role_name'), $allowedRoles)) {
-      $query->whereIn('proforma_status', [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA]);
-    } else {
-      // Obtener departamentos y bancos de la sesión
-      $departments = Session::get('current_department', []);
-
-      // Filtrar por departamento y banco
-      if (!empty($departments)) {
-        $query->whereIn('transactions.department_id', $departments);
-      }
-      $query->whereIn('proforma_status', [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA]);
-    }
+    $query->whereIn('proforma_status', [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA]);
 
     return $query;
   }

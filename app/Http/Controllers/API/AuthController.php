@@ -25,7 +25,7 @@ class AuthController extends Controller
         return [
           'id' => $role->id,
           'name' => $role->name,
-          'requires_department' => !in_array($role->name, User::ROLES_ALL_DEPARTMENTS)
+          'requires_department' => false
         ];
       }),
       'status' => 'success'
