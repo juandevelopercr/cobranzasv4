@@ -430,7 +430,16 @@
       "icon": "menu-icon tf-icons bx bx-bar-chart-alt-2",
       "slug": "reports",
       "permissions": [
-        "view-classifiers"
+        "view-generales-reports",
+        "view-registro-reports",
+        "view-facturacion-reports",
+        "view-facturacion-general-reports",
+        "view-cliente-reports",
+        "view-comisiones-reports",
+        "view-retencion-reports",
+        "view-antiguedad-reports",
+        "view-estado-cuenta-reports",
+        "view-gastos-reports"
       ],
       "submenu": [
         {
