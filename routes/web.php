@@ -6,6 +6,7 @@ use Livewire\Livewire;
 use \App\Models\Contact;
 use App\Models\Department;
 use App\Models\Movimiento;
+use App\Models\Comprobante;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Home;
 use Illuminate\Support\Facades\DB;
@@ -38,6 +39,7 @@ use App\Http\Controllers\classifiers\TimbreController;
 use App\Http\Controllers\customers\CustomerController;
 use App\Http\Controllers\reports\ReportCasoController;
 use App\Http\Controllers\authentications\RegisterBasic;
+use App\Http\Controllers\reports\ReportGastoController;
 use App\Http\Controllers\rolesPersmissions\AccessRoles;
 use App\Http\Controllers\classifiers\CaratulaController;
 use App\Http\Controllers\classifiers\GarantiaController;
@@ -305,6 +307,10 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
     // Reporte estado de cuenta
     Route::get('/estado-cuenta', [ReportEstadoCuentaController::class, 'index'])
       ->name('estado-cuenta.index');
+
+    // Reporte de Gasto
+    Route::get('/gastos', [ReportGastoController::class, 'index'])
+      ->name('gastos.index');
   });
 });
 
@@ -425,6 +431,20 @@ Route::get('/api/customers/search', function (\Illuminate\Http\Request $request)
       'id' => $contact->id,
       'text' => "{$contact->name}"
     ]);
+});
+
+Route::get('/api/emisor/search', function (\Illuminate\Http\Request $request) {
+    $term = $request->get('q');
+    return Comprobante::query()
+        ->where('emisor_nombre', 'like', "%{$term}%")
+        ->select('emisor_nombre') // solo esta columna
+        ->distinct()
+        ->limit(20)
+        ->pluck('emisor_nombre') // obtenemos solo los valores únicos
+        ->map(fn($nombre) => [
+            'id' => $nombre,
+            'text' => $nombre
+        ]);
 });
 
 // routes/web.php

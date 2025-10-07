@@ -2502,4 +2502,14 @@ class Transaction extends Model implements HasMedia
 
     return collect($status);
   }
+
+  public static function getStatusOptionsforReportGasto()
+  {
+      $status = [
+        ['id' => 'ACEPTADA', 'name' => __('ACEPTADO')],
+        ['id' => 'RECHAZADA', 'name' => __('RECHAZADO')],
+      ];
+
+      return collect($status);
+  }
 }

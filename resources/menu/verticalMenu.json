@@ -496,6 +496,14 @@
           "permissions": [
             "view-estado-cuenta-reports"
           ]
+        },
+        {
+          "url": "reports/gastos",
+          "name": "Gastos",
+          "slug": "reports.gastos.index",
+          "permissions": [
+            "view-gastos-reports"
+          ]
         }
       ]
     },
