@@ -40,10 +40,18 @@ class AntiguedadReport extends BaseReport
         END
     ";
 
-    // Abonos/pagos
+    // Abonos/pagos con conversión de moneda
     $pagosCase = "
         COALESCE((
-            SELECT SUM(total_medio_pago)
+            SELECT SUM(
+                CASE
+                    WHEN transactions.currency_id = 1 AND $currencyFilter = 16
+                        THEN transactions_payments.total_medio_pago * COALESCE(transactions.proforma_change_type,1)
+                    WHEN transactions.currency_id = 16 AND $currencyFilter = 1
+                        THEN transactions_payments.total_medio_pago / COALESCE(transactions.proforma_change_type,1)
+                    ELSE transactions_payments.total_medio_pago
+                END
+            )
             FROM transactions_payments
             WHERE transactions_payments.transaction_id = transactions.id
         ),0)
