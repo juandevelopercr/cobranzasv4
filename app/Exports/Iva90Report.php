@@ -325,6 +325,7 @@ class Iva90Report extends BaseReport
     ->join('currencies as cu', 't.currency_id', '=', 'cu.id')
     ->whereIn('t.document_type', ['PR','FE','TE'])
     ->whereIn('t.proforma_status', ['FACTURADA','ANULADA'])
+    ->whereIn('t.proforma_type', 'HONORARIO')
     ->whereNotNull('t.fecha_deposito_pago')
     //->where('t.fecha_deposito_pago', '<>', '')
     ->whereNotNull('t.numero_deposito_pago')
