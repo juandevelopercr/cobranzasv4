@@ -94,6 +94,8 @@ class CuentaManager extends BaseComponent
   public $columns;
   public $defaultColumns;
 
+  public $listActives = [];
+
   protected $listeners = [
     'datatableSettingChange' => 'refresDatatable',
   ];
@@ -109,6 +111,7 @@ class CuentaManager extends BaseComponent
     $this->banks = Bank::where('active', 1)->orderBy('name', 'ASC')->get();
     $this->currencies = Currency::where('active', 1)->orderBy('code', 'ASC')->get();
     $this->departments = Department::orderBy('name', 'ASC')->get();
+    $this->listActives = [['id' => 1, 'name' => 'Si'], ['id' => 0, 'name' => 'No']];
 
     $this->refresDatatable();
   }
@@ -502,6 +505,7 @@ class CuentaManager extends BaseComponent
   public $filters = [
     'filter_numero_cuenta' => NULL,
     'filter_nombre_cuenta' => NULL,
+    'filter_is_cuenta_301' => NULL,
     'filter_perosna_sociedad' => NULL,
     'filter_moneda' => NULL,
     'filter_bank' => NULL,
@@ -546,6 +550,25 @@ class CuentaManager extends BaseComponent
         'columnAlign' => '',
         'columnClass' => '',
         'function' => '',
+        'parameters' => [],
+        'sumary' => '',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'is_cuenta_301',
+        'orderName' => 'is_cuenta_301',
+        'label' => __('Cuenta 301'),
+        'filter' => 'is_cuenta_301',
+        'filter_type' => 'select',
+        'filter_sources' => 'listActives',
+        'filter_source_field' => 'name',
+        'columnType' => 'string',
+        'columnAlign' => 'center',
+        'columnClass' => '',
+        'function' => 'getHtmlColumnActive',
         'parameters' => [],
         'sumary' => '',
         'openHtmlTab' => '',
@@ -756,5 +779,10 @@ class CuentaManager extends BaseComponent
   public function dateRangeSelected($id, $range)
   {
     $this->filters[$id] = $range;
+  }
+
+  public function updatedIsCuenta301($value)
+  {
+    $this->is_cuenta_301 = (int) $value;
   }
 }

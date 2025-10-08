@@ -63,6 +63,11 @@ class Cuenta extends Model
     return $this->belongsToMany(BusinessLocation::class, 'cuentas_has_locations', 'cuenta_id', 'location_id');
   }
 
+  public function setIsCuenta301Attribute($value)
+  {
+      $this->attributes['is_cuenta_301'] = $value ? 1 : 0;
+  }
+
   public function scopeSearch($query, $value, $filters = [])
   {
     // Definir las columnas que quieres seleccionar
@@ -148,6 +153,10 @@ class Cuenta extends Model
       $query->whereHas('locations', function ($q) use ($filters) {
         $q->where('business_locations.name', 'like', '%' . $filters['filter_location'] . '%');
       });
+    }
+
+    if (isset($filters['is_cuenta_301']) && !is_null($filters['is_cuenta_301'])  && $filters['is_cuenta_301'] !== '') {
+      $query->where('is_cuenta_301', '=', (int)$filters['is_cuenta_301']);
     }
 
     return $query;
@@ -238,5 +247,15 @@ class Cuenta extends Model
       else
         return $balance['saldo_final_usd'];
     }
+  }
+
+  public function getHtmlColumnActive()
+  {
+    if ($this->active) {
+      $output = '<i class="bx bx-check-circle text-success fs-4" title="Si"></i>';
+    } else {
+      $output = '<i class="bx bx-x-circle text-danger fs-4" title="No"></i>';
+    }
+    return $output;
   }
 }
