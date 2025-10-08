@@ -1,5 +1,5 @@
 <div class="card">
-  <h4 class="card-header pb-0 text-md-start text-center ms-n2">{{ __('Reporte de Facturación con mas de 90 días') }}</h4>
+  <h4 class="card-header pb-0 text-md-start text-center ms-n2">{{ __('Reporte de Facturación con más de 90 días') }}</h4>
   <div class="card-datatable text-nowrap">
     <div class="dataTables_wrapper dt-bootstrap5 no-footer">
       <form wire:submit.prevent="exportExcel">
