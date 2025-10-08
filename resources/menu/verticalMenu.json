@@ -513,6 +513,41 @@
           "permissions": [
             "view-gastos-reports"
           ]
+        },
+        {
+          "name": "Reporte IVA",
+          "slug": "reports.iva",
+          "permissions": [
+            "view-iva-reports",
+            "view-iva90-reports",
+            "view-ivaMas90-reports"
+          ],
+          "submenu": [
+            {
+              "url": "reports/iva-mes",
+              "name": "Facturas con Pago",
+              "slug": "reports.iva-mes.index",
+              "permissions": [
+                "view-iva-reports"
+              ]
+            },
+            {
+              "url": "reports/iva-90",
+              "name": "Facturas menos 90 días",
+              "slug": "reports.iva-90.index",
+              "permissions": [
+                "view-iva90-reports"
+              ]
+            },
+            {
+              "url": "reports/iva-mas90",
+              "name": "Facturas más 90 días",
+              "slug": "reports.iva-mas90.index",
+              "permissions": [
+                "view-ivaMas90-reports"
+              ]
+            }
+          ]
         }
       ]
     },

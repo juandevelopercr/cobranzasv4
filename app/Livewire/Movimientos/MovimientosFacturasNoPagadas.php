@@ -335,6 +335,7 @@ class MovimientosFacturasNoPagadas extends TransactionManager
         $query->whereIn('transactions.location_id', $emisores);
     }
 
+    //dd($this->search);
     // Orden final: usar alias 'c.name' en lugar de 'contacts.name'
     return $query->orderByDesc('transactions.transaction_date')
                  ->orderByDesc('transactions.consecutivo')

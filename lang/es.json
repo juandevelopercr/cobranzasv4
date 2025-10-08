@@ -515,5 +515,8 @@
   "View-retencion": "Ver reporte de retención del 2%",
   "View-antiguedad": "Ver reporte de antiguedad de saldo",
   "View-estado-cuenta": "Ver reporte de estado de cuenta",
-  "View-gastos": "Ver reporte de gastos"
+  "View-gastos": "Ver reporte de gastos",
+  "View-iva": "Ver reporte de iva",
+  "View-iva90": "Ver reporte de iva menos de 90 días",
+  "View-ivamas90": "Ver reporte de iva máas de 90 días"
 }

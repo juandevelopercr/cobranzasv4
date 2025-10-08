@@ -32,6 +32,7 @@ use App\Http\Controllers\products\ProductController;
 use App\Http\Controllers\Settings\SettingController;
 use App\Http\Controllers\dashboard\GraficoController;
 use App\Http\Controllers\language\LanguageController;
+use App\Http\Controllers\reports\ReportIvaController;
 use App\Http\Controllers\Auth\RoleSelectionController;
 use App\Http\Controllers\classifiers\CuentaController;
 use App\Http\Controllers\classifiers\SectorController;
@@ -40,6 +41,7 @@ use App\Http\Controllers\customers\CustomerController;
 use App\Http\Controllers\reports\ReportCasoController;
 use App\Http\Controllers\authentications\RegisterBasic;
 use App\Http\Controllers\reports\ReportGastoController;
+use App\Http\Controllers\reports\ReportIva90Controller;
 use App\Http\Controllers\rolesPersmissions\AccessRoles;
 use App\Http\Controllers\classifiers\CaratulaController;
 use App\Http\Controllers\classifiers\GarantiaController;
@@ -50,6 +52,7 @@ use App\Http\Controllers\reports\ReportInvoiceController;
 use App\Http\Controllers\classifiers\CasoEstadoController;
 use App\Http\Controllers\classifiers\DepartmentController;
 use App\Http\Controllers\movimientos\MovimientoController;
+use App\Http\Controllers\reports\ReportIvaMas90Controller;
 use App\Http\Controllers\reports\ReportProformaController;
 use App\Http\Controllers\reports\ReportRegistroController;
 use App\Http\Controllers\billing\CalculoRegistroController;
@@ -311,6 +314,16 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
     // Reporte de Gasto
     Route::get('/gastos', [ReportGastoController::class, 'index'])
       ->name('gastos.index');
+
+    // Reporte de IVA
+    Route::get('/iva-mes', [ReportIvaController::class, 'index'])
+        ->name('iva-mes.index'); // ✅ nombre correcto
+
+    Route::get('/iva-90', [ReportIva90Controller::class, 'index'])
+        ->name('iva-90.index'); // ✅ nombre correcto
+
+    Route::get('/iva-mas90', [ReportIvaMas90Controller::class, 'index'])
+        ->name('iva-mas90.index'); // ✅ nombre correcto
   });
 });
 

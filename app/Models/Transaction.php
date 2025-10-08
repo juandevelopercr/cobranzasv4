@@ -532,6 +532,12 @@ class Transaction extends Model implements HasMedia
 
     if (!empty($filters['filter_consecutivo'])) {
       $query->where('transactions.consecutivo', 'like', '%' . $filters['filter_consecutivo'] . '%');
+      /*
+      dd([
+          'sql' => $query->toSql(),        // la consulta SQL con placeholders
+          'bindings' => $query->getBindings(), // los valores de los placeholders
+      ]);
+      */
     }
 
     if (!empty($filters['filter_customer_name'])) {
