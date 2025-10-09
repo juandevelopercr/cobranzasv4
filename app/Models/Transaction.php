@@ -407,19 +407,21 @@ class Transaction extends Model implements HasMedia
           NULLIF(casos.pnombre_apellidos_deudor, '')
       ) as caso_info"),
       DB::raw("(
-            SELECT GROUP_CONCAT(
-                       TRIM(
-                           CONCAT(
-                               COALESCE(cc.codigo, ''),
-                               ' ',
-                               COALESCE(cc.descrip, '')
-                           )
-                       ) SEPARATOR ', '
-                   )
-            FROM transactions_commissions tc
-            LEFT JOIN centro_costos cc ON tc.centro_costo_id = cc.id
-            WHERE tc.transaction_id = transactions.id
-        ) as centros_costos_html"),
+          SELECT GROUP_CONCAT(
+                    TRIM(
+                        CONCAT(
+                            COALESCE(cc.codigo, ''),
+                            ' ',
+                            COALESCE(cc.descrip, ''),
+                            ' ',
+                            IF(tc.abogado_encargado IS NOT NULL AND tc.abogado_encargado != '', CONCAT('(', tc.abogado_encargado, ')'), '')
+                        )
+                    ) SEPARATOR ', '
+                )
+          FROM transactions_commissions tc
+          LEFT JOIN centro_costos cc ON tc.centro_costo_id = cc.id
+          WHERE tc.transaction_id = transactions.id
+      ) as centros_costos_html"),
       DB::raw("(
             SELECT COALESCE(SUM(tp.total_medio_pago), 0)
             FROM transactions_payments tp
