@@ -80,10 +80,11 @@ class EstadoCuentaReport implements FromView, ShouldAutoSize, WithColumnFormatti
                         $q->whereDate('transaction_date', $singleDate->format('Y-m-d'));
                     }
                 }
-
+                /*
                 if (!empty($this->filters['filter_currency'])) {
                     $q->where('currency_id', $this->filters['filter_currency']);
                 }
+                    */
             })
             ->orderBy('name');
 

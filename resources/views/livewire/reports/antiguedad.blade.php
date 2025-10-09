@@ -56,7 +56,7 @@
                       class="form-select"
                       multiple>
                 @foreach ($this->centrosCosto as $centro)
-                  <option value="{{ $centro->id }}"> {{ $centro->descrip }} </option>
+                  <option value="{{ $centro->id }}"> {{ $centro->codigo .'-' .$centro->descrip }} </option>
                 @endforeach
               </select>
               @error('filter_centroCosto')
