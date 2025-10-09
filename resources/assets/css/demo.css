@@ -623,3 +623,10 @@ th {
   padding: 1rem; /* espacio interno */
   border-radius: 0.5rem; /* esquinas redondeadas */
 }
+
+.tr-dolar {
+  background-color: #e6f9ec; /* verde clarito */
+}
+.tr-colon {
+  background-color: #ffffff;
+}

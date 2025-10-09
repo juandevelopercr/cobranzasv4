@@ -18,8 +18,10 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach($cuentas301 as $key => $cuenta)
-                <tr>
+
+              @foreach($cuentas301 as $key => $cuenta)
+
+                <tr class="{{ $cuenta['moneda_id'] == 1 ? 'tr-dolar' : 'tr-colon' }}">
                     <td>{{ $key + 1 }}</td>
                     <td>{{ $cuenta['nombre_cuenta'] }}</td>
 
@@ -86,112 +88,113 @@
                         <b>{{ number_format($total, 2) }}</b>
                     </td>
                 </tr>
-            @endforeach
+              @endforeach
+
             </tbody>
-          <tfoot>
-              <tr>
-                  <td colspan="8"></td>
-                  <td><b>TOTAL COLONES</b></td>
-                  <td><b>TOTAL DOLARES</b></td>
-              </tr>
+            <tfoot>
+                <tr>
+                    <td colspan="8"></td>
+                    <td><b>TOTAL COLONES</b></td>
+                    <td><b>TOTAL DOLARES</b></td>
+                </tr>
 
-              <tr>
-                  <td colspan="6"></td>
-                  <td class="text-end" colspan="2"><b>SALDO DE CUENTAS 3-101 Y BAC CDF</b></td>
-                  <td class="text-end">
-                      <input type="text"
-                            class="form-control text-end fw-bold {{ $totalColones301 < 0 ? 'text-danger' : '' }}"
-                            readonly
-                            wire:model="totalColones301"
-                            style="width: 160px;">
-                  </td>
-                  <td class="text-end">
-                      <input type="text"
-                            class="form-control text-end fw-bold {{ $totalDolares301 < 0 ? 'text-danger' : '' }}"
-                            readonly
-                            wire:model="totalDolares301"
-                            style="width: 160px;">
-                  </td>
-              </tr>
+                <tr>
+                    <td colspan="6"></td>
+                    <td class="text-end" colspan="2"><b>SALDO DE CUENTAS 3-101 Y BAC CDF</b></td>
+                    <td class="text-end">
+                        <input type="text"
+                              class="form-control text-end fw-bold {{ $totalColones301 < 0 ? 'text-danger' : '' }}"
+                              readonly
+                              wire:model="totalColones301"
+                              style="width: 160px;">
+                    </td>
+                    <td class="text-end">
+                        <input type="text"
+                              class="form-control tr-dolar text-end fw-bold {{ $totalDolares301 < 0 ? 'text-danger' : '' }}"
+                              readonly
+                              wire:model="totalDolares301"
+                              style="width: 160px;">
+                    </td>
+                </tr>
 
-              <tr>
-                  <td colspan="6"></td>
-                  <td class="text-end" colspan="2"><b>SALDO DE LAS DEMAS CUENTAS</b></td>
-                  <td class="text-end">
-                      <input type="text"
-                            class="form-control text-end fw-bold {{ $otrasCuentasColones < 0 ? 'text-danger' : '' }}"
-                            readonly
-                            wire:model="otrasCuentasColones"
-                            style="width: 160px;">
-                  </td>
-                  <td class="text-end">
-                      <input type="text"
-                            class="form-control text-end fw-bold {{ $otrasCuentasDolares < 0 ? 'text-danger' : '' }}"
-                            readonly
-                            wire:model="otrasCuentasDolares"
-                            style="width: 160px;">
-                  </td>
-              </tr>
+                <tr>
+                    <td colspan="6"></td>
+                    <td class="text-end" colspan="2"><b>SALDO DE LAS DEMAS CUENTAS</b></td>
+                    <td class="text-end">
+                        <input type="text"
+                              class="form-control text-end fw-bold {{ $otrasCuentasColones < 0 ? 'text-danger' : '' }}"
+                              readonly
+                              wire:model="otrasCuentasColones"
+                              style="width: 160px;">
+                    </td>
+                    <td class="text-end">
+                        <input type="text"
+                              class="form-control tr-dolar text-end fw-bold {{ $otrasCuentasDolares < 0 ? 'text-danger' : '' }}"
+                              readonly
+                              wire:model="otrasCuentasDolares"
+                              style="width: 160px;">
+                    </td>
+                </tr>
 
-              <tr>
-                  <td colspan="6"></td>
-                  <td class="text-end" colspan="2"><b>TOTAL DISPONIBLE</b></td>
-                  <td class="text-end">
-                      <input type="text"
-                            class="form-control text-end fw-bold {{ $totalDisponibleColones < 0 ? 'text-danger' : '' }}"
-                            readonly
-                            wire:model="totalDisponibleColones"
-                            style="width: 160px;">
-                  </td>
-                  <td class="text-end">
-                      <input type="text"
-                            class="form-control text-end fw-bold {{ $totalDisponibleDolares < 0 ? 'text-danger' : '' }}"
-                            readonly
-                            wire:model="totalDisponibleDolares"
-                            style="width: 160px;">
-                  </td>
-              </tr>
+                <tr>
+                    <td colspan="6"></td>
+                    <td class="text-end" colspan="2"><b>TOTAL DISPONIBLE</b></td>
+                    <td class="text-end">
+                        <input type="text"
+                              class="form-control text-end fw-bold {{ $totalDisponibleColones < 0 ? 'text-danger' : '' }}"
+                              readonly
+                              wire:model="totalDisponibleColones"
+                              style="width: 160px;">
+                    </td>
+                    <td class="text-end">
+                        <input type="text"
+                              class="form-control tr-dolar text-end fw-bold {{ $totalDisponibleDolares < 0 ? 'text-danger' : '' }}"
+                              readonly
+                              wire:model="totalDisponibleDolares"
+                              style="width: 160px;">
+                    </td>
+                </tr>
 
-              <tr>
-                  <td colspan="6"></td>
-                  <td class="text-end" colspan="2"><b>TIPO DE CAMBIO</b></td>
-                  <td class="text-end">
-                      <div
-                          x-data="cleaveLivewire({
-                              initialValue: '{{ $tipo_cambio ?? '' }}',
-                              wireModelName: 'tipo_cambio',
-                              postUpdate: true,
-                              decimalScale: 2
-                          })"
-                          x-init="init($refs.cleaveInput)"
-                      >
-                          <div class="input-group input-group-merge has-validation">
-                              <input
-                                  x-ref="cleaveInput"
-                                  class="form-control text-end fw-bold"
-                                  type="text"
-                                  style="width: 160px;"
-                                  wire:ignore
-                              />
-                          </div>
-                      </div>
-                  </td>
-                  <td></td>
-              </tr>
+                <tr>
+                    <td colspan="6"></td>
+                    <td class="text-end" colspan="2"><b>TIPO DE CAMBIO</b></td>
+                    <td class="text-end">
+                        <div
+                            x-data="cleaveLivewire({
+                                initialValue: '{{ $tipo_cambio ?? '' }}',
+                                wireModelName: 'tipo_cambio',
+                                postUpdate: true,
+                                decimalScale: 2
+                            })"
+                            x-init="init($refs.cleaveInput)"
+                        >
+                            <div class="input-group input-group-merge has-validation">
+                                <input
+                                    x-ref="cleaveInput"
+                                    class="form-control text-end fw-bold"
+                                    type="text"
+                                    style="width: 160px;"
+                                    wire:ignore
+                                />
+                            </div>
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
 
-              <tr>
-                  <td colspan="6"></td>
-                  <td class="text-end" colspan="2"><b>TOTAL GENERAL DOLARIZADO</b></td>
-                  <td class="text-end">
-                      <input type="text"
-                            class="form-control text-end fw-bold {{ $totalDolarizado < 0 ? 'text-danger' : '' }}"
-                            readonly
-                            wire:model="totalDolarizado"
-                            style="width: 160px;">
-                  </td>
-                  <td></td>
-              </tr>
-          </tfoot>
+                <tr>
+                    <td colspan="6"></td>
+                    <td class="text-end" colspan="2"><b>TOTAL GENERAL DOLARIZADO</b></td>
+                    <td class="text-end">
+                        <input type="text"
+                              class="form-control tr-dolar text-end fw-bold {{ $totalDolarizado < 0 ? 'text-danger' : '' }}"
+                              readonly
+                              wire:model="totalDolarizado"
+                              style="width: 160px;">
+                    </td>
+                    <td></td>
+                </tr>
+            </tfoot>
 
         </table>
 
