@@ -34,7 +34,7 @@ class EstadoCuentaReport implements FromView, ShouldAutoSize, WithColumnFormatti
             'L' => '#,##0.00',
             'M' => '#,##0.00',
             'N' => '#,##0.00',
-            'O' => '"CRC "#,##0.00',
+            'O' => '#,##0.00',
         ];
     }
 
@@ -43,27 +43,41 @@ class EstadoCuentaReport implements FromView, ShouldAutoSize, WithColumnFormatti
         return [
             AfterSheet::class => function(AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-                $currentRow = 1;
 
-                foreach ($this->clientes as $cliente) {
-                    $currentRow += 1; // fila título cliente
-                    $currentRow += 1; // fila encabezados
+                // Buscamos todas las filas que sean encabezados (por ejemplo, las que tienen "No Factura")
+                // Como son dinámicas, podemos buscar por contenido o establecer un rango fijo si lo sabes.
 
-                    $numFacturas = count($cliente->transactionsEstadoCuenta);
+                // Si todos los encabezados están en las mismas columnas (A a T, por ejemplo),
+                // puedes aplicar el estilo a todas las filas que quieras:
+                $highestRow = $sheet->getHighestRow();
 
-                    if ($numFacturas > 0) {
-                        $sheet->getStyle("A{$currentRow}:T" . ($currentRow + $numFacturas - 1))
-                              ->getFill()
-                              ->setFillType(Fill::FILL_SOLID)
-                              ->getStartColor()->setARGB('FFD9F2D9');
+                for ($row = 1; $row <= $highestRow; $row++) {
+                    $cellValue = $sheet->getCell("B{$row}")->getValue();
+                    if ($cellValue === 'No Factura') {
+                        // Aplica color de fondo verde suave (D9F2D9)
+                        $sheet->getStyle("A{$row}:T{$row}")
+                            ->getFill()
+                            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                            ->getStartColor()->setARGB('FFD9F2D9');
                     }
 
-                    $currentRow += $numFacturas; // avanzar filas de facturas
-                    $currentRow += 3; // filas de totales
+                    if ($this->filters['filter_currency'] == 1){
+                      // Formato con símbolo CRC
+                      $sheet->getStyle("O{$row}")
+                          ->getNumberFormat()
+                          ->setFormatCode('"USD" #,##0.00');
+                    }
+                    else{
+                        // Formato con símbolo CRC
+                        $sheet->getStyle("O{$row}")
+                            ->getNumberFormat()
+                            ->setFormatCode('"CRC" #,##0.00');
+                    }
                 }
             },
         ];
     }
+
 
     public function view(): View
     {
@@ -80,11 +94,10 @@ class EstadoCuentaReport implements FromView, ShouldAutoSize, WithColumnFormatti
                         $q->whereDate('transaction_date', $singleDate->format('Y-m-d'));
                     }
                 }
-                /*
-                if (!empty($this->filters['filter_currency'])) {
-                    $q->where('currency_id', $this->filters['filter_currency']);
+
+                if (!empty($this->filters['filter_department'])) {
+                    $q->where('department_id', $this->filters['filter_department']);
                 }
-                    */
             })
             ->orderBy('name');
 

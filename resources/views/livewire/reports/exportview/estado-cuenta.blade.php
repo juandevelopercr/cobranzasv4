@@ -25,7 +25,7 @@
     <th style="text-align:center;"><b>IVA</b></th>
     <th style="text-align:center;"><b>Otros Cargos</b></th>
     <th style="text-align:center;"><b>Total</b></th>
-    <th style="text-align:center;"><b>Total Equivalente CRC</b></th>
+    <th style="text-align:center;"><b>Total Equivalente {{ $filters['filter_currency'] == 1 ?  "USD": 'CRC' }}</b></th>
     <th style="text-align:center;"><b>Número de Proforma</b></th>
     <th style="text-align:center;"><b>Deudor</b></th>
     <th style="text-align:center;"><b>O.C</b></th>
@@ -38,7 +38,7 @@
 @endphp
 
 @foreach($cliente->transactionsEstadoCuenta as $factura)
-<tr style="background-color:#D9F2D9">
+<tr>
     <td>{{ $factura->id }}</td>
     <td>{{ $factura->consecutivo }}</td>
     <td>{{ $factura->location->name }}</td>
@@ -81,7 +81,29 @@
     <td>{{ $factura->totalTax }}</td>
     <td>{{ $factura->totalOtrosCargos }}</td>
     <td>{{ $factura->totalComprobante }}</td>
-    <td>{{ $factura->currency_id == 16 ? $factura->totalComprobante : ($factura->totalComprobante * ($factura->proforma_change_type ?: 1)) }}</td>
+    <td>
+      @php
+        $totalEquivalente = 0;
+        if ($factura->currency_id == 1) { // Factura en DÓLARES
+              if ($filters['filter_currency'] == 1) {
+                  // Mostrar en dólares
+                  $totalEquivalente = $factura->totalComprobante;
+              } else {
+                  // Convertir a colones
+                  $totalEquivalente = $factura->totalComprobante * ($factura->proforma_change_type ?: 1);
+              }
+          } else { // Factura en COLONES (currency_id == 16)
+              if ($filters['filter_currency'] == 16) {
+                  // Mostrar en colones
+                  $totalEquivalente = $factura->totalComprobante;
+              } else {
+                  // Convertir a dólares
+                  $totalEquivalente = $factura->totalComprobante / ($factura->proforma_change_type ?: 1);
+              }
+          }
+      @endphp
+      {{ $totalEquivalente }}
+    </td>
     <td>{{ $factura->proforma_no }}</td>
     <td>{{ $factura->caso ? $factura->caso->deudor : '' }}</td>
     <td>{{ $factura->oc }}</td>
@@ -89,14 +111,27 @@
 </tr>
 
 @php
-    if ($factura->currency_id == 1){
-      $totalesFacturaCRC += $factura->totalComprobante * $factura->proforma_change_type;
-      $totalesAbonoCRC += $factura->payments->sum('amount') * $factura->proforma_change_type;
-    }
-    else{
-      $totalesFacturaCRC += $factura->totalComprobante;
-      $totalesAbonoCRC += $factura->payments->sum('amount');
-    }
+  if ($factura->currency_id == 1) { // Factura en DÓLARES
+      if ($filters['filter_currency'] == 1) {
+          // Mostrar en dólares
+          $totalesFacturaCRC += $factura->totalComprobante;
+          $totalesAbonoCRC += $factura->payments->sum('amount');
+      } else {
+          // Convertir a colones
+          $totalesFacturaCRC += $factura->totalComprobante * ($factura->proforma_change_type ?: 1);
+          $totalesAbonoCRC += $factura->payments->sum('amount') * ($factura->proforma_change_type ?: 1);
+      }
+  } else { // Factura en COLONES (currency_id == 16)
+      if ($filters['filter_currency'] == 16) {
+          // Mostrar en colones
+          $totalesFacturaCRC += $factura->totalComprobante;
+          $totalesAbonoCRC += $factura->payments->sum('amount');
+      } else {
+          // Convertir a dólares
+          $totalesFacturaCRC += $factura->totalComprobante / ($factura->proforma_change_type ?: 1);
+          $totalesAbonoCRC += $factura->payments->sum('amount') / ($factura->proforma_change_type ?: 1);
+      }
+  }
 @endphp
 @endforeach
 

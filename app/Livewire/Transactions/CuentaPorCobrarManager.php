@@ -578,7 +578,6 @@ class CuentaPorCobrarManager extends TransactionManager
       'document_type'         => 'tipo de documento',
       'currency_id'           => 'moneda',
       'condition_sale'        => 'condición de venta',
-      'department_id'         => 'departamento',
       'proforma_type'         => 'tipo de acto',
       'status'                => 'estado',
       'transaction_date'      => 'fecha de transacción',
@@ -688,7 +687,6 @@ class CuentaPorCobrarManager extends TransactionManager
     $this->contact_id             = $record->contact_id;
     $this->contact_economic_activity_id = $record->contact_economic_activity_id;
     $this->currency_id            = $record->currency_id;
-    $this->department_id          = $record->department_id;
     $this->area_id                = $record->area_id;
     $this->bank_id                = $record->bank_id;
     $this->caso_id                = $record->caso_id;
@@ -741,15 +739,6 @@ class CuentaPorCobrarManager extends TransactionManager
     $this->fecha_solicitud_factura = $record->fecha_solicitud_factura;
 
     $this->totalServGravados = $record->totalServGravados;
-    $this->totalmercGravadas = $record->totalmercGravadas;
-    $this->totalImpuestoServGravados = $record->totalImpuestoServGravados;
-    $this->totalImpuestomercGravadas = $record->totalImpuestomercGravadas;
-    $this->totalImpuestoServExonerados = $record->totalImpuestoServExonerados;
-    $this->totalImpuestoMercanciasExoneradas = $record->totalImpuestoMercanciasExoneradas;
-    $this->totalImpuestoNeto = $record->totalImpuestoNeto;
-    $this->totalServExentos = $record->totalServExentos;
-    $this->totalmercExentas = $record->totalmercExentas;
-
     $this->totalOtrosCargos = $record->totalOtrosCargos;
     $this->totalGravado = $record->totalGravado;
     $this->totalExento = $record->totalExento;
@@ -763,7 +752,6 @@ class CuentaPorCobrarManager extends TransactionManager
     // Se emite este evento para los componentes hijos
     $this->dispatch('updateTransactionContext', [
       'transaction_id'    => $record->id,
-      'department_id'     => $record->department_id,
       'bank_id'           => $record->bank_id,
       'type_notarial_act' => $record->proforma_type,
       'tipo_facturacion'  => $record->tipo_facturacion
@@ -1119,7 +1107,6 @@ class CuentaPorCobrarManager extends TransactionManager
       'contact_id',
       'contact_economic_activity_id',
       'currency_id',
-      'department_id',
       'area_id',
       'bank_id',
       'codigo_contable_id',
@@ -1191,11 +1178,6 @@ class CuentaPorCobrarManager extends TransactionManager
       if ($this->condition_sale !== '99') {
         $this->condition_sale_other = null;
       }
-    }
-
-    if ($propertyName == 'department_id') {
-      // emitir el evento para que actualice la info en las lineas
-      $this->dispatch('departmentChange', $this->department_id); // Enviar evento al frontend
     }
 
     if ($propertyName == 'bank_id') {
