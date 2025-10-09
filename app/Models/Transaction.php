@@ -2382,6 +2382,9 @@ class Transaction extends Model implements HasMedia
       case 'due':
         $htmlData = "<span class=\"badge bg-danger\">" . __('PENDIENTE') . "</span>";
         break;
+      default:
+        $htmlData = "<span class=\"badge bg-danger\">" . __('PENDIENTE') . "</span>";
+        break;
     }
 
     return $htmlData;

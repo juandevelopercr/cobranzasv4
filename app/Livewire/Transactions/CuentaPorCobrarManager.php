@@ -371,7 +371,8 @@ class CuentaPorCobrarManager extends TransactionManager
     $query = Transaction::search($this->search, $this->filters)
       ->join('transactions_commissions', 'transactions_commissions.transaction_id', '=', 'transactions.id')
       ->whereIn('transactions.document_type', $document_type)
-      ->whereNotIn('transactions_commissions.centro_costo_id', [1, 12, 14, 15, 16, 17, 28, 31]);
+      ->whereNotIn('transactions_commissions.centro_costo_id', [1,12,14,15,16,17]);
+
 
     // Condiciones según el rol del usuario
     $allowedRoles = User::ROLES_ALL_BANKS;
