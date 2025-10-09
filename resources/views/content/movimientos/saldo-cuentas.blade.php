@@ -4,7 +4,7 @@ $configData = Helper::appClasses();
 
 @extends('layouts/layoutMaster')
 
-@section('title', __('Cuentas por cobrar'))
+@section('title', __('Saldo cuentas'))
 
 <!-- Vendor Styles -->
 @section('vendor-style')
@@ -19,27 +19,20 @@ $configData = Helper::appClasses();
 'resources/assets/vendor/libs/spinkit/spinkit.scss'])
 @endsection
 
-@section('page-style')
-@vite('resources/assets/vendor/scss/pages/app-invoice.scss')
-@endsection
-
 <!-- Vendor Scripts -->
 @section('vendor-script')
-@vite(['resources/assets/vendor/libs/moment/moment.js',
-'resources/assets/vendor/libs/select2/select2.js',
+@vite(['resources/assets/vendor/libs/moment/moment.js', 'resources/assets/vendor/libs/select2/select2.js',
 'resources/assets/vendor/libs/@form-validation/popular.js',
 'resources/assets/vendor/libs/@form-validation/bootstrap5.js',
-'resources/assets/vendor/libs/@form-validation/auto-focus.js',
-'resources/assets/vendor/libs/cleavejs/cleave.js',
-'resources/assets/vendor/libs/cleavejs/cleave-phone.js',
-'resources/assets/vendor/libs/sweetalert2/sweetalert2.js',
-'resources/assets/vendor/libs/flatpickr/flatpickr.js',
-'resources/assets/vendor/libs/toastr/toastr.js',
+'resources/assets/vendor/libs/@form-validation/auto-focus.js', 'resources/assets/vendor/libs/cleavejs/cleave.js',
+'resources/assets/vendor/libs/cleavejs/cleave-phone.js', 'resources/assets/vendor/libs/sweetalert2/sweetalert2.js',
+'resources/assets/vendor/libs/flatpickr/flatpickr.js', 'resources/assets/vendor/libs/toastr/toastr.js',
 'resources/assets/vendor/libs/sortablejs/sortable.js',
-'resources/js/custom.js',
-'resources/js/num_toword.js'])
+'resources/js/custom.js'])
 @endsection
 
 @section('content')
-@livewire('transactions.cuenta-por-cobrar-manager', ['document_type'=>['PR', 'FE', 'TE']])
+@livewire('movimientos.movimiento-saldo-cuenta', [
+
+])
 @endsection

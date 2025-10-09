@@ -184,6 +184,7 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
   // CRUD MODULO BANCOS
   Route::get('banks/movements', [MovimientoController::class, 'index'])->name('banks-movements.index');
   Route::get('banks/revisions', [RevisionController::class, 'index'])->name('banks-revisions.index');
+  Route::get('banks/saldo-cuentas', [MovimientoController::class, 'saldoCuentas'])->name('banks-saldo-cuentas.index');
   Route::get('banks/movements-notifications', [MovimientoNotificationController::class, 'index'])->name('banks-movements-notifications');
   Route::get('banks/cuentas', [CuentaController::class, 'index'])->name('banks-cuentas');
 

@@ -13,4 +13,8 @@ class MovimientoController extends Controller
   {
     return view('content.movimientos.index', []);
   }
+
+  public function saldoCuentas(){
+    return view('content.movimientos.saldo-cuentas', []);
+  }
 }
