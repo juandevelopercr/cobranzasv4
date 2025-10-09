@@ -223,6 +223,14 @@
           "permissions": [
             "view-movimientos"
           ]
+        },
+        {
+          "url": "banks/saldo-cuentas",
+          "name": "Saldo de Cuentas",
+          "slug": "banks-saldo-cuentas",
+          "permissions": [
+            "saldo-cuentas-movimientos"
+          ]
         }
       ]
     },
