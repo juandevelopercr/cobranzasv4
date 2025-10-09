@@ -113,8 +113,11 @@ class MovimientoSaldoCuenta extends Component
                 return $saldo_sistema - $pendiente_registro - $timbres - $honorarios - $traslados_karla - $certifondo_bnfa - $colchon;
             });
 
-        $this->totalDisponibleColones = $this->totalColones301 + floatval($this->otrasCuentasColones);
-        $this->totalDisponibleDolares = $this->totalDolares301 + floatval($this->otrasCuentasDolares);
+        $otrasCuentasColones = floatval(str_replace(',', '', $this->otrasCuentasColones));
+        $otrasCuentasDolares = floatval(str_replace(',', '', $this->otrasCuentasDolares));
+
+        $this->totalDisponibleColones = $this->totalColones301 + $otrasCuentasColones;
+        $this->totalDisponibleDolares = $this->totalDolares301 + $otrasCuentasDolares;
 
         $tipoCambio = $this->tipo_cambio ?: 1;
         $this->totalDolarizado = $this->totalDisponibleDolares + ($this->totalDisponibleColones / floatval($tipoCambio));
