@@ -34,7 +34,7 @@ class EstadoCuentaReport implements FromView, ShouldAutoSize, WithColumnFormatti
             'L' => '#,##0.00',
             'M' => '#,##0.00',
             'N' => '#,##0.00',
-            'O' => '#,##0.00',
+            'O' => '"CRC "#,##0.00',
         ];
     }
 

@@ -25,7 +25,7 @@ class EstadoCuenta extends Component
 
   public function mount()
   {
-    $this->currencies = Currency::orderBy('code', 'ASC')->get();
+    $this->currencies = Currency::whereIn('id', [1,16])->orderBy('code', 'ASC')->get();
 
     $this->dispatch('reinitFormControls');
   }
@@ -52,19 +52,16 @@ class EstadoCuenta extends Component
 
   public function exportExcel()
   {
-    $this->loading = true;
+    // Validar que los campos requeridos estén llenos
+    $this->validate([
+        'filter_currency' => 'required',
+        'filter_date' => 'required',
+    ], [
+        'filter_currency.required' => 'Debe seleccionar una moneda.',
+        'filter_date.required' => 'Debe seleccionar un rango de fechas.',
+    ]);
 
-    /*
-    $title = 'ESTADO CUENTA';
-    if (!empty($this->filter_date)) {
-        // Extraer solo mes y año del rango
-        $range = explode(' to ', $this->filter_date);
-        if (count($range) === 2) {
-            $start = Carbon::createFromFormat('d-m-Y', trim($range[0]));
-            $title .= ' ' . $start->format('m-Y');
-        }
-    }
-        */
+    $this->loading = true;
 
     // Generar y descargar el Excel
     return Excel::download(new EstadoCuentaReport(

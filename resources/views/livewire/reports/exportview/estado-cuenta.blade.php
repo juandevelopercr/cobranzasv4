@@ -11,30 +11,30 @@
 </tr>
 
 <tr>
-    <th>#</th>
-    <th>No Factura</th>
-    <th>Emisor</th>
-    <th>Centro de costo</th>
-    <th>Fecha Factura</th>
-    <th>Fecha Vencimiento</th>
-    <th>Moneda</th>
-    <th>Tipo de Cambio</th>
-    <th>Total Venta</th>
-    <th>Total Descuento</th>
-    <th>Total Venta Neta</th>
-    <th>IVA</th>
-    <th>Otros Cargos</th>
-    <th>Total</th>
-    <th>Total Equivalente</th>
-    <th>Número de Proforma</th>
-    <th>Deudor</th>
-    <th>O.C</th>
-    <th>MIGO</th>
+    <th><b>#</b></th>
+    <th style="text-align:center;"><b>No Factura</b></th>
+    <th style="text-align:center;"><b>Emisor</b></th>
+    <th style="text-align:center;"><b>Centro de costo</b></th>
+    <th style="text-align:center;"><b>Fecha Factura</b></th>
+    <th style="text-align:center;"><b>Fecha Vencimiento</b></th>
+    <th style="text-align:center;"><b>Moneda</b></th>
+    <th style="text-align:center;"><b>Tipo de Cambio</b></th>
+    <th style="text-align:center;"><b>Total Venta</b></th>
+    <th style="text-align:center;"><b>Total Descuento</b></th>
+    <th style="text-align:center;"><b>Total Venta Neta</b></th>
+    <th style="text-align:center;"><b>IVA</b></th>
+    <th style="text-align:center;"><b>Otros Cargos</b></th>
+    <th style="text-align:center;"><b>Total</b></th>
+    <th style="text-align:center;"><b>Total Equivalente CRC</b></th>
+    <th style="text-align:center;"><b>Número de Proforma</b></th>
+    <th style="text-align:center;"><b>Deudor</b></th>
+    <th style="text-align:center;"><b>O.C</b></th>
+    <th style="text-align:center;"><b>MIGO</b></th>
 </tr>
 
 @php
-    $totalesFactura = 0;
-    $totalesAbono = 0;
+    $totalesFacturaCRC = 0;
+    $totalesAbonoCRC = 0;
 @endphp
 
 @foreach($cliente->transactionsEstadoCuenta as $factura)
@@ -74,14 +74,14 @@
 
     </td>
     <td>{{ $factura->currency->code }}</td>
-    <td>{{ number_format($factura->proforma_change_type, 2, '.', ',') }}</td>
-    <td>{{ number_format($factura->totalVenta, 2, '.', ',') }}</td>
-    <td>{{ number_format($factura->totalDiscount, 2, '.', ',') }}</td>
-    <td>{{ number_format($factura->totalVenta - $factura->totalDiscount, 2, '.', ',') }}</td>
-    <td>{{ number_format($factura->totalTax, 2, '.', ',') }}</td>
-    <td>{{ number_format($factura->totalOtrosCargos, 2, '.', ',') }}</td>
-    <td>{{ number_format($factura->totalComprobante, 2, '.', ',') }}</td>
-    <td>{{ number_format($factura->currency_id == 1 ? $factura->totalComprobante : ($factura->totalComprobante / ($factura->proforma_change_type ?: 1)), 2, '.', ',') }}</td>
+    <td>{{ $factura->proforma_change_type }}</td>
+    <td>{{ $factura->totalVenta }}</td>
+    <td>{{ $factura->totalDiscount }}</td>
+    <td>{{ $factura->totalVenta - $factura->totalDiscount }}</td>
+    <td>{{ $factura->totalTax }}</td>
+    <td>{{ $factura->totalOtrosCargos }}</td>
+    <td>{{ $factura->totalComprobante }}</td>
+    <td>{{ $factura->currency_id == 16 ? $factura->totalComprobante : ($factura->totalComprobante * ($factura->proforma_change_type ?: 1)) }}</td>
     <td>{{ $factura->proforma_no }}</td>
     <td>{{ $factura->caso ? $factura->caso->deudor : '' }}</td>
     <td>{{ $factura->oc }}</td>
@@ -89,23 +89,29 @@
 </tr>
 
 @php
-    $totalesFactura += $factura->totalComprobante;
-    $totalesAbono += $factura->payments->sum('amount');
+    if ($factura->currency_id == 1){
+      $totalesFacturaCRC += $factura->totalComprobante * $factura->proforma_change_type;
+      $totalesAbonoCRC += $factura->payments->sum('amount') * $factura->proforma_change_type;
+    }
+    else{
+      $totalesFacturaCRC += $factura->totalComprobante;
+      $totalesAbonoCRC += $factura->payments->sum('amount');
+    }
 @endphp
 @endforeach
 
-<tr style="font-weight:bold; background-color:#f0f0f0">
-    <td colspan="12" style="text-align:right"><b>TOTAL FACTURA(S):</b></td>
-    <td>{{ number_format($totalesFactura, 2, '.', ',') }}</td>
+<tr>
+    <td colspan="14" style="text-align:right; font-weight:bold;"><b>TOTAL FACTURA(S):</b></td>
+    <td style="text-align:right; font-weight:bold;">{{ $totalesFacturaCRC }}</td>
 </tr>
 
-<tr style="font-weight:bold; background-color:#f0f0f0">
-    <td colspan="12" style="text-align:right"><b>TOTAL ABONO(S):</b></td>
-    <td>{{ number_format($totalesAbono, 2, '.', ',') }}</td>
+<tr>
+    <td colspan="14" style="text-align:right; font-weight:bold;"><b>TOTAL ABONO(S):</b></td>
+    <td style="text-align:right; font-weight:bold;">{{ $totalesAbonoCRC }}</td>
 </tr>
 
-<tr style="font-weight:bold; background-color:#f0f0f0">
-    <td colspan="12" style="text-align:right"><b>TOTAL PENDIENTE:</b></td>
-    <td>{{ number_format($totalesFactura - $totalesAbono, 2, '.', ',') }}</td>
+<tr>
+    <td colspan="14" style="text-align:right; font-weight:bold; color:red;"><b>TOTAL PENDIENTE:</b></td>
+    <td style="text-align:right; font-weight:bold; color:red;">{{ $totalesFacturaCRC - $totalesAbonoCRC }}</td>
 </tr>
 @endforeach
