@@ -4,10 +4,10 @@
         <img src="{{ $logo }}" alt="Logo">
         </td>
         <td width="33%" align="center" valign="top">
-          @php
-          /*
           <br />
           <span style="font-size: 13px;"><strong><?= !empty($transaction->customer_comercial_name) ? $transaction->customer_comercial_name : $transaction->customer_name ?></strong></span><br />
+          @php
+          /*
           <span style="font-size: 11px;">Identificación: <?= $transaction->contact->identificacion ?></span><br />
           <span style="font-size: 11px;">Dirección: <?= wordwrap( $transaction->contact->address, 50 ) ?></span><br />
           <span style="font-size: 11px;">Teléfono: <?= $transaction->contact->phone ?></span><br />
