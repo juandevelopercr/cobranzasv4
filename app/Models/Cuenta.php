@@ -241,7 +241,7 @@ class Cuenta extends Model
         'DateStart' => Carbon::now()->startOfMonth()->toDateString(),
         'DateEnd'   => Carbon::now()->endOfMonth()->toDateString(),
       ];
-      $balance = Helpers::calculaBalance([$this->id], $dataDate, $status);
+      $balance = Helpers::calculaBalance([$this->id], $dataDate, $status, false);
       if ($this->moneda_id == 16)
         return $balance['saldo_final_crc'];
       else
