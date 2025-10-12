@@ -295,7 +295,7 @@ class ProcessComprobanteEmails extends Command
         'receptor_tipo_identificacion' => (string)$xml->Receptor->Identificacion->Tipo ?? '',
         'receptor_numero_identificacion' => $receptorId,
 
-        'tipo_cambio' => (float)($xml->ResumenFactura->TipoCambio ?? 1),
+        'tipo_cambio' => (float)($xml->ResumenFactura->CodigoTipoMoneda->TipoCambio ?? 1),
         'total_comprobante' => (float)$xml->ResumenFactura->TotalComprobante,
         'total_impuestos' => (float)($xml->ResumenFactura->TotalImpuesto ?? 0),
         'total_gravado' => (float)($xml->ResumenFactura->TotalGravado ?? 0),
