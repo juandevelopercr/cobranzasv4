@@ -1604,12 +1604,12 @@ class ProformaManager extends TransactionManager
         if (is_null($this->customer_comercial_name) || empty($this->customer_comercial_name))
           $this->customer_comercial_name = $contact->commercial_name;
         $this->invoice_type = $contact->invoice_type;
-        $this->condition_sale = $contact->conditionSale->code;
+        $this->condition_sale = $contact->conditionSale ? $contact->conditionSale->code: NULL;
         $this->pay_term_number = $contact->pay_term_number;
         $this->email_cc = $contact->email_cc;
         $this->clientEmail = $contact->email;
         $this->customer_email = $contact->email;
-        $this->tipoIdentificacion = $contact->identificationType->name;
+        $this->tipoIdentificacion = $contact->identificationType ? $contact->identificationType->name: NULL;
         $this->identificacion = $contact->identification;
       }
 

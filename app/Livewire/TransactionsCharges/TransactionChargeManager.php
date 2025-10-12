@@ -51,15 +51,15 @@ class TransactionChargeManager extends BaseComponent
   public $transaction_id = NULL;
   public $caso_id = NULL;
   public $product_id = NULL;
-  public $additional_charge_type_id;
-  public $additional_charge_other;
-  public $third_party_identification_type;
-  public $third_party_identification;
-  public $third_party_name;
-  public $detail;
-  public $percent;
-  public $quantity;
-  public $amount;
+  public $additional_charge_type_id = NULL;
+  public $additional_charge_other = NULL;
+  public $third_party_identification_type = NULL;
+  public $third_party_identification = NULL;
+  public $third_party_name = NULL;
+  public $detail = NULL;
+  public $percent = NULL;
+  public $quantity = NULL;
+  public $amount = NULL;
 
   public $bank_id = NULL;
   public $type_notarial_act = NULL;
@@ -74,8 +74,8 @@ class TransactionChargeManager extends BaseComponent
 
   public $total = 0;
 
-  public $columns;
-  public $defaultColumns;
+  public $columns = [];
+  public $defaultColumns = [];
 
   public $canview;
   public $cancreate;

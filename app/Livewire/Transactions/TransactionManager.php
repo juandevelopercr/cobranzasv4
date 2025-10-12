@@ -1185,22 +1185,6 @@ abstract class TransactionManager extends BaseComponent
   public function changeTab($tab)
   {
     $this->activeTab = $tab;
-
-    // Si cambias a la pestaña de comisiones, incrementa el contador
-    // para forzar la recarga del componente anidado
-    //if ($tab == 'comisiones') {
-    //  $this->contador++;
-    //}
-
-    // Emitir evento para reinicializar controles Select2 si es necesario
-    //$this->dispatch('reinitSelect2Controls');
   }
-
-  /*
-  public function setActiveTab($tab)
-  {
-    $this->activeTab = $tab;
-  }
-  */
 }
 // ProformaManager, InvoiceManager, NotaCreditoManager y NotaDebitoManager extenderán esta clase y redefinirán lógica específica como afterTransactionSaved()
