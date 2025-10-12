@@ -447,7 +447,11 @@
         "view-retencion-reports",
         "view-antiguedad-reports",
         "view-estado-cuenta-reports",
-        "view-gastos-reports"
+        "view-gastos-reports",
+        "view-iva-reports",
+        "view-iva90-reports",
+        "view-ivaMas90-reports",
+        "view-repofirmas-reports"
       ],
       "submenu": [
         {
