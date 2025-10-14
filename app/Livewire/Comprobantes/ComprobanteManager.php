@@ -280,8 +280,8 @@ class ComprobanteManager extends Component
   protected function messages()
   {
     return [
-        'location_id.required' => 'Debe seleccionar una ubicación.',
-        'location_id.exists'   => 'La ubicación seleccionada no es válida.',
+        'location_id.required' => 'El receptor del documento no es válido',
+        'location_id.exists'   => 'El receptor del documento no es válido',
 
         'xmlFile.required' => 'Debe adjuntar el archivo XML.',
         'xmlFile.mimes'    => 'El archivo XML debe tener extensión .xml.',
