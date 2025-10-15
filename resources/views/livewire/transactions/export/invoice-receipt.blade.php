@@ -38,24 +38,6 @@
             <div class="tm_shape_bg tm_accent_bg tm_mobile_hide"></div>
           </div>
 
-          @php
-          /*
-          <div style="text-align:right; float:right; width:100%">
-            @if($showReferencia)
-              <span class="tm_f12 tm_danger_color">
-                <b>{{ $referencia['title'] }} #: {{ $referencia['consecutivo'] }}</b>
-              </span>
-            @endif
-
-            @if($showNotaAnula && isset($nota['title']) && isset($nota['consecutivo']))
-              <span class="tm_f12 tm_danger_color">
-                <b>{{ $nota['title'] }} #: {{ $nota['consecutivo'] }}</b>
-              </span>
-            @endif
-          </div>
-          */
-          @endphp
-
           <div class="tm_invoice_info tm_mb10">
             <div class="tm_card_note tm_mobile_hide"><b class="tm_primary_color"></b></div>
             <div class="tm_invoice_info_list tm_white_color">
@@ -123,82 +105,64 @@
             </div>
           </div>
 
+          @if ($transaction->tipo_facturacion == \App\Models\Transaction::INDIVIDUAL && $transaction->caso)
+          @php
+            $demendado = ($transaction->bank_id == \App\Models\Bank::DAVIVIENDA) ? $transaction->caso->pnombre_apellidos_deudor : $transaction->caso->pnombre_demandado;
+            $numero_operacion = $transaction->bank_id == \App\Models\Bank::DAVIVIENDA ? $transaction->caso->pnumero_operacion2: $transaction->caso->pnumero_operacion1;
+
+            $tipo_proceso = $transaction->caso->proceso->nombre;
+            $numero_expediente = $transaction->caso->pnumero_expediente_judicial;
+
+            $producto = $transaction->caso->producto->nombre;
+          @endphp
           <div class="tm_table tm_style1">
-            @if ($caso && $transaction->department_id == $departmentRetail)
-            <div class="">
               <div class="tm_table_responsive">
                 <table>
                   <thead>
-                    <tr class="tm_accent_bg">
-                      <th class="tm_width_1 tm_semi_bold tm_white_color" colspan="2">Datos del Proceso</th>
+                    <tr>
+                      <th class="tm_mb2 tm_text_center" colspan="2">Datos del Proceso</th>
                     </tr>
                   </thead>
                   <tbody>
                     @if($caso)
                     <tr>
-                      <td class="tm_width_1">
-                        <b class="tm_primary_color">No. Caso:</b> {{ $caso->numero }}<br>
-                        <b class="tm_primary_color">Nombre:</b> {{ $caso->deudor }}<br>
-                        <b class="tm_primary_color">Dirigido a Dpto:</b> {{ $transaction->department ? $transaction->department->name: '' }}<br>
-                        <b class="tm_primary_color">Ejecutivo:</b> {{ $caso->nombre_formalizo }}<br>
+                      <td class="tm_width_1" valign="top">
+                        <b class="tm_primary_color">Nombre:</b> {{ $demendado }}<br>
+                        <b class="tm_primary_color">O.P:</b> {{ $numero_operacion }}<br>
+                        <b class="tm_primary_color">EXP.:</b> {{ $numero_expediente }}<br>
                       </td>
-                      <td class="tm_width_1">
-                        <b class="tm_primary_color">Tipo de garantía o Acto:</b> {{ $caso->garantia ? $caso->garantia->name: '' }}<br>
-                        <b class="tm_primary_color">Cédula del deudor:</b> {{ $caso->cedula_deudor }}<br>
-                        <b class="tm_primary_color">Contacto:</b> {{ $transaction->contacto_banco }}<br>
-                        <b class="tm_primary_color">No. Proveedor:</b> {{ $transaction->location ? $transaction->location->proveedor : '' }}<br>
+                      <td class="tm_width_1" valign="top">
+                        <b class="tm_primary_color">Tipo de Proces:</b> {{ $tipo_proceso }}<br>
+                        <b class="tm_primary_color">Producto:</b> {{ $producto }}<br>
                       </td>
                     </tr>
                     @endif
-                    @php
-                    /*
-                    @if ($transaction->bank_id == $bankSanJose)
-                    <tr>
-                      <td colspan="2"></td>
-                    </tr>
-                    <tr>
-                      <td class="tm_width_1">
-                        <b class="tm_primary_color">Dirigido a Depto.:</b>
-                        {{ $transaction->department ? $transaction->department->name: '' }}
-                        <br>
-                        <b class="tm_primary_color">Contacto:</b>
-                        {{ $transaction->contacto_banco ?? '' }}
-                        <br>
-                        <b class="tm_primary_color">No. Proveedor:</b>
-                        {{ $transaction->location ? $transaction->location->proveedor : '' }}
-                      </td>
-                      <td class="tm_width_1">
+                  </tbody>
+                </table>
+              </div>
+          </div>
+          @endif
 
-                      </td>
-                    </tr>
-                    @endif
-                    */
-                    @endphp
-                  </tbody>
-                </table>
-              </div>
+          @if ($transaction->department)
+          <div class="tm_table tm_style1">
+            <div class="tm_table_responsive">
+              <table>
+                <tbody>
+                  <tr>
+                    <td class="tm_width_1" valign="top">
+                      <b class="tm_primary_color">Dirigido a Departamento:</b> {{ $transaction->department ? $transaction->department->name: '-' }}<br>
+                    </td>
+                    <td class="tm_width_1" valign="top">
+                      <b class="tm_primary_color">Contacto:</b> {{ $transaction->contacto_banco ? $transaction->contacto_banco : '-' }}<br>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            @elseif ($transaction->bank_id == $bankSanJose)
-            <div class="">
-              <div class="tm_table_responsive">
-                <table>
-                  <thead>
-                    <tr class="tm_accent_bg">
-                      <th class="tm_width_1 tm_semi_bold tm_white_color" colspan="2">Datos del Proceso</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td class="tm_width_1">
-                        <b class="tm_primary_color">No. Proveedor:</b>
-                        {{ $transaction->location ? $transaction->location->proveedor : '' }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            @endif
+          </div>
+          <br>
+          @endif
+
 
             <div class="tm_table tm_style1">
               <div class="">
@@ -207,6 +171,9 @@
                     <thead>
                       <tr class="tm_accent_bg">
                         <th class="tm_width_4 tm_semi_bold tm_white_color">Asunto / Descripción</th>
+                        @if ($transaction->tipo_facturacion == \App\Models\Transaction::MASIVA)
+                          <th class="tm_width_4 tm_semi_bold tm_white_color">Detalle del Caso</th>
+                        @endif
                         <th class="tm_width_2 tm_semi_bold tm_white_color">Precio</th>
                         <th class="tm_width_1 tm_semi_bold tm_white_color">Cantidad</th>
                         <th class="tm_width_2 tm_semi_bold tm_white_color tm_text_right">Total</th>
@@ -277,13 +244,40 @@
                       $total_temp_sin_descuento = $totalTimbres_temp + $totalHonorarios_temp;
                       $total_temp_con_descuento = $total_temp_sin_descuento;
 
+                      $descuento = 0;
                       if ($line->discount > 0) {
                         $descuento = $total_temp_con_descuento * $line->discount / 100;
                         $total_temp_con_descuento = $total_temp_con_descuento - $descuento;
                       }
                       @endphp
                       <tr>
-                        <td class="tm_width_4">{!! html_entity_decode($description) !!}</td>
+                        <td class="tm_width_4">
+                            {!! html_entity_decode($description) !!}
+                            @if($descuento > 0)
+                              <br />
+                              <div style="width:100%; text-align:right">
+                                <span style="font-size: 10px; font-weight: bold;">DESCUENTO APLICADO {{ Helper::formatDecimal($descuento) }} % SOBRE {{ Helper::formatDecimal($total_temp_sin_descuento) }}</span>
+                              </div>
+                            @endif
+                        </td>
+                        @if ($transaction->tipo_facturacion == \App\Models\Transaction::MASIVA)
+                        <td>
+                          @if ($line->caso)
+                            @php
+                              $demendado = ($transaction->bank_id == \App\Models\Bank::DAVIVIENDA) ? $line->caso->pnombre_apellidos_deudor : $line->caso->pnombre_demandado;
+                              $numero_operacion = $transaction->bank_id == \App\Models\Bank::DAVIVIENDA ? $line->caso->pnumero_operacion2: $line->caso->pnumero_operacion1;
+
+                              $tipo_proceso = $line->caso->proceso->nombre;
+                              $numero_expediente = $line->caso->pnumero_expediente_judicial;
+
+                              $producto = $line->caso->producto->nombre;
+
+                              $numero = $line->caso->pnumero;
+                            @endphp
+                            {{ $tipo_proceso . ', ' . $numero_operacion . ', ' . $numero . '- ' . $demendado . ', ' . $producto }}
+                          @endif
+                        </td>
+                        @endif
                         <td class="tm_width_2">
                           @php
                           $value = 0;

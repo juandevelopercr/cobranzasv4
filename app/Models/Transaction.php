@@ -2,35 +2,36 @@
 
 namespace App\Models;
 
-use App\Helpers\Helpers;
-use App\MediaLibrary\CustomPathGenerator;
+use Helper;
+use Carbon\Carbon;
 use App\Models\Area;
 use App\Models\Bank;
-use App\Models\Business;
-use App\Models\BusinessLocation;
 use App\Models\Caso;
-use App\Models\CodigoContable;
-use App\Models\ConditionSale;
-use App\Models\Contact;
-use App\Models\Cuenta;
-use App\Models\Currency;
-use App\Models\TransactionCommission;
-use App\Models\TransactionLine;
-use App\Models\TransactionOtherCharge;
-use App\Models\TransactionPayment;
 use App\Models\User;
-use App\Services\Hacienda\ApiHacienda;
-use Carbon\Carbon;
-use Helper;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
+use App\Models\Cuenta;
+use App\Models\Contact;
+use App\Helpers\Helpers;
+use App\Models\Business;
+use App\Models\Currency;
+use App\Models\Department;
+use App\Models\ConditionSale;
+use App\Models\CodigoContable;
+use App\Models\TransactionLine;
+use App\Models\BusinessLocation;
 use Spatie\MediaLibrary\HasMedia;
+use App\Models\TransactionPayment;
+use Illuminate\Support\Facades\DB;
+use Spatie\Activitylog\LogOptions;
+use Illuminate\Support\Facades\Log;
+use App\Models\TransactionCommission;
+use App\Models\TransactionOtherCharge;
+use App\Services\Hacienda\ApiHacienda;
+use Illuminate\Database\Eloquent\Model;
+use App\MediaLibrary\CustomPathGenerator;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Transaction extends Model implements HasMedia
 {
@@ -86,6 +87,9 @@ class Transaction extends Model implements HasMedia
   const DEBIDA = 'due';
   const PARCIAL = 'partial';
   const ANULADO = 'annulled';
+
+  const INDIVIDUAL = 1;
+  const MASIVA     = 2;
 
   public $infoCaso;
 
@@ -245,6 +249,11 @@ class Transaction extends Model implements HasMedia
   public function caso()
   {
     return $this->belongsTo(Caso::class);
+  }
+
+  public function department()
+  {
+    return $this->belongsTo(Department::class);
   }
 
   public function cuenta()
