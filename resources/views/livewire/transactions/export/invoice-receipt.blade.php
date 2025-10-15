@@ -172,11 +172,11 @@
                       <tr class="tm_accent_bg">
                         <th class="tm_width_4 tm_semi_bold tm_white_color">Asunto / Descripción</th>
                         @if ($transaction->tipo_facturacion == \App\Models\Transaction::MASIVA)
-                          <th class="tm_width_4 tm_semi_bold tm_white_color">Detalle del Caso</th>
+                          <th class="tm_width_3 tm_semi_bold tm_white_color">Detalle del Caso</th>
                         @endif
                         <th class="tm_width_2 tm_semi_bold tm_white_color">Precio</th>
                         <th class="tm_width_1 tm_semi_bold tm_white_color">Cantidad</th>
-                        <th class="tm_width_2 tm_semi_bold tm_white_color tm_text_right">Total</th>
+                        <th class="tm_width_3 tm_semi_bold tm_white_color tm_text_right">Total</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -204,13 +204,13 @@
                       @if ($transaction->nombre_caso || $transaction->oc || $transaction->migo || $transaction->or ||
                       $transaction->gln || $transaction->prebill || $transaction->detalle_adicional)
                       <tr>
-                        <td>{!! html_entity_decode($str) !!}</td>
+                        <td class="tm_width_4">{!! html_entity_decode($str) !!}</td>
                         @if ($transaction->tipo_facturacion == \App\Models\Transaction::MASIVA)
-                          <td class="tm_width_4"></td>
+                          <td class="tm_width_3"></td>
                         @endif
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
-                        <td class="tm_width_2 tm_text_right"></td>
+                        <td class="tm_width_3 tm_text_right"></td>
                       </tr>
                       @endif
 
@@ -264,7 +264,7 @@
                             @endif
                         </td>
                         @if ($transaction->tipo_facturacion == \App\Models\Transaction::MASIVA)
-                        <td class="tm_width_4">
+                        <td class="tm_width_3">
                           @if ($line->caso)
                             @php
                               $demendado = ($transaction->bank_id == \App\Models\Bank::DAVIVIENDA) ? $line->caso->pnombre_apellidos_deudor : $line->caso->pnombre_demandado;
@@ -308,7 +308,7 @@
                           {{ $transaction->currency->symbol }} {{ Helper::formatDecimal($value) }}
                         </td>
                         <td class="tm_width_1 tm_text_center">{{ (int)$line->quantity }}</td>
-                        <td class="tm_width_2 tm_text_right">
+                        <td class="tm_width_3 tm_text_right">
                           {{ $transaction->currency->symbol }}
                           {{ Helper::formatDecimal($value + $line->monto_cargo_adicional) }}
                         </td>
@@ -319,10 +319,10 @@
                       @foreach ($desglose_formula_timbres['datos'] as $data)
                       <tr>
                         <td class="tm_width_4">{!! $data['titulo'] ?? '' !!}</td>
-                        <td class="tm_width_4"></td>
+                        <td class="tm_width_3"></td>
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
-                        <td class="tm_width_2 tm_text_right">
+                        <td class="tm_width_3 tm_text_right">
                           {{ $transaction->currency->symbol.' '. Helper::formatDecimal($data['monto_con_descuento'] +
                           $line->monto_cargo_adicional) }}
                         </td>
@@ -342,10 +342,10 @@
                       @foreach ($desglose_tabla_abogados_timbres['datos'] as $data)
                       <tr>
                         <td class="tm_width_4">{!! $data['titulo'] ?? '' !!}</td>
-                        <td class="tm_width_4"></td>
+                        <td class="tm_width_3"></td>
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
-                        <td class="tm_width_2 tm_text_right">
+                        <td class="tm_width_3 tm_text_right">
                           {{ $transaction->currency->symbol.' '. Helper::formatDecimal($data['monto_con_descuento'] +
                           $line->monto_cargo_adicional) }}
                         </td>
@@ -365,10 +365,10 @@
                       @foreach ($desglose_calculos_fijos_timbres['datos'] as $data)
                       <tr>
                         <td class="tm_width_4">{!! $data['titulo'] ?? '' !!}</td>
-                        <td class="tm_width_4"></td>
+                        <td class="tm_width_3"></td>
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
-                        <td class="tm_width_2 tm_text_right">
+                        <td class="tm_width_3 tm_text_right">
                           {{ $transaction->currency->symbol.' '. Helper::formatDecimal($data['monto_con_descuento'] +
                           $line->monto_cargo_adicional) }}
                         </td>
@@ -388,10 +388,10 @@
                       @foreach ($desglose_calculos_monto_manual_timbres['datos'] as $data)
                       <tr>
                         <td class="tm_width_4">{!! $data['titulo'] ?? ''!!}</td>
-                        <td class="tm_width_4"></td>
+                        <td class="tm_width_3"></td>
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
-                        <td class="tm_width_2 tm_text_right">
+                        <td class="tm_width_3 tm_text_right">
                           {{ $transaction->currency->symbol.' '. Helper::formatDecimal($data['monto_con_descuento'] +
                           $line->monto_cargo_adicional) }}
                         </td>
@@ -411,10 +411,10 @@
                       @foreach ($desglose_honorarios['datos'] as $data)
                       <tr>
                         <td class="tm_width_4">{!! $data['titulo'] ?? '' !!}</td>
-                        <td class="tm_width_4"></td>
+                        <td class="tm_width_3"></td>
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
-                        <td class="tm_width_2 tm_text_right">
+                        <td class="tm_width_3 tm_text_right">
                           {{ $transaction->currency->symbol.' '. Helper::formatDecimal($data['monto_con_descuento'] +
                           $line->monto_cargo_adicional) }}
                         </td>
@@ -434,10 +434,10 @@
                       @foreach ($desglose_calculo_monto_manual_honorarios['datos'] as $data)
                       <tr>
                         <td class="tm_width_4">{!! $data['titulo'] ?? '' !!}</td>
-                        <td class="tm_width_4"></td>
+                        <td class="tm_width_3"></td>
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
-                        <td class="tm_width_2 tm_text_right">
+                        <td class="tm_width_3 tm_text_right">
                           {{ $transaction->currency->symbol.' '. Helper::formatDecimal($data['monto_con_descuento'] +
                           $line->monto_cargo_adicional) }}
                         </td>
@@ -468,20 +468,20 @@
                       @if ($transaction_other_charges->isNotEmpty())
                       <tr>
                         <td class="tm_width_4"><strong>Otros Cargos</strong></td>
-                        <td class="tm_width_4"></td>
+                        <td class="tm_width_3"></td>
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
-                        <td class="tm_width_2 tm_text_right">
+                        <td class="tm_width_3 tm_text_right">
                         </td>
                       </tr>
 
                       @foreach ($transaction_other_charges as $charge)
                       <tr>
                         <td class="tm_width_4">{!! $charge->detail !!}</td>
-                        <td class="tm_width_4"></td>
+                        <td class="tm_width_3"></td>
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
-                        <td class="tm_width_2 tm_text_right">
+                        <td class="tm_width_3 tm_text_right">
                           {{ $transaction->currency->symbol.' '. Helper::formatDecimal($charge->amount *
                           $charge->quantity) }}
                         </td>

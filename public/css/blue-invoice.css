@@ -2701,14 +2701,80 @@ hr {
 } /*# sourceMappingURL=style.css.map */
 
 .watermark {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-45deg);
-    font-size: 120px;
-    font-weight: bold;
-    color: rgba(255, 0, 0, 0.15); /* Rojo transparente */
-    z-index: 1000;
-    pointer-events: none;
-    white-space: nowrap;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  font-size: 120px;
+  font-weight: bold;
+  color: rgba(255, 0, 0, 0.15); /* Rojo transparente */
+  z-index: 1000;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Para disminuir la fuente y el espaciado*/
+
+/* === Ajustes para versión compacta pero legible === */
+.tm_invoice_wrap {
+  font-size: 11px; /* tamaño base más pequeño */
+  line-height: 1.35; /* antes 1.2 → un poco más de aire */
+}
+
+.tm_table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.tm_table th,
+.tm_table td {
+  padding: 3px 5px; /* mantiene celdas compactas */
+  line-height: 1.3; /* antes 1.1 → mejora legibilidad */
+  word-wrap: break-word; /* evita desbordes */
+}
+
+.tm_table th {
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.tm_table td {
+  font-size: 10.5px;
+}
+
+.tm_pt25,
+.tm_pt30,
+.tm_pt40,
+.tm_pt20 {
+  padding-top: 10px !important;
+}
+
+.tm_pb25,
+.tm_pb30,
+.tm_pb40,
+.tm_pb20 {
+  padding-bottom: 10px !important;
+}
+
+.tm_mb25,
+.tm_mb30,
+.tm_mb40,
+.tm_mb20 {
+  margin-bottom: 10px !important;
+}
+
+.tm_invoice_head {
+  margin-bottom: 10px;
+}
+
+.tm_primary_color {
+  font-size: 11px;
+}
+
+@media print {
+  .tm_invoice_wrap {
+    zoom: 0.9; /* ajusta el tamaño general para que quepa más en una hoja */
+  }
 }
