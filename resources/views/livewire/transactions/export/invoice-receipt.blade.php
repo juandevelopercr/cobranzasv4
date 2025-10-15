@@ -205,6 +205,9 @@
                       $transaction->gln || $transaction->prebill || $transaction->detalle_adicional)
                       <tr>
                         <td>{!! html_entity_decode($str) !!}</td>
+                        @if ($transaction->tipo_facturacion == \App\Models\Transaction::MASIVA)
+                          <td class="tm_width_4"></td>
+                        @endif
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
                         <td class="tm_width_2 tm_text_right"></td>
@@ -261,7 +264,7 @@
                             @endif
                         </td>
                         @if ($transaction->tipo_facturacion == \App\Models\Transaction::MASIVA)
-                        <td>
+                        <td class="tm_width_4">
                           @if ($line->caso)
                             @php
                               $demendado = ($transaction->bank_id == \App\Models\Bank::DAVIVIENDA) ? $line->caso->pnombre_apellidos_deudor : $line->caso->pnombre_demandado;
@@ -316,6 +319,7 @@
                       @foreach ($desglose_formula_timbres['datos'] as $data)
                       <tr>
                         <td class="tm_width_4">{!! $data['titulo'] ?? '' !!}</td>
+                        <td class="tm_width_4"></td>
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
                         <td class="tm_width_2 tm_text_right">
@@ -338,6 +342,7 @@
                       @foreach ($desglose_tabla_abogados_timbres['datos'] as $data)
                       <tr>
                         <td class="tm_width_4">{!! $data['titulo'] ?? '' !!}</td>
+                        <td class="tm_width_4"></td>
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
                         <td class="tm_width_2 tm_text_right">
@@ -360,6 +365,7 @@
                       @foreach ($desglose_calculos_fijos_timbres['datos'] as $data)
                       <tr>
                         <td class="tm_width_4">{!! $data['titulo'] ?? '' !!}</td>
+                        <td class="tm_width_4"></td>
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
                         <td class="tm_width_2 tm_text_right">
@@ -382,6 +388,7 @@
                       @foreach ($desglose_calculos_monto_manual_timbres['datos'] as $data)
                       <tr>
                         <td class="tm_width_4">{!! $data['titulo'] ?? ''!!}</td>
+                        <td class="tm_width_4"></td>
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
                         <td class="tm_width_2 tm_text_right">
@@ -404,6 +411,7 @@
                       @foreach ($desglose_honorarios['datos'] as $data)
                       <tr>
                         <td class="tm_width_4">{!! $data['titulo'] ?? '' !!}</td>
+                        <td class="tm_width_4"></td>
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
                         <td class="tm_width_2 tm_text_right">
@@ -426,6 +434,7 @@
                       @foreach ($desglose_calculo_monto_manual_honorarios['datos'] as $data)
                       <tr>
                         <td class="tm_width_4">{!! $data['titulo'] ?? '' !!}</td>
+                        <td class="tm_width_4"></td>
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
                         <td class="tm_width_2 tm_text_right">
@@ -459,6 +468,7 @@
                       @if ($transaction_other_charges->isNotEmpty())
                       <tr>
                         <td class="tm_width_4"><strong>Otros Cargos</strong></td>
+                        <td class="tm_width_4"></td>
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
                         <td class="tm_width_2 tm_text_right">
@@ -468,6 +478,7 @@
                       @foreach ($transaction_other_charges as $charge)
                       <tr>
                         <td class="tm_width_4">{!! $charge->detail !!}</td>
+                        <td class="tm_width_4"></td>
                         <td class="tm_width_2"></td>
                         <td class="tm_width_1 tm_text_center"></td>
                         <td class="tm_width_2 tm_text_right">
