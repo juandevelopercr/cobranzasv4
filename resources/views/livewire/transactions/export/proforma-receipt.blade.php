@@ -454,10 +454,29 @@
                     <tr>
                       <td class="tm_width_4">{!! $charge->detail !!}</td>
                       @if ($transaction->tipo_facturacion == \App\Models\Transaction::MASIVA)
-                        <td class="tm_width_3"></td>
+                        <td class="tm_width_3">
+                          @if ($charge->caso)
+                            @php
+                              $demendado = ($transaction->bank_id == \App\Models\Bank::DAVIVIENDA) ? $charge->caso->pnombre_apellidos_deudor : $charge->caso->pnombre_demandado;
+                              $numero_operacion = $transaction->bank_id == \App\Models\Bank::DAVIVIENDA ? $charge->caso->pnumero_operacion2: $charge->caso->pnumero_operacion1;
+
+                              $tipo_proceso = $charge->caso->proceso->nombre;
+                              $numero_expediente = $charge->caso->pnumero_expediente_judicial;
+
+                              $producto = $charge->caso->producto->nombre;
+
+                              $numero = $charge->caso->pnumero;
+                            @endphp
+                            {{ $tipo_proceso . ', ' . $numero_operacion . ', ' . $numero . '- ' . $demendado . ', ' . $producto }}
+                          @endif
+                        </td>
                       @endif
-                      <td class="tm_width_2"></td>
-                      <td class="tm_width_1 tm_text_center"></td>
+                      <td class="tm_width_2">
+                        {{ $transaction->currency->symbol.' '. Helper::formatDecimal($charge->amount) }}
+                      </td>
+                      <td class="tm_width_1 tm_text_center">
+                        {{ $charge->quantity }}
+                      </td>
                       <td class="tm_width_3 tm_text_right">
                         {{ $transaction->currency->symbol.' '. Helper::formatDecimal($charge->amount *
                         $charge->quantity) }}
