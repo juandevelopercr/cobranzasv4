@@ -817,7 +817,7 @@ class InvoiceManager extends TransactionManager
       DB::commit();
 
       // Para que recalule los totales de la factura
-      $cloned->recalculeteTotals();
+      //$cloned->recalculeteTotals();
 
       // Livewire: Notificación y limpieza
       $this->reset(['selectedIds', 'recordId']);
