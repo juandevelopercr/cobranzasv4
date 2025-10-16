@@ -91,7 +91,6 @@
                   @endforeach
                 </tbody>
               </table>
-
               <div class="row overflow-y-scroll" wire:scroll>
                 {{ $records->links(data: ['scrollTo' => false]) }}
               </div>
