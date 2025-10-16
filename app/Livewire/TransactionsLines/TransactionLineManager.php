@@ -696,6 +696,7 @@ class TransactionLineManager extends BaseComponent
 
     $this->action = 'edit';
     $this->dispatch('refreshCleave');
+    $this->dispatch('reinitFormControls');
   }
 
   public function update()

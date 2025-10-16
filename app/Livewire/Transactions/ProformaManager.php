@@ -1104,6 +1104,7 @@ class ProformaManager extends TransactionManager
     $this->setInfoCaso();
 
     $this->dispatch('reinitSelect2Controls');
+    $this->dispatch('reinitSelect2Caso');
 
     //$this->dispatch('select2');
   }
