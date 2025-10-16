@@ -431,6 +431,8 @@ class Caso extends Model
       'casos.pfecha_presentacion_demanda',
       'casos.nfecha_traslado_juzgado',
       'casos.nfecha_notificacion_todas_partes',
+      'casos.pnombre_apellidos_deudor',
+      'casos.pcedula_deudor',
       'aestado.name as aestado_proceso_general',
       'casos.fecha_importacion',
       'casos_productos.nombre as producto',
@@ -533,6 +535,14 @@ class Caso extends Model
 
     if (!empty($filters['filter_pnumero_cedula'])) {
       $query->where('casos.pnumero_cedula', '=', $filters['filter_pnumero_cedula']);
+    }
+
+    if (!empty($filters['filter_pnombre_apellidos_deudor'])) {
+      $query->where('casos.pnombre_apellidos_deudor', 'like', '%' . $filters['filter_pnombre_apellidos_deudor'] . '%');
+    }
+
+    if (!empty($filters['filter_pcedula_deudor'])) {
+      $query->where('casos.pcedula_deudor', 'like', '%' . $filters['filter_pcedula_deudor'] . '%');
     }
 
     if (!empty($filters['filter_pfecha_presentacion_demanda'])) {

@@ -713,6 +713,22 @@
               "permissions": [
                 "view-classifiers"
               ]
+            },
+            {
+              "url": "classifiers/casos-notificadores",
+              "name": "Notificadores",
+              "slug": "classifiers-casos-notificadores",
+              "permissions": [
+                "view-classifiers"
+              ]
+            },
+            {
+              "url": "classifiers/casos-servicios",
+              "name": "Servicios",
+              "slug": "classifiers-casos-servicios",
+              "permissions": [
+                "view-classifiers"
+              ]
             }
           ]
         }

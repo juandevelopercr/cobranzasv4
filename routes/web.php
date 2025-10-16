@@ -65,6 +65,7 @@ use App\Http\Controllers\reports\ReportGeneralesController;
 use App\Http\Controllers\reports\ReportRetencionController;
 use App\Http\Controllers\Auth\DepartmentSelectionController;
 use App\Http\Controllers\classifiers\AreaPracticaController;
+use App\Http\Controllers\classifiers\CasoServicioController;
 use App\Http\Controllers\classifiers\ComisionistaController;
 use App\Http\Controllers\classifiers\ProductoCasoController;
 use App\Http\Controllers\reports\ReportAntiguedadController;
@@ -78,6 +79,7 @@ use App\Http\Controllers\classifiers\CasoPoderdanteController;
 use App\Http\Controllers\classifiers\CatalogoCuentaController;
 use App\Http\Controllers\reports\ReportEstadoCuentaController;
 use App\Http\Controllers\classifiers\CasoExpectativaController;
+use App\Http\Controllers\classifiers\CasoNotificadorController;
 use App\Http\Controllers\classifiers\GrupoEmpresarialController;
 use App\Http\Controllers\classifiers\CasoListadoJuzgadoController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
@@ -165,6 +167,10 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
   Route::get('classifiers/casos-listado-juzgados', [CasoListadoJuzgadoController::class, 'index'])->name('classifiers-casos-listado-juzgados');
   Route::get('classifiers/casos-poderdantes', [CasoPoderdanteController::class, 'index'])->name('classifiers-casos-poderdantes');
   Route::get('classifiers/casos-expectativas', [CasoExpectativaController::class, 'index'])->name('classifiers-casos-expectativas');
+  Route::get('classifiers/casos-notificadores', [CasoNotificadorController::class, 'index'])->name('classifiers-casos-notificadores');
+  Route::get('classifiers/casos-servicios', [CasoServicioController::class, 'index'])->name('classifiers-casos-servicios');
+
+
   Route::get('classifiers/grupos-empresariales', [GrupoEmpresarialController::class, 'index'])->name('classifiers-grupos-empresariales');
   Route::get('classifiers/areas-practicas', [AreaPracticaController::class, 'index'])->name('classifiers-areas-practicas');
   Route::get('classifiers/sectores', [SectorController::class, 'index'])->name('classifiers-sectores');
