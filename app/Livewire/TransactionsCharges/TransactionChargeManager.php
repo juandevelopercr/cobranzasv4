@@ -348,6 +348,8 @@ class TransactionChargeManager extends BaseComponent
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
 
+    $this->dispatch('reinitFormControls');
+
     $this->action = 'edit';
   }
 

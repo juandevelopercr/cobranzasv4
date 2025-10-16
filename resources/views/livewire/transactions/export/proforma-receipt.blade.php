@@ -292,7 +292,9 @@
                     @foreach ($desglose_formula_timbres['datos'] as $data)
                     <tr>
                       <td class="tm_width_4">{!! $data['titulo'] ?? '' !!}</td>
-                      <td class="tm_width_3"></td>
+                      @if ($transaction->tipo_facturacion == \App\Models\Transaction::MASIVA)
+                        <td class="tm_width_3"></td>
+                      @endif
                       <td class="tm_width_2"></td>
                       <td class="tm_width_1 tm_text_center"></td>
                       <td class="tm_width_3 tm_text_right">
@@ -315,7 +317,9 @@
                     @foreach ($desglose_tabla_abogados_timbres['datos'] as $data)
                     <tr>
                       <td class="tm_width_4">{!! $data['titulo'] ?? '' !!}</td>
-                      <td class="tm_width_3"></td>
+                      @if ($transaction->tipo_facturacion == \App\Models\Transaction::MASIVA)
+                        <td class="tm_width_3"></td>
+                      @endif
                       <td class="tm_width_2"></td>
                       <td class="tm_width_1 tm_text_center"></td>
                       <td class="tm_width_3 tm_text_right">
@@ -338,7 +342,9 @@
                     @foreach ($desglose_calculos_fijos_timbres['datos'] as $data)
                     <tr>
                       <td class="tm_width_4">{!! $data['titulo'] ?? '' !!}</td>
-                      <td class="tm_width_3"></td>
+                      @if ($transaction->tipo_facturacion == \App\Models\Transaction::MASIVA)
+                        <td class="tm_width_3"></td>
+                      @endif
                       <td class="tm_width_2"></td>
                       <td class="tm_width_1 tm_text_center"></td>
                       <td class="tm_width_3 tm_text_right">
@@ -361,7 +367,9 @@
                     @foreach ($desglose_calculos_monto_manual_timbres['datos'] as $data)
                     <tr>
                       <td class="tm_width_4">{!! $data['titulo'] ?? ''!!}</td>
-                      <td class="tm_width_3"></td>
+                      @if ($transaction->tipo_facturacion == \App\Models\Transaction::MASIVA)
+                        <td class="tm_width_3"></td>
+                      @endif
                       <td class="tm_width_2"></td>
                       <td class="tm_width_1 tm_text_center"></td>
                       <td class="tm_width_3 tm_text_right">
@@ -384,7 +392,9 @@
                     @foreach ($desglose_honorarios['datos'] as $data)
                     <tr>
                       <td class="tm_width_4">{!! $data['titulo'] ?? '' !!}</td>
-                      <td class="tm_width_3"></td>
+                      @if ($transaction->tipo_facturacion == \App\Models\Transaction::MASIVA)
+                        <td class="tm_width_3"></td>
+                      @endif
                       <td class="tm_width_2"></td>
                       <td class="tm_width_1 tm_text_center"></td>
                       <td class="tm_width_3 tm_text_right">
@@ -407,7 +417,9 @@
                     @foreach ($desglose_calculo_monto_manual_honorarios['datos'] as $data)
                     <tr>
                       <td class="tm_width_4">{!! $data['titulo'] ?? '' !!}</td>
-                      <td class="tm_width_3"></td>
+                      @if ($transaction->tipo_facturacion == \App\Models\Transaction::MASIVA)
+                        <td class="tm_width_3"></td>
+                      @endif
                       <td class="tm_width_2"></td>
                       <td class="tm_width_1 tm_text_center"></td>
                       <td class="tm_width_3 tm_text_right">
