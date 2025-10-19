@@ -499,7 +499,7 @@ use App\Models\User;
   <div class="row g-6">
     <div class="col-md-6 fv-plugins-icon-container">
       <label class="form-label" for="message">{{ __('Message') }}</label>
-      <textarea class="form-control" wire:model="message" name="message" id="message" rows="5"
+      <textarea class="form-control" wire:model.lazy="message" name="message" id="message" rows="5"
         placeholder="{{ __('Message') }}"></textarea>
       @error('message')
       <div class="text-danger mt-1">{{ $message }}</div>
@@ -508,7 +508,7 @@ use App\Models\User;
 
     <div class="col-md-6 fv-plugins-icon-container">
       <label class="form-label" for="notes">{{ __('Notes') }}</label>
-      <textarea class="form-control" wire:model="notes" name="notes" id="notes" rows="5"
+      <textarea class="form-control" wire:model.lazy="notes" name="notes" id="notes" rows="5"
         placeholder="{{ __('Notes') }}"></textarea>
       @error('notes')
       <div class="text-danger mt-1">{{ $message }}</div>
@@ -562,36 +562,43 @@ use App\Models\User;
         </select>
       </div>
     </div>
-    <div class="col-md-3 fv-plugins-icon-container">
-      <label class="form-label" for="nombreDeudor">{{ __('Nombre del deudor') }}</label>
+    <div class="col-md-2 fv-plugins-icon-container">
+      <label class="form-label" for="pnombre_demandado">{{ __('Nombre del demandado') }}</label>
       <div class="input-group input-group-merge has-validation">
-        <span class="input-group-text"><i class="bx bx-user"></i></span>
-        <input type="text" wire:model="nombreDeudor" name="nombreDeudor" id="nombreDeudor"
-          class="form-control @error('nombreDeudor') is-invalid @enderror" placeholder="{{ __('Nombre del deudor') }}" disabled>
+        <input type="text" wire:model="pnombre_demandado" name="pnombre_demandado" id="pnombre_demandado"
+          class="form-control @error('pnombre_demandado') is-invalid @enderror" placeholder="{{ __('Nombre del deudor') }}" disabled>
       </div>
-      @error('nombreDeudor')
+      @error('pnombre_demandado')
       <div class="text-danger mt-1">{{ $message }}</div>
       @enderror
     </div>
-    <div class="col-md-3 fv-plugins-icon-container">
-      <label class="form-label" for="tipoGarantia">{{ __('Tipo de garantía') }}</label>
+    <div class="col-md-2 fv-plugins-icon-container">
+      <label class="form-label" for="producto">{{ __('Tipo de producto') }}</label>
       <div class="input-group input-group-merge has-validation">
-        <span class="input-group-text"><i class="bx bx-user"></i></span>
-        <input type="text" wire:model="tipoGarantia" name="tipoGarantia" id="tipoGarantia"
-          class="form-control @error('tipoGarantia') is-invalid @enderror" placeholder="{{ __('Tipo de garantía') }}" disabled>
+        <input type="text" wire:model="producto" name="producto" id="producto"
+          class="form-control @error('producto') is-invalid @enderror" placeholder="{{ __('Tipo de producto') }}" disabled>
       </div>
-      @error('tipoGarantia')
+      @error('producto')
       <div class="text-danger mt-1">{{ $message }}</div>
       @enderror
     </div>
-    <div class="col-md-3 fv-plugins-icon-container">
-      <label class="form-label" for="nombre_caso">{{ __('Nombre de caso o referencia') }}</label>
+    <div class="col-md-2 fv-plugins-icon-container">
+      <label class="form-label" for="numero_operacion">{{ __('# de operación') }}</label>
       <div class="input-group input-group-merge has-validation">
-        <span class="input-group-text"><i class="bx bx-user"></i></span>
-        <input type="text" wire:model="nombre_caso" name="nombre_caso" id="nombre_caso"
-          class="form-control @error('nombre_caso') is-invalid @enderror" placeholder="{{ __('Nombre de caso o referencia') }}">
+        <input type="text" wire:model="numero_operacion" name="numero_operacion" id="numero_operacion"
+          class="form-control @error('numero_operacion') is-invalid @enderror" placeholder="{{ __('# de operación') }}" disabled>
       </div>
-      @error('nombre_caso')
+      @error('numero_operacion')
+      <div class="text-danger mt-1">{{ $message }}</div>
+      @enderror
+    </div>
+    <div class="col-md-2 fv-plugins-icon-container">
+      <label class="form-label" for="proceso">{{ __('Proceso') }}</label>
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" wire:model="proceso" name="proceso" id="proceso"
+          class="form-control @error('proceso') is-invalid @enderror" placeholder="{{ __('Proceso') }}" disabled>
+      </div>
+      @error('proceso')
       <div class="text-danger mt-1">{{ $message }}</div>
       @enderror
     </div>

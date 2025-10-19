@@ -206,6 +206,11 @@ abstract class TransactionManager extends BaseComponent
   public $paymentStatus = [];
   public $instruccionesPagos = [];
 
+  public $pnombre_demandado = NULL;
+  public $producto = NULL;
+  public $numero_operacion = NULL;
+  public $proceso = NULL;
+
   public $nombreDeudor = NULL;
   public $tipoGarantia = NULL;
   public $nombreCasoReferencia = NULL;
@@ -1069,7 +1074,7 @@ abstract class TransactionManager extends BaseComponent
   public function updatedCasoId($value)
   {
     if (!$value) {
-      $this->reset(['nombreDeudor', 'tipoGarantia']);
+      $this->reset(['pnombre_demandado', 'producto', 'numero_operacion', 'proceso']);
       return;
     }
     $this->setInfoCaso();
@@ -1080,8 +1085,10 @@ abstract class TransactionManager extends BaseComponent
     $caso = \App\Models\Caso::find($this->caso_id);
 
     if ($caso) {
-      $this->nombreDeudor = $caso->deudor;
-      $this->tipoGarantia = $caso->garantia ? $caso->garantia->name : ''; // ajusta si se llama diferente
+      $this->pnombre_demandado = $caso->pnombre_demandado;
+      $this->producto = $caso->producto ? $caso->producto->nombre: '';
+      $this->numero_operacion = $caso->pnumero_operacion1;
+      $this->proceso = $caso->proceso ? $caso->proceso->nombre: '';
     }
   }
 

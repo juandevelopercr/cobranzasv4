@@ -1539,6 +1539,10 @@ class ProformaManager extends TransactionManager
       'totalOtrosCargos',
       'totalComprobante',
       'old_contact_id',
+      'pnombre_demandado',
+      'producto',
+      'numero_operacion',
+      'proceso',
     );
 
     $this->bank_id = null;
@@ -1572,8 +1576,9 @@ class ProformaManager extends TransactionManager
     if ($propertyName == 'location_id') {
       if (!empty($this->location_id)) {
         $location = BusinessLocation::find($this->location_id);
-        if ($location)
+        if ($location && $location->notes && empty($this->notes)){
           $this->notes = $location->notes;
+        }
       }
     }
 
