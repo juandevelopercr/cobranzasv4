@@ -24,8 +24,16 @@
                     @include('livewire.includes.button-edit')
                   @endcan
 
+                  @php
+                  /*
                   @can("edit-casos")
                     @include('livewire.includes.button-eviar-notificacion')
+                  @endcan
+                  */
+                  @endphp
+
+                  @can("edit-casos")
+                    @include('livewire.includes.button-import')
                   @endcan
 
                   @can("delete-casos")

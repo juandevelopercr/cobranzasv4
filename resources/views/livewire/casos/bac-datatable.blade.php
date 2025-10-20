@@ -24,8 +24,16 @@
                     @include('livewire.includes.button-edit')
                   @endcan
 
+                  @php
+                  /*
                   @can("edit-casos")
                     @include('livewire.includes.button-eviar-notificacion')
+                  @endcan
+                  */
+                  @endphp
+
+                  @can("edit-casos")
+                    @include('livewire.includes.button-import')
                   @endcan
 
                   @can("delete-casos")
@@ -103,6 +111,10 @@
 
   @if($action == 'create' || $action == 'edit')
     @include('livewire.casos.partials.bac.form')
+  @endif
+
+  @if($action == 'importar')
+    @include('livewire.casos.partials.import-casos')
   @endif
 </div>
 

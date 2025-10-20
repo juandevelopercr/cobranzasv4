@@ -14,9 +14,12 @@ use App\Models\CasoJuzgado;
 use App\Models\CasoProceso;
 use Livewire\Attributes\On;
 use App\Models\CasoProducto;
+use App\Models\CasoServicio;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
+use App\Helpers\ImportColumns;
+use App\Models\CasoPoderdante;
 use App\Livewire\BaseComponent;
 use App\Models\CasoExpectativa;
 use App\Models\DataTableConfig;
@@ -24,9 +27,9 @@ use Livewire\Attributes\Computed;
 use App\Models\CasoListadoJuzgado;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Casos\CasoManager;
-use App\Models\CasoPoderdante;
 use Illuminate\Support\Facades\Auth;
 use App\Services\DocumentSequenceService;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CasoDavivienda extends CasoManager
 {
@@ -78,6 +81,8 @@ class CasoDavivienda extends CasoManager
 
     $this->procesos = CasoProceso::where('bank_id', $this->bank_id)->orderBy('nombre', 'ASC')->get();
 
+    $this->servicios = CasoServicio::where('activo', 1)->orderBy('id', 'ASC')->get();
+
     $this->currencies = Currency::orderBy('code', 'ASC')->get();
 
     $this->abogados = User::where('active', 1)
@@ -100,6 +105,8 @@ class CasoDavivienda extends CasoManager
     $this->juzgados = CasoJuzgado::where('activo', 1)->orderBy('nombre', 'ASC')->get();
 
     $this->poderdantes = CasoPoderdante::orderBy('id', 'ASC')->get();
+
+    $this->expectedColumns = ImportColumns::getColumnasPorBanco(Bank::DAVIVIENDA);
 
     $this->refresDatatable();
   }
@@ -147,6 +154,8 @@ class CasoDavivienda extends CasoManager
       'nestado_id' => ['nullable', 'integer'],
       'estado_id'  => ['nullable', 'integer'],
       'pnumero'    => ['nullable', 'integer'],
+      'caso_servicio_capturador_id' => ['nullable', 'integer'],
+      'caso_servicio_notificador_id' => ['nullable', 'integer'],
 
       // === NUMERIC SAFE ===
       'psaldo_de_seguros' => ['nullable', 'numeric'],
@@ -249,6 +258,7 @@ class CasoDavivienda extends CasoManager
       'bfecha_entrega_poder' => ['nullable', 'date'],
       'bfecha_levantamiento_gravamen' => ['nullable', 'date'],
       'f1fecha_asignacion_capturador' => ['nullable', 'date'],
+      'f1fecha_asignacion_notificador'=> ['nullable', 'date'],
       'f2fecha_publicacion_edicto' => ['nullable', 'date'],
       'pfecha_ingreso_cobro_judicial' => ['nullable', 'date'],
       'pfecha_devolucion_demanda_firma' => ['nullable', 'date'],
@@ -435,6 +445,8 @@ class CasoDavivienda extends CasoManager
       'bgastos_proceso' => ['nullable', 'string', 'max:190'],
       'pdespacho_judicial_juzgado' => ['nullable', 'string', 'max:190'],
       'pdatos_codeudor2' => ['nullable', 'string', 'max:190'],
+      'nombre_capturador' => ['nullable', 'string', 'max:100'],
+      'nombre_notificador' => ['nullable', 'string', 'max:100'],
 
       'fechasRemate' => 'nullable|array|min:0',
       'fechasRemate.*.fecha' => 'nullable|date|after_or_equal:today',
@@ -550,6 +562,7 @@ class CasoDavivienda extends CasoManager
       'bfecha_entrega_poder' => ['nullable', 'date'],
       'bfecha_levantamiento_gravamen' => ['nullable', 'date'],
       'f1fecha_asignacion_capturador' => ['nullable', 'date'],
+      'f1fecha_asignacion_notificador'=> ['nullable', 'date'],
       'f2fecha_publicacion_edicto' => ['nullable', 'date'],
       'pfecha_ingreso_cobro_judicial' => ['nullable', 'date'],
       'pfecha_devolucion_demanda_firma' => ['nullable', 'date'],
@@ -930,6 +943,7 @@ class CasoDavivienda extends CasoManager
     'filter_pnumero_operacion1' => NULL,
     'filter_pnombre_apellidos_deudor' => NULL,
     'filter_pcedula_deudor' => NULL,
+    'filter_pfecha_ingreso_cobro_judicial' => NULL,
     'filter_pfecha_asignacion_caso' => NULL,
     'filter_bank_name' => NULL,
     'filter_producto' => NULL,
@@ -1017,6 +1031,25 @@ class CasoDavivienda extends CasoManager
         'filter_sources' => '',
         'filter_source_field' => '',
         'columnType' => 'string',
+        'columnAlign' => '',
+        'columnClass' => '',
+        'function' => '',
+        'parameters' => [],
+        'sumary' => '',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'pfecha_ingreso_cobro_judicial',
+        'orderName' => 'pfecha_ingreso_cobro_judicial',
+        'label' => __('Fecha de ingreso a cobro judicial'),
+        'filter' => 'filter_pfecha_ingreso_cobro_judicial',
+        'filter_type' => 'date',
+        'filter_sources' => '',
+        'filter_source_field' => '',
+        'columnType' => 'date',
         'columnAlign' => '',
         'columnClass' => '',
         'function' => '',
@@ -1378,6 +1411,7 @@ class CasoDavivienda extends CasoManager
     $panels = [
       'info' => true, // siempre se muestra
       'notificacion' => false,
+      'notificadoresCapturadores' => true,
       'sentencia' => false,
       'arreglo' => false,
       'aprobacion' => false,

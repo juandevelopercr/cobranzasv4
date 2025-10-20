@@ -14,9 +14,11 @@ use App\Models\CasoJuzgado;
 use App\Models\CasoProceso;
 use Livewire\Attributes\On;
 use App\Models\CasoProducto;
+use App\Models\CasoServicio;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
+use App\Helpers\ImportColumns;
 use App\Livewire\BaseComponent;
 use App\Models\CasoExpectativa;
 use App\Models\DataTableConfig;
@@ -26,6 +28,7 @@ use Illuminate\Support\Facades\DB;
 use App\Livewire\Casos\CasoManager;
 use Illuminate\Support\Facades\Auth;
 use App\Services\DocumentSequenceService;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CasoScotiabank extends CasoManager
 {
@@ -76,6 +79,8 @@ class CasoScotiabank extends CasoManager
 
     $this->procesos = CasoProceso::where('bank_id', $this->bank_id)->orderBy('nombre', 'ASC')->get();
 
+    $this->servicios = CasoServicio::where('activo', 1)->orderBy('id', 'ASC')->get();
+
     $this->currencies = Currency::whereIn('id', [1,16])->orderBy('code', 'ASC')->get();
 
     $this->abogados = User::where('active', 1)
@@ -96,6 +101,8 @@ class CasoScotiabank extends CasoManager
     $this->expectativas = CasoExpectativa::where('activo', 1)->orderBy('nombre', 'ASC')->get();
 
     $this->juzgados = CasoJuzgado::where('activo', 1)->orderBy('nombre', 'ASC')->get();
+
+    $this->expectedColumns = ImportColumns::getColumnasPorBanco(Bank::SCOTIABANKCR);
 
     $this->refresDatatable();
   }
@@ -143,6 +150,8 @@ class CasoScotiabank extends CasoManager
       'nestado_id' => ['nullable', 'integer'],
       'estado_id'  => ['nullable', 'integer'],
       'pnumero'    => ['nullable', 'integer'],
+      'caso_servicio_capturador_id' => ['nullable', 'integer'],
+      'caso_servicio_notificador_id' => ['nullable', 'integer'],
 
       // === NUMERIC SAFE ===
       'psaldo_de_seguros' => ['nullable', 'numeric'],
@@ -245,6 +254,7 @@ class CasoScotiabank extends CasoManager
       'bfecha_entrega_poder' => ['nullable', 'date'],
       'bfecha_levantamiento_gravamen' => ['nullable', 'date'],
       'f1fecha_asignacion_capturador' => ['nullable', 'date'],
+      'f1fecha_asignacion_notificador'=> ['nullable', 'date'],
       'f2fecha_publicacion_edicto' => ['nullable', 'date'],
       'pfecha_ingreso_cobro_judicial' => ['nullable', 'date'],
       'pfecha_devolucion_demanda_firma' => ['nullable', 'date'],
@@ -400,8 +410,6 @@ class CasoScotiabank extends CasoManager
       'psubsidiaria' => ['nullable', 'string', 'max:100'],
       'pestadoid' => ['nullable', 'string', 'max:100'],
       'motivo_terminacion' => ['nullable', 'string', 'max:100'],
-
-
       'pdatos_codeudor1' => ['nullable', 'string', 'max:190'],
       'pdatos_anotantes' => ['nullable', 'string', 'max:190'],
       'pnumero_cedula' => ['nullable', 'string', 'max:190'],
@@ -431,6 +439,8 @@ class CasoScotiabank extends CasoManager
       'bgastos_proceso' => ['nullable', 'string', 'max:190'],
       'pdespacho_judicial_juzgado' => ['nullable', 'string', 'max:190'],
       'pdatos_codeudor2' => ['nullable', 'string', 'max:190'],
+      'nombre_capturador' => ['nullable', 'string', 'max:100'],
+      'nombre_notificador' => ['nullable', 'string', 'max:100'],
 
       'fechasRemate' => 'nullable|array|min:0',
       'fechasRemate.*.fecha' => 'nullable|date|after_or_equal:today',
@@ -546,6 +556,7 @@ class CasoScotiabank extends CasoManager
       'bfecha_entrega_poder' => ['nullable', 'date'],
       'bfecha_levantamiento_gravamen' => ['nullable', 'date'],
       'f1fecha_asignacion_capturador' => ['nullable', 'date'],
+      'f1fecha_asignacion_notificador'=> ['nullable', 'date'],
       'f2fecha_publicacion_edicto' => ['nullable', 'date'],
       'pfecha_ingreso_cobro_judicial' => ['nullable', 'date'],
       'pfecha_devolucion_demanda_firma' => ['nullable', 'date'],
@@ -1335,6 +1346,7 @@ class CasoScotiabank extends CasoManager
     $panels = [
       'info' => true, // siempre se muestra
       'notificacion' => false,
+      'notificadoresCapturadores' => true,
       'sentencia' => false,
       'arreglo' => false,
       'aprobacion' => false,

@@ -2,22 +2,25 @@
 
 namespace App\Livewire\Casos;
 
-use App\Helpers\Helpers;
-use App\Livewire\BaseComponent;
+use Carbon\Carbon;
 use App\Models\Bank;
 use App\Models\Caso;
-use App\Models\CasoEstado;
-use App\Models\Currency;
 use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Livewire\Attributes\Computed;
+use App\Helpers\Helpers;
+use App\Models\Currency;
+use App\Models\CasoEstado;
+use App\Models\CasoProceso;
 use Livewire\Attributes\On;
+use App\Models\CasoProducto;
 use Livewire\Attributes\Url;
-use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
+use App\Livewire\BaseComponent;
+use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use App\Models\CasoEstadoNotificadores;
+use Illuminate\Database\QueryException;
 
 class CasoManager extends BaseComponent
 {
@@ -59,321 +62,334 @@ class CasoManager extends BaseComponent
   public $procesos   = [];
   public $clientes   = [];
   public $expectativas   = [];
-  public $juzgados = [];
+  public $juzgados    = [];
   public $estadosNotificadores = [];
+  public $servicios   = [];
 
   // =========  TODAS LAS COLUMNAS DE la tabla `casos`  =========
-  public $contact_id;
-  public $bank_id;
-  public $product_id;
-  public $currency_id;
-  public $fecha_creacion;
+  public $contact_id = NULL;
+  public $bank_id = NULL;
+  public $product_id = NULL;
+  public $caso_servicio_capturador_id = NULL;
+  public $caso_servicio_notificador_id = NULL;
+  public $currency_id = NULL;
+  public $fecha_creacion = NULL;
 
   // === INTEGER FIELDS ===
-  public $abogado_id;
-  public $pexpectativa_recuperacion_id;
-  public $asistente1_id;
-  public $asistente2_id;
-  public $aestado_proceso_general_id;
-  public $proceso_id;
-  public $testado_proceso_id;
-  public $lestado_levantamiento_id;
-  public $ddespacho_judicial_juzgado_id;
-  public $bestado_levantamiento_id;
-  public $ldespacho_judicial_juzgado_id;
-  public $ppoderdante_id;
-  public $nestado_id;
-  public $estado_id;
-  public $pnumero;
+  public $abogado_id = NULL;
+  public $pexpectativa_recuperacion_id = NULL;
+  public $asistente1_id = NULL;
+  public $asistente2_id = NULL;
+  public $aestado_proceso_general_id = NULL;
+  public $proceso_id = NULL;
+  public $testado_proceso_id = NULL;
+  public $lestado_levantamiento_id = NULL;
+  public $ddespacho_judicial_juzgado_id = NULL;
+  public $bestado_levantamiento_id = NULL;
+  public $ldespacho_judicial_juzgado_id = NULL;
+  public $ppoderdante_id = NULL;
+  public $nestado_id = NULL;
+  public $estado_id = NULL;
+  public $pnumero = NULL;
 
   // === NUMERIC SAFE ===
-  public $psaldo_de_seguros;
-  public $psaldo_de_multas;
+  public $psaldo_de_seguros = NULL;
+  public $psaldo_de_multas = NULL;
 
-  public $pgastos_legales_caso;
-  public $pmonto_prima;
-  public $nhonorarios_notificacion;
-  public $nhonorarios_cobro_administrativo;
-  public $thonorarios_traspaso;
-  public $tgastos_traspaso;
-  public $tgastos_legales;
-  public $thonorarios_totales;
-  public $fhonorarios_levantamiento;
-  public $fcomision_ccc;
-  public $fhonorarios_totales;
-  public $rhonorario_escritura_inscripcion;
-  public $rgastos_impuestos;
-  public $dgastos_microfilm;
-  public $dhonorarios;
-  public $bhonorarios_levantamiento;
-  public $bhonorarios_comision;
-  public $bhonorarios_totales;
-  public $f1honorarios_capturador;
-  public $f1honorarios_comision;
-  public $agastos_mas_honorarios_acumulados;
-  public $ahonorarios_iniciales;
-  public $adiferencia_demanda_presentada;
-  public $adiferencia_sentencia_afavor;
-  public $adiferencia_sentencia_enfirme;
-  public $adiferencia_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_segunda_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_tercera_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_cuarta_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_quinta_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_sexta_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_septima_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_octava_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_novena_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_decima_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_decima_primera_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_decima_segunda_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_decima_tercera_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_decima_cuarta_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_decima_quinta_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_decima_sexta_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_decima_septima_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_decima_octava_liquidacion_de_sentencia_enfirme;
-  public $adiferencia_decima_novena_liquidacion_de_sentencia_enfirme;
-  public $agastos_legales_iniciales;
-  public $adiferencia_gastos_legales;
-  public $anumero_grupo;
-  public $acarga_gastos_legales;
-  public $pretenciones;
-  public $pmonto_arreglo_pago;
-  public $pmonto_cuota;
-  public $honorarios_legales_dolares;
+  public $pgastos_legales_caso = NULL;
+  public $pmonto_prima = NULL;
+  public $nhonorarios_notificacion = NULL;
+  public $nhonorarios_cobro_administrativo = NULL;
+  public $thonorarios_traspaso = NULL;
+  public $tgastos_traspaso= NULL;
+  public $tgastos_legales= NULL;
+  public $thonorarios_totales= NULL;
+  public $fhonorarios_levantamiento= NULL;
+  public $fcomision_ccc= NULL;
+  public $fhonorarios_totales= NULL;
+  public $rhonorario_escritura_inscripcion= NULL;
+  public $rgastos_impuestos= NULL;
+  public $dgastos_microfilm= NULL;
+  public $dhonorarios= NULL;
+  public $bhonorarios_levantamiento= NULL;
+  public $bhonorarios_comision= NULL;
+  public $bhonorarios_totales= NULL;
+  public $f1honorarios_capturador= NULL;
+  public $f1honorarios_comision= NULL;
+  public $agastos_mas_honorarios_acumulados= NULL;
+  public $ahonorarios_iniciales= NULL;
+  public $adiferencia_demanda_presentada= NULL;
+  public $adiferencia_sentencia_afavor= NULL;
+  public $adiferencia_sentencia_enfirme= NULL;
+  public $adiferencia_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_segunda_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_tercera_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_cuarta_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_quinta_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_sexta_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_septima_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_octava_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_novena_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_decima_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_decima_primera_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_decima_segunda_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_decima_tercera_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_decima_cuarta_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_decima_quinta_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_decima_sexta_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_decima_septima_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_decima_octava_liquidacion_de_sentencia_enfirme= NULL;
+  public $adiferencia_decima_novena_liquidacion_de_sentencia_enfirme= NULL;
+  public $agastos_legales_iniciales= NULL;
+  public $adiferencia_gastos_legales= NULL;
+  public $anumero_grupo= NULL;
+  public $acarga_gastos_legales= NULL;
+  public $pretenciones= NULL;
+  public $pmonto_arreglo_pago= NULL;
+  public $pmonto_cuota= NULL;
+  public $honorarios_legales_dolares= NULL;
 
 
   // === FECHAS SAFE ===
-  public $pfecha_pago_multas_y_seguros;
-  public $nfecha_ultima_liquidacion;
-  public $pfecha_asignacion_caso;
-  public $pfecha_presentacion_demanda;
-  public $nfecha_traslado_juzgado;
-  public $nfecha_notificacion_todas_partes;
-  public $sfecha_captura;
-  public $sfecha_sentencia;
-  public $sfecha_remate;
-  public $afecha_aprobacion_remate;
-  public $afecha_protocolizacion;
-  public $afecha_senalamiento_puesta_posesion;
-  public $afecha_registro;
-  public $afecha_presentacion_protocolizacion;
-  public $afecha_inscripcion;
-  public $afecha_terminacion;
-  public $afecha_suspencion_arreglo;
-  public $pfecha_curso_demanda;
-  public $afecha_informe_ultima_gestion;
-  public $nfecha_notificacion;
-  public $nfecha_pago;
-  public $afecha_aprobacion_arreglo;
-  public $afecha_envio_cotizacion_gasto;
-  public $tfecha_traspaso;
-  public $tfecha_envio_borrador_escritura;
-  public $tfecha_firma_escritura;
-  public $tfecha_presentacion_escritura;
-  public $tfecha_comunicacion;
-  public $tfecha_entrega_titulo_propiedad;
-  public $tfecha_exclusion;
-  public $tfecha_terminacion;
-  public $pfecha_e_instruccion_levantamiento;
-  public $lfecha_entrega_poder;
-  public $lfecha_levantamiento_gravamen;
-  public $lfecha_comunicado_banco;
-  public $efecha_visita;
-  public $rfecha_desinscripcion;
-  public $dfecha_interposicion_denuncia;
-  public $bfecha_entrega_poder;
-  public $bfecha_levantamiento_gravamen;
-  public $f1fecha_asignacion_capturador;
-  public $f2fecha_publicacion_edicto;
-  public $pfecha_ingreso_cobro_judicial;
-  public $pfecha_devolucion_demanda_firma;
-  public $pfecha_escrito_demanda;
-  public $sfecha_primer_remate;
-  public $sfecha_segundo_remate;
-  public $sfecha_tercer_remate;
-  public $afecha_firmeza_aprobacion_remate;
-  public $fecha_activacion;
-  public $afecha_levantamiento;
-  public $fecha_importacion;
-  public $pfecha_informe;
-  public $pfecha_ultimo_giro;
-  public $nfecha_entrega_requerimiento_pago;
-  public $nfecha_entrega_orden_captura;
-  public $afecha_avaluo;
-  public $afecha_ultimo_giro;
-  public $pfecha_primer_giro;
-  public $fecha_inicio_retenciones;
-  public $fecha_prescripcion;
-  public $fecha_pruebas;
-  public $pultima_gestion_cobro_administrativo;
-  public $afecha_presentacion_embargo;
-  public $afecha_arreglo_pago;
-  public $afecha_pago;
-  public $nfecha_audiencia;
+  public $pfecha_pago_multas_y_seguros= NULL;
+  public $nfecha_ultima_liquidacion= NULL;
+  public $pfecha_asignacion_caso= NULL;
+  public $pfecha_presentacion_demanda= NULL;
+  public $nfecha_traslado_juzgado= NULL;
+  public $nfecha_notificacion_todas_partes= NULL;
+  public $sfecha_captura= NULL;
+  public $sfecha_sentencia= NULL;
+  public $sfecha_remate= NULL;
+  public $afecha_aprobacion_remate= NULL;
+  public $afecha_protocolizacion= NULL;
+  public $afecha_senalamiento_puesta_posesion= NULL;
+  public $afecha_registro= NULL;
+  public $afecha_presentacion_protocolizacion= NULL;
+  public $afecha_inscripcion= NULL;
+  public $afecha_terminacion= NULL;
+  public $afecha_suspencion_arreglo= NULL;
+  public $pfecha_curso_demanda= NULL;
+  public $afecha_informe_ultima_gestion= NULL;
+  public $nfecha_notificacion= NULL;
+  public $nfecha_pago= NULL;
+  public $afecha_aprobacion_arreglo= NULL;
+  public $afecha_envio_cotizacion_gasto= NULL;
+  public $tfecha_traspaso= NULL;
+  public $tfecha_envio_borrador_escritura= NULL;
+  public $tfecha_firma_escritura= NULL;
+  public $tfecha_presentacion_escritura= NULL;
+  public $tfecha_comunicacion= NULL;
+  public $tfecha_entrega_titulo_propiedad= NULL;
+  public $tfecha_exclusion= NULL;
+  public $tfecha_terminacion= NULL;
+  public $pfecha_e_instruccion_levantamiento= NULL;
+  public $lfecha_entrega_poder= NULL;
+  public $lfecha_levantamiento_gravamen= NULL;
+  public $lfecha_comunicado_banco= NULL;
+  public $efecha_visita= NULL;
+  public $rfecha_desinscripcion= NULL;
+  public $dfecha_interposicion_denuncia= NULL;
+  public $bfecha_entrega_poder= NULL;
+  public $bfecha_levantamiento_gravamen= NULL;
+  public $f1fecha_asignacion_capturador= NULL;
+  public $f1fecha_asignacion_notificador= NULL;
+  public $f2fecha_publicacion_edicto= NULL;
+  public $pfecha_ingreso_cobro_judicial= NULL;
+  public $pfecha_devolucion_demanda_firma= NULL;
+  public $pfecha_escrito_demanda= NULL;
+  public $sfecha_primer_remate= NULL;
+  public $sfecha_segundo_remate= NULL;
+  public $sfecha_tercer_remate= NULL;
+  public $afecha_firmeza_aprobacion_remate= NULL;
+  public $fecha_activacion= NULL;
+  public $afecha_levantamiento= NULL;
+  public $fecha_importacion= NULL;
+  public $pfecha_informe= NULL;
+  public $pfecha_ultimo_giro= NULL;
+  public $nfecha_entrega_requerimiento_pago= NULL;
+  public $nfecha_entrega_orden_captura= NULL;
+  public $afecha_avaluo= NULL;
+  public $afecha_ultimo_giro= NULL;
+  public $pfecha_primer_giro= NULL;
+  public $fecha_inicio_retenciones= NULL;
+  public $fecha_prescripcion= NULL;
+  public $fecha_pruebas= NULL;
+  public $pultima_gestion_cobro_administrativo= NULL;
+  public $afecha_presentacion_embargo= NULL;
+  public $afecha_arreglo_pago= NULL;
+  public $afecha_pago= NULL;
+  public $nfecha_audiencia= NULL;
 
   // === STRINGS ===
-  public $pdetalle_garantia;
-  public $pubicacion_garantia;
-  public $npartes_notificadas;
-  public $acolisiones_embargos_anotaciones;
-  public $ajustificacion_casos_protocolizados_embargo;
-  public $tiempo_dias;
-  public $tiempo_annos;
-  public $pcomentarios_bullet_point;
-  public $pavance_cronologico;
-  public $nanotaciones;
-  public $nubicacion_garantia;
-  public $ntalleres_situaciones;
-  public $ncomentarios;
-  public $acomentarios;
-  public $aregistro_pago;
-  public $atraspaso_tercero;
-  public $ttraspaso_favor_tercero;
-  public $tborrador_escritura;
-  public $tautorizacion_tercero;
-  public $rcausa;
-  public $dresultado_sentencia;
-  public $apuesta_posesion;
-  public $pmonto_retencion_colones;
-  public $pmonto_retencion_dolares;
-  public $codigo_alerta;
-  public $ames_avance_judicial;
-  public $lavance_cronologico;
-  public $savance_cronologico;
-  public $aavance_cronologico;
-  public $f1avance_cronologico;
-  public $f2avance_cronologico;
-  public $navance_cronologico;
+  public $pdetalle_garantia= NULL;
+  public $pubicacion_garantia= NULL;
+  public $npartes_notificadas= NULL;
+  public $acolisiones_embargos_anotaciones= NULL;
+  public $ajustificacion_casos_protocolizados_embargo= NULL;
+  public $tiempo_dias= NULL;
+  public $tiempo_annos= NULL;
+  public $pcomentarios_bullet_point= NULL;
+  public $pavance_cronologico= NULL;
+  public $nanotaciones= NULL;
+  public $nubicacion_garantia= NULL;
+  public $ntalleres_situaciones= NULL;
+  public $ncomentarios= NULL;
+  public $acomentarios= NULL;
+  public $aregistro_pago= NULL;
+  public $atraspaso_tercero= NULL;
+  public $ttraspaso_favor_tercero= NULL;
+  public $tborrador_escritura= NULL;
+  public $tautorizacion_tercero= NULL;
+  public $rcausa= NULL;
+  public $dresultado_sentencia= NULL;
+  public $apuesta_posesion= NULL;
+  public $pmonto_retencion_colones= NULL;
+  public $pmonto_retencion_dolares= NULL;
+  public $codigo_alerta= NULL;
+  public $ames_avance_judicial= NULL;
+  public $lavance_cronologico= NULL;
+  public $savance_cronologico= NULL;
+  public $aavance_cronologico= NULL;
+  public $f1avance_cronologico= NULL;
+  public $f2avance_cronologico= NULL;
+  public $navance_cronologico= NULL;
 
-  public $nombre_cliente;
-  public $empresa;
-  public $email_cliente;
-  public $user_create;
-  public $user_update;
-  public $acontacto_telefonico;
-  public $acorreo;
-  public $aembargo_cuentas;
-  public $aembargo_salarios;
-  public $aembargo_muebles;
-  public $aembargo_inmuebles;
-  public $ranotacion;
-  public $rmarchamo_al_dia;
-  public $rpendiente;
-  public $nexonerado_cobro;
-  public $noposicion_demanda;
-  public $nembargos_cuentas;
-  public $nembargos_salarios;
-  public $nembargos_muebles;
-  public $nembargos_inmuebles;
-  public $abienes_adjudicados;
+  public $nombre_cliente= NULL;
+  public $empresa= NULL;
+  public $email_cliente= NULL;
+  public $user_create= NULL;
+  public $user_update= NULL;
+  public $acontacto_telefonico= NULL;
+  public $acorreo= NULL;
+  public $aembargo_cuentas= NULL;
+  public $aembargo_salarios= NULL;
+  public $aembargo_muebles= NULL;
+  public $aembargo_inmuebles= NULL;
+  public $ranotacion= NULL;
+  public $rmarchamo_al_dia= NULL;
+  public $rpendiente= NULL;
+  public $nexonerado_cobro= NULL;
+  public $noposicion_demanda= NULL;
+  public $nembargos_cuentas= NULL;
+  public $nembargos_salarios= NULL;
+  public $nembargos_muebles= NULL;
+  public $nembargos_inmuebles= NULL;
+  public $abienes_adjudicados= NULL;
 
-  public $nmarchamo;
-  public $pestado_arreglo;
-  public $codigo_activacion;
+  public $nmarchamo= NULL;
+  public $pestado_arreglo= NULL;
+  public $codigo_activacion= NULL;
 
-  public $dcorreo_electronico;
-  public $pcorreo_demandado_deudor_o_arrendatario;
+  public $dcorreo_electronico= NULL;
+  public $pcorreo_demandado_deudor_o_arrendatario= NULL;
 
-  public $pnumero_operacion2;
-  public $pnumero_contrato;
-  public $anumero_placa1;
-  public $anumero_placa2;
-  public $anumero_marchamo;
-  public $atipo_expediente;
-  public $dnumero_carnet;
-  public $dnumero_telefonico;
-  public $pcedula_arrendatario;
-  public $dnumero_expediente;
-  public $pcedula_deudor;
-  public $ptelefono_demandado_deudor_o_arrendatario;
-  public $pplaca1;
-  public $pplaca2;
-  public $pnumero_cedula_juridica;
+  public $pnumero_operacion2= NULL;
+  public $pnumero_contrato= NULL;
+  public $anumero_placa1= NULL;
+  public $anumero_placa2= NULL;
+  public $anumero_marchamo= NULL;
+  public $atipo_expediente= NULL;
+  public $dnumero_carnet= NULL;
+  public $dnumero_telefonico= NULL;
+  public $pcedula_arrendatario= NULL;
+  public $dnumero_expediente= NULL;
+  public $pcedula_deudor= NULL;
+  public $ptelefono_demandado_deudor_o_arrendatario= NULL;
+  public $pplaca1= NULL;
+  public $pplaca2= NULL;
+  public $pnumero_cedula_juridica= NULL;
 
-  public $pnombre_contacto_o_arrendatario;
-  public $pnombre_coarrendatario;
-  public $pcedula_coarrendatario;
-  public $pcorreo_coarrendatario;
-  public $ptelefono_coarrendatario;
-  public $afirma_legal;
-  public $areasignaciones;
-  public $pdepartamento_solicitante;
-  public $lasesoramiento_formal;
-  public $lsumaria;
-  public $lcausa;
-  public $lproveedores_servicio;
-  public $pcontrato_leasing;
-  public $ptitular_contrato;
-  public $pcedula_titular;
-  public $egestion_a_realizar;
-  public $eestado_cliente_gran_tamano;
-  public $dnombre_notario;
-  public $destado_casos_con_anotaciones;
-  public $bapersonamiento_formal;
-  public $bsumaria;
-  public $bcausa;
-  public $bproveedores_servicios;
-  public $f1proveedor_servicio;
-  public $f1estado_captura;
-  public $f2causa_remate;
-  public $f2publicacion_edicto;
-  public $f2tiempo_concedido_edicto;
-  public $f2preclusion_tiempo;
-  public $f2estado_remanente;
-  public $pnombre_arrendatario;
-  public $pnombre_apellidos_deudor;
-  public $pestatus_operacion;
-  public $nestado_actual_primera_notificacion;
-  public $ntipo_garantia;
-  public $abufete;
-  public $ajuzgado;
-  public $aestado_operacion;
-  public $pnumero_tarjeta;
-  public $pnombre_persona_juridica;
-  public $pcomprador;
-  public $aretenciones_con_giro;
-  public $pente;
-  public $pplazo_arreglo_pago;
-  public $pno_cuota;
-  public $psubsidiaria;
-  public $pestadoid;
-  public $motivo_terminacion;
+  public $pnombre_contacto_o_arrendatario= NULL;
+  public $pnombre_coarrendatario= NULL;
+  public $pcedula_coarrendatario= NULL;
+  public $pcorreo_coarrendatario= NULL;
+  public $ptelefono_coarrendatario= NULL;
+  public $afirma_legal= NULL;
+  public $areasignaciones= NULL;
+  public $pdepartamento_solicitante= NULL;
+  public $lasesoramiento_formal= NULL;
+  public $lsumaria= NULL;
+  public $lcausa= NULL;
+  public $lproveedores_servicio= NULL;
+  public $pcontrato_leasing= NULL;
+  public $ptitular_contrato= NULL;
+  public $pcedula_titular= NULL;
+  public $egestion_a_realizar= NULL;
+  public $eestado_cliente_gran_tamano= NULL;
+  public $dnombre_notario= NULL;
+  public $destado_casos_con_anotaciones= NULL;
+  public $bapersonamiento_formal= NULL;
+  public $bsumaria= NULL;
+  public $bcausa= NULL;
+  public $bproveedores_servicios= NULL;
+  public $f1proveedor_servicio= NULL;
+  public $f1estado_captura= NULL;
+  public $f2causa_remate= NULL;
+  public $f2publicacion_edicto= NULL;
+  public $f2tiempo_concedido_edicto= NULL;
+  public $f2preclusion_tiempo= NULL;
+  public $f2estado_remanente= NULL;
+  public $pnombre_arrendatario= NULL;
+  public $pnombre_apellidos_deudor= NULL;
+  public $pestatus_operacion= NULL;
+  public $nestado_actual_primera_notificacion= NULL;
+  public $ntipo_garantia= NULL;
+  public $abufete= NULL;
+  public $ajuzgado= NULL;
+  public $aestado_operacion= NULL;
+  public $pnumero_tarjeta= NULL;
+  public $pnombre_persona_juridica= NULL;
+  public $pcomprador= NULL;
+  public $aretenciones_con_giro= NULL;
+  public $pente= NULL;
+  public $pplazo_arreglo_pago= NULL;
+  public $pno_cuota= NULL;
+  public $psubsidiaria= NULL;
+  public $pestadoid= NULL;
+  public $motivo_terminacion= NULL;
 
-  public $pdatos_codeudor1;
-  public $pdatos_codeudor2;
-  public $pdatos_anotantes;
-  public $pnumero_cedula;
-  public $pinmueble;
-  public $pmueble;
-  public $pvehiculo;
-  public $pdatos_fiadores;
-  public $pnumero_expediente_judicial;
-  public $pnumero_operacion1;
-  public $pmonto_estimacion_demanda;
-  public $pmonto_estimacion_demanda_colones;
-  public $pmonto_estimacion_demanda_dolares;
-  public $asaldo_capital_operacion;
-  public $asaldo_capital_operacion_usd;
-  public $aestimacion_demanda_en_presentacion;
-  public $aestimacion_demanda_en_presentacion_usd;
-  public $liquidacion_intereses_aprobada_crc;
-  public $liquidacion_intereses_aprobada_usd;
-  public $agastos_legales;
-  public $ahonorarios_totales;
-  public $ahonorarios_totales_usd;
-  public $amonto_cancelar;
-  public $amonto_incobrable;
-  public $amonto_avaluo;
-  public $psaldo_dolarizado;
-  public $pnombre_demandado;
-  public $bgastos_proceso;
-  public $pdespacho_judicial_juzgado;
-  public $pdatos_codeudor;
-  public $created_at;
-  public $updated_at;
-  public $deleted_at;
+  public $pdatos_codeudor1= NULL;
+  public $pdatos_codeudor2= NULL;
+  public $pdatos_anotantes= NULL;
+  public $pnumero_cedula= NULL;
+  public $pinmueble= NULL;
+  public $pmueble= NULL;
+  public $pvehiculo= NULL;
+  public $pdatos_fiadores= NULL;
+  public $pnumero_expediente_judicial= NULL;
+  public $pnumero_operacion1= NULL;
+  public $pmonto_estimacion_demanda= NULL;
+  public $pmonto_estimacion_demanda_colones= NULL;
+  public $pmonto_estimacion_demanda_dolares= NULL;
+  public $asaldo_capital_operacion= NULL;
+  public $asaldo_capital_operacion_usd= NULL;
+  public $aestimacion_demanda_en_presentacion= NULL;
+  public $aestimacion_demanda_en_presentacion_usd= NULL;
+  public $liquidacion_intereses_aprobada_crc= NULL;
+  public $liquidacion_intereses_aprobada_usd= NULL;
+  public $agastos_legales= NULL;
+  public $ahonorarios_totales= NULL;
+  public $ahonorarios_totales_usd= NULL;
+  public $amonto_cancelar= NULL;
+  public $amonto_incobrable= NULL;
+  public $amonto_avaluo= NULL;
+  public $psaldo_dolarizado= NULL;
+  public $pnombre_demandado= NULL;
+  public $bgastos_proceso= NULL;
+  public $pdespacho_judicial_juzgado= NULL;
+  public $pdatos_codeudor= NULL;
+  public $nombre_capturador= NULL;
+  public $nombre_notificador= NULL;
+  public $created_at= NULL;
+  public $updated_at= NULL;
+  public $deleted_at= NULL;
+
+  public $message = NULL;
+  public $tipoMessage = NULL;
+  public $archivo = NULL;
+  public $errores = [];
+  public $importedCount = 0;
+  public $expectedColumns = [];
 
   // ====== Config de validación por grupos (para crear reglas sin omitir nada) ======
   /*
@@ -629,6 +645,7 @@ class CasoManager extends BaseComponent
       'bfecha_entrega_poder',
       'bfecha_levantamiento_gravamen',
       'f1fecha_asignacion_capturador',
+      'f1fecha_asignacion_notificador',
       'f2fecha_publicacion_edicto',
       'pfecha_ingreso_cobro_judicial',
       'pfecha_devolucion_demanda_firma',
@@ -812,7 +829,14 @@ class CasoManager extends BaseComponent
       'bgastos_proceso',
       'pdespacho_judicial_juzgado',
       'pdatos_codeudor2',
-      'closeForm'
+      'nombre_capturador',
+      'nombre_notificador',
+      'caso_servicio_capturador_id',
+      'caso_servicio_notificador_id',
+      'closeForm',
+      'message',
+      'tipoMessage',
+      'archivo'
     );
     $this->selectedIds = [];
     $this->dispatch('updateSelectedIds', $this->selectedIds);
@@ -862,6 +886,7 @@ class CasoManager extends BaseComponent
     $this->bfecha_entrega_poder = $this->normalizeDateForDB($this->bfecha_entrega_poder);
     $this->bfecha_levantamiento_gravamen = $this->normalizeDateForDB($this->bfecha_levantamiento_gravamen);
     $this->f1fecha_asignacion_capturador = $this->normalizeDateForDB($this->f1fecha_asignacion_capturador);
+    $this->f1fecha_asignacion_notificador = $this->normalizeDateForDB($this->f1fecha_asignacion_notificador);
     $this->f2fecha_publicacion_edicto = $this->normalizeDateForDB($this->f2fecha_publicacion_edicto);
     $this->afecha_firmeza_aprobacion_remate = $this->normalizeDateForDB($this->afecha_firmeza_aprobacion_remate);
     $this->pfecha_ultimo_giro = $this->normalizeDateForDB($this->pfecha_ultimo_giro);
@@ -934,6 +959,7 @@ class CasoManager extends BaseComponent
     $this->bfecha_entrega_poder = $this->normalizeDateForView($record->bfecha_entrega_poder);
     $this->bfecha_levantamiento_gravamen = $this->normalizeDateForView($record->bfecha_levantamiento_gravamen);
     $this->f1fecha_asignacion_capturador = $this->normalizeDateForView($record->f1fecha_asignacion_capturador);
+    $this->f1fecha_asignacion_notificador = $this->normalizeDateForView($record->f1fecha_asignacion_notificador);
     $this->f2fecha_publicacion_edicto = $this->normalizeDateForView($record->f2fecha_publicacion_edicto);
     $this->afecha_firmeza_aprobacion_remate = $this->normalizeDateForView($record->afecha_firmeza_aprobacion_remate);
     $this->pfecha_ultimo_giro = $this->normalizeDateForView($record->pfecha_ultimo_giro);
@@ -1133,4 +1159,103 @@ class CasoManager extends BaseComponent
   {
     $this->resetPage(); // Resetea la página a la primera cada vez que se actualiza $perPage
   }
+
+  public function showImport(){
+    $this->action = 'importar';
+  }
+
+  // Mostrar formulario de importación
+  public function mostrarImportacion()
+  {
+      $this->resetValidation();
+      $this->reset(['archivo', 'mensaje', 'tipo']);
+      $this->action = 'importar';
+  }
+
+  // Cancelar importación y volver al listado
+  public function cancelarImportacion()
+  {
+      $this->action = 'list';
+  }
+
+  protected function setProducto(&$caso, &$errores, $fila)
+  {
+      if (!empty($caso->product_id)) {
+          $producto = CasoProducto::whereHas('bank', fn($q) => $q->where('bank_id', $caso->bank_id))
+              ->where('nombre', trim($caso->product_id))
+              ->first();
+
+          if ($producto) {
+              $caso->product_id = $producto->id;
+          } else {
+              $errores[] = "Fila {$fila}: No se ha encontrado el producto '{$caso->product_id}'.";
+          }
+      }
+  }
+
+  public function setProceso(&$caso, &$errores, $fila)
+  {
+      if (!empty($caso->proceso_id)) {
+          $proceso = CasoProceso::where('bank_id', $caso->bank_id)
+              ->where('nombre', trim($caso->proceso_id))
+              ->first();
+
+          if ($proceso) {
+              $caso->proceso_id = $proceso->id;
+          } else {
+              $errores[] = "Fila {$fila}: No se ha encontrado el proceso '{$caso->proceso_id}'.";
+          }
+      }
+  }
+
+  public function setMoneda(&$caso)
+  {
+      if (!empty($caso->currency_id)) {
+          $moneda = strtoupper(trim($caso->currency_id));
+
+          if ($moneda === 'CRC' || $moneda === 'COLONES') {
+              $caso->currency_id = 16;
+          } elseif ($moneda === 'MIXTO' || $moneda === 'MIXTA') {
+              $caso->currency_id = 158;
+          } else {
+              $caso->currency_id = 1;
+          }
+      }
+  }
+
+  public function setEstadoProcesal(&$caso, &$errores, $fila)
+  {
+      if (!empty($caso->producto_id) && $caso->producto_id > 0 && !empty($caso->aestado_proceso_general_id)) {
+
+          $estado = CasoEstado::join('casos_estados_bancos', function ($join) use ($caso) {
+                  $join->on('casos_estados_bancos.estado_id', '=', 'casos_estados.id')
+                      ->where('casos_estados_bancos.bank_id', $caso->banco_id);
+              })
+              ->join('casos_estados_productos', function ($join) use ($caso) {
+                  $join->on('casos_estados_productos.estado_id', '=', 'casos_estados.id')
+                      ->where('casos_estados_productos.product_id', $caso->producto_id);
+              })
+              ->where('casos_estados.name', trim($caso->aestado_proceso_general_id))
+              ->first();
+
+          if ($estado) {
+              $caso->aestado_proceso_general_id = $estado->id;
+          } else {
+              $productoNombre = $caso->producto ? $caso->producto->nombre : 'No encontrado';
+              $errores[] = "Fila {$fila}: No se ha encontrado el Estado Procesal '{$caso->aestado_proceso_general_id}' para el producto '{$productoNombre}'.";
+          }
+      }
+  }
+
+	public function setEstadoNotificacion(&$caso, &$mensaje, $fila)
+	{
+		if (!empty($caso->nestado_id)) {
+			// Estados notificaciones
+			$estado = CasoEstadoNotificadores::find()->where(['nombre' => $caso->nestado_id])->asArray()->one();
+			if (!empty($estado))
+				$caso->nestado_id = $estado['id'];
+			else
+				$mensaje .= 'No se ha encontrado el estado: ' . $caso->nestado_id . ' en la fila: ' . $fila . "\n<br />";
+		}
+	}
 }

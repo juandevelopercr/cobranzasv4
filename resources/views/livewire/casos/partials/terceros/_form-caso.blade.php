@@ -38,6 +38,16 @@ $show = false;
 </div>
 @endif
 
+{{-- Notificadores y capturadores --}}
+@if ($this->panels['notificadoresCapturadores'])
+<div class="card border-0 mb-7">
+  <div class="card-body panel-card bg-light-red">
+    <h4 class="mb-0">Notificadores y Capturadores</h4>
+    @include('livewire.casos.partials.bac.panels.notifiadores-capturadores-caso')
+  </div>
+</div>
+@endif
+
 {{-- Sentencia --}}
 @if ($this->panels['sentencia'])
 <div class="card border-0 mb-7">
@@ -250,7 +260,15 @@ $show = false;
     aestado_proceso_general_id: {
       fireEvent: false,
       wireIgnore: true,
-    }
+    },
+    caso_servicio_capturador_id: {
+      fireEvent: false,
+      wireIgnore: true,
+    },
+    caso_servicio_notificador_id: {
+      fireEvent: false,
+      wireIgnore: true,
+    },
   };
 
 

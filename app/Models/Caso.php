@@ -43,6 +43,8 @@ class Caso extends Model
     'nestado_id',
     'estado_id',
     'pnumero',
+    'caso_servicio_capturador_id',
+    'caso_servicio_notificador_id',
 
     // === NUMERIC SAFE ===
     'psaldo_de_seguros',
@@ -144,6 +146,7 @@ class Caso extends Model
     'bfecha_entrega_poder',
     'bfecha_levantamiento_gravamen',
     'f1fecha_asignacion_capturador',
+    'f1fecha_asignacion_notificador',
     'f2fecha_publicacion_edicto',
     'pfecha_ingreso_cobro_judicial',
     'pfecha_devolucion_demanda_firma',
@@ -326,7 +329,9 @@ class Caso extends Model
     'pnombre_demandado',
     'bgastos_proceso',
     'pdespacho_judicial_juzgado',
-    'pdatos_codeudor2'
+    'pdatos_codeudor2',
+    'nombre_capturador',
+    'nombre_notificador',
   ];
 
   public function bank()
@@ -342,6 +347,16 @@ class Caso extends Model
   public function producto()
   {
     return $this->belongsTo(CasoProducto::class, 'product_id');
+  }
+
+  public function servicioNotificador()
+  {
+    return $this->belongsTo(CasoServicio::class, 'product_id');
+  }
+
+  public function servicioCapturador()
+  {
+    return $this->belongsTo(CasoServicio::class, 'product_id');
   }
 
   public function proceso()
@@ -421,6 +436,7 @@ class Caso extends Model
       'casos.id',
       'casos.pnumero',
       'casos.pnumero_operacion1',
+      'casos.pfecha_ingreso_cobro_judicial',
       'casos.pfecha_asignacion_caso',
       'banks.name as bank_name',
       'casos.pnumero_contrato',
@@ -467,6 +483,34 @@ class Caso extends Model
 
     if (!empty($filters['filter_pnumero_operacion1'])) {
       $query->where('casos.pnumero_operacion1', $filters['filter_pnumero_operacion1']);
+    }
+
+    if (!empty($filters['filter_pfecha_ingreso_cobro_judicial'])) {
+      $range = explode(' to ', $filters['filter_pfecha_ingreso_cobro_judicial']);
+
+      if (count($range) === 2) {
+        try {
+          // Validar y convertir las fechas del rango
+          $start = Carbon::createFromFormat('d-m-Y', $range[0])->format('Y-m-d');
+          $end = Carbon::createFromFormat('d-m-Y', $range[1])->format('Y-m-d');
+
+          // Aplicar filtro si ambas fechas son válidas
+          $query->whereBetween('casos.pfecha_ingreso_cobro_judicial', [$start, $end]);
+        } catch (\Exception $e) {
+          // Manejar el caso de fechas inválidas (opcional: log o ignorar)
+        }
+      } else {
+        try {
+          // Validar y convertir la fecha única
+          $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_pfecha_ingreso_cobro_judicial'])
+                            ->format('Y-m-d');
+
+          // Aplicar filtro si la fecha es válida
+          $query->where('casos.pfecha_ingreso_cobro_judicial', '=', (string) $singleDate);
+        } catch (\Exception $e) {
+          // Manejar el caso de fecha inválida (opcional: log o ignorar)
+        }
+      }
     }
 
     if (!empty($filters['filter_pfecha_asignacion_caso'])) {

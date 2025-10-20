@@ -13,10 +13,13 @@ use App\Models\CasoEstado;
 use App\Models\CasoJuzgado;
 use App\Models\CasoProceso;
 use Livewire\Attributes\On;
+use App\Imports\CasosImport;
 use App\Models\CasoProducto;
+use App\Models\CasoServicio;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
+use App\Helpers\ImportColumns;
 use App\Livewire\BaseComponent;
 use App\Models\CasoExpectativa;
 use App\Models\DataTableConfig;
@@ -24,7 +27,10 @@ use Livewire\Attributes\Computed;
 use App\Models\CasoListadoJuzgado;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Casos\CasoManager;
+use Illuminate\Support\Facades\Log;
+use App\Exports\CasosTemplateExport;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Services\DocumentSequenceService;
 
 class CasoBac extends CasoManager
@@ -77,6 +83,8 @@ class CasoBac extends CasoManager
 
     $this->currencies = Currency::whereIn('id', [1,16])->orderBy('code', 'ASC')->get();
 
+    $this->servicios = CasoServicio::where('activo', 1)->orderBy('id', 'ASC')->get();
+
     $this->abogados = User::where('active', 1)
       ->whereHas('roles', fn($q) => $q->whereIn('name', [User::ABOGADO, User::JEFE_AREA]))
       ->orderBy('name')->get();
@@ -95,6 +103,8 @@ class CasoBac extends CasoManager
     $this->expectativas = CasoExpectativa::where('activo', 1)->orderBy('nombre', 'ASC')->get();
 
     $this->juzgados = CasoJuzgado::where('activo', 1)->orderBy('nombre', 'ASC')->get();
+
+    $this->expectedColumns = ImportColumns::getColumnasPorBanco(Bank::SANJOSE);
 
     $this->refresDatatable();
   }
@@ -142,6 +152,8 @@ class CasoBac extends CasoManager
       'nestado_id' => ['nullable', 'integer'],
       'estado_id'  => ['nullable', 'integer'],
       'pnumero'    => ['nullable', 'integer'],
+      'caso_servicio_capturador_id' => ['nullable', 'integer'],
+      'caso_servicio_notificador_id' => ['nullable', 'integer'],
 
       // === NUMERIC SAFE ===
       'psaldo_de_seguros' => ['nullable', 'numeric'],
@@ -244,6 +256,7 @@ class CasoBac extends CasoManager
       'bfecha_entrega_poder' => ['nullable', 'date'],
       'bfecha_levantamiento_gravamen' => ['nullable', 'date'],
       'f1fecha_asignacion_capturador' => ['nullable', 'date'],
+      'f1fecha_asignacion_notificador' => ['nullable', 'date'],
       'f2fecha_publicacion_edicto' => ['nullable', 'date'],
       'pfecha_ingreso_cobro_judicial' => ['nullable', 'date'],
       'pfecha_devolucion_demanda_firma' => ['nullable', 'date'],
@@ -430,6 +443,8 @@ class CasoBac extends CasoManager
       'bgastos_proceso' => ['nullable', 'string', 'max:190'],
       'pdespacho_judicial_juzgado' => ['nullable', 'string', 'max:190'],
       'pdatos_codeudor2' => ['nullable', 'string', 'max:190'],
+      'nombre_capturador' => ['nullable', 'string', 'max:100'],
+      'nombre_notificador' => ['nullable', 'string', 'max:100'],
 
       'fechasRemate' => 'nullable|array|min:0',
       'fechasRemate.*.fecha' => 'nullable|date|after_or_equal:today',
@@ -545,6 +560,7 @@ class CasoBac extends CasoManager
       'bfecha_entrega_poder' => ['nullable', 'date'],
       'bfecha_levantamiento_gravamen' => ['nullable', 'date'],
       'f1fecha_asignacion_capturador' => ['nullable', 'date'],
+      'f1fecha_asignacion_notificador' => ['nullable', 'date'],
       'f2fecha_publicacion_edicto' => ['nullable', 'date'],
       'pfecha_ingreso_cobro_judicial' => ['nullable', 'date'],
       'pfecha_devolucion_demanda_firma' => ['nullable', 'date'],
@@ -1333,6 +1349,7 @@ class CasoBac extends CasoManager
     $panels = [
       'info' => true, // siempre se muestra
       'notificacion' => true,
+      'notificadoresCapturadores' => true,
       'sentencia' => true,
       'arreglo' => false,
       'aprobacion' => true,
@@ -1366,4 +1383,156 @@ class CasoBac extends CasoManager
       unset($this->fechasRemate[$index]);
       $this->fechasRemate = array_values($this->fechasRemate);
   }
+
+  public function importar()
+  {
+      $this->resetErrorBag();
+      $this->message = null;
+      $this->tipoMessage = 'info';
+
+      //$banco = 'BAC';
+      //$this->expectedColumns = ImportColumns::getColumnasPorBanco($banco);
+
+      if (empty($this->expectedColumns)) {
+          $this->addError('archivo', 'No hay definición de columnas para el banco seleccionado.');
+          return;
+      }
+
+      if (!$this->archivo) {
+          $this->addError('archivo', 'Debe seleccionar un archivo Excel.');
+          return;
+      }
+
+      $extension = strtolower($this->archivo->getClientOriginalExtension());
+      if (!in_array($extension, ['xlsx', 'xls'])) {
+          $this->addError('archivo', 'El archivo debe ser .xlsx o .xls');
+          return;
+      }
+
+      // Leer el archivo como array
+      $array = Excel::toArray([], $this->archivo->getRealPath());
+      $sheet = $array[0] ?? null;
+
+      if (!$sheet || count($sheet) === 0) {
+          $this->addError('archivo', 'El archivo está vacío o no tiene filas.');
+          return;
+      }
+
+      $headerRow = $sheet[0];
+      $normalize = fn($h) => mb_strtolower(trim(str_replace("\xC2\xA0", ' ', (string)$h)));
+      $headersNormalized = array_map($normalize, $headerRow);
+      $expectedHeaders = array_keys($this->expectedColumns);
+      $expectedNormalized = array_map($normalize, $expectedHeaders);
+
+      $mapping = [];
+      $missing = [];
+      foreach ($expectedNormalized as $i => $expNorm) {
+          $foundIndex = array_search($expNorm, $headersNormalized, true);
+          if ($foundIndex === false) {
+              $missing[] = $expectedHeaders[$i];
+          } else {
+              $mapping[$expectedHeaders[$i]] = $foundIndex;
+          }
+      }
+
+      if (!empty($missing)) {
+          $this->tipoMessage = 'danger';
+          $this->message = "Faltan columnas obligatorias: <b>" . implode(', ', $missing) . "</b>";
+          return;
+      }
+
+      $casosParaGuardar = [];
+      $errores = [];
+
+      // Procesar filas
+      for ($r = 1; $r < count($sheet); $r++) {
+          $row = $sheet[$r];
+          if (empty(array_filter($row, fn($c) => !is_null($c) && trim((string)$c) !== ''))) {
+              continue;
+          }
+
+          $caso = new \App\Models\Caso();
+          $caso->bank_id = Bank::SANJOSE;
+          $caso->fecha_creacion = now();
+
+          // Asignar valores y convertir tipos
+          foreach ($this->expectedColumns as $header => $config) {
+              $campo = $config['campo'];
+              $tipo = $config['tipo'];
+              $colIndex = $mapping[$header];
+              $valor = $row[$colIndex] ?? null;
+
+              if ($tipo === 'date' && $valor !== null && $valor !== '') {
+                  try {
+                      if ($valor instanceof \Carbon\Carbon) {
+                          $valor = $valor->format('Y-m-d');
+                      } else {
+                          $valor = date('Y-m-d', strtotime($valor));
+                      }
+                  } catch (\Throwable $e) {
+                      $valor = null;
+                  }
+              } elseif ($tipo === 'int') {
+                  $valor = (int)$valor;
+              } elseif ($tipo === 'float') {
+                  $valor = (float)$valor;
+              } elseif ($tipo === 'string') {
+                  $valor = trim((string)$valor);
+              }
+
+              $caso->$campo = $valor;
+          }
+
+          // Validación de llaves foráneas
+          $this->setProducto($caso, $errores, $r);
+          $this->setProceso($caso, $errores, $r);
+          $this->setMoneda($caso);
+          $this->setEstadoProcesal($caso, $errores, $r);
+
+          // Validación de campos obligatorios
+          if (empty($caso->product_id) || empty($caso->proceso_id)) {
+              $errores[] = "Fila " . ($r + 1) . ": 'Producto' o 'Proceso' vacíos.";
+              continue;
+          }
+
+          $casosParaGuardar[] = $caso;
+      }
+
+      if (!empty($errores)) {
+          $this->tipoMessage = 'danger';
+          $this->message = "Se encontraron errores, no se ha guardado ningún registro:<br>" . implode('<br>', $errores);
+          return;
+      }
+
+      // Guardar todos los casos
+      if (!empty($casosParaGuardar)) {
+          $filasGuardadas = 0;
+          DB::beginTransaction();
+          try {
+              foreach ($casosParaGuardar as $caso) {
+                  $caso->fecha_importacion = now();
+                  $caso->fecha_creacion = now();
+                  $caso->save();
+                  $filasGuardadas++;
+              }
+              DB::commit();
+              $this->tipoMessage = 'success';
+              $this->message = "Se importaron correctamente <b>{$filasGuardadas}</b> registros.";
+          } catch (\Throwable $e) {
+              DB::rollBack();
+              $this->tipoMessage = 'danger';
+              $this->message = "Ocurrió un error al guardar los registros: " . $e->getMessage();
+          }
+      }
+
+      $this->tipoMessage = empty($errores) ? 'success' : 'warning';
+      $this->message = "Se importaron correctamente <b>{$filasGuardadas}</b> registros.";
+  }
+
+  public function descargarPlantilla()
+  {
+      $fileName = "plantilla_casos_BAC.xlsx";
+      return Excel::download(new CasosTemplateExport(Bank::SANJOSE), $fileName);
+  }
+
 }
