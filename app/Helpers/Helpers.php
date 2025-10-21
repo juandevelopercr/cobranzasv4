@@ -836,7 +836,7 @@ class Helpers
       $msg[] = __('The invoice must have at least one line of detail or other charges') . '<br>';
     }
 
-    if (!$transaction->caso) {
+    if ($transaction->tipo_facturacion == 1 && !$transaction->caso) {
       $msg[] = __('Debe asignar un caso antes de solicitar la factura') . '<br>';
     }
 
