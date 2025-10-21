@@ -1066,6 +1066,21 @@ class Transaction extends Model implements HasMedia
         HTML;
     }
 
+    // XML comprobante electrónico
+    if ($user->can('download-pdf-proformas') && in_array($this->status, [self::ACEPTADA, self::RECHAZADA])) {
+      $html .= <<<HTML
+            <button type="button"
+                class="btn p-0 me-2 text-warning"
+                title="Descargar XML-FE"
+                wire:click="downloadXML({$this->id})"
+                wire:loading.attr="disabled"
+                wire:target="downloadXML">
+                <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="downloadXML({$this->id})"></i>
+                <i class="bx bx-code-block {$iconSize}" wire:loading.remove wire:target="downloadXML({$this->id})"></i>
+            </button>
+        HTML;
+    }
+
     // Solicitar Factura
     if ($this->proforma_status === self::PROCESO) {
       $html .= <<<HTML
@@ -1105,18 +1120,19 @@ class Transaction extends Model implements HasMedia
     }
 
     // XML comprobante electrónico
-    $html .= <<<HTML
-          <button type="button"
-              class="btn p-0 me-2 text-warning"
-              title="Descargar XML"
-              wire:click="downloadXML({$this->id})"
-              wire:loading.attr="disabled"
-              wire:target="downloadXML">
-              <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="downloadXML({$this->id})"></i>
-              <i class="bx bx-code-block {$iconSize}" wire:loading.remove wire:target="downloadXML({$this->id})"></i>
-          </button>
-      HTML;
-
+    if (auth()->user()->hasRole('SuperAdmin')) {
+      $html .= <<<HTML
+            <button type="button"
+                class="btn p-0 me-2 text-warning"
+                title="Descargar XML"
+                wire:click="downloadXML({$this->id})"
+                wire:loading.attr="disabled"
+                wire:target="downloadXML">
+                <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="downloadXML({$this->id})"></i>
+                <i class="bx bx-code-block {$iconSize}" wire:loading.remove wire:target="downloadXML({$this->id})"></i>
+            </button>
+        HTML;
+    }
 
     $html .= '</div>';
     return $html;

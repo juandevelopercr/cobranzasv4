@@ -86,6 +86,7 @@
             $width_column3 = 'tm_width_2';
             $width_column4 = 'tm_width_1';
             $width_column5 = 'tm_width_2';
+            $width_column6 = 'tm_width_2';
           @endphp
 
           @if ($transaction->tipo_facturacion == \App\Models\Transaction::INDIVIDUAL && $transaction->caso)
@@ -103,6 +104,7 @@
             $width_column3 = 'tm_width_2';
             $width_column4 = 'tm_width_1';
             $width_column5 = 'tm_width_2';
+            $width_column6 = 'tm_width_2';
           @endphp
           <div class="tm_table tm_style1">
               <div class="tm_table_responsive">
@@ -165,7 +167,8 @@
                       @endif
                       <th class="{{ $width_column3 }} tm_semi_bold tm_white_color tm_text_center">Precio</th>
                       <th class="{{ $width_column4 }} tm_semi_bold tm_white_color tm_text_center">Cantidad</th>
-                      <th class="{{ $width_column5 }} tm_semi_bold tm_white_color tm_text_center">Total</th>
+                      <th class="{{ $width_column5 }} tm_semi_bold tm_white_color tm_text_center">Iva</th>
+                      <th class="{{ $width_column6 }} tm_semi_bold tm_white_color tm_text_center">Total</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -200,6 +203,7 @@
                       <td class="{{ $width_column3 }} tm_text_right"></td>
                       <td class="{{ $width_column4 }} tm_text_center"></td>
                       <td class="{{ $width_column5 }} tm_text_right"></td>
+                      <td class="{{ $width_column6 }} tm_text_right"></td>
                     </tr>
                     @endif
 
@@ -300,6 +304,10 @@
                       <td class="{{ $width_column4 }} tm_text_center">{{ (int)$line->quantity }}</td>
                       <td class="{{ $width_column5 }} tm_text_right">
                         {{ $transaction->currency->symbol }}
+                        {{ Helper::formatDecimal($line->tax) }}
+                      </td>
+                      <td class="{{ $width_column5 }} tm_text_right">
+                        {{ $transaction->currency->symbol }}
                         {{ Helper::formatDecimal($value + $line->monto_cargo_adicional) }}
                       </td>
                     </tr>
@@ -314,7 +322,8 @@
                       @endif
                       <td class="{{ $width_column3 }} tm_text_right"></td>
                       <td class="{{ $width_column4 }} tm_text_center"></td>
-                      <td class="{{ $width_column5 }} tm_text_right">
+                      <td class="{{ $width_column5 }} tm_text_right"></td>
+                      <td class="{{ $width_column6 }} tm_text_right">
                         {{ $transaction->currency->symbol.' '. Helper::formatDecimal($data['monto_con_descuento'] +
                         $line->monto_cargo_adicional) }}
                       </td>
@@ -339,7 +348,8 @@
                       @endif
                       <td class="{{ $width_column3 }} tm_text_right"></td>
                       <td class="{{ $width_column4 }} tm_text_center"></td>
-                      <td class="{{ $width_column5 }} tm_text_right">
+                      <td class="{{ $width_column5 }} tm_text_right"></td>
+                      <td class="{{ $width_column6 }} tm_text_right">
                         {{ $transaction->currency->symbol.' '. Helper::formatDecimal($data['monto_con_descuento'] +
                         $line->monto_cargo_adicional) }}
                       </td>
@@ -364,7 +374,8 @@
                       @endif
                       <td class="{{ $width_column3 }} tm_text_right"></td>
                       <td class="{{ $width_column4 }} tm_text_center"></td>
-                      <td class="{{ $width_column5 }} tm_text_right">
+                      <td class="{{ $width_column5 }} tm_text_right"></td>
+                      <td class="{{ $width_column6 }} tm_text_right">
                         {{ $transaction->currency->symbol.' '. Helper::formatDecimal($data['monto_con_descuento'] +
                         $line->monto_cargo_adicional) }}
                       </td>
@@ -389,7 +400,8 @@
                       @endif
                       <td class="{{ $width_column3 }} tm_text_right"></td>
                       <td class="{{ $width_column4 }} tm_text_center"></td>
-                      <td class="{{ $width_column5 }} tm_text_right">
+                      <td class="{{ $width_column5 }} tm_text_right"></td>
+                      <td class="{{ $width_column6 }} tm_text_right">
                         {{ $transaction->currency->symbol.' '. Helper::formatDecimal($data['monto_con_descuento'] +
                         $line->monto_cargo_adicional) }}
                       </td>
@@ -414,7 +426,8 @@
                       @endif
                       <td class="{{ $width_column3 }} tm_text_right"></td>
                       <td class="{{ $width_column4 }} tm_text_center"></td>
-                      <td class="{{ $width_column5 }} tm_text_right">
+                      <td class="{{ $width_column5 }} tm_text_right"></td>
+                      <td class="{{ $width_column6 }} tm_text_right">
                         {{ $transaction->currency->symbol.' '. Helper::formatDecimal($data['monto_con_descuento'] +
                         $line->monto_cargo_adicional) }}
                       </td>
@@ -439,7 +452,8 @@
                       @endif
                       <td class="{{ $width_column3 }} tm_text_right"></td>
                       <td class="{{ $width_column4 }} tm_text_center"></td>
-                      <td class="{{ $width_column5 }} tm_text_right">
+                      <td class="{{ $width_column5 }} tm_text_right"></td>
+                      <td class="{{ $width_column6 }} tm_text_right">
                         {{ $transaction->currency->symbol.' '. Helper::formatDecimal($data['monto_con_descuento'] +
                         $line->monto_cargo_adicional) }}
                       </td>
@@ -475,7 +489,8 @@
                       @endif
                       <td class="{{ $width_column3 }} tm_text_right"></td>
                       <td class="{{ $width_column4 }} tm_text_center"></td>
-                      <td class="{{ $width_column5 }} tm_text_right">
+                      <td class="{{ $width_column5 }} tm_text_right"></td>
+                      <td class="{{ $width_column6 }} tm_text_right">
                       </td>
                     </tr>
 
@@ -507,6 +522,9 @@
                         {{ $charge->quantity }}
                       </td>
                       <td class="{{ $width_column5 }} tm_text_right">
+
+                      </td>
+                      <td class="{{ $width_column6 }} tm_text_right">
                         {{ $transaction->currency->symbol.' '. Helper::formatDecimal($charge->amount *
                         $charge->quantity) }}
                       </td>
