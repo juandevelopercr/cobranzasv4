@@ -211,7 +211,8 @@ class LineaDetalleAType
       $this->setFormaFarmaceutica($business->forma_farmaceutica);
     }
 
-    $this->setPrecioUnitario($line->honorarios / $line->quantity);
+    //$this->setPrecioUnitario($line->honorarios / $line->quantity);
+    $this->setPrecioUnitario($line->getPrecioHonorario() / $line->quantity);
 
     // Adicionar los descuentos
     if (!empty($line->discounts)) {

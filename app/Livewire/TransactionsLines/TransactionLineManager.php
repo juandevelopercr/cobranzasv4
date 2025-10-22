@@ -522,12 +522,17 @@ class TransactionLineManager extends BaseComponent
       $this->validateTaxes($this->taxes);
 
       if (in_array($transaction->document_type, [Transaction::PROFORMACOMPRA, Transaction::FACTURACOMPRAELECTRONICA]))
-        $honorarios = $record->getMonto();
-      else
-        $honorarios = $record->getHonorarios($transaction->bank_id, 'HONORARIO', $transaction->currency_id, $transaction->proforma_change_type, $this->discounts);
+        $monto = $record->getMonto();
+      else{
+        $honorarios = $record->getHonorarios($transaction->bank_id, 'HONORARIO', $transaction->currency_id, $transaction->proforma_change_type, $record->porcientoDescuento);
+        $porcientoDescuento = $record->porcientoDescuento;
+        $descuentos = $record->calculaMontoDescuentos($honorarios, $porcientoDescuento);
+
+        $monto = $honorarios - $descuentos;
+      }
 
       // Calcular los montos de impuesto
-      $this->actualizarTaxAmount($honorarios);
+      $this->actualizarTaxAmount($monto);
 
       // Sincronizar impuestos
       foreach ($this->taxes as $tax) {
@@ -754,12 +759,18 @@ class TransactionLineManager extends BaseComponent
       $this->validateTaxes($this->taxes);
 
       if (in_array($transaction->document_type, [Transaction::PROFORMACOMPRA, Transaction::FACTURACOMPRAELECTRONICA]))
-        $honorarios = $record->getMonto();
+        $monto = $record->getMonto();
       else
-        $honorarios = $record->getHonorarios($transaction->bank_id, 'HONORARIO', $transaction->currency_id, $transaction->proforma_change_type, $this->discounts);
+      {
+        $honorarios = $record->getHonorarios($transaction->bank_id, 'HONORARIO', $transaction->currency_id, $transaction->proforma_change_type, $record->porcientoDescuento);
+        $porcientoDescuento = $record->porcientoDescuento;
+        $descuentos = $record->calculaMontoDescuentos($honorarios, $porcientoDescuento);
+
+        $monto = $honorarios - $descuentos;
+      }
 
       // Calcular los montos de impuesto
-      $this->actualizarTaxAmount($honorarios);
+      $this->actualizarTaxAmount($monto);
 
       // Sincronizar impuestos
       foreach ($this->taxes as $tax) {

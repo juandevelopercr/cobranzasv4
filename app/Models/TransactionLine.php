@@ -282,10 +282,10 @@ class TransactionLine extends Model
     //$taxes = !is_null($this->taxes) ? $this->taxes : collect([]);
 
     $tipo = 'HONORARIO';
-    $this->honorarios = $this->getHonorarios($bank_id, $tipo, $currency, $changeType, $discounts) ?? 0;
+    $this->honorarios = $this->getHonorarios($bank_id, $tipo, $currency, $changeType, $this->porcientoDescuento) ?? 0;
 
     $tipo = 'GASTO';
-    $this->timbres = $this->getTimbres($bank_id, $tipo, $currency, $changeType, $discounts) ?? 0;
+    $this->timbres = $this->getTimbres($bank_id, $tipo, $currency, $changeType, $this->porcientoDescuento) ?? 0;
 
     $this->discount = $this->getDescuento() ?? 0;
     $this->subtotal = $this->getSubtotal() ?? 0;
@@ -338,16 +338,20 @@ class TransactionLine extends Model
   //*******************************************************************//
   //********************Inicio Calculo de Honorarios********************//
   //*******************************************************************//
-  public function getHonorarios($bank_id, $tipo, $currency, $changeType, $discounts)
+  public function getPrecioHonorario(){
+    return round($this->honorario - $this->discount, 2);
+  }
+
+  public function getHonorarios($bank_id, $tipo, $currency, $changeType, $discountPercent)
   {
     $honorario = 0;
 
     //if ($this->transaction->proforma_type == 'HONORARIO') {
-    $monto_honorarios = $this->desgloseHonorarios($bank_id, $tipo, $currency, $changeType, $discounts);
+    $monto_honorarios = $this->desgloseHonorarios($bank_id, $tipo, $currency, $changeType, $discountPercent);
     $this->desglose_honorarios = $monto_honorarios;
 
     // Monto Manual
-    $monto_manual = $this->desgloseCalculaMontoManual($bank_id, $tipo, $currency, $changeType, $discounts);
+    $monto_manual = $this->desgloseCalculaMontoManual($bank_id, $tipo, $currency, $changeType, $discountPercent);
     $this->desglose_calculo_monto_honorario_manual = $monto_manual;
 
     $honorario = $monto_honorarios['monto_sin_descuento'] + $monto_manual['monto_sin_descuento'];
@@ -357,7 +361,7 @@ class TransactionLine extends Model
     return round($honorario, 2);
   }
 
-  public function desgloseHonorarios($bank_id, $tipo, $currency, $changeType, $discounts)
+  public function desgloseHonorarios($bank_id, $tipo, $currency, $changeType, $discountPercent)
   {
     $honorarios = ProductHonorariosTimbre::join('products_banks', 'products_banks.product_id', '=', 'product_honorarios_timbres.product_id')
       ->where('products_banks.bank_id', $bank_id)
@@ -408,8 +412,8 @@ class TransactionLine extends Model
       $monto = $monto * $this->quantity;
       $summonto_sin_descuento += round($monto, 2);
 
-      if (!empty($discounts)) {
-        $descuento = $this->calculaMontoDescuentos($monto, $discounts);
+      if (!empty($discountPercent) && $discountPercent > 0) {
+        $descuento = $this->calculaMontoDescuentos($monto, $discountPercent);
 
         $monto_con_descuento = $monto - ($descuento ?? 0);
         $summonto_con_descuento += round($monto_con_descuento, 2);
@@ -470,23 +474,23 @@ class TransactionLine extends Model
   //*******************************************************************//
   //********************Inicio Calculo de Timbres**********************//
   //*******************************************************************//
-  public function getTimbres($bank_id, $tipo, $currency, $changeType, $discounts)
+  public function getTimbres($bank_id, $tipo, $currency, $changeType, $discountPercent)
   {
     $timbre = 0;
 
-    $monto_formula = $this->desgloseTimbreFormula($bank_id, $tipo, $currency, $changeType, $discounts);
+    $monto_formula = $this->desgloseTimbreFormula($bank_id, $tipo, $currency, $changeType, $discountPercent);
     $this->desglose_timbre_formula = $monto_formula;
 
     // Tabla Timbre Abogados
-    $monto_grada = $this->desgloseTablaAbogados($bank_id, $tipo, $currency, $changeType, $discounts);
+    $monto_grada = $this->desgloseTablaAbogados($bank_id, $tipo, $currency, $changeType, $discountPercent);
     $this->desglose_tabla_abogados = $monto_grada;
 
     // Fijo
-    $monto_fijo = $this->desgloseCalculosFijos($bank_id, $tipo, $currency, $changeType, $discounts);
+    $monto_fijo = $this->desgloseCalculosFijos($bank_id, $tipo, $currency, $changeType, $discountPercent);
     $this->desglose_calculos_fijos = $monto_fijo;
 
     // Monto Manual
-    $monto_manual = $this->desgloseCalculaMontoManual($bank_id, $tipo, $currency, $changeType, $discounts);
+    $monto_manual = $this->desgloseCalculaMontoManual($bank_id, $tipo, $currency, $changeType, $discountPercent);
     $this->desglose_calculo_monto_timbre_manual = $monto_manual;
 
     //$timbre = $monto_formula + $monto_grada + $monto_fijo + $monto_manual;
@@ -497,7 +501,7 @@ class TransactionLine extends Model
     return $timbre;
   }
 
-  public function desgloseTimbreFormula($bank_id, $tipo, $currency, $changeType, $discounts)
+  public function desgloseTimbreFormula($bank_id, $tipo, $currency, $changeType, $discountPercent)
   {
     $monto = 0;
     $monto_con_descuento = 0;
@@ -562,8 +566,8 @@ class TransactionLine extends Model
       } else
         $sum_item_sin_descuento_seis_porciento += round($monto, 2);
 
-      if (!empty($discounts)) {
-        $descuento = $this->calculaMontoDescuentos($monto, $discounts);
+      if (!empty($discountPercent) && $discountPercent > 0) {
+        $descuento = $this->calculaMontoDescuentos($monto, $discountPercent);
 
         $monto_con_descuento = $monto - ($descuento ?? 0);
         $summonto_con_descuento += round($monto_con_descuento, 2);
@@ -583,7 +587,7 @@ class TransactionLine extends Model
     ];
   }
 
-  public function desgloseTablaAbogados($bank_id, $tipo, $currency, $changeType, $discounts)
+  public function desgloseTablaAbogados($bank_id, $tipo, $currency, $changeType, $discountPercent)
   {
     $monto = 0;
     $monto_con_descuento = 0;
@@ -666,8 +670,8 @@ class TransactionLine extends Model
       } else
         $sum_item_sin_descuento_seis_porciento += round($monto, 2);
 
-      if (!empty($discounts)) {
-        $descuento = $this->calculaMontoDescuentos($monto, $discounts);
+      if (!empty($discountPercent) && $discountPercent > 0) {
+        $descuento = $this->calculaMontoDescuentos($monto, $discountPercent);
 
         $monto_con_descuento = $monto - ($descuento ?? 0);
         $summonto_con_descuento    = round($monto_con_descuento);
@@ -688,7 +692,7 @@ class TransactionLine extends Model
     ];
   }
 
-  public function desgloseCalculosFijos($bank_id, $tipo, $currency, $changeType, $discounts)
+  public function desgloseCalculosFijos($bank_id, $tipo, $currency, $changeType, $discountPercent)
   {
     $monto = 0;
     $monto_con_descuento = 0;
@@ -741,8 +745,8 @@ class TransactionLine extends Model
       } else
         $sum_item_sin_descuento_seis_porciento += round($monto, 2);
 
-      if (!empty($discounts)) {
-        $descuento = $this->calculaMontoDescuentos($monto, $discounts);
+      if (!empty($discountPercent) && $discountPercent > 0) {
+        $descuento = $this->calculaMontoDescuentos($monto, $discountPercent);
 
         $monto_con_descuento = $monto - ($descuento ?? 0);
         $summonto_con_descuento += round($monto_con_descuento, 2);
@@ -762,7 +766,7 @@ class TransactionLine extends Model
     ];
   }
 
-  public function desgloseCalculaMontoManual($bank_id, $tipo, $currency, $changeType, $discounts)
+  public function desgloseCalculaMontoManual($bank_id, $tipo, $currency, $changeType, $discountPercent)
   {
     $monto = 0;
     $monto_con_descuento = 0;
@@ -821,8 +825,8 @@ class TransactionLine extends Model
       } else
         $sum_item_sin_descuento_seis_porciento += round($monto, 2);
 
-      if (!empty($discounts)) {
-        $descuento = $this->calculaMontoDescuentos($monto, $discounts);
+      if (!empty($discountPercent) && $discountPercent > 0) {
+        $descuento = $this->calculaMontoDescuentos($monto, $discountPercent);
 
         $monto_con_descuento = $monto - ($descuento ?? 0);
         $summonto_con_descuento += round($monto_con_descuento, 2);
@@ -846,8 +850,8 @@ class TransactionLine extends Model
   public function getPrice()
   {
     $price = $this->price;
-    if ($this->porcientoDescuento > 0)
-      $price = $this->price * $this->porcientoDescuento / 100;
+    //if ($this->porcientoDescuento > 0)
+    //$price = $this->price * $this->porcientoDescuento / 100;
 
     return $price;
   }
@@ -867,9 +871,9 @@ class TransactionLine extends Model
 
   public function getDescuento()
   {
-    $discounts = !is_null($this->discounts) ? $this->discounts : collect([]);
+    //$discounts = !is_null($this->discounts) ? $this->discounts : collect([]);
     $monto = $this->honorarios;
-    $descuento = $this->calculaMontoDescuentos($monto, $discounts);
+    $descuento = $this->calculaMontoDescuentos($monto, $this->porcientoDescuento);
 
     return number_format($descuento ?? 0, 5, '.', '');
   }
@@ -882,10 +886,10 @@ class TransactionLine extends Model
 
   // Se puede incluir un máximo de 5 repeticiones de descuentos, cada descuento adicional
   //se calcula sobre la base menos el descuento anterior.
-  protected function calculaMontoDescuentos($monto, $discounts)
+  public function calculaMontoDescuentos($monto, $discountPercent)
   {
     $total_discount = 0;
-
+    /*
     foreach ($discounts as $discount) {
       // Aplica cada descuento sobre el monto restante
       $descuento_aplicado = $monto * ($discount->discount_percent / 100);
@@ -898,11 +902,13 @@ class TransactionLine extends Model
       // Resta el descuento del monto
       $monto -= $descuento_aplicado;
     }
-
-    $total_discount = round($total_discount, 2);
+    */
+    if ($discountPercent > 0)
+      $total_discount = round($monto * $discountPercent / 100, 2);
 
     return $total_discount;
   }
+
 
   public function getImpuesto()
   {

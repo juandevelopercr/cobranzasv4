@@ -174,7 +174,11 @@
       </div>
     </div>
 
+    @php
+    /*
     @include('livewire.transactions-lines.partials._form-taxes')
+    */
+    @endphp
 
     @if (auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
       @include('livewire.transactions-lines.partials._form-discounts')
