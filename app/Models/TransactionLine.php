@@ -339,7 +339,7 @@ class TransactionLine extends Model
   //********************Inicio Calculo de Honorarios********************//
   //*******************************************************************//
   public function getPrecioHonorario(){
-    return round($this->honorario - $this->discount, 2);
+    return round($this->honorarios - ($this->discount ?? 0), 2);
   }
 
   public function getHonorarios($bank_id, $tipo, $currency, $changeType, $discountPercent)
