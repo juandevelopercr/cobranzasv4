@@ -1837,6 +1837,7 @@ class ProformaManager extends TransactionManager
       $cloned->proforma_no = $consecutive;
       $cloned->created_by = auth()->user()->id;
       $cloned->proforma_status = Transaction::PROCESO;
+      $cloned->document_type = 'PR';
       $cloned->location_id = NULL;
       $cloned->status = NULL;
       $cloned->payment_status = 'due';
