@@ -34,10 +34,16 @@ class CasoDocumentManager extends Component
   protected function rules()
   {
     return [
-      "inputs.file.{$this->collection}" => 'required|mimes:pdf,doc,docx,xls,xlsx,jpg,png|max:5120',
+      'file' => 'required|mimes:pdf,doc,docx,xls,xlsx,jpg,png|max:102400',
+      "inputs.file.{$this->collection}" => 'required|mimes:pdf,doc,docx,xls,xlsx,jpg,png',
       "inputs.title.{$this->collection}" => 'required|string|max:100',
     ];
   }
+
+  protected $messages = [
+      'file.max' => 'El archivo es demasiado grande. El tamaño máximo permitido es de 100 MB.',
+      'file.mimes' => 'Solo se permiten archivos PDF, Word, Excel o imágenes.',
+  ];
 
   #[On('updateCasoContext')]
   public function handleUpdateContext($data)
