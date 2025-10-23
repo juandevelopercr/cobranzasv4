@@ -193,7 +193,9 @@ class ResumenComprobanteAType
     $this->setTotalNoSujeto($transaction->totalNoSujeto);
 
     $this->setTotalVenta($transaction->totalVenta);
-    $this->setTotalDescuentos($transaction->totalDiscount);
+    //$this->setTotalDescuentos($transaction->totalDiscount);
+    // Aqui no se envia descuento hacienda
+    $this->setTotalDescuentos(0);
     $this->setTotalVentaNeta($transaction->totalVentaNeta);
 
     // Adicionar los impuestos
