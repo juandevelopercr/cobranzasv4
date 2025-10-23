@@ -442,7 +442,8 @@ abstract class TransactionManager extends BaseComponent
 
       $transaction->totalVenta = $transaction->totalGravado + $transaction->totalExento + $transaction->totalExonerado + $transaction->totalNoSujeto + $transaction->totalTimbres;
       $transaction->totalDiscount = $totals ? ($totals->totalDiscount ?? 0) : 0;
-      $transaction->totalVentaNeta = $transaction->totalVenta - $transaction->totalDiscount;
+      //$transaction->totalVentaNeta = $transaction->totalVenta - $transaction->totalDiscount;
+      $transaction->totalVentaNeta = $transaction->totalVenta;
 
       $transaction->totalImpAsumEmisorFabrica = $totals ? ($totals->totalImpuestoAsumidoEmisorFabrica ?? 0) : 0;
       $transaction->totalIVADevuelto = 0; // Por ahora se pone en cero, si se factura algún medicamento debe colocarse
