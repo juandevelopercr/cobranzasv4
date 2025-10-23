@@ -14,6 +14,9 @@ class DocumentsManager extends Component
 {
   use WithFileUploads;
 
+  // Permitir archivos hasta 100 MB
+  protected int $maxUploadSize = 1024 * 1024 * 100; // 100 MB
+
   //public $transaction;
   public $transaction_id;
   public $file;
