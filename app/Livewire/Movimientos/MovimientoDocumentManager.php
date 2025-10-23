@@ -29,7 +29,7 @@ class MovimientoDocumentManager extends Component
   public $canexport;
 
   protected $rules = [
-    'file' => 'required|mimes:pdf,doc,docx,xls,xlsx,jpg,png|max:5120',  // 5MB max
+    'file' => 'required|mimes:pdf,doc,docx,xls,xlsx,jpg,png|max:102400',
     'title' => 'required|string|max:100',
   ];
 
