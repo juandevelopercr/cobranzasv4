@@ -40,10 +40,16 @@ class CasoDocumentManager extends Component
     ];
   }
 
-  protected $messages = [
-      'file.max' => 'El archivo es demasiado grande. El tamaño máximo permitido es de 100 MB.',
-      'file.mimes' => 'Solo se permiten archivos PDF, Word, Excel o imágenes.',
-  ];
+  public function messages()
+  {
+      return [
+          "file.max" => 'El archivo es demasiado grande. Máximo 100 MB.',
+          "file.mimes" => 'Solo se permiten archivos PDF, Word, Excel o imágenes.',
+          "inputs.file.{$this->collection}.max" => 'El archivo es demasiado grande. Máximo 100 MB.',
+          "inputs.file.{$this->collection}.mimes" => 'Solo se permiten archivos PDF, Word, Excel o imágenes.',
+          "inputs.title.{$this->collection}.required" => 'Debe indicar un título.',
+      ];
+  }
 
   #[On('updateCasoContext')]
   public function handleUpdateContext($data)

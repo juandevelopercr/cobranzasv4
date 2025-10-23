@@ -35,6 +35,15 @@ class DocumentsManager extends Component
     'attach_to_email' => 'boolean',
   ];
 
+  public function messages()
+  {
+      return [
+          'file.max' => 'El archivo es demasiado grande. Máximo 100 MB.',
+          'file.mimes' => 'Solo se permiten archivos PDF, Word, Excel o imágenes.',
+          'title.required' => 'Debe indicar un título.',
+      ];
+  }
+
   #[On('updateTransactionContext')]
   public function handleUpdateContext($data)
   {
