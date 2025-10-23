@@ -190,12 +190,13 @@ class ResumenComprobanteAType
     $this->setTotalGravado($transaction->totalGravado);
     $this->setTotalExento($transaction->totalExento);
     $this->setTotalExonerado($transaction->totalExonerado);
-    $this->setTotalNoSujeto($transaction->totalNoSujeto);
+    //$this->setTotalNoSujeto($transaction->totalNoSujeto);
+    $this->setTotalNoSujeto(number_format($transaction->totalNoSujeto, 5, '.', ''));
 
     $this->setTotalVenta($transaction->totalVenta);
     //$this->setTotalDescuentos($transaction->totalDiscount);
     // Aqui no se envia descuento hacienda
-    $this->setTotalDescuentos(0);
+    $this->setTotalDescuentos(number_format(0, 5, '.', ''));
     $this->setTotalVentaNeta($transaction->totalVentaNeta);
 
     // Adicionar los impuestos
