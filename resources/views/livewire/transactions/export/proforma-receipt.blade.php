@@ -94,10 +94,10 @@
             $demendado = ($transaction->bank_id == \App\Models\Bank::DAVIVIENDA) ? $transaction->caso->pnombre_apellidos_deudor : $transaction->caso->pnombre_demandado;
             $numero_operacion = $transaction->bank_id == \App\Models\Bank::DAVIVIENDA ? $transaction->caso->pnumero_operacion2: $transaction->caso->pnumero_operacion1;
 
-            $tipo_proceso = $transaction->caso->proceso->nombre;
+            $tipo_proceso = $transaction->caso->proceso ? $transaction->caso->proceso->nombre: '-';
             $numero_expediente = $transaction->caso->pnumero_expediente_judicial;
 
-            $producto = $transaction->caso->producto->nombre;
+            $producto = $transaction->caso->producto ? $transaction->caso->producto->nombre: '-';
 
             $width_column1 = 'tm_width_8';
             $width_column2 = '';
