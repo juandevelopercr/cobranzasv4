@@ -886,7 +886,7 @@ public function getTotalHonorarioIva($currencyCode, $format = false)
     $total = 0;
     $changeType = $this->getChangeType();
     if ($currencyCode == $this->currency->code)
-      $total = $this->totalHonorarios  ($this->totalDiscount ?? 0);
+      $total = $this->totalHonorarios - ($this->totalDiscount ?? 0);
     else
         if ($currencyCode != $this->currency->code) {
       if ($currencyCode == 'USD')

@@ -43,7 +43,7 @@ class DepartmentManager extends BaseComponent
 
   public string $code = '';
   public string $name = '';
-  public string $email;
+  public ?string $email = null; // ?string permite string o null
   public $centro_costo_id;
   public $codigo_contable_id;
   public $active = 1;
