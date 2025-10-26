@@ -1258,4 +1258,15 @@ class CasoManager extends BaseComponent
 				$mensaje .= 'No se ha encontrado el estado: ' . $caso->nestado_id . ' en la fila: ' . $fila . "\n<br />";
 		}
 	}
+
+  // En tu componente Livewire
+  public function excelColumnLetter($index)
+  {
+      $letter = '';
+      while ($index >= 0) {
+          $letter = chr($index % 26 + 65) . $letter;
+          $index = intval($index / 26) - 1;
+      }
+      return $letter;
+  }
 }

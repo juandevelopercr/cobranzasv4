@@ -1,24 +1,11 @@
 <div class="card mb-6">
     <form wire:submit.prevent="importar" class="p-4 bg-white rounded shadow-md">
-
-        @php
-            // Función para convertir índice a letra de columna Excel (0 => A, 1 => B, 26 => AA)
-            function excelColumnLetter($index) {
-                $letter = '';
-                while ($index >= 0) {
-                    $letter = chr($index % 26 + 65) . $letter;
-                    $index = intval($index / 26) - 1;
-                }
-                return $letter;
-            }
-        @endphp
-
         @if($expectedColumns)
             <div class="row">
                 <strong>Columnas esperadas:</strong>
                 @foreach($expectedColumns as $index => $config)
                     <div class="col-md-3">
-                        <strong>{{ excelColumnLetter($loop->index) }}</strong> - {{ $index }}
+                        <strong>{{ $this->excelColumnLetter($loop->index) }}</strong> - {{ $index }}
                     </div>
                 @endforeach
             </div>
