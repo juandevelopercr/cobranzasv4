@@ -866,13 +866,13 @@ public function getTotalHonorarioIva($currencyCode, $format = false)
     $total = 0;
     $changeType = $this->getChangeType();
     if ($currencyCode == $this->currency->code)
-      $total = $this->totalHonorarios + ($this->totalTax ?? 0);
+      $total = $this->totalHonorarios - ($this->totalDiscount ?? 0) + ($this->totalTax ?? 0);
     else
         if ($currencyCode != $this->currency->code) {
       if ($currencyCode == 'USD')
-        $total = ($this->totalHonorarios + ($this->totalTax ?? 0)) / $changeType;
+        $total = ($this->totalHonorarios - ($this->totalDiscount ?? 0) + ($this->totalTax ?? 0)) / $changeType;
       else
-        $total = ($this->totalHonorarios + ($this->totalTax ?? 0)) * $changeType;
+        $total = ($this->totalHonorarios - ($this->totalDiscount ?? 0) + ($this->totalTax ?? 0)) * $changeType;
     }
 
     if ($format)
@@ -886,13 +886,13 @@ public function getTotalHonorarioIva($currencyCode, $format = false)
     $total = 0;
     $changeType = $this->getChangeType();
     if ($currencyCode == $this->currency->code)
-      $total = $this->totalHonorarios;
+      $total = $this->totalHonorarios  ($this->totalDiscount ?? 0);
     else
         if ($currencyCode != $this->currency->code) {
       if ($currencyCode == 'USD')
-        $total = $this->totalHonorarios / $changeType;
+        $total = ($this->totalHonorarios - ($this->totalDiscount ?? 0)) / $changeType;
       else
-        $total = $this->totalHonorarios * $changeType;
+        $total = ($this->totalHonorarios - ($this->totalDiscount ?? 0)) * $changeType;
     }
 
     if ($format)
