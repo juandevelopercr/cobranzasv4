@@ -507,7 +507,7 @@ class HistoryManager extends TransactionManager
         'field' => 'proforma_status',
         'orderName' => 'transactions.proforma_status',
         'label' => __('Status'),
-        'filter' => 'filter_status',
+        'filter' => 'filter_proforma_status',
         'filter_type' => 'select',
         'filter_sources' => 'statusOptions',
         'filter_source_field' => 'name',
