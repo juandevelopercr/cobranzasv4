@@ -106,6 +106,14 @@
                   $tComprobante = 0;
                   $tComprobanteUsd = 0;
                   $tComprobanteCrc = 0;
+                  $tHonorarioIvaUsd = 0;
+                  $tHonorarioIvaCrc = 0;
+
+                  $tHonorarioUsd = 0;
+                  $tHonorarioCrc = 0;
+
+                  $tIvaUsd = 0;
+                  $tIvaCrc = 0;
                   $allowedRoles = User::ROLES_ALL_BANKS;
                   @endphp
 
@@ -114,6 +122,18 @@
                   $totalComprobante = $record->totalComprobante;
                   $totalComprobanteUsd = $record->getTotalComprobante('USD');
                   $totalComprobanteCrc = $record->getTotalComprobante('CRC');
+
+                  $tHonorarioIvaUsd += $record->getTotalHonorarioIva('USD');
+                  $tHonorarioIvaCrc += $record->getTotalHonorarioIva('CRC');
+
+                  $tHonorarioUsd += $record->getTotalHonorario('USD');
+                  $tHonorarioCrc += $record->getTotalHonorario('CRC');
+
+                  $tHonorarioUsd += $record->getTotalHonorario('USD');
+                  $tHonorarioCrc += $record->getTotalHonorario('CRC');
+
+                  $tIvaUsd += $record->getTotalIva('USD');
+                  $tIvaCrc += $record->getTotalIva('CRC');
 
                   $tComprobante += $totalComprobante;
                   $tComprobanteUsd += $totalComprobanteUsd;

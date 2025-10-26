@@ -861,6 +861,66 @@ class Transaction extends Model implements HasMedia
     return $total ?? 0;
   }
 
+public function getTotalHonorarioIva($currencyCode, $format = false)
+  {
+    $total = 0;
+    $changeType = $this->getChangeType();
+    if ($currencyCode == $this->currency->code)
+      $total = $this->totalHonorarios + ($this->totalTax ?? 0);
+    else
+        if ($currencyCode != $this->currency->code) {
+      if ($currencyCode == 'USD')
+        $total = ($this->totalHonorarios + ($this->totalTax ?? 0)) / $changeType;
+      else
+        $total = ($this->totalHonorarios + ($this->totalTax ?? 0)) * $changeType;
+    }
+
+    if ($format)
+      $total = Helpers::formatDecimal($total);
+
+    return $total ?? 0;
+  }
+
+  public function getTotalHonorario($currencyCode, $format = false)
+  {
+    $total = 0;
+    $changeType = $this->getChangeType();
+    if ($currencyCode == $this->currency->code)
+      $total = $this->totalHonorarios;
+    else
+        if ($currencyCode != $this->currency->code) {
+      if ($currencyCode == 'USD')
+        $total = $this->totalHonorarios / $changeType;
+      else
+        $total = $this->totalHonorarios * $changeType;
+    }
+
+    if ($format)
+      $total = Helpers::formatDecimal($total);
+
+    return $total ?? 0;
+  }
+
+  public function getTotalIva($currencyCode, $format = false)
+  {
+    $total = 0;
+    $changeType = $this->getChangeType();
+    if ($currencyCode == $this->currency->code)
+      $total = $this->totalTax;
+    else
+        if ($currencyCode != $this->currency->code) {
+      if ($currencyCode == 'USD')
+        $total = $this->totalTax / $changeType;
+      else
+        $total = $this->totalTax * $changeType;
+    }
+
+    if ($format)
+      $total = Helpers::formatDecimal($total);
+
+    return $total ?? 0;
+  }
+
   public function getChangeType()
   {
     $changeType = $this->factura_change_type;

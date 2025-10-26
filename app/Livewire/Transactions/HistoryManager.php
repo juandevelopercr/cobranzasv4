@@ -63,6 +63,12 @@ class HistoryManager extends TransactionManager
     'filter_bank_name' => NULL,
     'filter_fecha_envio_email' => NULL,
     'filter_status' => NULL,
+    'filter_total_honorarios_con_iva_usd' => NULL,
+    'filter_total_honorarios_con_iva_crc' => NULL,
+    'filter_total_honorarios_usd' => NULL,
+    'filter_total_honorarios_crc' => NULL,
+    'filter_total_iva_usd' => NULL,
+    'filter_total_iva_crc' => NULL,
     'filter_total_usd' => NULL,
     'filter_total_crc' => NULL
   ];
@@ -240,7 +246,7 @@ class HistoryManager extends TransactionManager
         'filter_sources' => '',
         'filter_source_field' => '',
         'columnType' => 'decimal',
-        'columnAlign' => '',
+        'columnAlign' => 'right',
         'columnClass' => '',
         'function' => '',
         'parameters' => [],
@@ -516,6 +522,158 @@ class HistoryManager extends TransactionManager
         'width' => NULL,
         'visible' => true,
       ],
+[
+        'field' => 'totalHonorariosIva',
+        'orderName' => '',
+        'label' => __('Total Honorarios Con IVA USD'),
+        'filter' => 'filter_total_honorarios_con_iva_usd',
+        'filter_type' => '',
+        'filter_sources' => '',
+        'filter_source_field' => '',
+        'columnType' => 'decimal',
+        'columnAlign' => 'right',
+        'columnClass' => 'wrap-col-100',
+        'function' => 'getTotalHonorarioIva',
+        'parameters' => ['USD', true],
+        'sumary' => 'tHonorarioIvaUsd',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => '',
+        'visible' => true,
+      ],
+      [
+        'field' => 'totalHonorariosIva',
+        'orderName' => '',
+        'label' => __('Total Honorarios Con IVA CRC'),
+        'filter' => 'filter_total_honorarios_con_iva_crc',
+        'filter_type' => '',
+        'filter_sources' => '',
+        'filter_source_field' => '',
+        'columnType' => 'decimal',
+        'columnAlign' => 'right',
+        'columnClass' => 'wrap-col-100',
+        'function' => 'getTotalHonorarioIva',
+        'parameters' => ['CRC', true], // Parámetro a pasar a la función
+        'sumary' => 'tHonorarioIvaCrc',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'totalHonorarios',
+        'orderName' => '',
+        'label' => __('Total Honorarios USD'),
+        'filter' => 'filter_total_honorarios_usd',
+        'filter_type' => '',
+        'filter_sources' => '',
+        'filter_source_field' => '',
+        'columnType' => 'decimal',
+        'columnAlign' => 'right',
+        'columnClass' => 'wrap-col-100',
+        'function' => 'getTotalHonorario',
+        'parameters' => ['USD', true],
+        'sumary' => 'tHonorarioUsd',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'totalHonorarios',
+        'orderName' => '',
+        'label' => __('Total Honorarios CRC'),
+        'filter' => 'filter_total_honorarios_crc',
+        'filter_type' => '',
+        'filter_sources' => '',
+        'filter_source_field' => '',
+        'columnType' => 'decimal',
+        'columnAlign' => 'right',
+        'columnClass' => 'wrap-col-100',
+        'function' => 'getTotalHonorario',
+        'parameters' => ['CRC', true], // Parámetro a pasar a la función
+        'sumary' => 'tHonorarioCrc',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'totalHonorarios',
+        'orderName' => '',
+        'label' => __('Total Honorarios USD'),
+        'filter' => 'filter_total_honorarios_usd',
+        'filter_type' => '',
+        'filter_sources' => '',
+        'filter_source_field' => '',
+        'columnType' => 'decimal',
+        'columnAlign' => 'right',
+        'columnClass' => 'wrap-col-100',
+        'function' => 'getTotalHonorario',
+        'parameters' => ['USD', true],
+        'sumary' => 'tHonorarioUsd',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'totalHonorarios',
+        'orderName' => '',
+        'label' => __('Total Honorarios CRC'),
+        'filter' => 'filter_total_honorarios_crc',
+        'filter_type' => '',
+        'filter_sources' => '',
+        'filter_source_field' => '',
+        'columnType' => 'decimal',
+        'columnAlign' => 'right',
+        'columnClass' => 'wrap-col-100',
+        'function' => 'getTotalHonorario',
+        'parameters' => ['CRC', true], // Parámetro a pasar a la función
+        'sumary' => 'tHonorarioCrc',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'total_iva',
+        'orderName' => '',
+        'label' => __('Total IVA USD'),
+        'filter' => 'filter_total_iva_usd',
+        'filter_type' => '',
+        'filter_sources' => '',
+        'filter_source_field' => '',
+        'columnType' => 'decimal',
+        'columnAlign' => 'right',
+        'columnClass' => 'wrap-col-100',
+        'function' => 'getTotalIva',
+        'parameters' => ['USD', true],
+        'sumary' => 'tIvaUsd',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'totalHonorarios',
+        'orderName' => '',
+        'label' => __('Total IVA CRC'),
+        'filter' => 'filter_total_iva_crc',
+        'filter_type' => '',
+        'filter_sources' => '',
+        'filter_source_field' => '',
+        'columnType' => 'decimal',
+        'columnAlign' => 'right',
+        'columnClass' => 'wrap-col-100',
+        'function' => 'getTotalIva',
+        'parameters' => ['CRC', true], // Parámetro a pasar a la función
+        'sumary' => 'tIvaCrc',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
       [
         'field' => 'total_usd',
         'orderName' => '',
@@ -525,7 +683,7 @@ class HistoryManager extends TransactionManager
         'filter_sources' => '',
         'filter_source_field' => '',
         'columnType' => 'decimal',
-        'columnAlign' => '',
+        'columnAlign' => 'right',
         'columnClass' => '',
         'function' => 'getTotalComprobante',
         'parameters' => ['USD', true],
@@ -544,7 +702,7 @@ class HistoryManager extends TransactionManager
         'filter_sources' => '',
         'filter_source_field' => '',
         'columnType' => 'decimal',
-        'columnAlign' => '',
+        'columnAlign' => 'right',
         'columnClass' => '',
         'function' => 'getTotalComprobante',
         'parameters' => ['CRC', true], // Parámetro a pasar a la función
@@ -563,11 +721,6 @@ class HistoryManager extends TransactionManager
   {
     //$document_type = $this->document_type;
     $documentType = ['PR', 'FE', 'TE'];
-    /*
-    if (!is_array($this->document_type)) {
-      $document_type = [$this->document_type];
-    }
-      */
     $query = Transaction::search($this->search, $this->filters)
       ->whereIn('document_type', $documentType);
 
@@ -575,17 +728,26 @@ class HistoryManager extends TransactionManager
     $allowedRoles = User::ROLES_ALL_BANKS;
     $user = auth()->user();
     if ($user->hasAnyRole($allowedRoles)) {
-      $query->where(function ($q) {
-        $q->whereIn('proforma_status', [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA]);
-      });
+      if (empty($this->filters['filter_status'])) {
+          $query->whereIn('proforma_status', [
+              Transaction::FACTURADA,
+              Transaction::RECHAZADA,
+              Transaction::ANULADA,
+          ]);
+      }
     } else {
       //Obtener bancos
       $allowedBanks = $user->banks->pluck('id');
       if (!empty($allowedBanks)) {
         $query->whereIn('transactions.bank_id', $allowedBanks);
       }
-
-      $query->whereIn('proforma_status', [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA]);
+      if (empty($this->filters['filter_status'])) {
+          $query->whereIn('proforma_status', [
+              Transaction::FACTURADA,
+              Transaction::RECHAZADA,
+              Transaction::ANULADA,
+          ]);
+      }
     }
 
     return $query;

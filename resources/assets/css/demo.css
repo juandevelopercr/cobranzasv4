@@ -203,6 +203,15 @@ table.dataTable td.text-400 {
   text-overflow: ellipsis;
 }
 
+th.wrap-col-100,
+td.wrap-col-100 {
+  min-width: 100px;
+  max-width: 150px;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
 th.wrap-col-200,
 td.wrap-col-200 {
   min-width: 200px;
