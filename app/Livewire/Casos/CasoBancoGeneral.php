@@ -1386,14 +1386,11 @@ class CasoBancoGeneral extends CasoManager
       $this->fechasRemate = array_values($this->fechasRemate);
   }
 
-public function importar()
+  public function importar()
   {
       $this->resetErrorBag();
       $this->message = null;
       $this->tipoMessage = 'info';
-
-      //$banco = 'BAC';
-      //$this->expectedColumns = ImportColumns::getColumnasPorBanco($banco);
 
       if (empty($this->expectedColumns)) {
           $this->addError('archivo', 'No hay definición de columnas para el banco seleccionado.');
@@ -1420,12 +1417,14 @@ public function importar()
           return;
       }
 
+      // Normalizar encabezados
       $headerRow = $sheet[0];
       $normalize = fn($h) => mb_strtolower(trim(str_replace("\xC2\xA0", ' ', (string)$h)));
       $headersNormalized = array_map($normalize, $headerRow);
       $expectedHeaders = array_keys($this->expectedColumns);
       $expectedNormalized = array_map($normalize, $expectedHeaders);
 
+      // Mapear columnas
       $mapping = [];
       $missing = [];
       foreach ($expectedNormalized as $i => $expNorm) {
@@ -1453,18 +1452,29 @@ public function importar()
               continue;
           }
 
-          $caso = new \App\Models\Caso();
-          $caso->bank_id = Bank::BANCOGENERAL;
-          $caso->fecha_creacion = now();
+          // Identificar caso existente o crear nuevo
+          $pnumero = trim($row[$mapping['numero']] ?? null);
+          $caso = null;
+          if ($pnumero) {
+              $caso = \App\Models\Caso::where([
+                  'pnumero' => $pnumero,
+                  'bank_id' => Bank::BANCOGENERAL
+              ])->first();
+          }
+          if (!$caso) {
+              $caso = new \App\Models\Caso();
+              $caso->bank_id = Bank::BANCOGENERAL;
+              $caso->fecha_creacion = now();
+          }
 
-          // Asignar valores y convertir tipos
+          // Asignar valores de columnas
           foreach ($this->expectedColumns as $header => $config) {
               $campo = $config['campo'];
               $tipo = $config['tipo'];
-              $colIndex = $mapping[$header];
-              $valor = $row[$colIndex] ?? null;
+              $colIndex = $mapping[$header] ?? null;
+              $valor = $colIndex !== null ? $row[$colIndex] : null;
 
-              if ($tipo === 'date' && $valor !== null && $valor !== '') {
+              if ($tipo === 'date' && $valor) {
                   try {
                       if ($valor instanceof \Carbon\Carbon) {
                           $valor = $valor->format('Y-m-d');
@@ -1485,16 +1495,13 @@ public function importar()
               $caso->$campo = $valor;
           }
 
-          // Validación de llaves foráneas
+          // Validación de llaves foráneas y campos obligatorios
           $this->setProducto($caso, $errores, $r);
           $this->setProceso($caso, $errores, $r);
           $this->setMoneda($caso);
           $this->setEstadoProcesal($caso, $errores, $r);
-					$this->setEstadoNotificacion($caso, $errores, $r);
+          $this->setEstadoNotificacion($caso, $errores, $r);
 
-          //$caso->pfecha_asignacion_caso = date('Y-m-d', strtotime($model->fecha_asignacion));
-
-          // Validación de campos obligatorios
           if (empty($caso->product_id) || empty($caso->proceso_id)) {
               $errores[] = "Fila " . ($r + 1) . ": 'Producto' o 'Proceso' vacíos.";
               continue;
@@ -1509,12 +1516,15 @@ public function importar()
           return;
       }
 
-      // Guardar todos los casos
+      // Guardar casos en la base de datos
+      $filasGuardadas = 0;
       if (!empty($casosParaGuardar)) {
-          $filasGuardadas = 0;
           DB::beginTransaction();
           try {
               foreach ($casosParaGuardar as $caso) {
+                  if (!$caso->exists) {
+                      $caso->fecha_creacion = now();
+                  }
                   $caso->fecha_importacion = now();
                   $caso->save();
                   $filasGuardadas++;
@@ -1528,15 +1538,11 @@ public function importar()
               $this->message = "Ocurrió un error al guardar los registros: " . $e->getMessage();
           }
       }
-
-      $this->tipoMessage = empty($errores) ? 'success' : 'warning';
-      $this->message = "Se importaron correctamente <b>{$filasGuardadas}</b> registros.";
   }
 
   public function descargarPlantilla()
   {
-      $fileName = "plantilla_casos_banco_generak.xlsx";
+      $fileName = "plantilla_casos_canco_general.xlsx";
       return Excel::download(new CasosTemplateExport(Bank::BANCOGENERAL), $fileName);
   }
-
 }

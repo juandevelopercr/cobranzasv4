@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Bank;
 use App\Models\Caso;
 use App\Models\User;
+use App\Models\Contact;
 use App\Helpers\Helpers;
 use App\Models\Currency;
 use App\Models\CasoEstado;
@@ -15,7 +16,9 @@ use App\Models\CasoProducto;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
+use App\Models\CasoPoderdante;
 use App\Livewire\BaseComponent;
+use App\Models\CasoExpectativa;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -1175,8 +1178,20 @@ class CasoManager extends BaseComponent
   // Cancelar importación y volver al listado
   public function cancelarImportacion()
   {
-      $this->action = 'list';
+     $this->action = 'list';
   }
+
+	protected function setCliente(&$caso, &$errores, $fila)
+	{
+		if (!empty($caso->contact_id)) {
+			// Clientes
+			$cliente = Contact::where(['name' => $caso->contact_id])->asArray()->one();
+			if (!empty($cliente))
+				$caso->contact_id = $cliente['id'];
+			else
+        $errores[] = "Fila {$fila}: No se ha encontrado el cliente '{$caso->contac_id}'.";
+		}
+	}
 
   protected function setProducto(&$caso, &$errores, $fila)
   {
@@ -1247,15 +1262,48 @@ class CasoManager extends BaseComponent
       }
   }
 
-	public function setEstadoNotificacion(&$caso, &$mensaje, $fila)
+	public function setEstadoNotificacion(&$caso, &$errores, $fila)
 	{
 		if (!empty($caso->nestado_id)) {
 			// Estados notificaciones
-			$estado = CasoEstadoNotificadores::find()->where(['nombre' => $caso->nestado_id])->asArray()->one();
+			$estado = CasoEstadoNotificadores::where(['nombre' => $caso->nestado_id])->first();
 			if (!empty($estado))
 				$caso->nestado_id = $estado['id'];
 			else
-				$mensaje .= 'No se ha encontrado el estado: ' . $caso->nestado_id . ' en la fila: ' . $fila . "\n<br />";
+        $errores[] = "Fila {$fila}: No se ha encontrado el Estado  '{$caso->nestado_id}'";
+		}
+	}
+
+	public function setExpectativaRecuperacion(&$caso, &$errores, $fila)
+	{
+		if (!empty($caso->pexpectativa_recuperacion_id)) {
+			// Expectativa de recuperación
+			$expectativa = CasoExpectativa::where(['nombre' => $caso->pexpectativa_recuperacion_id])->first();
+			if (!empty($expectativa))
+				$caso->pexpectativa_recuperacion_id = $expectativa['id'];
+			else
+        $errores[] = "Fila {$fila}: No se ha encontrado la expectativa de recuperación  '{$caso->pexpectativa_recuperacion_id}'";
+		}
+	}
+
+	public function setPoderdante(&$caso, &$mensaje, $fila)
+	{
+		if (!empty($caso->ppoderdante_id)) {
+			// Poderdante
+      $poderdante = \App\Models\CasoPoderdante::join(
+          'casos_poderdantes_bancos',
+          function($join) use ($caso) {
+              $join->on('casos_poderdantes_bancos.poderdante_id', '=', 'casos_poderdantes.id')
+                  ->where('casos_poderdantes_bancos.bank_id', $caso->banco_id);
+          }
+      )
+      ->where('casos_poderdantes.nombre', trim($caso->ppoderdante_id))
+      ->first(); // devuelve un objeto o null
+
+			if (!empty($poderdante))
+				$caso->ppoderdante_id = $poderdante['id'];
+			else
+				$mensaje .= 'No se ha encontrado el Poderdante: ' . $caso->ppoderdante_id . ' en la fila: ' . $fila . "<br />";
 		}
 	}
 

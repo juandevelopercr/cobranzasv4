@@ -26,9 +26,10 @@ use Livewire\Attributes\Computed;
 use App\Models\CasoListadoJuzgado;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Casos\CasoManager;
+use App\Exports\CasosTemplateExport;
 use Illuminate\Support\Facades\Auth;
-use App\Services\DocumentSequenceService;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Services\DocumentSequenceService;
 
 class CasoTerceros extends CasoManager
 {
@@ -1433,5 +1434,165 @@ class CasoTerceros extends CasoManager
   {
       unset($this->fechasRemate[$index]);
       $this->fechasRemate = array_values($this->fechasRemate);
+  }
+
+  public function importar()
+  {
+      $this->resetErrorBag();
+      $this->message = null;
+      $this->tipoMessage = 'info';
+
+      if (empty($this->expectedColumns)) {
+          $this->addError('archivo', 'No hay definición de columnas para el banco seleccionado.');
+          return;
+      }
+
+      if (!$this->archivo) {
+          $this->addError('archivo', 'Debe seleccionar un archivo Excel.');
+          return;
+      }
+
+      $extension = strtolower($this->archivo->getClientOriginalExtension());
+      if (!in_array($extension, ['xlsx', 'xls'])) {
+          $this->addError('archivo', 'El archivo debe ser .xlsx o .xls');
+          return;
+      }
+
+      // Leer el archivo como array
+      $array = Excel::toArray([], $this->archivo->getRealPath());
+      $sheet = $array[0] ?? null;
+
+      if (!$sheet || count($sheet) === 0) {
+          $this->addError('archivo', 'El archivo está vacío o no tiene filas.');
+          return;
+      }
+
+      // Normalizar encabezados
+      $headerRow = $sheet[0];
+      $normalize = fn($h) => mb_strtolower(trim(str_replace("\xC2\xA0", ' ', (string)$h)));
+      $headersNormalized = array_map($normalize, $headerRow);
+      $expectedHeaders = array_keys($this->expectedColumns);
+      $expectedNormalized = array_map($normalize, $expectedHeaders);
+
+      // Mapear columnas
+      $mapping = [];
+      $missing = [];
+      foreach ($expectedNormalized as $i => $expNorm) {
+          $foundIndex = array_search($expNorm, $headersNormalized, true);
+          if ($foundIndex === false) {
+              $missing[] = $expectedHeaders[$i];
+          } else {
+              $mapping[$expectedHeaders[$i]] = $foundIndex;
+          }
+      }
+
+      if (!empty($missing)) {
+          $this->tipoMessage = 'danger';
+          $this->message = "Faltan columnas obligatorias: <b>" . implode(', ', $missing) . "</b>";
+          return;
+      }
+
+      $casosParaGuardar = [];
+      $errores = [];
+
+      // Procesar filas
+      for ($r = 1; $r < count($sheet); $r++) {
+          $row = $sheet[$r];
+          if (empty(array_filter($row, fn($c) => !is_null($c) && trim((string)$c) !== ''))) {
+              continue;
+          }
+
+          // Identificar caso existente o crear nuevo
+          $pnumero = trim($row[$mapping['numero']] ?? null);
+          $caso = null;
+          if ($pnumero) {
+              $caso = \App\Models\Caso::where([
+                  'pnumero' => $pnumero,
+                  'bank_id' => Bank::TERCEROS
+              ])->first();
+          }
+          if (!$caso) {
+              $caso = new \App\Models\Caso();
+              $caso->bank_id = Bank::TERCEROS;
+              $caso->fecha_creacion = now();
+          }
+
+          // Asignar valores de columnas
+          foreach ($this->expectedColumns as $header => $config) {
+              $campo = $config['campo'];
+              $tipo = $config['tipo'];
+              $colIndex = $mapping[$header] ?? null;
+              $valor = $colIndex !== null ? $row[$colIndex] : null;
+
+              if ($tipo === 'date' && $valor) {
+                  try {
+                      if ($valor instanceof \Carbon\Carbon) {
+                          $valor = $valor->format('Y-m-d');
+                      } else {
+                          $valor = date('Y-m-d', strtotime($valor));
+                      }
+                  } catch (\Throwable $e) {
+                      $valor = null;
+                  }
+              } elseif ($tipo === 'int') {
+                  $valor = (int)$valor;
+              } elseif ($tipo === 'float') {
+                  $valor = (float)$valor;
+              } elseif ($tipo === 'string') {
+                  $valor = trim((string)$valor);
+              }
+
+              $caso->$campo = $valor;
+          }
+
+          // Validación de llaves foráneas y campos obligatorios
+          $this->setProducto($caso, $errores, $r);
+          $this->setProceso($caso, $errores, $r);
+          $this->setMoneda($caso);
+          $this->setEstadoProcesal($caso, $errores, $r);
+          $this->setExpectativaRecuperacion($caso, $errores, $r);
+
+          if (empty($caso->product_id) || empty($caso->proceso_id)) {
+              $errores[] = "Fila " . ($r + 1) . ": 'Producto' o 'Proceso' vacíos.";
+              continue;
+          }
+
+          $casosParaGuardar[] = $caso;
+      }
+
+      if (!empty($errores)) {
+          $this->tipoMessage = 'danger';
+          $this->message = "Se encontraron errores, no se ha guardado ningún registro:<br>" . implode('<br>', $errores);
+          return;
+      }
+
+      // Guardar casos en la base de datos
+      $filasGuardadas = 0;
+      if (!empty($casosParaGuardar)) {
+          DB::beginTransaction();
+          try {
+              foreach ($casosParaGuardar as $caso) {
+                  if (!$caso->exists) {
+                      $caso->fecha_creacion = now();
+                  }
+                  $caso->fecha_importacion = now();
+                  $caso->save();
+                  $filasGuardadas++;
+              }
+              DB::commit();
+              $this->tipoMessage = 'success';
+              $this->message = "Se importaron correctamente <b>{$filasGuardadas}</b> registros.";
+          } catch (\Throwable $e) {
+              DB::rollBack();
+              $this->tipoMessage = 'danger';
+              $this->message = "Ocurrió un error al guardar los registros: " . $e->getMessage();
+          }
+      }
+  }
+
+  public function descargarPlantilla()
+  {
+      $fileName = "plantilla_casos_BAC.xlsx";
+      return Excel::download(new CasosTemplateExport(Bank::TERCEROS), $fileName);
   }
 }

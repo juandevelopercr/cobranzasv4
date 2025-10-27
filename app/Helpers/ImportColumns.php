@@ -7,6 +7,7 @@ use App\Models\Bank;
 class ImportColumns
 {
     const COLUMNAS_SANJOSE = [
+        'numero'=> ['campo'=>'pnumero', 'tipo'=>'string'],
         'Producto' => ['campo' => 'product_id', 'tipo' => 'string'],
         'Proceso' => ['campo' => 'proceso_id', 'tipo' => 'string'],
         'Operación' => ['campo' => 'pnumero_operacion1', 'tipo' => 'string'],
@@ -50,7 +51,7 @@ class ImportColumns
                         'Datos de los Fiadores'=>['campo'=>'pdatos_fiadores', 'tipo'=>'string'],
                         'Producto'=>['campo'=>'producto_id', 'tipo'=>'string'],
                         'Tipo de Proceso'=>['campo'=>'proceso_id', 'tipo'=>'string'],
-                        'Tipo de moneda'=>['campo'=>'moneda_id', 'tipo'=>'string'],
+                        'Tipo de moneda'=>['campo'=>'currency_id', 'tipo'=>'string'],
                         'Expectativa Recuperación'=>['campo'=>'pexpectativa_recuperacion_id', 'tipo'=>'string'],
                         'Estatus de Operación'=>['campo'=>'pestatus_operacion', 'tipo'=>'string'],
                         'Número Expediente Judicial'=>['campo'=>'pnumero_expediente_judicial', 'tipo'=>'string'],
@@ -103,13 +104,14 @@ class ImportColumns
                     ];
 
     const COLUMNAS_SCOTIABANKCR = [
-        'Cliente'=>['campo'=>'cliente_id', 'tipo'=>'string'],
+        'numero'=> ['campo'=>'pnumero', 'tipo'=>'string'],
+        'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
         'Número Operación1'=>['campo'=>'pnumero_operacion1', 'tipo'=>'string'],
         'Producto'=>['campo'=>'producto_id', 'tipo'=>'string'],
         'PROCESO'=>['campo'=>'proceso_id', 'tipo'=>'string'],
         'Nombre del Demandado'=>['campo'=>'pnombre_demandado', 'tipo'=>'string'],
         'Número de Cédula del demandado'=>['campo'=>'pnumero_cedula', 'tipo'=>'string'],
-        'MONEDA'=>['campo'=>'moneda_id', 'tipo'=>'string'],
+        'MONEDA'=>['campo'=>'currency_id', 'tipo'=>'string'],
         'Monto Estimación Demanda'=>['campo'=>'pmonto_estimacion_demanda', 'tipo'=>'string'],
         'Firma Legal'=>['campo'=>'afirma_legal', 'tipo'=>'string'],
         'Fecha Asignación de Caso'=>['campo'=>'pfecha_asignacion_caso', 'tipo'=>'date'],
@@ -142,12 +144,13 @@ class ImportColumns
 
 
     const COLUMNAS_TERCEROS = [
+        'numero'=> ['campo'=>'pnumero', 'tipo'=>'string'],
         'SUBCIDIARIA'=>['campo'=>'psubsidiaria', 'tipo'=>'string'],
         'TIPO PRODUCTO'=>['campo'=>'producto_id', 'tipo'=>'string'],
         'PROCESO'=>['campo'=>'proceso_id', 'tipo'=>'string'],
         'Nombre del Demandado'=>['campo'=>'pnombre_demandado', 'tipo'=>'string'],
         'Número de Cédula del demandado'=>['campo'=>'pnumero_cedula', 'tipo'=>'string'],
-        'MONEDA'=>['campo'=>'moneda_id', 'tipo'=>'string'],
+        'MONEDA'=>['campo'=>'currency_id', 'tipo'=>'string'],
         'DETALLE DE GARANTÍA O DOCUMENTO'=>['campo'=>'pdetalle_garantia', 'tipo'=>'string'],
         'Despacho Judicial Juzgado'=>['campo'=>'pdespacho_judicial_juzgado', 'tipo'=>'string'],
         'Número Expediente Judicial'=>['campo'=>'pnumero_expediente_judicial', 'tipo'=>'string'],
@@ -173,6 +176,7 @@ class ImportColumns
     ];
 
     const COLUMNAS_LAFISE = [
+        'numero'=> ['campo'=>'pnumero', 'tipo'=>'string'],
         'Número Operación1'=>['campo'=>'pnumero_operacion1', 'tipo'=>'string'],
         'Número de Tarjeta'=>['campo'=>'pnumero_tarjeta', 'tipo'=>'string'],
         'Nombre del Demandado'=>['campo'=>'pnombre_demandado', 'tipo'=>'string'],
@@ -183,7 +187,7 @@ class ImportColumns
         'Datos de los Fiadores'=>['campo'=>'pdatos_codeudor2', 'tipo'=>'string'],
         'PRODUCTO'=>['campo'=>'producto_id', 'tipo'=>'string'],
         'Tipo de Proceso'=>['campo'=>'proceso_id', 'tipo'=>'string'],
-        'Tipo de moneda'=>['campo'=>'moneda_id', 'tipo'=>'string'],
+        'Tipo de moneda'=>['campo'=>'currency_id', 'tipo'=>'string'],
         'Expectativa Recuperación'=>['campo'=>'pexpectativa_recuperacion_id', 'tipo'=>'string'],
         'Estatus de Operación'=>['campo'=>'aestado_operacion', 'tipo'=>'string'],
         'Número Expediente Judicial'=>['campo'=>'pnumero_expediente_judicial', 'tipo'=>'string'],
@@ -230,6 +234,7 @@ class ImportColumns
     ];
 
     const COLUMNAS_FINANCIERACAFSA = [
+        'numero'=> ['campo'=>'pnumero', 'tipo'=>'string'],
         'Número de operación'=>['campo'=>'pnumero_operacion1', 'tipo'=>'string'],
         'Apellidos y Nombre del Deudor'=>['campo'=>'pnombre_demandado', 'tipo'=>'string'],
         'Documento de Identificación'=>['campo'=>'pnumero_cedula', 'tipo'=>'string'],
@@ -251,7 +256,7 @@ class ImportColumns
         'Fecha de celebración de Segundo remate'=>['campo'=>'sfecha_segundo_remate', 'tipo'=>'date'],
         'Fecha de celebración de Tercer remate'=>['campo'=>'sfecha_tercer_remate', 'tipo'=>'date'],
         'Fecha de firmeza de aprobación de remate'=>['campo'=>'afecha_aprobacion_remate', 'tipo'=>'date'],
-        'Moneda'=>['campo'=>'moneda_id', 'tipo'=>'string'],
+        'Moneda'=>['campo'=>'currency_id', 'tipo'=>'string'],
         'Estimación de la demanda'=>['campo'=>'pmonto_estimacion_demanda', 'tipo'=>'string'],
         'Saldo Capital de la Operación'=>['campo'=>'asaldo_capital_operacion', 'tipo'=>'string'],
         'Probabilidad de recuperación'=>['campo'=>'pexpectativa_recuperacion_id', 'tipo'=>'string'],
@@ -259,6 +264,7 @@ class ImportColumns
     ];
 
     const COLUMNAS_BANCOGENERAL = [
+        'numero'=> ['campo'=>'pnumero', 'tipo'=>'string'],
         'Número Operación1'=>['campo'=>'pnumero_operacion1', 'tipo'=>'string'],
         'Nombre del Demandado'=>['campo'=>'pnombre_demandado', 'tipo'=>'string'],
         'Producto'=>['campo'=>'producto_id', 'tipo'=>'string'],
@@ -273,7 +279,7 @@ class ImportColumns
         'Fecha de Remate 2'=>['campo'=>'sfecha_segundo_remate', 'tipo'=>'date'],
         'Fecha de Remate 3'=>['campo'=>'sfecha_tercer_remate', 'tipo'=>'date'],
         'Bien adjudicado #'=>['campo'=>'abienes_adjudicados', 'tipo'=>'string'],
-        'Moneda'=>['campo'=>'moneda_id', 'tipo'=>'string'],
+        'Moneda'=>['campo'=>'currency_id', 'tipo'=>'string'],
         'Monto Estimación Demanda'=>['campo'=>'pmonto_estimacion_demanda', 'tipo'=>'string'],
         'ESTIMACION DE GASTOS'=>['campo'=>'bgastos_proceso', 'tipo'=>'string'],
         'Fecha de Terminación'=>['campo'=>'afecha_terminacion', 'tipo'=>'date'],

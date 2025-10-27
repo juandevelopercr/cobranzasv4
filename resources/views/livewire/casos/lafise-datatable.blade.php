@@ -112,6 +112,11 @@
   @if($action == 'create' || $action == 'edit')
     @include('livewire.casos.partials.lafise.form')
   @endif
+
+  @if($action == 'importar')
+    @include('livewire.casos.partials.import-casos')
+  @endif
+
 </div>
 
 @push('scripts')
