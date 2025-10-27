@@ -1,4 +1,7 @@
-<th wire:key="sort-@if(isset($index)) {{ $index }} @endif"  scope="col" class="px-4 py-3 icon-hover {{ $columnClass }}" @if(!empty($name)) wire:click="setSortBy('{{ $name }}')" @endif
+<th wire:key="sort-@if(isset($index)) {{ $index }} @endif"
+    scope="col"
+    class="px-4 py-3 icon-hover {{ isset($columnClass) ? $columnClass : '' }}"
+    @if(!empty($name)) wire:click="setSortBy('{{ $name }}')" @endif
     @if(isset($width) && !empty($width)) style="width: {{ $width }};" @endif>
     <div class="d-flex justify-content-between align-items-center">
         <span>{{ $displayName }}</span>
