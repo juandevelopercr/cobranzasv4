@@ -101,56 +101,70 @@
   <!-- Document List -->
   <div class="row mt-5">
     @foreach($documents as $document)
-    <div class="col-md-4 mb-3">
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title">
-            <i class="bx bx-file {{ getIcon($document['mime_type']) }}" style="font-size: 2rem;"></i>
-            {{ $document['name'] }}
-          </h5>
-          <p class="card-text">
-            {{ __('Size') }}: {{ number_format($document['size'] / 1024, 2) }} KB <br>
-            {{ __('Created at') }}: {{ \Carbon\Carbon::createFromFormat('d/m/Y H:i', $document['created_at'])->format('d/m/Y H:i') }}
-          </p>
+      @php
+      $fileExists = \Illuminate\Support\Facades\Storage::disk($document['disk'] ?? 'public')
+                    ->exists($document['path'] ?? null);
+      @endphp
+      @php
+      /*
+      @if($fileExists)
+      */
+      @endphp
+      <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bx bx-file {{ getIcon($document['mime_type']) }}" style="font-size: 2rem;"></i>
+              {{ $document['name'] }}
+            </h5>
+            <p class="card-text">
+              {{ __('Size') }}: {{ number_format($document['size'] / 1024, 2) }} KB <br>
+              {{ __('Created at') }}: {{ \Carbon\Carbon::createFromFormat('d/m/Y H:i', $document['created_at'])->format('d/m/Y H:i') }}
+            </p>
 
-          @if($canedit && $editingDocumentId === $document['id'])
-            <div class="mt-4">
-              <div class="d-flex align-items-center gap-3">
-                <input type="text" wire:model="title_by_collection.{{ $collection }}" class="form-control" placeholder="{{ __('Document Title') }}">
-                @error('title_by_collection.' . $collection) <span class="text-danger">{{ $message }}</span> @enderror
+            @if($canedit && $editingDocumentId === $document['id'])
+              <div class="mt-4">
+                <div class="d-flex align-items-center gap-3">
+                  <input type="text" wire:model="title_by_collection.{{ $collection }}" class="form-control" placeholder="{{ __('Document Title') }}">
+                  @error('title_by_collection.' . $collection) <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
+                <div class="mt-3 d-flex gap-2">
+                  <button wire:click="updateDocument" class="btn btn-primary d-flex align-items-center" wire:loading.attr="disabled" wire:target="updateDocument">
+                    <span wire:loading.remove wire:target="updateDocument">
+                      <i class="bx bx-save bx-sm me-2"></i>{{ __('Save') }}
+                    </span>
+                    <span wire:loading wire:target="updateDocument">
+                      <i class="spinner-border spinner-border-sm me-2" role="status"></i>{{ __('Saving...') }}
+                    </span>
+                  </button>
+                  <button wire:click="$set('editingDocumentId', null)" class="btn btn-outline-secondary d-flex align-items-center">
+                    <i class="fa fa-remove bx-sm me-2"></i>{{ __('Cancel') }}
+                  </button>
+                </div>
               </div>
-              <div class="mt-3 d-flex gap-2">
-                <button wire:click="updateDocument" class="btn btn-primary d-flex align-items-center" wire:loading.attr="disabled" wire:target="updateDocument">
-                  <span wire:loading.remove wire:target="updateDocument">
-                    <i class="bx bx-save bx-sm me-2"></i>{{ __('Save') }}
-                  </span>
-                  <span wire:loading wire:target="updateDocument">
-                    <i class="spinner-border spinner-border-sm me-2" role="status"></i>{{ __('Saving...') }}
-                  </span>
+            @elseif ($this->onlyview == false)
+              @if ($canedit)
+                <button wire:click="editDocument({{ $document['id'] }})" class="btn btn-icon item-edit" data-bs-toggle="tooltip" title="{{ __('Edit') }}">
+                  <i class="bx bx-edit bx-md"></i>
                 </button>
-                <button wire:click="$set('editingDocumentId', null)" class="btn btn-outline-secondary d-flex align-items-center">
-                  <i class="fa fa-remove bx-sm me-2"></i>{{ __('Cancel') }}
+              @endif
+              <a href="{{ $document['url'] }}" target="_blank" class="btn btn-icon" data-bs-toggle="tooltip" title="{{ __('Download') }}">
+                <i class="bx bxs-download bx-md"></i>
+              </a>
+              @if ($candelete)
+                <button wire:click.prevent="confirmarAccion({{ $document['id'] }}, 'delete', '{{ __('Are you sure you want to delete this record') }} ?', '{{ __('After confirmation, the record will be deleted') }}', '{{ __('Yes, proceed') }}')" class="btn btn-icon item-trash text-danger" data-bs-toggle="tooltip" title="{{ __('Delete') }}">
+                  <i class="bx bx-trash bx-md"></i>
                 </button>
-              </div>
-            </div>
-          @elseif ($this->onlyview == false && $canexport)
-            @if ($canedit)
-              <button wire:click="editDocument({{ $document['id'] }})" class="btn btn-icon item-edit" data-bs-toggle="tooltip" title="{{ __('Edit') }}">
-                <i class="bx bx-edit bx-md"></i>
-              </button>
+              @endif
             @endif
-            <a href="{{ $document['url'] }}" target="_blank" class="btn btn-icon" data-bs-toggle="tooltip" title="{{ __('Download') }}">
-              <i class="bx bxs-download bx-md"></i>
-            </a>
-            @if ($candelete)
-              <button wire:click.prevent="confirmarAccion({{ $document['id'] }}, 'delete', '{{ __('Are you sure you want to delete this record') }} ?', '{{ __('After confirmation, the record will be deleted') }}', '{{ __('Yes, proceed') }}')" class="btn btn-icon item-trash text-danger" data-bs-toggle="tooltip" title="{{ __('Delete') }}">
-                <i class="bx bx-trash bx-md"></i>
-              </button>
-            @endif
-          @endif
+          </div>
         </div>
       </div>
-    </div>
+      @php
+      /*
+      @endif
+      */
+      @endphp
     @endforeach
   </div>
 </div>

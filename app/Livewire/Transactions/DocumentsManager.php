@@ -33,7 +33,7 @@ class DocumentsManager extends Component
   public $canexport;
 
   protected $rules = [
-    'file' => 'required|mimes:pdf,doc,docx,xls,xlsx,jpg,png|max:102400',
+    'file' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,jpg,png|max:102400',
     'title' => 'required|string|max:100',
     'attach_to_email' => 'boolean',
   ];
@@ -41,11 +41,24 @@ class DocumentsManager extends Component
   public function messages()
   {
       return [
-          'file.max' => 'El archivo es demasiado grande. Máximo 100 MB.',
+          'file.required' => 'Debe seleccionar un archivo.',
+          'file.file' => 'El archivo seleccionado no es válido.',
           'file.mimes' => 'Solo se permiten archivos PDF, Word, Excel o imágenes.',
+          'file.max' => 'El archivo es demasiado grande. Máximo 100 MB.',
           'title.required' => 'Debe indicar un título.',
+          'title.max' => 'El título no puede superar 100 caracteres.',
       ];
   }
+
+  protected function validationAttributes(): array
+  {
+    return [
+      'file' => 'Archivo',
+      'title' => 'Título',
+      'attach_to_email' => 'Adjuntar a correo',
+    ];
+  }
+
 
   #[On('updateTransactionContext')]
   public function handleUpdateContext($data)
@@ -164,13 +177,14 @@ class DocumentsManager extends Component
     ]);
   }
 
-  public function beforedelete(){
+  public function beforedelete()
+  {
     $this->confirmarAccion(
-        null,
-        'delete',
-        '¿Está seguro que desea eliminar este registro?',
-        'Después de confirmar, el registro será eliminado',
-        __('Sí, proceed')
+      null,
+      'delete',
+      '¿Está seguro que desea eliminar este registro?',
+      'Después de confirmar, el registro será eliminado',
+      __('Sí, proceed')
     );
   }
 

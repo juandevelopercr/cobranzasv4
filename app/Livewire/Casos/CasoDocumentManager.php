@@ -36,21 +36,20 @@ class CasoDocumentManager extends Component
 
   protected function rules()
   {
-    return [
-      'file' => 'required|mimes:pdf,doc,docx,xls,xlsx,jpg,png|max:102400',
-      "inputs.file.{$this->collection}" => 'required|mimes:pdf,doc,docx,xls,xlsx,jpg,png',
-      "inputs.title.{$this->collection}" => 'required|string|max:100',
-    ];
+      return [
+          "file_by_collection.{$this->collection}" => "required|file|max:{$this->maxUploadSize}|mimes:pdf,doc,docx,xls,xlsx,jpg,png",
+          "title_by_collection.{$this->collection}" => 'required|string|max:100',
+      ];
   }
 
   public function messages()
   {
       return [
-          "file.max" => 'El archivo es demasiado grande. Máximo 100 MB.',
-          "file.mimes" => 'Solo se permiten archivos PDF, Word, Excel o imágenes.',
-          "inputs.file.{$this->collection}.max" => 'El archivo es demasiado grande. Máximo 100 MB.',
-          "inputs.file.{$this->collection}.mimes" => 'Solo se permiten archivos PDF, Word, Excel o imágenes.',
-          "inputs.title.{$this->collection}.required" => 'Debe indicar un título.',
+          "file_by_collection.{$this->collection}.required" => 'Debe seleccionar un archivo.',
+          "file_by_collection.{$this->collection}.mimes" => 'Solo se permiten archivos PDF, Word, Excel o imágenes.',
+          "file_by_collection.{$this->collection}.max" => 'El archivo es demasiado grande. Máximo 100 MB.',
+          "title_by_collection.{$this->collection}.required" => 'Debe indicar un título.',
+          "title_by_collection.{$this->collection}.max" => 'El título no puede superar 100 caracteres.',
       ];
   }
 
@@ -91,51 +90,66 @@ class CasoDocumentManager extends Component
   public function loadDocuments()
   {
     $caso = Caso::findOrFail($this->caso_id);
-    $this->documents = $caso->getMedia($this->collection)->map(function ($doc) {
-      return [
-        'id' => $doc->id,
-        'name' => $doc->name,
-        'size' => $doc->size,
-        'mime_type' => $doc->mime_type,
-        'title' => $doc->getCustomProperty('title', ''),
-        'created_at' => $doc->created_at->format('d/m/Y H:i'),
-        'url' => $doc->getUrl(),
-      ];
-    })->toArray();
+    $this->documents = $caso->getMedia($this->collection)
+      ->filter(function ($doc) {
+        // ✅ solo dejar los que realmente existen en el disco
+        return $doc->exists();
+      })
+      ->map(function ($doc) {
+        return [
+          'id'        => $doc->id,
+          'name'      => $doc->name,
+          'size'      => $doc->size,
+          'mime_type' => $doc->mime_type,
+          'title'     => $doc->getCustomProperty('title', ''),
+          'created_at' => $doc->created_at->format('d/m/Y H:i'),
+          'path'      => $doc->getPathRelativeToRoot(), // ✅ corregido: usar $doc
+          'url'       => $doc->getUrl(),
+        ];
+      })
+      ->toArray();
   }
 
   public function saveDocument()
   {
-    $file = $this->file_by_collection[$this->collection] ?? null;
-    $title = $this->title_by_collection[$this->collection] ?? null;
+      $file = $this->file_by_collection[$this->collection] ?? null;
+      $title = $this->title_by_collection[$this->collection] ?? null;
 
-    $this->validate([
-      "file_by_collection.{$this->collection}" => 'required|mimes:pdf,doc,docx,xls,xlsx,jpg,png|max:5120',
-      "title_by_collection.{$this->collection}" => 'required|string|max:100',
-    ]);
+      $this->validate(); // usa rules() dinámicas
 
-    try {
-      $caso = Caso::findOrFail($this->caso_id);
-      $media = $caso
-        ->addMedia($file->getRealPath())
-        ->usingName($title)
-        ->toMediaCollection($this->collection);
+      try {
+          $caso = Caso::findOrFail($this->caso_id);
 
-      $media->setCustomProperty('title', $title);
-      $media->save();
+          $media = $caso
+              ->addMedia($file->getRealPath())
+              ->usingName($title)
+              ->toMediaCollection($this->collection);
 
-      $this->dispatch('show-notification', ['type' => 'success', 'message' => __('The record has been updated')]);
+          $media->setCustomProperty('title', $title);
+          $media->save();
 
-      // Limpiar solo los datos de esta colección
-      $this->file_by_collection[$this->collection] = null;
-      $this->title_by_collection[$this->collection] = null;
+          $this->dispatch('show-notification', [
+              'type' => 'success',
+              'message' => __('The record has been updated')
+          ]);
 
-      $this->loadDocuments();
-    } catch (FileUnacceptableForCollection $e) {
-      $this->dispatch('show-notification', ['type' => 'error', 'message' => __('The file type is not accepted') . ' ' . $e->getMessage()]);
-    } catch (\Exception $e) {
-      $this->dispatch('show-notification', ['type' => 'error', 'message' => __('An error occurred while updating the registro') . ' ' . $e->getMessage()]);
-    }
+          // Limpiar campos de esta colección
+          $this->file_by_collection[$this->collection] = null;
+          $this->title_by_collection[$this->collection] = null;
+
+          $this->loadDocuments();
+
+      } catch (FileUnacceptableForCollection $e) {
+          $this->dispatch('show-notification', [
+              'type' => 'error',
+              'message' => __('The file type is not accepted') . ' ' . $e->getMessage()
+          ]);
+      } catch (\Exception $e) {
+          $this->dispatch('show-notification', [
+              'type' => 'error',
+              'message' => __('An error occurred while updating the record') . ' ' . $e->getMessage()
+          ]);
+      }
   }
 
   public function editDocument($documentId)
@@ -179,13 +193,14 @@ class CasoDocumentManager extends Component
     ]);
   }
 
-  public function beforedelete(){
+  public function beforedelete()
+  {
     $this->confirmarAccion(
-        null,
-        'delete',
-        '¿Está seguro que desea eliminar este registro?',
-        'Después de confirmar, el registro será eliminado',
-        __('Sí, proceed')
+      null,
+      'delete',
+      '¿Está seguro que desea eliminar este registro?',
+      'Después de confirmar, el registro será eliminado',
+      __('Sí, proceed')
     );
   }
 
