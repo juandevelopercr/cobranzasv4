@@ -274,9 +274,20 @@ class TransactionLine extends Model
   public function updateTransactionTotals($currency)
   {
     //$currency = $this->transaction->currency_id;
-    $changeType = in_array($this->transaction->document_type, [Transaction::PROFORMA, Transaction::NOTACREDITO, Transaction::NOTADEBITO])
-      ? $this->transaction->proforma_change_type
-      : $this->transaction->factura_change_type;
+    if (in_array($this->transaction->document_type, [
+        Transaction::PROFORMA,
+        Transaction::NOTACREDITO,
+        Transaction::NOTADEBITO
+    ])) {
+        // PRIORIDAD → proforma_change_type, si no, factura_change_type
+        $changeType = $this->transaction->proforma_change_type
+            ?? $this->transaction->factura_change_type;
+    } else {
+        // PRIORIDAD → factura_change_type, si no, proforma_change_type
+        $changeType = $this->transaction->factura_change_type
+            ?? $this->transaction->proforma_change_type;
+    }
+
     $bank_id = $this->transaction->bank_id;
     $discounts = !is_null($this->discounts) ? $this->discounts : collect([]);
     //$taxes = !is_null($this->taxes) ? $this->taxes : collect([]);
