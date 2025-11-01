@@ -274,8 +274,8 @@ class ComisionReport extends BaseReport
             }
         }
 
-        if (!empty($this->filters['filter_type'])) {
-          $query->where('tc.comision_pagada', '=', $this->filters['filter_type']);
+        if (isset($this->filters['filter_type']) && $this->filters['filter_type'] !== '') {
+            $query->where('tc.comision_pagada', '=', $this->filters['filter_type']);
         }
 
         if (!empty($this->filters['filter_currency'])) {
