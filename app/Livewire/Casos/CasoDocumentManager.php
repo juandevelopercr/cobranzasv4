@@ -3,12 +3,14 @@
 namespace App\Livewire\Casos;
 
 use App\Models\Caso;
-use Illuminate\Database\QueryException;
-use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\Attributes\On;
 use Livewire\WithFileUploads;
-use Spatie\MediaLibrary\MediaCollections\Exceptions\FileUnacceptableForCollection;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileUnacceptableForCollection;
 
 class CasoDocumentManager extends Component
 {
@@ -90,24 +92,89 @@ class CasoDocumentManager extends Component
   public function loadDocuments()
   {
     $caso = Caso::findOrFail($this->caso_id);
+
     $this->documents = $caso->getMedia($this->collection)
-      ->filter(function ($doc) {
-        // ✅ solo dejar los que realmente existen en el disco
-        return $doc->exists();
-      })
-      ->map(function ($doc) {
-        return [
-          'id'        => $doc->id,
-          'name'      => $doc->name,
-          'size'      => $doc->size,
-          'mime_type' => $doc->mime_type,
-          'title'     => $doc->getCustomProperty('title', ''),
-          'created_at' => $doc->created_at->format('d/m/Y H:i'),
-          'path'      => $doc->getPathRelativeToRoot(), // ✅ corregido: usar $doc
-          'url'       => $doc->getUrl(),
-        ];
-      })
-      ->toArray();
+        ->map(function ($doc) {
+
+            $relativePath = $doc->getPathRelativeToRoot();
+            $exists = Storage::disk('public')->exists($relativePath);
+
+            // ✅ Si NO existe => buscar en documentsOlds
+            if (! $exists) {
+
+                $oldPath = 'documentsOlds/' . $doc->file_name;
+
+                if (Storage::disk('public')->exists($oldPath)) {
+
+                    Log::info("Documento encontrado en carpeta antigua", [
+                        'media_id'      => $doc->id,
+                        'file_name'     => $doc->file_name,
+                        'original_path' => $relativePath,
+                        'fallback_path' => $oldPath
+                    ]);
+
+                    // ✅ RESTAURAR ARCHIVO A LA UBICACIÓN ORIGINAL
+                    $targetFolder = dirname($relativePath);
+                    $targetPath   = $targetFolder . '/' . $doc->file_name;
+
+                    Storage::disk('public')->makeDirectory($targetFolder);
+                    Storage::disk('public')->move($oldPath, $targetPath);
+
+                    Log::info("Documento restaurado en ubicación esperada", [
+                        'media_id'     => $doc->id,
+                        'file_name'    => $doc->file_name,
+                        'new_location' => $targetPath
+                    ]);
+
+                    $relativePath = $targetPath;
+                } else {
+
+                    Log::warning("Documento no existe en ninguno de los discos", [
+                        'media_id' => $doc->id,
+                        'file_name' => $doc->file_name,
+                        'original_path' => $relativePath,
+                        'fallback_path' => $oldPath
+                    ]);
+
+                    $url = null;
+                }
+            }
+
+            // ✅ URL final
+            $url = Storage::disk('public')->exists($relativePath)
+                ? Storage::disk('public')->url($relativePath)
+                : null;
+
+            // ✅ Actualizar tamaño real en BD
+            $absolutePath = Storage::disk('public')->path($relativePath);
+
+            if (file_exists($absolutePath)) {
+                $realSize = filesize($absolutePath);
+
+                if ($realSize != $doc->size) {
+                    $doc->size = $realSize;
+                    $doc->save();
+
+                    Log::info("Tamaño actualizado en BD", [
+                        'media_id' => $doc->id,
+                        'file_name' => $doc->file_name,
+                        'new_size' => $realSize
+                    ]);
+                }
+            }
+
+            return [
+                'id'        => $doc->id,
+                'name'      => $doc->name,
+                'size'      => $doc->size,
+                'mime_type' => $doc->mime_type,
+                'title'     => $doc->getCustomProperty('title', ''),
+                'created_at' => $doc->created_at->format('d/m/Y H:i'),
+                'path'      => $relativePath,
+                'url'       => $url,
+            ];
+        })
+        ->toArray();
   }
 
   public function saveDocument()
