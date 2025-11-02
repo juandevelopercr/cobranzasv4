@@ -13,6 +13,7 @@ use App\Models\CasoEstado;
 use App\Models\CasoProceso;
 use Livewire\Attributes\On;
 use App\Models\CasoProducto;
+use App\Models\CasoServicio;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
@@ -1181,23 +1182,29 @@ class CasoManager extends BaseComponent
      $this->action = 'list';
   }
 
-	protected function setCliente(&$caso, &$errores, $fila)
-	{
-		if (!empty($caso->contact_id)) {
-			// Clientes
-			$cliente = Contact::where(['name' => $caso->contact_id])->asArray()->one();
-			if (!empty($cliente))
-				$caso->contact_id = $cliente['id'];
-			else
-        $errores[] = "Fila {$fila}: No se ha encontrado el cliente '{$caso->contac_id}'.";
-		}
-	}
+  protected function setCliente(&$caso, &$errores, $fila)
+  {
+      if (!empty($caso->contact_id)) {
+
+          // Buscar cliente por nombre
+          $cliente = Contact::where('name', $caso->contact_id)->first();
+
+          if ($cliente) {
+              $caso->contact_id = $cliente->id;
+          } else {
+              $errores[] = "Fila {$fila}: No se ha encontrado el cliente '{$caso->contact_id}'.";
+          }
+      }
+  }
 
   protected function setProducto(&$caso, &$errores, $fila)
   {
       if (!empty($caso->product_id)) {
-          $producto = CasoProducto::whereHas('bank', fn($q) => $q->where('bank_id', $caso->bank_id))
-              ->where('nombre', trim($caso->product_id))
+
+          $producto = CasoProducto::where('nombre', trim($caso->product_id))
+              ->whereHas('banks', function ($q) use ($caso) {
+                  $q->where('bank_id', $caso->bank_id);
+              })
               ->first();
 
           if ($producto) {
@@ -1219,6 +1226,32 @@ class CasoManager extends BaseComponent
               $caso->proceso_id = $proceso->id;
           } else {
               $errores[] = "Fila {$fila}: No se ha encontrado el proceso '{$caso->proceso_id}'.";
+          }
+      }
+  }
+
+  public function setServicioCapturador(&$caso, &$errores, $fila)
+  {
+      if (!empty($caso->caso_servicio_capturador_id)) {
+          $data = CasoServicio::where('nombre', $caso->caso_servicio_capturador_id)->first();
+
+          if ($data) {
+              $caso->caso_servicio_capturador_id = $data->id;
+          } else {
+              $errores[] = "Fila {$fila}: No se ha encontrado el servicio del capturador '{$caso->caso_servicio_capturador_id}'.";
+          }
+      }
+  }
+
+  public function setServicioNotificador(&$caso, &$errores, $fila)
+  {
+      if (!empty($caso->caso_servicio_notificador_id)) {
+          $data = CasoServicio::where('nombre', $caso->caso_servicio_notificador_id)->first();
+
+          if ($data) {
+              $caso->caso_servicio_notificador_id = $data->id;
+          } else {
+              $errores[] = "Fila {$fila}: No se ha encontrado el servicio del notificador '{$caso->caso_servicio_notificador_id}'.";
           }
       }
   }

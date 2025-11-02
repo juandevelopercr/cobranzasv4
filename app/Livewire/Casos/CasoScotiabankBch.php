@@ -1407,157 +1407,197 @@ class CasoScotiabankBch extends CasoManager
 
   public function importar()
   {
-      $this->resetErrorBag();
-      $this->message = null;
-      $this->tipoMessage = 'info';
+    $this->resetErrorBag();
+    $this->message = null;
+    $this->tipoMessage = 'info';
 
-      if (empty($this->expectedColumns)) {
-          $this->addError('archivo', 'No hay definición de columnas para el banco seleccionado.');
-          return;
-      }
+    if (empty($this->expectedColumns)) {
+        $this->addError('archivo', 'No hay definición de columnas para el banco seleccionado.');
+        return;
+    }
 
-      if (!$this->archivo) {
-          $this->addError('archivo', 'Debe seleccionar un archivo Excel.');
-          return;
-      }
+    if (!$this->archivo) {
+        $this->addError('archivo', 'Debe seleccionar un archivo Excel.');
+        return;
+    }
 
-      $extension = strtolower($this->archivo->getClientOriginalExtension());
-      if (!in_array($extension, ['xlsx', 'xls'])) {
-          $this->addError('archivo', 'El archivo debe ser .xlsx o .xls');
-          return;
-      }
+    $extension = strtolower($this->archivo->getClientOriginalExtension());
+    if (!in_array($extension, ['xlsx', 'xls'])) {
+        $this->addError('archivo', 'El archivo debe ser .xlsx o .xls');
+        return;
+    }
 
-      // Leer el archivo como array
-      $array = Excel::toArray([], $this->archivo->getRealPath());
-      $sheet = $array[0] ?? null;
+    // Leer Excel
+    $array = Excel::toArray([], $this->archivo->getRealPath());
+    $sheet = $array[0] ?? null;
 
-      if (!$sheet || count($sheet) === 0) {
-          $this->addError('archivo', 'El archivo está vacío o no tiene filas.');
-          return;
-      }
+    if (!$sheet || count($sheet) === 0) {
+        $this->addError('archivo', 'El archivo está vacío o no tiene filas.');
+        return;
+    }
 
-      // Normalizar encabezados
-      $headerRow = $sheet[0];
-      $normalize = fn($h) => mb_strtolower(trim(str_replace("\xC2\xA0", ' ', (string)$h)));
-      $headersNormalized = array_map($normalize, $headerRow);
-      $expectedHeaders = array_keys($this->expectedColumns);
-      $expectedNormalized = array_map($normalize, $expectedHeaders);
+    // Normalizar encabezados
+    $headerRow = $sheet[0];
+    $headersNormalized = array_map([ImportColumns::class, 'normalizeHeader'], $headerRow);
+    $expectedHeaders = array_keys($this->expectedColumns);
+    $expectedNormalized = array_map([ImportColumns::class, 'normalizeHeader'], $expectedHeaders);
 
-      // Mapear columnas
-      $mapping = [];
-      $missing = [];
-      foreach ($expectedNormalized as $i => $expNorm) {
-          $foundIndex = array_search($expNorm, $headersNormalized, true);
-          if ($foundIndex === false) {
-              $missing[] = $expectedHeaders[$i];
-          } else {
-              $mapping[$expectedHeaders[$i]] = $foundIndex;
-          }
-      }
+    // Mapeo
+    $mapping = [];
+    $missing = [];
 
-      if (!empty($missing)) {
-          $this->tipoMessage = 'danger';
-          $this->message = "Faltan columnas obligatorias: <b>" . implode(', ', $missing) . "</b>";
-          return;
-      }
+    foreach ($expectedNormalized as $i => $expNorm) {
+        $foundIndex = array_search($expNorm, $headersNormalized, true);
+        if ($foundIndex === false) {
+            $missing[] = $expectedHeaders[$i];
+        } else {
+            $mapping[$expectedHeaders[$i]] = $foundIndex;
+        }
+    }
 
-      $casosParaGuardar = [];
-      $errores = [];
+    if (!empty($missing)) {
+        $this->tipoMessage = 'danger';
+        $this->message = "Faltan columnas obligatorias: <b>" . implode(', ', $missing) . "</b>";
+        return;
+    }
 
-      // Procesar filas
-      for ($r = 1; $r < count($sheet); $r++) {
-          $row = $sheet[$r];
-          if (empty(array_filter($row, fn($c) => !is_null($c) && trim((string)$c) !== ''))) {
+    $casosParaGuardar = [];
+    $errores = [];
+
+    // Procesar filas
+    $nuevos = 0;
+    $actualizados = 0;
+    for ($r = 1; $r < count($sheet); $r++) {
+        $row = $sheet[$r];
+
+        // Fila vacía = skip
+        if (empty(array_filter($row, fn($c) => !is_null($c) && trim((string)$c) !== ''))) {
+            continue;
+        }
+
+        // Verificar columna Número
+        if (!isset($mapping['Número'])) {
+            $errores[] = "Fila {$r}: columna 'Número' no existe en el Excel.";
+            continue;
+        }
+
+        $pnumero = trim($row[$mapping['Número']] ?? null);
+
+        // Ver si existe el caso
+        $caso = null;
+        if ($pnumero) {
+            $caso = \App\Models\Caso::where([
+                'pnumero' => $pnumero,
+            ])->first();
+
+            if ($caso && $caso->bank_id != Bank::SCOTIABANKBCH){
+              $errores[] = "Fila {$r}: columna 'Número' existe en un caso del banco: ". $caso->bank->name;
               continue;
-          }
+            }
+        }
 
-          // Identificar caso existente o crear nuevo
-          $pnumero = trim($row[$mapping['numero']] ?? null);
-          $caso = null;
-          if ($pnumero) {
-              $caso = \App\Models\Caso::where([
-                  'pnumero' => $pnumero,
-                  'bank_id' => Bank::SCOTIABANKBCH
-              ])->first();
-          }
-          if (!$caso) {
-              $caso = new \App\Models\Caso();
-              $caso->bank_id = Bank::SCOTIABANKBCH;
-              $caso->fecha_creacion = now();
-          }
+        $esNuevo = false;
+        // ✅ Si existe → actualizar
+        if ($caso) {
+            // Aquí actualizas los campos normalmente
+        } else {
+            // ✅ Si NO existe → crear
+            $caso = new \App\Models\Caso();
+            $caso->bank_id = Bank::SCOTIABANKBCH;
+            $caso->fecha_creacion = now();
+            $esNuevo = true;
+        }
 
-          // Asignar valores de columnas
-          foreach ($this->expectedColumns as $header => $config) {
-              $campo = $config['campo'];
-              $tipo = $config['tipo'];
-              $colIndex = $mapping[$header] ?? null;
-              $valor = $colIndex !== null ? $row[$colIndex] : null;
+        // Asignar valores
+        foreach ($this->expectedColumns as $header => $config) {
+            $campo = $config['campo'];
+            $tipo = $config['tipo'];
+            $colIndex = $mapping[$header] ?? null;
+            $valor = $colIndex !== null ? $row[$colIndex] : null;
 
-              if ($tipo === 'date' && $valor) {
-                  try {
-                      if ($valor instanceof \Carbon\Carbon) {
-                          $valor = $valor->format('Y-m-d');
-                      } else {
-                          $valor = date('Y-m-d', strtotime($valor));
-                      }
-                  } catch (\Throwable $e) {
-                      $valor = null;
-                  }
-              } elseif ($tipo === 'int') {
-                  $valor = (int)$valor;
-              } elseif ($tipo === 'float') {
-                  $valor = (float)$valor;
-              } elseif ($tipo === 'string') {
-                  $valor = trim((string)$valor);
-              }
+            if ($tipo === 'date' && $valor) {
+                try {
+                    if ($valor instanceof \Carbon\Carbon) {
+                        $valor = $valor->format('Y-m-d');
+                    } else {
+                        $valor = date('Y-m-d', strtotime($valor));
+                    }
+                } catch (\Throwable $e) {
+                    $valor = null;
+                }
+            } elseif ($tipo === 'int') {
+                $valor = is_numeric($valor) ? (int)$valor : null;
+            } elseif ($tipo === 'float') {
+                $valor = is_numeric($valor) ? (float)$valor : null;
+            } elseif ($tipo === 'string') {
+                $valor = trim((string)$valor);
+                if ($valor === '') {
+                    $valor = null;
+                }
+            }
 
-              $caso->$campo = $valor;
-          }
+            $caso->$campo = $valor;
+        }
 
-          // Validación de llaves foráneas y campos obligatorios
-          $this->setCliente($caso, $errores, $r);
-          $this->setProducto($caso, $errores, $r);
-          $this->setProceso($caso, $errores, $r);
-          $this->setMoneda($caso);
-          $this->setEstadoProcesal($caso, $errores, $r);
+        // Validaciones extra
+        $this->setCliente($caso, $errores, $r);
+        $this->setProducto($caso, $errores, $r);
+        $this->setProceso($caso, $errores, $r);
+        $this->setMoneda($caso);
+        $this->setEstadoProcesal($caso, $errores, $r);
 
-          if (empty($caso->product_id) || empty($caso->proceso_id)) {
-              $errores[] = "Fila " . ($r + 1) . ": 'Producto' o 'Proceso' vacíos.";
-              continue;
-          }
+        if (empty($caso->product_id) || empty($caso->proceso_id)) {
+            $errores[] = "Fila " . ($r + 1) . ": 'Producto' o 'Proceso' vacíos.";
+            continue;
+        }
 
-          $casosParaGuardar[] = $caso;
-      }
+        $casosParaGuardar[] = $caso;
+    }
 
-      if (!empty($errores)) {
-          $this->tipoMessage = 'danger';
-          $this->message = "Se encontraron errores, no se ha guardado ningún registro:<br>" . implode('<br>', $errores);
-          return;
-      }
+    // Mostrar errores si hay
+    if (!empty($errores)) {
+        $this->tipoMessage = 'danger';
+        $this->message = "Se encontraron errores, no se ha guardado ningún registro:<br>" . implode('<br>', $errores);
+        return;
+    }
 
-      // Guardar casos en la base de datos
-      $filasGuardadas = 0;
-      if (!empty($casosParaGuardar)) {
-          DB::beginTransaction();
-          try {
-              foreach ($casosParaGuardar as $caso) {
-                  if (!$caso->exists) {
-                      $caso->fecha_creacion = now();
-                  }
-                  $caso->fecha_importacion = now();
-                  $caso->save();
-                  $filasGuardadas++;
-              }
+    // Si no hay nuevos casos
+    if (empty($casosParaGuardar)) {
+        $this->tipoMessage = 'warning';
+        $this->message = "No se insertaron registros nuevos.";
+        return;
+    }
 
-              DB::commit();
-              $this->tipoMessage = 'success';
-              $this->message = "Se importaron correctamente <b>{$filasGuardadas}</b> registros.";
-          } catch (\Throwable $e) {
-              DB::rollBack();
-              $this->tipoMessage = 'danger';
-              $this->message = "Ocurrió un error al guardar los registros: " . $e->getMessage();
-          }
-      }
+    // Guardar
+    $filasGuardadas = 0;
+    DB::beginTransaction();
+    try {
+        foreach ($casosParaGuardar as $caso) {
+            $esNuevo = !$caso->exists;  // <- detecta si es insert o update
+
+            $caso->fecha_importacion = now();
+            $caso->save();
+
+            if ($esNuevo) {
+                $nuevos++;
+            } else {
+                $actualizados++;
+            }
+        }
+
+        DB::commit();
+
+        $this->tipoMessage = 'success';
+        $this->message =
+            "Importación exitosa:<br>
+            ✅ Nuevos: <b>{$nuevos}</b><br>
+            🔁 Actualizados: <b>{$actualizados}</b><br>
+            📄 Total procesados: <b>" . ($nuevos + $actualizados) . "</b>";
+    } catch (\Throwable $e) {
+        DB::rollBack();
+        $this->tipoMessage = 'danger';
+        $this->message = "Ocurrió un error al guardar los registros: " . $e->getMessage();
+    }
   }
 
   public function descargarPlantilla()

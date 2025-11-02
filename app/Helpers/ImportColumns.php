@@ -6,8 +6,23 @@ use App\Models\Bank;
 
 class ImportColumns
 {
+
+     /**
+     * Normaliza los encabezados de columnas eliminando espacios,
+     * caracteres invisibles y pasando todo a minúsculas.
+     */
+    public static function normalizeHeader($h)
+    {
+        return mb_strtolower(
+            trim(
+                str_replace("\xC2\xA0", ' ', (string) $h)
+            )
+        );
+    }
+
     const COLUMNAS_SANJOSE = [
-        'numero'=> ['campo'=>'pnumero', 'tipo'=>'string'],
+        'Número'=> ['campo'=>'pnumero', 'tipo'=>'string'],
+        'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
         'Producto' => ['campo' => 'product_id', 'tipo' => 'string'],
         'Proceso' => ['campo' => 'proceso_id', 'tipo' => 'string'],
         'Operación' => ['campo' => 'pnumero_operacion1', 'tipo' => 'string'],
@@ -35,10 +50,17 @@ class ImportColumns
         'F. Terminado' => ['campo' => 'afecha_terminacion', 'tipo' => 'date'],
         'Estatus de Operación' => ['campo' => 'pestatus_operacion', 'tipo' => 'string'],
         'Comentarios OCE' => ['campo' => 'ncomentarios', 'tipo' => 'string'],
+        'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
+        'Nombre del capturador' => ['campo' => 'nombre_capturador', 'tipo' => 'string'],
+        'Servicio del Capturador' => ['campo' => 'caso_servicio_capturador_id', 'tipo' => 'string'],
+        'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
+        'Nombre del notificador' => ['campo' => 'nombre_notificador', 'tipo' => 'string'],
+        'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 
     const COLUMNAS_DAVIVIENDA = [
-                        'numero'=> ['campo'=>'pnumero', 'tipo'=>'string'],
+                        'Número'=> ['campo'=>'pnumero', 'tipo'=>'string'],
+                        'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
                         'Fecha de Asignación de caso' => ['campo'=>'pfecha_asignacion_caso', 'tipo'=>'date'],
                         'Número Operación1'=>['campo'=>'pnumero_operacion1', 'tipo'=>'string'],
                         'Número Operación2'=>['campo'=>'pnumero_operacion2', 'tipo'=>'string'],
@@ -49,7 +71,7 @@ class ImportColumns
                         'Número de cédula jurídica'=>['campo'=>'pnumero_cedula_juridica', 'tipo'=>'string'],
                         'Datos Codeudor1 (Bullet Point)'=>['campo'=>'pdatos_codeudor1', 'tipo'=>'string'],
                         'Datos de los Fiadores'=>['campo'=>'pdatos_fiadores', 'tipo'=>'string'],
-                        'Producto'=>['campo'=>'producto_id', 'tipo'=>'string'],
+                        'Producto'=>['campo'=>'product_id', 'tipo'=>'string'],
                         'Tipo de Proceso'=>['campo'=>'proceso_id', 'tipo'=>'string'],
                         'Tipo de moneda'=>['campo'=>'currency_id', 'tipo'=>'string'],
                         'Expectativa Recuperación'=>['campo'=>'pexpectativa_recuperacion_id', 'tipo'=>'string'],
@@ -101,13 +123,19 @@ class ImportColumns
                         'Monto Retenc Dólares'=>['campo'=>'pmonto_retencion_dolares', 'tipo'=>'string'],
                         'Fecha de activación'=>['campo'=>'fecha_activacion', 'tipo'=>'date'],
                         'Código de activación'=>['campo'=>'codigo_activacion', 'tipo'=>'string'],
+                        'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
+                        'Nombre del capturador' => ['campo' => 'nombre_capturador', 'tipo' => 'string'],
+                        'Servicio del Capturador' => ['campo' => 'caso_servicio_capturador_id', 'tipo' => 'string'],
+                        'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
+                        'Nombre del notificador' => ['campo' => 'nombre_notificador', 'tipo' => 'string'],
+                        'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
                     ];
 
     const COLUMNAS_SCOTIABANKCR = [
-        'numero'=> ['campo'=>'pnumero', 'tipo'=>'string'],
+        'Número'=> ['campo'=>'pnumero', 'tipo'=>'string'],
         'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
         'Número Operación1'=>['campo'=>'pnumero_operacion1', 'tipo'=>'string'],
-        'Producto'=>['campo'=>'producto_id', 'tipo'=>'string'],
+        'Producto'=>['campo'=>'product_id', 'tipo'=>'string'],
         'PROCESO'=>['campo'=>'proceso_id', 'tipo'=>'string'],
         'Nombre del Demandado'=>['campo'=>'pnombre_demandado', 'tipo'=>'string'],
         'Número de Cédula del demandado'=>['campo'=>'pnumero_cedula', 'tipo'=>'string'],
@@ -140,13 +168,20 @@ class ImportColumns
         'Fecha de Pruebas'=>['campo'=>'fecha_pruebas', 'tipo'=>'date'],
         'Motivo de Terminación'=>['campo'=>'motivo_terminacion', 'tipo'=>'string'],
         'Honorarios Legales Dólares'=>['campo'=>'honorarios_legales_dolares', 'tipo'=>'string'],
+        'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
+        'Nombre del capturador' => ['campo' => 'nombre_capturador', 'tipo' => 'string'],
+        'Servicio del Capturador' => ['campo' => 'caso_servicio_capturador_id', 'tipo' => 'string'],
+        'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
+        'Nombre del notificador' => ['campo' => 'nombre_notificador', 'tipo' => 'string'],
+        'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 
 
     const COLUMNAS_TERCEROS = [
-        'numero'=> ['campo'=>'pnumero', 'tipo'=>'string'],
+        'Número'=> ['campo'=>'pnumero', 'tipo'=>'string'],
+        'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
         'SUBCIDIARIA'=>['campo'=>'psubsidiaria', 'tipo'=>'string'],
-        'TIPO PRODUCTO'=>['campo'=>'producto_id', 'tipo'=>'string'],
+        'TIPO PRODUCTO'=>['campo'=>'product_id', 'tipo'=>'string'],
         'PROCESO'=>['campo'=>'proceso_id', 'tipo'=>'string'],
         'Nombre del Demandado'=>['campo'=>'pnombre_demandado', 'tipo'=>'string'],
         'Número de Cédula del demandado'=>['campo'=>'pnumero_cedula', 'tipo'=>'string'],
@@ -173,10 +208,17 @@ class ImportColumns
         'Monto Incobrable'=>['campo'=>'amonto_incobrable', 'tipo'=>'string'],
         'Contacto telefónico'=>['campo'=>'acontacto_telefonico', 'tipo'=>'string'],
         'Correo electrónico'=>['campo'=>'acorreo', 'tipo'=>'string'],
+        'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
+        'Nombre del capturador' => ['campo' => 'nombre_capturador', 'tipo' => 'string'],
+        'Servicio del Capturador' => ['campo' => 'caso_servicio_capturador_id', 'tipo' => 'string'],
+        'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
+        'Nombre del notificador' => ['campo' => 'nombre_notificador', 'tipo' => 'string'],
+        'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 
     const COLUMNAS_LAFISE = [
-        'numero'=> ['campo'=>'pnumero', 'tipo'=>'string'],
+        'Número'=> ['campo'=>'pnumero', 'tipo'=>'string'],
+        'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
         'Número Operación1'=>['campo'=>'pnumero_operacion1', 'tipo'=>'string'],
         'Número de Tarjeta'=>['campo'=>'pnumero_tarjeta', 'tipo'=>'string'],
         'Nombre del Demandado'=>['campo'=>'pnombre_demandado', 'tipo'=>'string'],
@@ -185,7 +227,7 @@ class ImportColumns
         'Número de cédula Jurídica'=>['campo'=>'pnumero_cedula_juridica', 'tipo'=>'string'],
         'Datos Codeudor1 (Bullet Point)'=>['campo'=>'pdatos_codeudor1', 'tipo'=>'string'],
         'Datos de los Fiadores'=>['campo'=>'pdatos_codeudor2', 'tipo'=>'string'],
-        'PRODUCTO'=>['campo'=>'producto_id', 'tipo'=>'string'],
+        'PRODUCTO'=>['campo'=>'product_id', 'tipo'=>'string'],
         'Tipo de Proceso'=>['campo'=>'proceso_id', 'tipo'=>'string'],
         'Tipo de moneda'=>['campo'=>'currency_id', 'tipo'=>'string'],
         'Expectativa Recuperación'=>['campo'=>'pexpectativa_recuperacion_id', 'tipo'=>'string'],
@@ -231,15 +273,22 @@ class ImportColumns
         'Gastos Legales'=>['campo'=>'agastos_legales', 'tipo'=>'string'],
         'Honorarios totales'=>['campo'=>'ahonorarios_totales', 'tipo'=>'string'],
         'Bufete'=>['campo'=>'abufete', 'tipo'=>'string'],
+        'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
+        'Nombre del capturador' => ['campo' => 'nombre_capturador', 'tipo' => 'string'],
+        'Servicio del Capturador' => ['campo' => 'caso_servicio_capturador_id', 'tipo' => 'string'],
+        'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
+        'Nombre del notificador' => ['campo' => 'nombre_notificador', 'tipo' => 'string'],
+        'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 
     const COLUMNAS_FINANCIERACAFSA = [
-        'numero'=> ['campo'=>'pnumero', 'tipo'=>'string'],
+        'Número'=> ['campo'=>'pnumero', 'tipo'=>'string'],
+        'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
         'Número de operación'=>['campo'=>'pnumero_operacion1', 'tipo'=>'string'],
         'Apellidos y Nombre del Deudor'=>['campo'=>'pnombre_demandado', 'tipo'=>'string'],
         'Documento de Identificación'=>['campo'=>'pnumero_cedula', 'tipo'=>'string'],
         'Tipo de Proceso'=>['campo'=>'proceso_id', 'tipo'=>'string'],
-        'PRODUCTO'=>['campo'=>'producto_id', 'tipo'=>'string'],
+        'PRODUCTO'=>['campo'=>'product_id', 'tipo'=>'string'],
         'Número de expediente'=>['campo'=>'pnumero_expediente_judicial', 'tipo'=>'string'],
         'Despacho Judicial'=>['campo'=>'pdespacho_judicial_juzgado', 'tipo'=>'string'],
         'Fecha de ingreso a cobro judicial'=>['campo'=>'pfecha_ingreso_cobro_judicial', 'tipo'=>'date'],
@@ -261,13 +310,20 @@ class ImportColumns
         'Saldo Capital de la Operación'=>['campo'=>'asaldo_capital_operacion', 'tipo'=>'string'],
         'Probabilidad de recuperación'=>['campo'=>'pexpectativa_recuperacion_id', 'tipo'=>'string'],
         'Mes de avance judicial'=>['campo'=>'ames_avance_judicial', 'tipo'=>'string'],
+        'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
+        'Nombre del capturador' => ['campo' => 'nombre_capturador', 'tipo' => 'string'],
+        'Servicio del Capturador' => ['campo' => 'caso_servicio_capturador_id', 'tipo' => 'string'],
+        'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
+        'Nombre del notificador' => ['campo' => 'nombre_notificador', 'tipo' => 'string'],
+        'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 
     const COLUMNAS_BANCOGENERAL = [
-        'numero'=> ['campo'=>'pnumero', 'tipo'=>'string'],
+        'Número'=> ['campo'=>'pnumero', 'tipo'=>'string'],
+        'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
         'Número Operación1'=>['campo'=>'pnumero_operacion1', 'tipo'=>'string'],
         'Nombre del Demandado'=>['campo'=>'pnombre_demandado', 'tipo'=>'string'],
-        'Producto'=>['campo'=>'producto_id', 'tipo'=>'string'],
+        'Producto'=>['campo'=>'product_id', 'tipo'=>'string'],
         'Proceso'=>['campo'=>'proceso_id', 'tipo'=>'string'],
         'Despacho Judicial Juzgado'=>['campo'=>'pdespacho_judicial_juzgado', 'tipo'=>'string'],
         'Número Expediente Judicial'=>['campo'=>'pnumero_expediente_judicial', 'tipo'=>'string'],
@@ -283,6 +339,12 @@ class ImportColumns
         'Monto Estimación Demanda'=>['campo'=>'pmonto_estimacion_demanda', 'tipo'=>'string'],
         'ESTIMACION DE GASTOS'=>['campo'=>'bgastos_proceso', 'tipo'=>'string'],
         'Fecha de Terminación'=>['campo'=>'afecha_terminacion', 'tipo'=>'date'],
+        'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
+        'Nombre del capturador' => ['campo' => 'nombre_capturador', 'tipo' => 'string'],
+        'Servicio del Capturador' => ['campo' => 'caso_servicio_capturador_id', 'tipo' => 'string'],
+        'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
+        'Nombre del notificador' => ['campo' => 'nombre_notificador', 'tipo' => 'string'],
+        'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 
     //Bank::BANCODECOSTARICA => self::COLUMNAS_BANCODECOSTARICA,

@@ -2684,5 +2684,4 @@ class Helpers
     $cuenta->saldo = $saldoActual;
     $cuenta->save();
   }
-
 }
