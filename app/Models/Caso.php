@@ -13,10 +13,19 @@ use App\Models\CasoProducto;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Bank;
+use Illuminate\Support\Facades\DB;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Caso extends Model
+class Caso extends Model implements HasMedia
 {
-  use HasFactory, SoftDeletes;
+  use InteractsWithMedia;
+  use LogsActivity;
+  use SoftDeletes;
 
   protected $table = 'casos';
 
@@ -424,10 +433,71 @@ class Caso extends Model
     return $this->belongsTo(Contact::class);
   }
 
+  public function pendientes()
+  {
+    return $this->hasMany(CasoSituacion::class, 'caso_id')
+      ->where('tipo', 'PENDIENTE');
+  }
+
+  public function defectuosos()
+  {
+    return $this->hasMany(CasoSituacion::class, 'caso_id')
+      ->where('tipo', 'DEFECTUOSO');
+  }
+
   // app/Models/Caso.php
   public function fechasRemate()
   {
       return $this->hasMany(CasoFechaRemate::class);
+  }
+
+  public function registerMediaCollections(): void
+  {
+    $this->addMediaCollection('casos_general_documents')
+      ->useDisk('public')
+      ->acceptsMimeTypes([
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'image/jpeg',
+        'image/png'
+      ]);
+    //->singleFile();  // Evita múltiples archivos si es necesario (quítalo si no aplica)
+
+    $this->addMediaCollection('casos_bank_documents')
+      ->useDisk('public')
+      ->acceptsMimeTypes([
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'image/jpeg',
+        'image/png'
+      ]);
+    //->singleFile();  // Evita múltiples archivos si es necesario (quítalo si no aplica)
+  }
+
+  public function getActivitylogOptions(): LogOptions
+  {
+    return LogOptions::defaults()
+      //->logOnly(['*'])
+      ->logOnly(['estado_id']) // solo este campo nos interesa
+      ->setDescriptionForEvent(fn(string $eventName) => __('fields.caso_event', ['event' => __('fields.event_' . $eventName)]))
+      ->useLogName('caso')
+      ->logOnlyDirty()
+      ->dontSubmitEmptyLogs();
+    // Chain fluent methods for configuration options
+  }
+
+  public function tapActivity(Activity $activity, string $eventName)
+  {
+    if ($eventName === 'updated' && ! $this->wasChanged('estado_id')) {
+      // Anula el log si no cambió estado
+      $activity->preventSubmit();
+    }
   }
 
   public function scopeSearch($query, $value, $filters = [])

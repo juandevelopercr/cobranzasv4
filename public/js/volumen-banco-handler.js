@@ -113,7 +113,7 @@ window.renderFusionCharts = function (chartData) {
               </div>
               <h3 class="no-data-title">No hay datos disponibles</h3>
               <p class="no-data-message">
-                ${chartData.line_volumen?.caption || ''} 
+                ${chartData.line_volumen?.caption || ''}
                 ${chartData.line_volumen?.subCaption ? '| ' + chartData.line_volumen.subCaption : ''}
               </p>
               <p class="no-data-message">Intenta con otros filtros o parámetros</p>
@@ -230,7 +230,7 @@ window.renderFusionCharts = function (chartData) {
               </div>
               <h3 class="no-data-title">No hay datos disponibles</h3>
               <p class="no-data-message">
-                ${chartData.pie_formalizaciones_mes?.caption || ''} 
+                ${chartData.pie_formalizaciones_mes?.caption || ''}
                 ${chartData.pie_formalizaciones_mes?.subCaption ? '| ' + chartData.pie_formalizaciones_mes.subCaption : ''}
               </p>
               <p class="no-data-message">Intenta con otros filtros o parámetros</p>
@@ -285,6 +285,11 @@ window.renderFusionCharts = function (chartData) {
               borderColor: '#CCCCCC',
               borderThickness: '1',
               borderAlpha: '50',
+
+              // Valores en porcentaje
+              showValues: '1', // mostrar los valores sobre el gráfico
+              showPercentValues: '1', // mostrar los valores como porcentaje
+              valuePosition: 'inside', // opcional: 'inside' o 'outside' para la posición del valor
 
               baseFontSize: '14',
               captionFontSize: '20',
@@ -345,7 +350,7 @@ window.renderFusionCharts = function (chartData) {
               </div>
               <h3 class="no-data-title">No hay datos disponibles</h3>
               <p class="no-data-message">
-                ${chartData.pie_formalizaciones_year?.caption || ''} 
+                ${chartData.pie_formalizaciones_year?.caption || ''}
                 ${chartData.pie_formalizaciones_year?.subCaption ? '| ' + chartData.pie_formalizaciones_year.subCaption : ''}
               </p>
               <p class="no-data-message">Intenta con otros filtros o parámetros</p>
@@ -400,6 +405,11 @@ window.renderFusionCharts = function (chartData) {
               borderColor: '#CCCCCC',
               borderThickness: '1',
               borderAlpha: '50',
+
+              // Valores en porcentaje
+              showValues: '1', // mostrar los valores sobre el gráfico
+              showPercentValues: '1', // mostrar los valores como porcentaje
+              valuePosition: 'inside', // opcional: 'inside' o 'outside' para la posición del valor
 
               baseFontSize: '14',
               captionFontSize: '20',
