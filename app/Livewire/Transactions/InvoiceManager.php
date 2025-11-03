@@ -24,7 +24,7 @@ class InvoiceManager extends TransactionManager
 {
   public $customer_text; // para mostrar el texto inicial
 
-  public $sortBy = 'transactions.consecutivo';
+  public $sortBy = 'transactions.id';
 
   public $document_type = ['FE', 'TE'];
 
