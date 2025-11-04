@@ -1200,7 +1200,6 @@ class CasoManager extends BaseComponent
   protected function setProducto(&$caso, &$errores, $fila)
   {
       if (!empty($caso->product_id)) {
-
           $producto = CasoProducto::where('nombre', trim($caso->product_id))
               ->whereHas('banks', function ($q) use ($caso) {
                   $q->where('bank_id', $caso->bank_id);
@@ -1210,9 +1209,12 @@ class CasoManager extends BaseComponent
           if ($producto) {
               $caso->product_id = $producto->id;
           } else {
+              $caso->product_id = NULL;
               $errores[] = "Fila {$fila}: No se ha encontrado el producto '{$caso->product_id}'.";
           }
       }
+      else
+        $caso->product_id = NULL;
   }
 
   public function setProceso(&$caso, &$errores, $fila)
@@ -1225,9 +1227,12 @@ class CasoManager extends BaseComponent
           if ($proceso) {
               $caso->proceso_id = $proceso->id;
           } else {
+              $caso->proceso_id = NULL;
               $errores[] = "Fila {$fila}: No se ha encontrado el proceso '{$caso->proceso_id}'.";
           }
       }
+      else
+        $caso->proceso_id = NULL;
   }
 
   public function setServicioCapturador(&$caso, &$errores, $fila)
@@ -1238,9 +1243,12 @@ class CasoManager extends BaseComponent
           if ($data) {
               $caso->caso_servicio_capturador_id = $data->id;
           } else {
+              $caso->caso_servicio_capturador_id = NULL;
               $errores[] = "Fila {$fila}: No se ha encontrado el servicio del capturador '{$caso->caso_servicio_capturador_id}'.";
           }
       }
+      else
+        $caso->caso_servicio_capturador_id = NULL;
   }
 
   public function setServicioNotificador(&$caso, &$errores, $fila)
@@ -1251,9 +1259,12 @@ class CasoManager extends BaseComponent
           if ($data) {
               $caso->caso_servicio_notificador_id = $data->id;
           } else {
+              $caso->caso_servicio_notificador_id = NULL;
               $errores[] = "Fila {$fila}: No se ha encontrado el servicio del notificador '{$caso->caso_servicio_notificador_id}'.";
           }
       }
+      else
+        $caso->caso_servicio_notificador_id = NULL;
   }
 
   public function setMoneda(&$caso)
@@ -1274,7 +1285,6 @@ class CasoManager extends BaseComponent
   public function setEstadoProcesal(&$caso, &$errores, $fila)
   {
       if (!empty($caso->producto_id) && $caso->producto_id > 0 && !empty($caso->aestado_proceso_general_id)) {
-
           $estado = CasoEstado::join('casos_estados_bancos', function ($join) use ($caso) {
                   $join->on('casos_estados_bancos.estado_id', '=', 'casos_estados.id')
                       ->where('casos_estados_bancos.bank_id', $caso->banco_id);
@@ -1289,10 +1299,13 @@ class CasoManager extends BaseComponent
           if ($estado) {
               $caso->aestado_proceso_general_id = $estado->id;
           } else {
+              $caso->aestado_proceso_general_id = null;
               $productoNombre = $caso->producto ? $caso->producto->nombre : 'No encontrado';
               $errores[] = "Fila {$fila}: No se ha encontrado el Estado Procesal '{$caso->aestado_proceso_general_id}' para el producto '{$productoNombre}'.";
           }
       }
+      else
+        $caso->aestado_proceso_general_id = null;
   }
 
 	public function setEstadoNotificacion(&$caso, &$errores, $fila)
@@ -1302,9 +1315,13 @@ class CasoManager extends BaseComponent
 			$estado = CasoEstadoNotificadores::where(['nombre' => $caso->nestado_id])->first();
 			if (!empty($estado))
 				$caso->nestado_id = $estado['id'];
-			else
+			else{
+        $caso->nestado_id = NULL;
         $errores[] = "Fila {$fila}: No se ha encontrado el Estado  '{$caso->nestado_id}'";
+      }
 		}
+    else
+      $caso->nestado_id = NULL;
 	}
 
 	public function setExpectativaRecuperacion(&$caso, &$errores, $fila)
@@ -1314,9 +1331,13 @@ class CasoManager extends BaseComponent
 			$expectativa = CasoExpectativa::where(['nombre' => $caso->pexpectativa_recuperacion_id])->first();
 			if (!empty($expectativa))
 				$caso->pexpectativa_recuperacion_id = $expectativa['id'];
-			else
+			else{
+        $caso->pexpectativa_recuperacion_id = NULL;
         $errores[] = "Fila {$fila}: No se ha encontrado la expectativa de recuperación  '{$caso->pexpectativa_recuperacion_id}'";
+      }
 		}
+    else
+      $caso->pexpectativa_recuperacion_id = NULL;
 	}
 
 	public function setPoderdante(&$caso, &$mensaje, $fila)
@@ -1335,9 +1356,13 @@ class CasoManager extends BaseComponent
 
 			if (!empty($poderdante))
 				$caso->ppoderdante_id = $poderdante['id'];
-			else
+			else{
+        $caso->ppoderdante_id = NULL;
 				$mensaje .= 'No se ha encontrado el Poderdante: ' . $caso->ppoderdante_id . ' en la fila: ' . $fila . "<br />";
+      }
 		}
+    else
+      $caso->ppoderdante_id = NULL;
 	}
 
   // En tu componente Livewire
@@ -1349,5 +1374,33 @@ class CasoManager extends BaseComponent
           $index = intval($index / 26) - 1;
       }
       return $letter;
+  }
+
+  function parseFecha($valor)
+  {
+      if (empty($valor)) {
+          return null;
+      }
+
+      // Si es número → serial Excel
+      if (is_numeric($valor)) {
+          return Carbon::createFromDate(1899, 12, 30)
+              ->addDays((int)$valor)
+              ->format('Y-m-d');
+      }
+
+      // Si es string intentar formatos
+      $valor = trim($valor);
+
+      $formatos = ['d/m/Y', 'd-m-Y', 'Y-m-d', 'Y/m/d'];
+
+      foreach ($formatos as $f) {
+          $fecha = Carbon::createFromFormat($f, $valor);
+          if ($fecha && $fecha->format($f) === $valor) {
+              return $fecha->format('Y-m-d');
+          }
+      }
+
+      return null;
   }
 }

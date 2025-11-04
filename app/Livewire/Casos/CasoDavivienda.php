@@ -31,6 +31,7 @@ use App\Exports\CasosTemplateExport;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Services\DocumentSequenceService;
+use Illuminate\Support\Facades\Validator;
 
 class CasoDavivienda extends CasoManager
 {
@@ -511,6 +512,8 @@ class CasoDavivienda extends CasoManager
       'nestado_id' => "estado",
       'estado_id'  => "estado",
       'pnumero'    => "número",
+      'caso_servicio_capturador_id' => "Servicio del capturador",
+      'caso_servicio_notificador_id' => "Servicio del notificador",
 
       // === NUMERIC SAFE ===
       /*
@@ -1663,6 +1666,13 @@ class CasoDavivienda extends CasoManager
 
     // Normalizar encabezados
     $headerRow = $sheet[0];
+
+    // Obtener columnas según banco
+    $columns = ImportColumns::getColumnasPorBanco(Bank::DAVIVIENDA);
+
+    // Claves esperadas
+    $expectedHeaders = array_keys($columns);
+
     $headersNormalized = array_map([ImportColumns::class, 'normalizeHeader'], $headerRow);
     $expectedHeaders = array_keys($this->expectedColumns);
     $expectedNormalized = array_map([ImportColumns::class, 'normalizeHeader'], $expectedHeaders);
@@ -1740,17 +1750,10 @@ class CasoDavivienda extends CasoManager
             $colIndex = $mapping[$header] ?? null;
             $valor = $colIndex !== null ? $row[$colIndex] : null;
 
-            if ($tipo === 'date' && $valor) {
-                try {
-                    if ($valor instanceof \Carbon\Carbon) {
-                        $valor = $valor->format('Y-m-d');
-                    } else {
-                        $valor = date('Y-m-d', strtotime($valor));
-                    }
-                } catch (\Throwable $e) {
-                    $valor = null;
-                }
-            } elseif ($tipo === 'int') {
+            if ($tipo === 'date') {
+                $valor = $this->parseFecha($valor);
+            }
+            elseif ($tipo === 'int') {
                 $valor = is_numeric($valor) ? (int)$valor : null;
             } elseif ($tipo === 'float') {
                 $valor = is_numeric($valor) ? (float)$valor : null;
@@ -1765,15 +1768,34 @@ class CasoDavivienda extends CasoManager
         }
 
         // Validaciones extra
+        $this->setCliente($caso, $errores, $r);
         $this->setProducto($caso, $errores, $r);
         $this->setProceso($caso, $errores, $r);
         $this->setMoneda($caso);
         $this->setEstadoProcesal($caso, $errores, $r);
         $this->setExpectativaRecuperacion($caso, $errores, $r);
         $this->setPoderdante($caso, $errores, $r);
+        $this->setServicioCapturador($caso, $errores, $r);
+        $this->setServicioNotificador($caso, $errores, $r);
 
-        if (empty($caso->product_id) || empty($caso->proceso_id)) {
-            $errores[] = "Fila " . ($r + 1) . ": 'Producto' o 'Proceso' vacíos.";
+        if (empty($caso->product_id)) {
+            $errores[] = "Fila " . ($r + 1) . ": Debe definir el producto.";
+            continue;
+        }
+
+        if (empty($caso->proceso_id)) {
+            $errores[] = "Fila " . ($r + 1) . ": Debe definir el proceso.";
+            continue;
+        }
+
+        $validator = Validator::make($caso->toArray(), $this->rules());
+
+        if ($validator->fails()) {
+            foreach ($validator->errors()->messages() as $field => $messages) {
+                foreach ($messages as $msg) {
+                    $errores[] = "Fila " . ($r + 1) . " | Campo: $field → $msg";
+                }
+            }
             continue;
         }
 
@@ -1795,11 +1817,19 @@ class CasoDavivienda extends CasoManager
     }
 
     // Guardar
-    $filasGuardadas = 0;
     DB::beginTransaction();
     try {
         foreach ($casosParaGuardar as $caso) {
             $esNuevo = !$caso->exists;  // <- detecta si es insert o update
+
+            if (is_null($caso->pnumero)){
+              // Generar consecutivo
+              $document_type = 'CASO';
+              $consecutive = DocumentSequenceService::generateConsecutiveCaso(
+                $document_type
+              );
+              $caso->pnumero = $consecutive;
+            }
 
             $caso->fecha_importacion = now();
             $caso->save();

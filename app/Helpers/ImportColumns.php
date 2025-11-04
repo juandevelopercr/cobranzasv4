@@ -20,7 +20,7 @@ class ImportColumns
         );
     }
 
-    const COLUMNAS_SANJOSE = [
+    public const COLUMNAS_SANJOSE = [
         'Número'=> ['campo'=>'pnumero', 'tipo'=>'string'],
         'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
         'Producto' => ['campo' => 'product_id', 'tipo' => 'string'],
@@ -58,7 +58,7 @@ class ImportColumns
         'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 
-    const COLUMNAS_DAVIVIENDA = [
+    public const COLUMNAS_DAVIVIENDA = [
                         'Número'=> ['campo'=>'pnumero', 'tipo'=>'string'],
                         'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
                         'Fecha de Asignación de caso' => ['campo'=>'pfecha_asignacion_caso', 'tipo'=>'date'],
@@ -131,7 +131,7 @@ class ImportColumns
                         'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
                     ];
 
-    const COLUMNAS_SCOTIABANKCR = [
+    public const COLUMNAS_SCOTIABANKCR = [
         'Número'=> ['campo'=>'pnumero', 'tipo'=>'string'],
         'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
         'Número Operación1'=>['campo'=>'pnumero_operacion1', 'tipo'=>'string'],
@@ -177,7 +177,7 @@ class ImportColumns
     ];
 
 
-    const COLUMNAS_TERCEROS = [
+    public const COLUMNAS_TERCEROS = [
         'Número'=> ['campo'=>'pnumero', 'tipo'=>'string'],
         'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
         'SUBCIDIARIA'=>['campo'=>'psubsidiaria', 'tipo'=>'string'],
@@ -216,7 +216,7 @@ class ImportColumns
         'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 
-    const COLUMNAS_LAFISE = [
+    public const COLUMNAS_LAFISE = [
         'Número'=> ['campo'=>'pnumero', 'tipo'=>'string'],
         'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
         'Número Operación1'=>['campo'=>'pnumero_operacion1', 'tipo'=>'string'],
@@ -281,7 +281,7 @@ class ImportColumns
         'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 
-    const COLUMNAS_FINANCIERACAFSA = [
+    public const COLUMNAS_FINANCIERACAFSA = [
         'Número'=> ['campo'=>'pnumero', 'tipo'=>'string'],
         'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
         'Número de operación'=>['campo'=>'pnumero_operacion1', 'tipo'=>'string'],
@@ -318,7 +318,7 @@ class ImportColumns
         'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 
-    const COLUMNAS_BANCOGENERAL = [
+    public const COLUMNAS_BANCOGENERAL = [
         'Número'=> ['campo'=>'pnumero', 'tipo'=>'string'],
         'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
         'Número Operación1'=>['campo'=>'pnumero_operacion1', 'tipo'=>'string'],
