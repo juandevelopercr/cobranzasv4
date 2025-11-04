@@ -786,7 +786,7 @@ class HistoryManager extends TransactionManager
       'bank_id'               => 'nullable|integer|exists:banks,id',
       'codigo_contable_id'    => 'nullable|integer|exists:codigo_contables,id',
       'caso_id'               => 'nullable|integer|exists:casos,id',
-      //'created_by'          => 'required|integer|exists:users,id',
+      'created_by'            => 'nullable|integer|exists:users,id',
 
       // Enums
       //'document_type'         => 'required|in:PR,FE,TE,ND,NC,FEC,FEE,REP',
