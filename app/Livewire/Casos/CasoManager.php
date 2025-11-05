@@ -1348,17 +1348,17 @@ class CasoManager extends BaseComponent
           'casos_poderdantes_bancos',
           function($join) use ($caso) {
               $join->on('casos_poderdantes_bancos.poderdante_id', '=', 'casos_poderdantes.id')
-                  ->where('casos_poderdantes_bancos.bank_id', $caso->banco_id);
+                  ->where('casos_poderdantes_bancos.bank_id', $caso->bank_id);
           }
       )
       ->where('casos_poderdantes.nombre', trim($caso->ppoderdante_id))
       ->first(); // devuelve un objeto o null
 
-			if (!empty($poderdante))
-				$caso->ppoderdante_id = $poderdante['id'];
+			if ($poderdante && !empty($poderdante))
+				$caso->ppoderdante_id = $poderdante->id;
 			else{
-        $caso->ppoderdante_id = NULL;
 				$mensaje .= 'No se ha encontrado el Poderdante: ' . $caso->ppoderdante_id . ' en la fila: ' . $fila . "<br />";
+        $caso->ppoderdante_id = NULL;
       }
 		}
     else
@@ -1389,18 +1389,26 @@ class CasoManager extends BaseComponent
               ->format('Y-m-d');
       }
 
-      // Si es string intentar formatos
+      // Si es string, intentar distintos formatos
       $valor = trim($valor);
 
       $formatos = ['d/m/Y', 'd-m-Y', 'Y-m-d', 'Y/m/d'];
 
       foreach ($formatos as $f) {
-          $fecha = Carbon::createFromFormat($f, $valor);
-          if ($fecha && $fecha->format($f) === $valor) {
-              return $fecha->format('Y-m-d');
+          try {
+              $fecha = Carbon::createFromFormat($f, $valor);
+              // Validar que se haya podido parsear
+              if ($fecha && $fecha->format($f) === $valor) {
+                  return $fecha->format('Y-m-d');
+              }
+          } catch (\Exception $e) {
+              // Fecha inválida → continuar con siguiente formato
+              continue;
           }
       }
 
+      // Si ninguno funcionó o es inválido
       return null;
   }
+
 }

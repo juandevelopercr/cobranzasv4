@@ -1694,6 +1694,7 @@ class CasoLafise extends CasoManager
         $this->setMoneda($caso);
         $this->setEstadoProcesal($caso, $errores, $r);
         $this->setExpectativaRecuperacion($caso, $errores, $r);
+        $this->setEstadoNotificacion($caso, $errores, $r);
         $this->setPoderdante($caso, $errores, $r);
         $this->setServicioCapturador($caso, $errores, $r);
         $this->setServicioNotificador($caso, $errores, $r);
