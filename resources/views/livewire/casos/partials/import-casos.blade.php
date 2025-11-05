@@ -43,7 +43,7 @@
                           <path d="M12 3v14" />
                           <path d="M9 10l3 3l3 -3" />
                         </svg>
-                        Descargar plantilla BAC
+                        Descargar plantilla
                     </button>
 
                     &nbsp;&nbsp;
