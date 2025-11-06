@@ -75,6 +75,7 @@ use App\Http\Controllers\rolesPersmissions\AccessPermission;
 use App\Http\Controllers\reports\ReportFacturacionController;
 use App\Http\Controllers\reports\ReportTransactionController;
 use App\Livewire\Movimientos\Export\MovimientoExportFromView;
+use App\Http\Controllers\classifiers\CasoCapturadorController;
 use App\Http\Controllers\classifiers\CasoPoderdanteController;
 use App\Http\Controllers\classifiers\CatalogoCuentaController;
 use App\Http\Controllers\reports\ReportEstadoCuentaController;
@@ -168,6 +169,7 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
   Route::get('classifiers/casos-poderdantes', [CasoPoderdanteController::class, 'index'])->name('classifiers-casos-poderdantes');
   Route::get('classifiers/casos-expectativas', [CasoExpectativaController::class, 'index'])->name('classifiers-casos-expectativas');
   Route::get('classifiers/casos-notificadores', [CasoNotificadorController::class, 'index'])->name('classifiers-casos-notificadores');
+  Route::get('classifiers/casos-capturadores', [CasoCapturadorController::class, 'index'])->name('classifiers-casos-capturadores');
   Route::get('classifiers/casos-servicios', [CasoServicioController::class, 'index'])->name('classifiers-casos-servicios');
 
 

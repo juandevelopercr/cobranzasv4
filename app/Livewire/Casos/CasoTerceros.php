@@ -19,8 +19,10 @@ use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use App\Helpers\ImportColumns;
+use App\Models\CasoCapturador;
 use App\Livewire\BaseComponent;
 use App\Models\CasoExpectativa;
+use App\Models\CasoNotificador;
 use App\Models\DataTableConfig;
 use Livewire\Attributes\Computed;
 use App\Models\CasoListadoJuzgado;
@@ -106,6 +108,10 @@ class CasoTerceros extends CasoManager
 
     $this->expectedColumns = ImportColumns::getColumnasPorBanco(Bank::TERCEROS);
 
+    $this->notificadores = CasoNotificador::where('activo', 1)->orderBy('nombre', 'ASC')->get();
+
+    $this->capturadores = CasoCapturador::where('activo', 1)->orderBy('nombre', 'ASC')->get();
+
     $this->refresDatatable();
   }
 
@@ -152,8 +158,10 @@ class CasoTerceros extends CasoManager
       'nestado_id' => ['nullable', 'integer'],
       'estado_id'  => ['nullable', 'integer'],
       'pnumero'    => ['nullable', 'integer'],
-      'caso_servicio_capturador_id' => ['nullable', 'integer'],
-      'caso_servicio_notificador_id' => ['nullable', 'integer'],
+      'caso_servicio_capturador_id' => ['nullable', 'integer', 'exists:casos_servicios,id'],
+      'caso_servicio_notificador_id' => ['nullable', 'integer', 'exists:casos_servicios,id'],
+      'capturador_id' => ['nullable', 'integer', 'exists:casos_capturadores,id'],
+      'notificador_id' => ['nullable', 'integer', 'exists:casos_notificadores,id'],
 
       // === NUMERIC SAFE ===
       'psaldo_de_seguros' => ['nullable', 'numeric'],
@@ -443,8 +451,6 @@ class CasoTerceros extends CasoManager
       'bgastos_proceso' => ['nullable', 'string', 'max:190'],
       'pdespacho_judicial_juzgado' => ['nullable', 'string', 'max:190'],
       'pdatos_codeudor2' => ['nullable', 'string', 'max:190'],
-      'nombre_capturador' => ['nullable', 'string', 'max:100'],
-      'nombre_notificador' => ['nullable', 'string', 'max:100'],
 
       'fechasRemate' => 'nullable|array|min:0',
       'fechasRemate.*.fecha' => 'nullable|date|after_or_equal:today',
@@ -1741,6 +1747,8 @@ class CasoTerceros extends CasoManager
         $this->setExpectativaRecuperacion($caso, $errores, $r);
         $this->setServicioCapturador($caso, $errores, $r);
         $this->setServicioNotificador($caso, $errores, $r);
+        $this->setCapturador($caso, $errores, $r);
+        $this->setNotificador($caso, $errores, $r);
 
         if (empty($caso->product_id)) {
             $errores[] = "Fila " . ($r + 1) . ": Debe definir el producto.";

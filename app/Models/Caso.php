@@ -54,6 +54,8 @@ class Caso extends Model implements HasMedia
     'pnumero',
     'caso_servicio_capturador_id',
     'caso_servicio_notificador_id',
+    'capturador_id',
+    'notificador_id',
 
     // === NUMERIC SAFE ===
     'psaldo_de_seguros',
@@ -339,8 +341,6 @@ class Caso extends Model implements HasMedia
     'bgastos_proceso',
     'pdespacho_judicial_juzgado',
     'pdatos_codeudor2',
-    'nombre_capturador',
-    'nombre_notificador',
   ];
 
   public function bank()

@@ -109,6 +109,8 @@
     @enderror
   </div>
 
+  @php
+  /*
   <div class="col-md-9 fv-plugins-icon-container">
     <label class="form-label" for="ncomentarios">{{ __('Comentarios') }}</label>
     <textarea class="form-control" wire:model="ncomentarios" name="ncomentarios" id="ncomentarios" rows="2"></textarea>
@@ -116,6 +118,8 @@
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
+  */
+  @endphp
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="nhonorarios_notificacion">{{ __('Honorarios por notificación') }}</label>

@@ -17,9 +17,11 @@ use App\Models\CasoServicio;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
+use App\Models\CasoCapturador;
 use App\Models\CasoPoderdante;
 use App\Livewire\BaseComponent;
 use App\Models\CasoExpectativa;
+use App\Models\CasoNotificador;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -69,6 +71,8 @@ class CasoManager extends BaseComponent
   public $juzgados    = [];
   public $estadosNotificadores = [];
   public $servicios   = [];
+  public $notificadores   = [];
+  public $capturadores   = [];
 
   // =========  TODAS LAS COLUMNAS DE la tabla `casos`  =========
   public $contact_id = NULL;
@@ -95,6 +99,8 @@ class CasoManager extends BaseComponent
   public $nestado_id = NULL;
   public $estado_id = NULL;
   public $pnumero = NULL;
+  public $capturador_id= NULL;
+  public $notificador_id= NULL;
 
   // === NUMERIC SAFE ===
   public $psaldo_de_seguros = NULL;
@@ -382,8 +388,6 @@ class CasoManager extends BaseComponent
   public $bgastos_proceso= NULL;
   public $pdespacho_judicial_juzgado= NULL;
   public $pdatos_codeudor= NULL;
-  public $nombre_capturador= NULL;
-  public $nombre_notificador= NULL;
   public $created_at= NULL;
   public $updated_at= NULL;
   public $deleted_at= NULL;
@@ -833,8 +837,8 @@ class CasoManager extends BaseComponent
       'bgastos_proceso',
       'pdespacho_judicial_juzgado',
       'pdatos_codeudor2',
-      'nombre_capturador',
-      'nombre_notificador',
+      'capturador_id',
+      'notificador_id',
       'caso_servicio_capturador_id',
       'caso_servicio_notificador_id',
       'closeForm',
@@ -1259,12 +1263,44 @@ class CasoManager extends BaseComponent
           if ($data) {
               $caso->caso_servicio_notificador_id = $data->id;
           } else {
-              $caso->caso_servicio_notificador_id = NULL;
               $errores[] = "Fila {$fila}: No se ha encontrado el servicio del notificador '{$caso->caso_servicio_notificador_id}'.";
+              $caso->caso_servicio_notificador_id = NULL;
           }
       }
       else
         $caso->caso_servicio_notificador_id = NULL;
+  }
+
+  public function setCapturador(&$caso, &$errores, $fila)
+  {
+      if (!empty($caso->capturador_id)) {
+          $data = CasoCapturador::where('nombre', $caso->capturador_id)->first();
+
+          if ($data) {
+              $caso->capturador_id = $data->id;
+          } else {
+              $errores[] = "Fila {$fila}: No se ha encontrado el capturador '{$caso->capturador_id}'.";
+              $caso->capturador_id = NULL;
+          }
+      }
+      else
+        $caso->capturador_id = NULL;
+  }
+
+  public function setNotificador(&$caso, &$errores, $fila)
+  {
+      if (!empty($caso->notificador_id)) {
+          $data = CasoNotificador::where('nombre', $caso->notificador_id)->first();
+
+          if ($data) {
+              $caso->notificador_id = $data->id;
+          } else {
+              $errores[] = "Fila {$fila}: No se ha encontrado el notificador '{$caso->notificador_id}'.";
+              $caso->notificador_id = NULL;
+          }
+      }
+      else
+        $caso->notificador_id = NULL;
   }
 
   public function setMoneda(&$caso)
@@ -1284,14 +1320,14 @@ class CasoManager extends BaseComponent
 
   public function setEstadoProcesal(&$caso, &$errores, $fila)
   {
-      if (!empty($caso->producto_id) && $caso->producto_id > 0 && !empty($caso->aestado_proceso_general_id)) {
-          $estado = CasoEstado::join('casos_estados_bancos', function ($join) use ($caso) {
+      if (!empty($caso->product_id) && $caso->product_id > 0 && !empty($caso->aestado_proceso_general_id)) {
+          $estado = CasoEstado::join('casos_estados_bancosX', function ($join) use ($caso) {
                   $join->on('casos_estados_bancos.estado_id', '=', 'casos_estados.id')
                       ->where('casos_estados_bancos.bank_id', $caso->banco_id);
               })
               ->join('casos_estados_productos', function ($join) use ($caso) {
                   $join->on('casos_estados_productos.estado_id', '=', 'casos_estados.id')
-                      ->where('casos_estados_productos.product_id', $caso->producto_id);
+                      ->where('casos_estados_productos.product_id', $caso->product_id);
               })
               ->where('casos_estados.name', trim($caso->aestado_proceso_general_id))
               ->first();
@@ -1299,9 +1335,9 @@ class CasoManager extends BaseComponent
           if ($estado) {
               $caso->aestado_proceso_general_id = $estado->id;
           } else {
-              $caso->aestado_proceso_general_id = null;
               $productoNombre = $caso->producto ? $caso->producto->nombre : 'No encontrado';
               $errores[] = "Fila {$fila}: No se ha encontrado el Estado Procesal '{$caso->aestado_proceso_general_id}' para el producto '{$productoNombre}'.";
+              $caso->aestado_proceso_general_id = null;
           }
       }
       else
@@ -1316,8 +1352,8 @@ class CasoManager extends BaseComponent
 			if (!empty($estado))
 				$caso->nestado_id = $estado['id'];
 			else{
-        $caso->nestado_id = NULL;
         $errores[] = "Fila {$fila}: No se ha encontrado el Estado  '{$caso->nestado_id}'";
+        $caso->nestado_id = NULL;
       }
 		}
     else
@@ -1332,8 +1368,8 @@ class CasoManager extends BaseComponent
 			if (!empty($expectativa))
 				$caso->pexpectativa_recuperacion_id = $expectativa['id'];
 			else{
-        $caso->pexpectativa_recuperacion_id = NULL;
         $errores[] = "Fila {$fila}: No se ha encontrado la expectativa de recuperación  '{$caso->pexpectativa_recuperacion_id}'";
+        $caso->pexpectativa_recuperacion_id = NULL;
       }
 		}
     else

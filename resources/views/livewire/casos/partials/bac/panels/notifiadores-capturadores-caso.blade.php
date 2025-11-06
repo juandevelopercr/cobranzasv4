@@ -15,13 +15,17 @@
     @enderror
   </div>
 
-  <div class="col-12 col-sm-6 col-md-4 col-lg-4 fv-plugins-icon-container">
-    <label class="form-label" for="nombre_capturador">{{ __('Nombre del capturador') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="nombre_capturador" id="nombre_capturador"
-          class="form-control @error('nombre_capturador') is-invalid @enderror">
+  <div class="col-12 col-sm-6 col-md-4 col-lg-4 select2-primary fv-plugins-icon-container">
+    <label class="form-label" for="capturador_id">{{ __('Capturador') }}</label>
+    <div wire:ignore>
+      <select wire:model.live="capturador_id" id="capturador_id" class="select2 form-select @error('capturador_id') is-invalid @enderror">
+        <option value="">{{ __('Seleccione...') }}</option>
+        @foreach ($this->capturadores as $capturador)
+          <option value="{{ $capturador->id }}">{{ $capturador->nombre }}</option>
+        @endforeach
+      </select>
     </div>
-    @error('nombre_capturador')
+    @error('capturador_id')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
@@ -57,13 +61,17 @@
     @enderror
   </div>
 
-  <div class="col-12 col-sm-6 col-md-4 col-lg-4 fv-plugins-icon-container">
-    <label class="form-label" for="nombre_notificador">{{ __('Nombre del notificador') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="nombre_notificador" id="nombre_notificador"
-          class="form-control @error('nombre_notificador') is-invalid @enderror">
+  <div class="col-12 col-sm-6 col-md-4 col-lg-4 select2-primary fv-plugins-icon-container">
+    <label class="form-label" for="notificador_id">{{ __('Notificador') }}</label>
+    <div wire:ignore>
+      <select wire:model.live="notificador_id" id="notificador_id" class="select2 form-select @error('notificador_id') is-invalid @enderror">
+        <option value="">{{ __('Seleccione...') }}</option>
+        @foreach ($this->notificadores as $notificador)
+          <option value="{{ $notificador->id }}">{{ $notificador->nombre }}</option>
+        @endforeach
+      </select>
     </div>
-    @error('nombre_notificador')
+    @error('notificador_id')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>

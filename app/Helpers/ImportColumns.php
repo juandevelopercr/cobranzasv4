@@ -51,10 +51,10 @@ class ImportColumns
         'Estatus de Operación' => ['campo' => 'pestatus_operacion', 'tipo' => 'string'],
         'Comentarios OCE' => ['campo' => 'ncomentarios', 'tipo' => 'string'],
         'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
-        'Nombre del capturador' => ['campo' => 'nombre_capturador', 'tipo' => 'string'],
+        'Nombre del capturador' => ['campo' => 'capturador_id', 'tipo' => 'string'],
         'Servicio del Capturador' => ['campo' => 'caso_servicio_capturador_id', 'tipo' => 'string'],
         'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
-        'Nombre del notificador' => ['campo' => 'nombre_notificador', 'tipo' => 'string'],
+        'Nombre del notificador' => ['campo' => 'notificador_id', 'tipo' => 'string'],
         'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 
@@ -124,10 +124,10 @@ class ImportColumns
                         'Fecha de activación'=>['campo'=>'fecha_activacion', 'tipo'=>'date'],
                         'Código de activación'=>['campo'=>'codigo_activacion', 'tipo'=>'string'],
                         'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
-                        'Nombre del capturador' => ['campo' => 'nombre_capturador', 'tipo' => 'string'],
+                        'Nombre del capturador' => ['campo' => 'capturador_id', 'tipo' => 'string'],
                         'Servicio del Capturador' => ['campo' => 'caso_servicio_capturador_id', 'tipo' => 'string'],
                         'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
-                        'Nombre del notificador' => ['campo' => 'nombre_notificador', 'tipo' => 'string'],
+                        'Nombre del notificador' => ['campo' => 'notificador_id', 'tipo' => 'string'],
                         'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
                     ];
 
@@ -169,10 +169,10 @@ class ImportColumns
         'Motivo de Terminación'=>['campo'=>'motivo_terminacion', 'tipo'=>'string'],
         'Honorarios Legales Dólares'=>['campo'=>'honorarios_legales_dolares', 'tipo'=>'string'],
         'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
-        'Nombre del capturador' => ['campo' => 'nombre_capturador', 'tipo' => 'string'],
+        'Nombre del capturador' => ['campo' => 'capturador_id', 'tipo' => 'string'],
         'Servicio del Capturador' => ['campo' => 'caso_servicio_capturador_id', 'tipo' => 'string'],
         'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
-        'Nombre del notificador' => ['campo' => 'nombre_notificador', 'tipo' => 'string'],
+        'Nombre del notificador' => ['campo' => 'notificador_id', 'tipo' => 'string'],
         'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 
@@ -209,10 +209,10 @@ class ImportColumns
         'Contacto telefónico'=>['campo'=>'acontacto_telefonico', 'tipo'=>'string'],
         'Correo electrónico'=>['campo'=>'acorreo', 'tipo'=>'string'],
         'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
-        'Nombre del capturador' => ['campo' => 'nombre_capturador', 'tipo' => 'string'],
+        'Nombre del capturador' => ['campo' => 'capturador_id', 'tipo' => 'string'],
         'Servicio del Capturador' => ['campo' => 'caso_servicio_capturador_id', 'tipo' => 'string'],
         'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
-        'Nombre del notificador' => ['campo' => 'nombre_notificador', 'tipo' => 'string'],
+        'Nombre del notificador' => ['campo' => 'notificador_id', 'tipo' => 'string'],
         'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 
@@ -274,10 +274,10 @@ class ImportColumns
         'Honorarios totales'=>['campo'=>'ahonorarios_totales', 'tipo'=>'string'],
         'Bufete'=>['campo'=>'abufete', 'tipo'=>'string'],
         'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
-        'Nombre del capturador' => ['campo' => 'nombre_capturador', 'tipo' => 'string'],
+        'Nombre del capturador' => ['campo' => 'capturador_id', 'tipo' => 'string'],
         'Servicio del Capturador' => ['campo' => 'caso_servicio_capturador_id', 'tipo' => 'string'],
         'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
-        'Nombre del notificador' => ['campo' => 'nombre_notificador', 'tipo' => 'string'],
+        'Nombre del notificador' => ['campo' => 'notificador_id', 'tipo' => 'string'],
         'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 
@@ -311,10 +311,10 @@ class ImportColumns
         'Probabilidad de recuperación'=>['campo'=>'pexpectativa_recuperacion_id', 'tipo'=>'string'],
         'Mes de avance judicial'=>['campo'=>'ames_avance_judicial', 'tipo'=>'string'],
         'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
-        'Nombre del capturador' => ['campo' => 'nombre_capturador', 'tipo' => 'string'],
+        'Nombre del capturador' => ['campo' => 'capturador_id', 'tipo' => 'string'],
         'Servicio del Capturador' => ['campo' => 'caso_servicio_capturador_id', 'tipo' => 'string'],
         'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
-        'Nombre del notificador' => ['campo' => 'nombre_notificador', 'tipo' => 'string'],
+        'Nombre del notificador' => ['campo' => 'notificador_id', 'tipo' => 'string'],
         'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 
@@ -340,10 +340,10 @@ class ImportColumns
         'ESTIMACION DE GASTOS'=>['campo'=>'bgastos_proceso', 'tipo'=>'string'],
         'Fecha de Terminación'=>['campo'=>'afecha_terminacion', 'tipo'=>'date'],
         'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
-        'Nombre del capturador' => ['campo' => 'nombre_capturador', 'tipo' => 'string'],
+        'Nombre del capturador' => ['campo' => 'capturador_id', 'tipo' => 'string'],
         'Servicio del Capturador' => ['campo' => 'caso_servicio_capturador_id', 'tipo' => 'string'],
         'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
-        'Nombre del notificador' => ['campo' => 'nombre_notificador', 'tipo' => 'string'],
+        'Nombre del notificador' => ['campo' => 'notificador_id', 'tipo' => 'string'],
         'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 

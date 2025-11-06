@@ -28,7 +28,7 @@
 <body>
     <div class="container my-4">
         <!-- Título del reporte -->
-        <h3 class="text-center mb-4">{{ __('Casos notificadores Report') }}</h3>
+        <h3 class="text-center mb-4">{{ __('Casos capturadores Report') }}</h3>
 
         <!-- Fecha del reporte -->
         <p class="text-end"><strong>{{ __('Date') }}:</strong> {{ \Carbon\Carbon::now()->format('d/m/Y') }}</p>

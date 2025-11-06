@@ -715,6 +715,14 @@
               ]
             },
             {
+              "url": "classifiers/casos-capturadores",
+              "name": "Capturadores",
+              "slug": "classifiers-casos-capturadores",
+              "permissions": [
+                "view-classifiers"
+              ]
+            },
+            {
               "url": "classifiers/casos-notificadores",
               "name": "Notificadores",
               "slug": "classifiers-casos-notificadores",
