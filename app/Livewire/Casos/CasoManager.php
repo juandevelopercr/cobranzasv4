@@ -1321,7 +1321,7 @@ class CasoManager extends BaseComponent
   public function setEstadoProcesal(&$caso, &$errores, $fila)
   {
       if (!empty($caso->product_id) && $caso->product_id > 0 && !empty($caso->aestado_proceso_general_id)) {
-          $estado = CasoEstado::join('casos_estados_bancosX', function ($join) use ($caso) {
+          $estado = CasoEstado::join('casos_estados_bancos', function ($join) use ($caso) {
                   $join->on('casos_estados_bancos.estado_id', '=', 'casos_estados.id')
                       ->where('casos_estados_bancos.bank_id', $caso->banco_id);
               })
