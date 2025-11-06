@@ -37,6 +37,7 @@ class HistoryManager extends TransactionManager
   public $document_type = ['PR', 'FE', 'TE'];
 
   public $documentTypes = [];
+  public $caso_text = ''; // para mostrar el texto inicial
 
   public $filters = [
     'filter_action' => NULL,
@@ -1045,6 +1046,7 @@ class HistoryManager extends TransactionManager
 
     $this->clientEmail = $record->contact->email;
 
+    /*
     $contact = Contact::find($record->contact_id);
     $this->tipoIdentificacion = $contact->identificationType->name;
     $this->identificacion = $contact->identification;
@@ -1054,6 +1056,19 @@ class HistoryManager extends TransactionManager
       $text = $contact->name;
       $this->dispatch('setSelect2Value', id: 'contact_id', value: $this->contact_id, text: $text);
     }
+    */
+    $contact = Contact::find($record->contact_id);
+
+    if ($contact) {
+      $this->tipoIdentificacion = $contact->identificationType->name;
+      $this->identificacion = $contact->identification;
+      $this->clientEmail = $record->contact ? $record->contact->email: '';
+
+      $this->customer_text = $contact->name;
+      $text = $contact->name;
+      $this->dispatch('setSelect2Value', id: 'contact_id', value: $this->contact_id, text: $text);
+    }
+
 
     // Se emite este evento para los componentes hijos
     $this->dispatch('updateTransactionContext', [
@@ -1104,14 +1119,25 @@ class HistoryManager extends TransactionManager
     }
 
     if ($record->caso) {
-      $text = $record->caso->numero . ' - ' . $record->caso->deudor;
-      $this->dispatch('setSelect2Value', id: 'caso_id', value: $this->caso_id, text: $text);
+      $this->caso_text = strtoupper(
+        implode(' / ', array_filter([
+          $record->caso->pnumero,
+          $record->caso->pnumero_operacion1,
+          ($record->caso->pnombre_demandado || $record->caso->pnombre_apellidos_deudor)
+            ? trim($record->caso->pnombre_demandado . ' ' . $record->caso->pnombre_apellidos_deudor)
+            : null
+        ], fn($value) => $value !== null && $value !== ''))
+      );
+      $this->dispatch('setSelect2Value', id: 'caso_id', value: $this->caso_id, text: $this->caso_text);
+    }
+    else{
+      $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: '');
     }
 
     $this->setInfoCaso();
 
     $this->dispatch('reinitSelect2Controls');
-
+    $this->dispatch('reinitSelect2Caso');
     //$this->dispatch('select2');
   }
 
@@ -1216,6 +1242,7 @@ class HistoryManager extends TransactionManager
       'contact_id',
       'contact_economic_activity_id',
       'currency_id',
+      'caso_text',
       'area_id',
       'bank_id',
       'codigo_contable_id',

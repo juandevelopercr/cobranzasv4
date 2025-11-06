@@ -522,10 +522,7 @@
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="caso_id">{{ __('Caso') }}</label>
       <div wire:ignore>
-        <select id="caso_id" class="form-select select2-ajax" data-placeholder="Buscar caso...">
-            @if($caso_text)
-                <option value="{{ $caso_id }}" selected>{{ $caso_text }}</option>
-            @endif
+        <select id="caso_id" class="form-select select2-ajax" data-placeholder="Buscar caso por número o deudor">
         </select>
       </div>
     </div>
@@ -597,52 +594,56 @@
 @script()
 <script>
   $(document).ready(function() {
+    // Para la busqueda del caso
+    // Configuración AJAX para caso_id
+    window.select2Config = {
+      department_id: {fireEvent: true},
+      //bank_id: {fireEvent: true},
+      cuenta_id: {fireEvent: false},
+      showInstruccionesPago: {fireEvent: false},
+      currency_id: {fireEvent: false},
+      contact_economic_activity_id: {fireEvent: false},
+      location_economic_activity_id: {fireEvent: false},
+      //condition_sale: {fireEvent: true},
+      created_by: {fireEvent: false},
+      location_id: {fireEvent: true},
+      codigo_contable_id: {fireEvent: false},
+      proforma_type: {fireEvent: false},
+      proforma_status: {fireEvent: false},
+      area_id: {fireEvent: false}
+    };
 
-    function initSelect2Caso() {
-      $('#caso_id').select2({
-        placeholder: $('#caso_id').data('placeholder'),
-        minimumInputLength: 2,
-        ajax: {
-          url: '/api/casos/search',
-          dataType: 'json',
-          delay: 250,
-          data: function (params) {
-            return {
-              q: params.term,
-              bank_id: $("#bank_id").val()
-            };
-          },
-          processResults: function (data) {
-            return {
-              results: data.map(item => ({
-                id: item.id,
-                text: item.text
-              }))
-            };
-          },
-          cache: true
-        }
-      });
-
-      // Manejar selección y enviar a Livewire
-      $('#caso_id').on('change', function () {
-        const val = $(this).val();
-        if (typeof $wire !== 'undefined') {
-          $wire.set('caso_id', val);
-        }
-      });
-    }
-
-    // Re-ejecuta las inicializaciones después de actualizaciones de Livewire
-    Livewire.on('reinitSelect2Caso', () => {
-      console.log('Reinicializando controles después de Livewire update reinitFormControls');
-      setTimeout(() => {
-        initSelect2Caso();
-
-      }, 300); // Retraso para permitir que el DOM se estabilice
+    $('#caso_id').select2({
+      placeholder: $('#caso_id').data('placeholder'),
+      minimumInputLength: 2,
+      ajax: {
+        url: '/api/casos/search',
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+          return {
+            q: params.term
+          };
+        },
+        processResults: function (data) {
+          return {
+            results: data.map(item => ({
+              id: item.id,
+              text: item.text
+            }))
+          };
+        },
+        cache: true
+      }
     });
 
-    initSelect2Caso();
+    // Manejar selección y enviar a Livewire
+    $('#caso_id').on('change', function () {
+      const val = $(this).val();
+      if (typeof $wire !== 'undefined') {
+        $wire.set('caso_id', val);
+      }
+    });
 
     $('#contact_id').select2({
       placeholder: $('#contact_id').data('placeholder'),
@@ -675,6 +676,29 @@
         $wire.set('contact_id', val);
       }
     });
+
+    //**************************************************************
+    //*****Para todos los demás select2****************
+    //**************************************************************
+    Object.entries(select2Config).forEach(([id, config]) => {
+      const $select = $('#' + id);
+      if (!$select.length) return;
+
+      $select.select2();
+
+      // Default values
+      const fireEvent = config.fireEvent ?? false;
+      //const allowClear = config.allowClear ?? false;
+      //const placeholder = config.placeholder ?? 'Seleccione una opción';
+
+      $select.on('change', function() {
+        let data = $(this).val();
+        $wire.set(id, data, fireEvent);
+        $wire.id = data;
+        //@this.department_id = data;
+        console.log(data);
+      });
+    });
   })
 
   Livewire.on('setSelect2Value', ({ id, value, text }) => {
@@ -701,22 +725,9 @@
 
   const initializeSelect2 = () => {
       const selects = [
-        //'condition_sale',
-        //'invoice_type',
-        'codigo_contable_id',
-        'location_id',
-        'bank_id',
-        'currency_id',
-        'proforma_type',
-        'department_id',
-        'cuenta_id',
-        'showInstruccionesPago',
-        'contact_economic_activity_id',
-        'location_economic_activity_id',
-        //'tipo_facturacion',
-        'created_by',
-        'proforma_status',
-        'area_id'
+        'condition_sale',
+        'invoice_type',
+        'bank_id'
       ];
 
       selects.forEach((id) => {
@@ -733,7 +744,7 @@
             if (newValue !== livewireValue) {
               // Actualiza Livewire solo si es el select2 de `condition_sale`
               // Hay que poner wire:ignore en el select2 para que todo vaya bien
-              const specificIds = ['tipo_facturacion','condition_sale', 'location_id']; // Lista de IDs específicos
+              const specificIds = ['condition_sale', 'invoice_type']; // Lista de IDs específicos
 
               if (specificIds.includes(id)) {
                 @this.set(id, newValue);
@@ -754,11 +765,35 @@
 
     // Re-ejecuta las inicializaciones después de actualizaciones de Livewire
     Livewire.on('reinitSelect2Controls', () => {
-      console.log('Reinicializando select de casos');
+      console.log('Reinicializando controles después de Livewire update reinitFormControls');
       setTimeout(() => {
         initializeSelect2();
+        initSelect2Other();
       }, 300); // Retraso para permitir que el DOM se estabilice
     });
+
+    function initSelect2Other(){
+        Object.entries(select2Config).forEach(([id, config]) => {
+        const $select = $('#' + id);
+        if (!$select.length) return;
+
+        $select.select2();
+
+        // Default values
+        const fireEvent = config.fireEvent ?? false;
+        //const allowClear = config.allowClear ?? false;
+        //const placeholder = config.placeholder ?? 'Seleccione una opción';
+
+        $select.on('change', function() {
+          let data = $(this).val();
+          $wire.set(id, data, fireEvent);
+          $wire.id = data;
+          //@this.department_id = data;
+          console.log(data);
+        });
+      });
+    }
+
 </script>
 @endscript
 @endif

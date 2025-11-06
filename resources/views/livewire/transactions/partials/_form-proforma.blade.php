@@ -771,7 +771,7 @@ use App\Models\User;
             if (newValue !== livewireValue) {
               // Actualiza Livewire solo si es el select2 de `condition_sale`
               // Hay que poner wire:ignore en el select2 para que todo vaya bien
-              const specificIds = ['department_id','tipo_facturacion','condition_sale', 'location_id']; // Lista de IDs específicos
+              const specificIds = ['tipo_facturacion','condition_sale', 'location_id']; // Lista de IDs específicos
 
               if (specificIds.includes(id)) {
                 @this.set(id, newValue);
