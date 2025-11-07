@@ -98,8 +98,8 @@ class CasoEstadoManager extends BaseComponent
   protected function rules()
   {
     $rules = [
-      'name'        => 'required|string|max:50',
-      'description' => 'nullable|string|max:100',
+      'name'        => 'required|string|max:191',
+      'description' => 'nullable|string|max:191',
       'active'      => 'required|integer|in:0,1',
     ];
 
@@ -339,7 +339,8 @@ class CasoEstadoManager extends BaseComponent
 
   public $filters = [
     'filter_name' => NULL,
-    'filter_description' => NULL,
+    'filter_bank' => NULL,
+    'filter_producto' => NULL,
     'filter_active' => NULL,
   ];
 
@@ -366,17 +367,36 @@ class CasoEstadoManager extends BaseComponent
         'visible' => true,
       ],
       [
-        'field' => 'description',
-        'orderName' => 'description',
-        'label' => __('Description'),
-        'filter' => 'filter_description',
+        'field' => 'bancos',
+        'orderName' => '',
+        'label' => __('Banks'),
+        'filter' => 'filter_bank',
         'filter_type' => 'input',
         'filter_sources' => '',
         'filter_source_field' => '',
         'columnType' => 'string',
         'columnAlign' => '',
-        'columnClass' => '',
-        'function' => '',
+        'columnClass' => 'wrap-col-400',
+        'function' => 'getHtmlBancos',
+        'parameters' => [],
+        'sumary' => '',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'productos',
+        'orderName' => '',
+        'label' => __('Productos'),
+        'filter' => 'filter_producto',
+        'filter_type' => 'input',
+        'filter_sources' => '',
+        'filter_source_field' => '',
+        'columnType' => 'string',
+        'columnAlign' => '',
+        'columnClass' => 'wrap-col-400',
+        'function' => 'getHtmlProductos',
         'parameters' => [],
         'sumary' => '',
         'openHtmlTab' => '',

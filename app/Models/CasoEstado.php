@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Bank;
 use App\Models\CasoProducto;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 
 class CasoEstado extends Model
@@ -114,5 +115,23 @@ class CasoEstado extends Model
 
     $html .= '</div>';
     return $html;
+  }
+
+  public function getHtmlProductos()
+  {
+      $productos = $this->products()->pluck('nombre');
+
+      return $productos->isNotEmpty()
+          ? $productos->implode(', ')
+          : "<span class=\"text-gray-500\">-</span>";
+  }
+
+  public function getHtmlBancos()
+  {
+      $bancos = $this->banks()->pluck('name');
+
+      return $bancos->isNotEmpty()
+          ? $bancos->implode(', ')
+          : "<span class=\"text-gray-500\">-</span>";
   }
 }
