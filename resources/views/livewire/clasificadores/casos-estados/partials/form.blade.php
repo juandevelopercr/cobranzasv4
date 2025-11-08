@@ -16,7 +16,7 @@
     @endif
 
     <div class="row g-6">
-      <div class="col-md-4 fv-plugins-icon-container">
+      <div class="col-md-6 fv-plugins-icon-container">
         <label class="form-label" for="name">{{ __('Name') }}</label>
         <div class="input-group input-group-merge has-validation">
           <span class="input-group-text"><i class="bx bx-font"></i></span>
@@ -24,18 +24,6 @@
             class="form-control @error('name') is-invalid @enderror" placeholder="{{ __('Name') }}">
         </div>
         @error('name')
-        <div class="text-danger mt-1">{{ $message }}</div>
-        @enderror
-      </div>
-
-      <div class="col-md-4 fv-plugins-icon-container">
-        <label class="form-label" for="description">{{ __('Description') }}</label>
-        <div class="input-group input-group-merge has-validation">
-          <span class="input-group-text"><i class="bx bx-font"></i></span>
-          <input type="text" wire:model="description" id="description"
-            class="form-control @error('description') is-invalid @enderror" placeholder="{{ __('Description') }}">
-        </div>
-        @error('description')
         <div class="text-danger mt-1">{{ $message }}</div>
         @enderror
       </div>

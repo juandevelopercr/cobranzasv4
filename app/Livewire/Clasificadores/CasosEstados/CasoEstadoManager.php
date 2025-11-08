@@ -53,8 +53,8 @@ class CasoEstadoManager extends BaseComponent
   public $listbanks = [];
   public $listproducts = [];
 
-  public $banks;
-  public $products;
+  public $banks = [];
+  public $products = [];
 
   protected $listeners = [
     'datatableSettingChange' => 'refresDatatable',
@@ -134,7 +134,9 @@ class CasoEstadoManager extends BaseComponent
       // Crear el usuario con la contraseña encriptada
       $record = CasoEstado::create($validatedData);
 
-      $record->banks()->sync($this->selected_banks);
+      $record->banks()->sync($this->banks);
+
+      $record->products()->sync($this->banks);
 
       $closeForm = $this->closeForm;
 
@@ -191,7 +193,9 @@ class CasoEstadoManager extends BaseComponent
       // Actualiza el usuario
       $record->update($validatedData);
 
-      $record->banks()->sync($this->selected_banks);
+      $record->banks()->sync($this->banks);
+
+      $record->products()->sync($this->banks);
 
       $closeForm = $this->closeForm;
 
@@ -288,6 +292,8 @@ class CasoEstadoManager extends BaseComponent
     $this->reset(
       'name',
       'description',
+      'banks',
+      'products',
       'active'
     );
 
