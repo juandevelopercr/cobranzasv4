@@ -136,7 +136,7 @@ class CasoEstadoManager extends BaseComponent
 
       $record->banks()->sync($this->banks);
 
-      $record->products()->sync($this->banks);
+      $record->products()->sync($this->products);
 
       $closeForm = $this->closeForm;
 
@@ -195,7 +195,7 @@ class CasoEstadoManager extends BaseComponent
 
       $record->banks()->sync($this->banks);
 
-      $record->products()->sync($this->banks);
+      $record->products()->sync($this->products);
 
       $closeForm = $this->closeForm;
 
