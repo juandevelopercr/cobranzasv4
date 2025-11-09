@@ -32,21 +32,20 @@
                   <i class="bx bx-receipt bx-lg d-sm-none"></i>
                 </button>
               </li>
+              @php
+              /*
               <li class="nav-item">
                 <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
                   data-bs-target="#navs-justified-history" aria-controls="navs-justified-history" aria-selected="false">
                   <span class="d-none d-sm-block">
                     <i class="tf-icons bx bx-history bx-lg me-1_5 align-text-center"></i>
                     {{ __('Historial') }}
-                    <?php
-                    /*
-                    <span class="badge rounded-pill badge-center h-px-20 w-px-20 bg-label-danger ms-1_5 pt-50">3</span>
-                    */
-                    ?>
                   </span>
                   <i class="bx bx-history bx-lg d-sm-none"></i>
                 </button>
               </li>
+              */
+              @endphp
               <li class="nav-item">
                 <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
                   data-bs-target="#navs-justified-pendiente" aria-controls="navs-justified-pendiente" aria-selected="false">
@@ -105,9 +104,9 @@
                   </div>
                 @endif
               </div>
+              @php
+              /*
               <div class="tab-pane fade" id="navs-justified-history" role="tabpanel">
-                @php
-                /*
                  @if($this->recordId)
                   @livewire('casos.caso-activity-timeline', ['caso_id' => $this->recordId], key('caso-activity-'.$this->recordId))
                 @else
@@ -118,12 +117,10 @@
                     {{ __('Information will be displayed here after you have created the case') }}
                   </div>
                 @endif
-                */
-                @endphp
               </div>
+              */
+              @endphp
               <div class="tab-pane fade" id="navs-justified-pendiente" role="tabpanel">
-               @php
-                /*
                 @if($this->recordId)
                   @livewire('casos.caso-situacion-manager', [
                     'caso_id' => $this->recordId,
@@ -144,12 +141,8 @@
                     {{ __('Information will be displayed here after you have created the case') }}
                   </div>
                 @endif
-                */
-                @endphp
               </div>
               <div class="tab-pane fade" id="navs-justified-defecto" role="tabpanel">
-                 @php
-                /*
                 @if($this->recordId)
                   @livewire('casos.caso-situacion-manager', [
                     'caso_id' => $this->recordId,
@@ -170,12 +163,8 @@
                     {{ __('Information will be displayed here after you have created the case') }}
                   </div>
                 @endif
-                */
-                @endphp
               </div>
               <div class="tab-pane fade" id="navs-justified-doc-generales" role="tabpanel">
-                 @php
-                /*
                 @if($this->recordId)
                   @livewire('casos.caso-document-manager', [
                     'caso_id' => $this->recordId,
@@ -196,12 +185,8 @@
                     {{ __('Information will be displayed here after you have created the case') }}
                   </div>
                 @endif
-                */
-                @endphp
               </div>
               <div class="tab-pane fade" id="navs-justified-doc-bancos" role="tabpanel">
-                 @php
-                /*
                 @if($this->recordId)
                   @livewire('casos.caso-document-manager', [
                     'caso_id' => $this->recordId,
@@ -222,8 +207,6 @@
                     {{ __('Information will be displayed here after you have created the case') }}
                   </div>
                 @endif
-                */
-                @endphp
               </div>
             </div>
           </div>
