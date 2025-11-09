@@ -80,7 +80,7 @@ class ImportColumns
                         'Despacho Judicial Juzgado'=>['campo'=>'pdespacho_judicial_juzgado', 'tipo'=>'string'],
                         'Comprador'=>['campo'=>'pcomprador', 'tipo'=>'string'],
                         'Poderdante'=>['campo'=>'ppoderdante_id', 'tipo'=>'string'],
-                        'Fecha de última gestión de cobro Administrativo'=>['campo'=>'pfecha_ingreso_cobro_judicial', 'tipo'=>'date'],
+                        'Fecha de última gestión de cobro Administrativo'=>['campo'=>'pultima_gestion_cobro_administrativo', 'tipo'=>'date'],
                         'Fecha de ingreso a cobro judicial'=>['campo'=>'pfecha_ingreso_cobro_judicial', 'tipo'=>'date'],
                         'Fecha devolución de demanda para firma'=>['campo'=>'pfecha_devolucion_demanda_firma', 'tipo'=>'date'],
                         'Fecha de presentación de la demanda'=>['campo'=>'pfecha_presentacion_demanda', 'tipo'=>'date'],

@@ -21,8 +21,10 @@ use App\Models\CasoCapturador;
 use App\Models\CasoPoderdante;
 use App\Livewire\BaseComponent;
 use App\Models\CasoExpectativa;
+use App\Models\CasoFechaRemate;
 use App\Models\CasoNotificador;
 use Livewire\Attributes\Computed;
+use App\Models\CasoListadoJuzgado;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CasoEstadoNotificadores;
@@ -1400,6 +1402,50 @@ class CasoManager extends BaseComponent
     else
       $caso->ppoderdante_id = NULL;
 	}
+
+  public function setDespachoJudicial(&$caso, &$mensaje, $fila)
+	{
+		if (!empty($caso->pnumero_expediente_judicial)) {
+
+        $codigo = trim($caso->pnumero_expediente_judicial);
+
+        // Extraemos los 4 dígitos que necesitamos del input
+        $ultimosCuatro = substr($codigo, 10, 4); // substr empieza en 0
+
+        $listadoJuzgado = CasoListadoJuzgado::whereRaw(
+            "SUBSTRING(codigo, 11, 4) = ?", // posición 11 en MySQL
+            [$ultimosCuatro]
+        )->first();
+
+        $caso->pdespacho_judicial_juzgado = $listadoJuzgado ? strtoupper($listadoJuzgado->nombre) : '';
+		}
+	}
+
+  public function setFechasRemate(&$caso, &$mensaje, $fila){
+    if (!empty($caso->sfecha_primer_remate)){
+      $casoFecha = new CasoFechaRemate;
+      $casoFecha->caso_id = $caso->id;
+      $casoFecha->fecha = $caso->sfecha_primer_remate;
+      $casoFecha->titulo = 'Primer Remate';
+      $casoFecha->save();
+    }
+
+    if (!empty($caso->sfecha_segundo_remate)){
+      $casoFecha = new CasoFechaRemate;
+      $casoFecha->caso_id = $caso->id;
+      $casoFecha->fecha = $caso->sfecha_segundo_remate;
+      $casoFecha->titulo = 'Segundo Remate';
+      $casoFecha->save();
+    }
+
+    if (!empty($caso->sfecha_tercer_remate)){
+      $casoFecha = new CasoFechaRemate;
+      $casoFecha->caso_id = $caso->id;
+      $casoFecha->fecha = $caso->sfecha_tercer_remate;
+      $casoFecha->titulo = 'Tercer Remate';
+      $casoFecha->save();
+    }
+  }
 
   // En tu componente Livewire
   public function excelColumnLetter($index)

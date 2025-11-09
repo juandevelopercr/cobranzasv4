@@ -1873,6 +1873,8 @@ class CasoCoocique extends CasoManager
             $caso->fecha_importacion = now();
             $caso->save();
 
+            $this->setFechasRemate($caso, $errores, $r);
+
             if ($esNuevo) {
                 $nuevos++;
             } else {

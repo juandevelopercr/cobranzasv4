@@ -1559,6 +1559,8 @@ class CasoScotiabankBch extends CasoManager
         $this->setCapturador($caso, $errores, $r);
         $this->setNotificador($caso, $errores, $r);
 
+        $this->setDespachoJudicial($caso, $errores, $r);
+
         if (empty($caso->product_id)) {
             $errores[] = "Fila " . ($r + 1) . ": Debe definir el producto.";
             continue;

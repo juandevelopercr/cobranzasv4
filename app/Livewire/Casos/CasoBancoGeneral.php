@@ -1694,6 +1694,8 @@ class CasoBancoGeneral extends CasoManager
         $this->setCapturador($caso, $errores, $r);
         $this->setNotificador($caso, $errores, $r);
 
+        $this->setDespachoJudicial($caso, $errores, $r);
+
         if (empty($caso->product_id)) {
             $errores[] = "Fila " . ($r + 1) . ": Debe definir el producto.";
             continue;
@@ -1749,6 +1751,8 @@ class CasoBancoGeneral extends CasoManager
 
             $caso->fecha_importacion = now();
             $caso->save();
+
+            $this->setFechasRemate($caso, $errores, $r);
 
             if ($esNuevo) {
                 $nuevos++;
