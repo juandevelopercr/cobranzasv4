@@ -161,7 +161,6 @@
           </div>
           @endif
 
-          @if ($transaction->department)
           <div class="tm_table tm_style1">
             <div class="tm_table_responsive">
               <table>
@@ -179,7 +178,6 @@
             </div>
           </div>
           <br>
-          @endif
 
             <div class="tm_table tm_style1">
               <div class="">

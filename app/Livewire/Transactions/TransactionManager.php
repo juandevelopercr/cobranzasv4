@@ -1086,7 +1086,7 @@ abstract class TransactionManager extends BaseComponent
     $caso = \App\Models\Caso::find($this->caso_id);
 
     if ($caso) {
-      $this->pnombre_demandado = $caso->pnombre_demandado;
+      $this->pnombre_demandado = $caso->pnombre_demandado.' '.$caso->pnombre_apellidos_deudor;
       $this->producto = $caso->producto ? $caso->producto->nombre: '';
       $this->numero_operacion = $caso->pnumero_operacion1;
       $this->proceso = $caso->proceso ? $caso->proceso->nombre: '';

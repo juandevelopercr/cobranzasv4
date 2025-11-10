@@ -555,7 +555,7 @@ use App\Models\User;
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="caso_id">{{ __('Caso') }}</label>
       <div wire:ignore>
-        <select id="caso_id" class="form-select select2-ajax" data-placeholder="Buscar caso...">
+        <select id="transaction_caso_id" class="form-select select2-ajax" data-placeholder="Buscar caso...">
             @if($caso_text)
                 <option value="{{ $caso_id }}" selected>{{ $caso_text }}</option>
             @endif
@@ -636,8 +636,8 @@ use App\Models\User;
   $(document).ready(function() {
 
     function initSelect2Caso() {
-      $('#caso_id').select2({
-        placeholder: $('#caso_id').data('placeholder'),
+      $('#transaction_caso_id').select2({
+        placeholder: $('#transaction_caso_id').data('placeholder'),
         minimumInputLength: 2,
         ajax: {
           url: '/api/casos/search',
@@ -662,7 +662,7 @@ use App\Models\User;
       });
 
       // Manejar selección y enviar a Livewire
-      $('#caso_id').on('change', function () {
+      $('#transaction_caso_id').on('change', function () {
         const val = $(this).val();
         if (typeof $wire !== 'undefined') {
           $wire.set('caso_id', val);

@@ -751,17 +751,11 @@ class ProformaManager extends TransactionManager
 
   public function create()
   {
-    /*
-    $this->resetExcept(['business_id','currencies','conditionSales', 'pay_term_type','issuers', 'codigosContables', 'areas', 'users', 'cuentas',
-                        'proformaTypes', 'paymentStatus','paymentMethods','instruccionesPagos', 'listaUsuarios', 'statusOptions', 'tiposFacturacion']);
-    */
+    $this->customer_text = '';
     $this->resetControls();
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
-    //$this->customer_text = '';
-    //$this->resetControls();
-
-    //$this->cleanEmptyForeignKeys();
+    $this->cleanEmptyForeignKeys();
 
     // Obtener la fecha actual en formato Y-m-d
     $today = Carbon::now()->toDateString();
@@ -794,7 +788,6 @@ class ProformaManager extends TransactionManager
 
     $this->action = 'create';
     $this->dispatch('scroll-to-top');
-    //$this->dispatch('select2');
     $this->dispatch('reinitSelect2Controls');
   }
 
@@ -1062,7 +1055,6 @@ class ProformaManager extends TransactionManager
 
   public function edit($recordId)
   {
-    $this->cleanEmptyForeignKeys();
     $recordId = $this->getRecordAction($recordId);
 
     if (!$recordId) {
@@ -1070,6 +1062,7 @@ class ProformaManager extends TransactionManager
     }
 
     $record = Transaction::find($recordId);
+    $this->recordId = $recordId;
 
     $this->recordId = $recordId;
     //$this->transaction = $record;
@@ -1263,8 +1256,6 @@ class ProformaManager extends TransactionManager
 
     $this->dispatch('reinitSelect2Controls');
     $this->dispatch('reinitSelect2Caso');
-
-    //$this->dispatch('select2');
   }
 
   public function update()
@@ -1399,6 +1390,7 @@ class ProformaManager extends TransactionManager
         'message' => __('An error occurred while updating the registro') . ' ' . $e->getMessage(),
       ]);
     }
+    $this->resetControls();
   }
 
   #[On('facturar')]
@@ -1475,6 +1467,7 @@ class ProformaManager extends TransactionManager
       // Registrar el error en el log
       logger()->error('Error en facturar:' . ' ' . $e->getMessage(), ['exception' => $e]);
     }
+    $this->resetControls();
   }
 
   private function facturarHonorario($transaction)

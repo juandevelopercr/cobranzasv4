@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Bank;
 use App\Models\User;
 use App\Mail\TestMail;
 use Livewire\Livewire;
