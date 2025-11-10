@@ -507,7 +507,7 @@ class Caso extends Model implements HasMedia
       'casos.pnumero',
       'casos.pnumero_operacion1',
       'casos.pfecha_ingreso_cobro_judicial',
-      'casos.filter_nestado_actual_primera_notificacion',
+      'casos.nestado_actual_primera_notificacion',
       'casos.pfecha_asignacion_caso',
       'banks.name as bank_name',
       'casos.pnumero_contrato',
@@ -540,7 +540,6 @@ class Caso extends Model implements HasMedia
       ->leftJoin('casos_procesos', 'casos.proceso_id', '=', 'casos_procesos.id')
       ->leftJoin('currencies', 'casos.currency_id', '=', 'currencies.id')
       ->leftJoin('users as u', 'casos.abogado_id', '=', 'u.id')
-      ->leftJoin('users as ua', 'casos.asistente1_id', '=', 'ua.id')
       ->leftJoin('users as ua', 'casos.asistente1_id', '=', 'ua.id')
       ->leftJoin('casos_estados as aestado', 'casos.aestado_proceso_general_id', '=', 'aestado.id');
 
