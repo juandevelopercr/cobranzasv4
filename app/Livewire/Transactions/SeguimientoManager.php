@@ -50,6 +50,8 @@ class SeguimientoManager extends TransactionManager
 
   public $documentTypes = [];
 
+  public $caso_text = ''; // para mostrar el texto inicial
+
   public $filters = [
     'filter_action' => NULL,
     'filter_consecutivo' => NULL,
@@ -986,8 +988,19 @@ class SeguimientoManager extends TransactionManager
     }
 
     if ($record->caso) {
-      $text = $record->caso->numero . ' - ' . $record->caso->deudor;
-      $this->dispatch('setSelect2Value', id: 'caso_id', value: $this->caso_id, text: $text);
+      $this->caso_text = strtoupper(
+        implode(' / ', array_filter([
+          $record->caso->pnumero,
+          $record->caso->pnumero_operacion1,
+          ($record->caso->pnombre_demandado || $record->caso->pnombre_apellidos_deudor)
+            ? trim($record->caso->pnombre_demandado . ' ' . $record->caso->pnombre_apellidos_deudor)
+            : null
+        ], fn($value) => $value !== null && $value !== ''))
+      );
+      $this->dispatch('setSelect2Value', id: 'caso_id', value: $this->caso_id, text: $this->caso_text);
+    }
+    else{
+      $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: '');
     }
 
     $this->setInfoCaso();

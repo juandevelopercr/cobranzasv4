@@ -526,36 +526,43 @@
         </select>
       </div>
     </div>
-    <div class="col-md-3 fv-plugins-icon-container">
-      <label class="form-label" for="nombreDeudor">{{ __('Nombre del deudor') }}</label>
+    <div class="col-md-2 fv-plugins-icon-container">
+      <label class="form-label" for="pnombre_demandado">{{ __('Nombre del demandado') }}</label>
       <div class="input-group input-group-merge has-validation">
-        <span class="input-group-text"><i class="bx bx-user"></i></span>
-        <input type="text" wire:model="nombreDeudor" name="nombreDeudor" id="nombreDeudor"
-          class="form-control @error('nombreDeudor') is-invalid @enderror" placeholder="{{ __('Nombre del deudor') }}" disabled>
+        <input type="text" wire:model="pnombre_demandado" name="pnombre_demandado" id="pnombre_demandado"
+          class="form-control @error('pnombre_demandado') is-invalid @enderror" placeholder="{{ __('Nombre del deudor') }}" disabled>
       </div>
-      @error('nombreDeudor')
+      @error('pnombre_demandado')
       <div class="text-danger mt-1">{{ $message }}</div>
       @enderror
     </div>
-    <div class="col-md-3 fv-plugins-icon-container">
-      <label class="form-label" for="tipoGarantia">{{ __('Tipo de garantía') }}</label>
+    <div class="col-md-2 fv-plugins-icon-container">
+      <label class="form-label" for="producto">{{ __('Tipo de producto') }}</label>
       <div class="input-group input-group-merge has-validation">
-        <span class="input-group-text"><i class="bx bx-user"></i></span>
-        <input type="text" wire:model="tipoGarantia" name="tipoGarantia" id="tipoGarantia"
-          class="form-control @error('tipoGarantia') is-invalid @enderror" placeholder="{{ __('Tipo de garantía') }}" disabled>
+        <input type="text" wire:model="producto" name="producto" id="producto"
+          class="form-control @error('producto') is-invalid @enderror" placeholder="{{ __('Tipo de producto') }}" disabled>
       </div>
-      @error('tipoGarantia')
+      @error('producto')
       <div class="text-danger mt-1">{{ $message }}</div>
       @enderror
     </div>
-    <div class="col-md-3 fv-plugins-icon-container">
-      <label class="form-label" for="nombre_caso">{{ __('Nombre de caso o referencia') }}</label>
+    <div class="col-md-2 fv-plugins-icon-container">
+      <label class="form-label" for="numero_operacion">{{ __('# de operación') }}</label>
       <div class="input-group input-group-merge has-validation">
-        <span class="input-group-text"><i class="bx bx-user"></i></span>
-        <input type="text" wire:model="nombre_caso" name="nombre_caso" id="nombre_caso"
-          class="form-control @error('nombre_caso') is-invalid @enderror" placeholder="{{ __('Nombre de caso o referencia') }}">
+        <input type="text" wire:model="numero_operacion" name="numero_operacion" id="numero_operacion"
+          class="form-control @error('numero_operacion') is-invalid @enderror" placeholder="{{ __('# de operación') }}" disabled>
       </div>
-      @error('nombre_caso')
+      @error('numero_operacion')
+      <div class="text-danger mt-1">{{ $message }}</div>
+      @enderror
+    </div>
+    <div class="col-md-2 fv-plugins-icon-container">
+      <label class="form-label" for="proceso">{{ __('Proceso') }}</label>
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" wire:model="proceso" name="proceso" id="proceso"
+          class="form-control @error('proceso') is-invalid @enderror" placeholder="{{ __('Proceso') }}" disabled>
+      </div>
+      @error('proceso')
       <div class="text-danger mt-1">{{ $message }}</div>
       @enderror
     </div>
@@ -594,56 +601,52 @@
 @script()
 <script>
   $(document).ready(function() {
-    // Para la busqueda del caso
-    // Configuración AJAX para caso_id
-    window.select2Config = {
-      department_id: {fireEvent: true},
-      //bank_id: {fireEvent: true},
-      cuenta_id: {fireEvent: false},
-      showInstruccionesPago: {fireEvent: false},
-      currency_id: {fireEvent: false},
-      contact_economic_activity_id: {fireEvent: false},
-      location_economic_activity_id: {fireEvent: false},
-      //condition_sale: {fireEvent: true},
-      created_by: {fireEvent: false},
-      location_id: {fireEvent: true},
-      codigo_contable_id: {fireEvent: false},
-      proforma_type: {fireEvent: false},
-      proforma_status: {fireEvent: false},
-      area_id: {fireEvent: false}
-    };
 
-    $('#caso_id').select2({
-      placeholder: $('#caso_id').data('placeholder'),
-      minimumInputLength: 2,
-      ajax: {
-        url: '/api/casos/search',
-        dataType: 'json',
-        delay: 250,
-        data: function (params) {
-          return {
-            q: params.term
-          };
-        },
-        processResults: function (data) {
-          return {
-            results: data.map(item => ({
-              id: item.id,
-              text: item.text
-            }))
-          };
-        },
-        cache: true
-      }
+    function initSelect2Caso() {
+      $('#caso_id').select2({
+        placeholder: $('#caso_id').data('placeholder'),
+        minimumInputLength: 2,
+        ajax: {
+          url: '/api/casos/search',
+          dataType: 'json',
+          delay: 250,
+          data: function (params) {
+            return {
+              q: params.term,
+              bank_id: $("#bank_id").val()
+            };
+          },
+          processResults: function (data) {
+            return {
+              results: data.map(item => ({
+                id: item.id,
+                text: item.text
+              }))
+            };
+          },
+          cache: true
+        }
+      });
+
+      // Manejar selección y enviar a Livewire
+      $('#caso_id').on('change', function () {
+        const val = $(this).val();
+        if (typeof $wire !== 'undefined') {
+          $wire.set('caso_id', val);
+        }
+      });
+    }
+
+    // Re-ejecuta las inicializaciones después de actualizaciones de Livewire
+    Livewire.on('reinitSelect2Caso', () => {
+      console.log('Reinicializando controles después de Livewire update reinitFormControls');
+      setTimeout(() => {
+        initSelect2Caso();
+
+      }, 300); // Retraso para permitir que el DOM se estabilice
     });
 
-    // Manejar selección y enviar a Livewire
-    $('#caso_id').on('change', function () {
-      const val = $(this).val();
-      if (typeof $wire !== 'undefined') {
-        $wire.set('caso_id', val);
-      }
-    });
+    initSelect2Caso();
 
     $('#contact_id').select2({
       placeholder: $('#contact_id').data('placeholder'),
@@ -676,29 +679,6 @@
         $wire.set('contact_id', val);
       }
     });
-
-    //**************************************************************
-    //*****Para todos los demás select2****************
-    //**************************************************************
-    Object.entries(select2Config).forEach(([id, config]) => {
-      const $select = $('#' + id);
-      if (!$select.length) return;
-
-      $select.select2();
-
-      // Default values
-      const fireEvent = config.fireEvent ?? false;
-      //const allowClear = config.allowClear ?? false;
-      //const placeholder = config.placeholder ?? 'Seleccione una opción';
-
-      $select.on('change', function() {
-        let data = $(this).val();
-        $wire.set(id, data, fireEvent);
-        $wire.id = data;
-        //@this.department_id = data;
-        console.log(data);
-      });
-    });
   })
 
   Livewire.on('setSelect2Value', ({ id, value, text }) => {
@@ -725,9 +705,22 @@
 
   const initializeSelect2 = () => {
       const selects = [
-        'condition_sale',
-        'invoice_type',
-        'bank_id'
+        //'condition_sale',
+        //'invoice_type',
+        'codigo_contable_id',
+        'location_id',
+        'bank_id',
+        'currency_id',
+        'proforma_type',
+        'department_id',
+        'cuenta_id',
+        'showInstruccionesPago',
+        'contact_economic_activity_id',
+        'location_economic_activity_id',
+        //'tipo_facturacion',
+        'created_by',
+        'proforma_status',
+        'area_id'
       ];
 
       selects.forEach((id) => {
@@ -744,7 +737,7 @@
             if (newValue !== livewireValue) {
               // Actualiza Livewire solo si es el select2 de `condition_sale`
               // Hay que poner wire:ignore en el select2 para que todo vaya bien
-              const specificIds = ['condition_sale', 'invoice_type']; // Lista de IDs específicos
+              const specificIds = ['tipo_facturacion','condition_sale', 'location_id']; // Lista de IDs específicos
 
               if (specificIds.includes(id)) {
                 @this.set(id, newValue);
@@ -765,35 +758,11 @@
 
     // Re-ejecuta las inicializaciones después de actualizaciones de Livewire
     Livewire.on('reinitSelect2Controls', () => {
-      console.log('Reinicializando controles después de Livewire update reinitFormControls');
+      console.log('Reinicializando select de casos');
       setTimeout(() => {
         initializeSelect2();
-        initSelect2Other();
       }, 300); // Retraso para permitir que el DOM se estabilice
     });
-
-
-    function initSelect2Other(){
-        Object.entries(select2Config).forEach(([id, config]) => {
-        const $select = $('#' + id);
-        if (!$select.length) return;
-
-        $select.select2();
-
-        // Default values
-        const fireEvent = config.fireEvent ?? false;
-        //const allowClear = config.allowClear ?? false;
-        //const placeholder = config.placeholder ?? 'Seleccione una opción';
-
-        $select.on('change', function() {
-          let data = $(this).val();
-          $wire.set(id, data, fireEvent);
-          $wire.id = data;
-          //@this.department_id = data;
-          console.log(data);
-        });
-      });
-    }
 </script>
 @endscript
 @endif
