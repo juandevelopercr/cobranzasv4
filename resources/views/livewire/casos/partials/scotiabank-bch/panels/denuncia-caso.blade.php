@@ -4,8 +4,8 @@
     <div wire:ignore>
       <select wire:model.live="ranotacion" id="ranotacion" class="select2 form-select @error('ranotacion') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
-         <option value="Si">Si</option>
-         <option value="No">No</option>
+         <option value="SI">SI</option>
+         <option value="NO">NO</option>
       </select>
     </div>
     @error('ranotacion')
@@ -17,8 +17,8 @@
     <div wire:ignore>
       <select wire:model.live="rmarchamo_al_dia" id="rmarchamo_al_dia" class="select2 form-select @error('rmarchamo_al_dia') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
-         <option value="Si">Si</option>
-         <option value="No">No</option>
+         <option value="SI">SI</option>
+         <option value="NO">NO</option>
       </select>
     </div>
     @error('rmarchamo_al_dia')
@@ -31,8 +31,8 @@
     <div wire:ignore>
       <select wire:model.live="rpendiente" id="rpendiente" class="select2 form-select @error('rpendiente') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
-         <option value="Si">Si</option>
-         <option value="No">No</option>
+         <option value="SI">SI</option>
+         <option value="NO">NO</option>
       </select>
     </div>
     @error('rpendiente')

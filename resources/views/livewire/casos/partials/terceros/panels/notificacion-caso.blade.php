@@ -186,8 +186,8 @@
     <div wire:ignore>
       <select wire:model.live="nexonerado_cobro" id="nexonerado_cobro" class="select2 form-select @error('nexonerado_cobro') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
-         <option value="Si">Si</option>
-         <option value="No">No</option>
+        <option value="SI">SI</option>
+        <option value="NO">NO</option>
       </select>
     </div>
     @error('nexonerado_cobro')

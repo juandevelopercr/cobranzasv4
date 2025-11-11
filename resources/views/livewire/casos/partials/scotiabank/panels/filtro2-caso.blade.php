@@ -13,8 +13,8 @@
     <div wire:ignore>
       <select wire:model.live="f2publicacion_edicto" id="f2publicacion_edicto" class="select2 form-select @error('f2publicacion_edicto') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
-         <option value="Si">Si</option>
-         <option value="No">No</option>
+         <option value="SI">SI</option>
+         <option value="NO">NO</option>
       </select>
     </div>
     @error('f2publicacion_edicto')

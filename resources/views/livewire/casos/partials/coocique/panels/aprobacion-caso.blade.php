@@ -52,8 +52,8 @@
     <div wire:ignore>
       <select wire:model.live="apuesta_posesion" id="apuesta_posesion" class="select2 form-select @error('apuesta_posesion') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>
-         <option value="Si">Si</option>
-         <option value="No">No</option>
+        <option value="SI">SI</option>
+        <option value="NO">NO</option>
       </select>
     </div>
     @error('apuesta_posesion')
