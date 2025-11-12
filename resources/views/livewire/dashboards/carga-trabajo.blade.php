@@ -7,25 +7,6 @@ use App\Models\User;
       <div class="card-datatable text-nowrap">
         <div class="dataTables_wrapper dt-bootstrap5 no-footer">
           <div class="row mt-3 mb-6">
-              <div class="col-md-3 flex-column-filter elect2-primary fv-plugins-icon-container"
-                  x-data="select2Livewire({
-                    wireModelName: 'department',
-                    postUpdate: true
-                  })"
-                  x-init="init($refs.select)"
-                  wire:ignore>
-                <label class="form-label" for="department">{{ __('Department') }}</label>
-                <select x-ref="select" id="department"
-                        class="select2 form-select @error('department') is-invalid @enderror">
-                  @if (auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
-                      <option value="">{{ __('Todos') }}</option>
-                  @endif
-                  @foreach ($this->departments as $department)
-                    <option value="{{ $department->id }}">{{ $department->name }}</option>
-                  @endforeach
-                </select>
-              </div>
-
               <div class="col-md-2 flex-column-filter select2-primary fv-plugins-icon-container"
                   x-data="select2Livewire({
                     wireModelName: 'year',
@@ -96,7 +77,7 @@ use App\Models\User;
             </div>
           </div>
           <div class="row mt-3 mb-6">
-              @foreach (['firmas_abogado_bar', 'caratulas_abogado_bar', 'precaratulas_abogado_bar', 'carga_trabajo_bar'] as $chartId)
+              @foreach (['firmas_abogado_bar', 'carga_trabajo_bar'] as $chartId)
                 <div class="{{ $chartsPerRow == 1 ? 'col-md-12' : 'col-md-6' }}">
                   @include('dashboard.components.chart-wrapper', ['chartId' => $chartId])
                 </div>
@@ -115,90 +96,3 @@ use App\Models\User;
   });
 </script>
 @endpush
-
-
-@php
-/*
-<table class="kv-grid-table table table-bordered table-striped kv-table-wrap">
-<thead>
-  <tr data-key="1">
-    <th colspan="13" class="kv-align-center kv-align-middle kv-merged-header" align="center" style="text-align:center">TOTAL Honorarios: Todos los departamentos</th>
-  </tr>
-</thead>
-<thead>
-  <tr>
-    <th class="kv-align-center kv-align-middle kv-merged-header" style="width:50px; text-align: center;" rowspan="2" data-col-seq="0">DOLARES</th>
-    <th class="kv-align-center kv-align-middle" data-col-seq="2" style="text-align: center;"><a href="#" data-sort="codigo">ENE</a></th>
-    <th class="kv-align-center kv-align-middle" data-col-seq="3" style="text-align: center;"><a href="#" data-sort="descripcion">FEB</a></th>
-    <th class="kv-align-center kv-align-middle" data-col-seq="4" style="text-align: center;"><a href="#" data-sort="es_gasto">MAR</a></th>
-    <th class="kv-align-center kv-align-middle" data-col-seq="5" style="text-align: center;"><a href="#" data-sort="unidad_medida_id">ABR</a></th>
-    <th class="sort-numerical kv-align-center kv-align-middle" data-col-seq="6" style="text-align: center;"><a href="#" data-sort="precio">MAY</a></th>
-    <th class="sort-numerical kv-align-center kv-align-middle" data-col-seq="7" style="text-align: center;"><a href="#" data-sort="precio">JUN</a></th>
-    <th class="sort-numerical kv-align-center kv-align-middle" data-col-seq="8" style="text-align: center;"><a href="#" data-sort="precio">JUL</a></th>
-    <th class="sort-numerical kv-align-center kv-align-middle" data-col-seq="9" style="text-align: center;"><a href="#" data-sort="precio">AGO</a></th>
-    <th class="sort-numerical kv-align-center kv-align-middle" data-col-seq="10" style="text-align: center;"><a href="#" data-sort="precio">SEP</a></th>
-    <th class="sort-numerical kv-align-center kv-align-middle" data-col-seq="11" style="text-align: center;"><a href="#" data-sort="precio">OCT</a></th>
-    <th class="sort-numerical kv-align-center kv-align-middle" data-col-seq="12" style="text-align: center;"><a href="#" data-sort="precio">NOV</a></th>
-    <th class="sort-numerical kv-align-center kv-align-middle" data-col-seq="13" style="text-align: center;"><a href="#" data-sort="precio">DIC</a></th>
-  </tr>
-</thead>
-<tbody>
-  <tr data-key="1">
-    <td class="kv-align-center kv-align-middle" style="width: 50px; mso-number-format: \@; text-align: center;" data-col-seq="0">2024</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      213.731,02</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      307.470,09</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      226.957,03</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      340.646,17</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      399.669,28</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      407.190,81</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      638.040,82</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      364.854,34</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      399.401,17</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      504.062,03</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      446.791,96</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      591.318,10</td>
-      </tr>
-  <tr data-key="1">
-    <td class="kv-align-center kv-align-middle" style="width: 50px; mso-number-format: \@; text-align: center;" data-col-seq="0">2025</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      277.664,29</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      460.838,89</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      644.916,12</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      339.503,79</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      302.448,81</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      238.591,20</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      0,00</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      0,00</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      0,00</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      0,00</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      0,00</td>
-        <td class="kv-align-center kv-align-middle" data-raw-value="0.00000" style="mso-number-format: \#\,\#\#0\.00; text-align: right;">$
-      0,00</td>
-      </tr>
-
-</tbody>
-</table>
-*/
-@endphp

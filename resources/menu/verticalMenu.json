@@ -352,14 +352,6 @@
       ],
       "submenu": [
         {
-          "url": "dashboard/firmas",
-          "name": "Firmas",
-          "slug": "dashboard-firmas.index",
-          "permissions": [
-            "view-firmas-dashboard"
-          ]
-        },
-        {
           "url": "dashboard/honorarios-anno",
           "name": "Honorarios",
           "slug": "dashboard-honorarios-anno.index",
@@ -368,67 +360,11 @@
           ]
         },
         {
-          "url": "dashboard/control-mensual",
-          "name": "Control mensual",
-          "slug": "dashboard-control-mensual.index",
-          "permissions": [
-            "view-control-mensual-dashboard"
-          ]
-        },
-        {
           "url": "dashboard/carga-trabajo",
           "name": "Carga de trabajo",
           "slug": "dashboard-carga-trabajo.index",
           "permissions": [
             "view-carga-trabajo-dashboard"
-          ]
-        },
-        {
-          "url": "dashboard/formalizaciones",
-          "name": "Formalizaciones",
-          "slug": "dashboard-formalizaciones.index",
-          "permissions": [
-            "view-formalizaciones-dashboard"
-          ]
-        },
-        {
-          "url": "dashboard/tipos-caratulas",
-          "name": "Carátulas y precarátulas",
-          "slug": "dashboard-tipos-caratulas.index",
-          "permissions": [
-            "view-tipos-caratulas-dashboard"
-          ]
-        },
-        {
-          "url": "dashboard/volumen-banco",
-          "name": "Volumen por banco",
-          "slug": "dashboard-volumen-banco.index",
-          "permissions": [
-            "view-volumen-banco-dashboard"
-          ]
-        },
-        {
-          "url": "dashboard/facturacion-abogado",
-          "name": "facturación por abogado",
-          "slug": "dashboard-facturacion-abogado.index",
-          "permissions": [
-            "view-facturacion-abogado-dashboard"
-          ]
-        },
-        {
-          "url": "dashboard/tipos-garantias",
-          "name": "Tipos Garantías / actos",
-          "slug": "dashboard-tipos-garantias.index",
-          "permissions": [
-            "view-tipos-garantias-dashboard"
-          ]
-        },
-        {
-          "url": "dashboard/facturacion-centro-costo",
-          "name": "Facturación / centro de costo",
-          "slug": "dashboard-facturacion-centro-costo.index",
-          "permissions": [
-            "view-facturacion-centro-costo-dashboard"
           ]
         }
       ]

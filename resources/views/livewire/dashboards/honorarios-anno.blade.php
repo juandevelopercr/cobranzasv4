@@ -7,25 +7,6 @@ use App\Models\User;
       <div class="card-datatable text-nowrap">
         <div class="dataTables_wrapper dt-bootstrap5 no-footer">
           <div class="row mt-3 mb-6">
-              <div class="col-md-3 flex-column-filter elect2-primary fv-plugins-icon-container"
-                  x-data="select2Livewire({
-                    wireModelName: 'department',
-                    postUpdate: true
-                  })"
-                  x-init="init($refs.select)"
-                  wire:ignore>
-                <label class="form-label" for="department">{{ __('Department') }}</label>
-                <select x-ref="select" id="department"
-                        class="select2 form-select @error('department') is-invalid @enderror">
-                  @if (auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
-                      <option value="">{{ __('Todos') }}</option>
-                  @endif
-                  @foreach ($this->departments as $department)
-                    <option value="{{ $department->id }}">{{ $department->name }}</option>
-                  @endforeach
-                </select>
-              </div>
-
               <div class="col-md-2 flex-column-filter select2-primary fv-plugins-icon-container"
                   x-data="select2Livewire({
                     wireModelName: 'firstYear',

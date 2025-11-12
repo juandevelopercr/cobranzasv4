@@ -5,7 +5,6 @@ namespace App\Livewire\Dashboards;
 use App\Models\Bank;
 use App\Models\Caso;
 use App\Models\Currency;
-use App\Models\Department;
 use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
@@ -17,25 +16,14 @@ use Livewire\Component;
 
 class HonorariosAnno extends Component
 {
-  public $department;
-  public $departments = [];
   public $years = [];      // Lista de años disponibles para el filtro
   public $firstYear;       // Año inicial del filtro (por defecto, año anterior al actual)
   public $lastYear;        // Año final del filtro (por defecto, año actual)
   public $chartTheme = 'zune'; // Valor por defecto
   public $chartsPerRow = 1; // por defecto 2 gráficos por fila
-  public $departmentName;
 
   public function mount()
   {
-    // Obtener departamentos y bancos de la sesión
-    $departments = Session::get('current_department', []);
-
-    $this->departments = Department::where('active', 1)
-      ->whereIn('id', $departments)
-      ->orderBy('name', 'ASC')
-      ->get();
-
     // Obtener años únicos desde la columna created_at
     $this->years = Transaction::select(DB::raw('YEAR(transaction_date) as year'))
       ->where('proforma_status', Transaction::FACTURADA)
@@ -58,7 +46,7 @@ class HonorariosAnno extends Component
 
   public function updated($property)
   {
-    if (in_array($property, ['department', 'firstYear', 'lastYear', 'chartTheme'])) {
+    if (in_array($property, ['firstYear', 'lastYear', 'chartTheme'])) {
       $this->js(<<<JS
           Livewire.dispatch('updateFusionCharts', {$this->getChartDataJson()});
       JS);
@@ -75,10 +63,6 @@ class HonorariosAnno extends Component
 
   public function getChartData(): array
   {
-    $this->departmentName = Department::find($this->department)?->name ?? '';
-
-    //$mscolumn2d = $this->getDataMsColumn2d();
-
     $data = $this->getDataBar();
     $heatmap = $this->getHeatmapByYearData(); // Nueva función para obtener datos del heatmap
     $heatmap_banks = $this->getHeatmapByBankData();
@@ -109,77 +93,81 @@ class HonorariosAnno extends Component
 
   public function getDataBar(): array
   {
-    $query = Transaction::select(
-      DB::raw('YEAR(transaction_date) AS year'),
-      DB::raw('MONTH(transaction_date) AS month'),
-      DB::raw("
-        ROUND(SUM(
-            CASE                                                                                             
-                WHEN transactions.currency_id = " . Currency::DOLARES . " AND transactions.department_id = casos.department_id
-                    THEN (totalHonorarios - totalDiscount + totalTax)
-                ELSE 0
-            END
-        ), 2) AS total_usd
-    "),
-      DB::raw("
-        ROUND(SUM(
-            CASE 
-                WHEN transactions.currency_id = " . Currency::COLONES . " AND transactions.department_id = casos.department_id
-                    THEN (totalHonorarios - totalDiscount + totalTax)
-                ELSE 0
-            END
-        ), 2) AS total_crc
-    ")
-    )
-      ->join('casos', 'transactions.caso_id', '=', 'casos.id')
-      ->where('proforma_status', Transaction::FACTURADA)
-      ->whereIn('document_type', [
-        Transaction::PROFORMA,
-        Transaction::FACTURAELECTRONICA,
-        Transaction::TIQUETEELECTRONICO
+      $startDate = Carbon::create($this->firstYear, 1, 1)->startOfDay();
+      $endDate   = Carbon::create($this->lastYear, 12, 31)->endOfDay();
+
+      // Subquery: transacciones distintas
+      $transactionsSub = Transaction::select(
+          'transactions.id',
+          'transactions.caso_id',
+          'transactions.currency_id',
+          'transactions.totalHonorarios',
+          'transactions.totalDiscount',
+          'transactions.totalTax',
+          'transactions.proforma_change_type',
+          'transactions.transaction_date'
+      )
+      ->whereNotNull('transactions.caso_id')
+      ->whereNull('transactions.deleted_at')
+      ->where('transactions.proforma_status', Transaction::FACTURADA)
+      ->whereIn('transactions.document_type', [
+          Transaction::PROFORMA,
+          Transaction::FACTURAELECTRONICA,
+          Transaction::TIQUETEELECTRONICO
       ])
-      ->whereNotNull('transaction_date')
-      ->whereYear('transaction_date', '>=', $this->firstYear)
-      ->whereYear('transaction_date', '<=', $this->lastYear);
+      ->where('transactions.proforma_type', 'HONORARIO');
 
-    // Filtro por departamento
-    if (!empty($this->department)) {
-      $query->where('transactions.department_id', $this->department);
-    } elseif (!empty($this->departments)) {
-      $ids = collect($this->departments)->pluck('id')->toArray();
-      if (!empty($ids)) {
-        $query->whereIn('transactions.department_id', $ids);
-      }
-    }
+      $data = DB::table(DB::raw("({$transactionsSub->toSql()}) as transactions"))
+          ->mergeBindings($transactionsSub->getQuery())
+          ->join('casos', 'transactions.caso_id', '=', 'casos.id')
+          ->select(
+              DB::raw('YEAR(transactions.transaction_date) as year'),
+              DB::raw('MONTH(transactions.transaction_date) as month'),
+              DB::raw('COUNT(DISTINCT transactions.id) as total_transacciones'),
+              DB::raw('SUM(CASE WHEN transactions.currency_id = 1 THEN (COALESCE(transactions.totalHonorarios,0) - COALESCE(transactions.totalDiscount,0) + COALESCE(transactions.totalTax,0)) ELSE 0 END) as total_usd'),
+              DB::raw('SUM(CASE WHEN transactions.currency_id = 16 THEN (COALESCE(transactions.totalHonorarios,0) - COALESCE(transactions.totalDiscount,0) + COALESCE(transactions.totalTax,0)) ELSE 0 END) as total_crc'),
+              DB::raw('SUM(
+                  CASE
+                      WHEN transactions.currency_id = 1 THEN (COALESCE(transactions.totalHonorarios,0) - COALESCE(transactions.totalDiscount,0) + COALESCE(transactions.totalTax,0))
+                      WHEN transactions.currency_id = 16 THEN (COALESCE(transactions.totalHonorarios,0) - COALESCE(transactions.totalDiscount,0) + COALESCE(transactions.totalTax,0)) / NULLIF(COALESCE(transactions.proforma_change_type,1),0)
+                      ELSE 0
+                  END
+              ) as total_dolarizado')
+          )
+          ->whereBetween('transactions.transaction_date', [$startDate, $endDate])
+          ->groupBy(DB::raw('YEAR(transactions.transaction_date), MONTH(transactions.transaction_date)'))
+          ->orderBy('year')
+          ->orderBy('month')
+          ->get();
 
-    $data = $query
-      ->groupBy(DB::raw('YEAR(transaction_date), MONTH(transaction_date)'))
-      ->orderBy('year')
-      ->orderBy('month')
-      ->get();
+      // IDs por mes para depuración
+      $idsPorMes = $data->mapWithKeys(function($item) {
+          return ["{$item->year}-{$item->month}" => []]; // Puedes poblar con IDs si necesitas
+      });
 
-    $estructura_usd = $this->getEstructuraGraficoBar($data, 'USD');
-    $estructura_crc = $this->getEstructuraGraficoBar($data, 'CRC');
+      // Estructura para gráfico
+      $estructura_usd = $this->getEstructuraGraficoBar($data, 'USD');
+      $estructura_crc = $this->getEstructuraGraficoBar($data, 'CRC');
+      $dataset_dolarizado = $data->map(fn($item) => [
+          'label' => "{$item->month}-{$item->year}",
+          'value' => $item->total_dolarizado,
+      ]);
 
-    $caption_usd = 'Honorarios USD';
-    $caption_crc = 'Honorarios CRC';
-    $subCaption = [];
+      $subCaption = [];
+      $subCaption[] = "Desde: {$this->firstYear}";
+      $subCaption[] = "Hasta: {$this->lastYear}";
 
-    if (!empty($this->departmentName)) {
-      $subCaption[] = "Departamento: {$this->departmentName}";
-    }
-
-    $subCaption[] = "Desde: {$this->firstYear}";
-    $subCaption[] = "Hasta: {$this->lastYear}";
-
-    return [
-      'categories' => $estructura_usd['categories'],
-      'dataset_usd' => $estructura_usd['dataset'],
-      'dataset_crc' => $estructura_crc['dataset'],
-      'caption_usd' => $caption_usd,
-      'caption_crc' => $caption_crc,
-      'subCaption' => implode(' | ', $subCaption),
-    ];
+      return [
+          'categories' => $estructura_usd['categories'],
+          'dataset_usd' => $estructura_usd['dataset'],
+          'dataset_crc' => $estructura_crc['dataset'],
+          'dataset_dolarizado' => $dataset_dolarizado,
+          'ids_por_mes' => $idsPorMes,
+          'caption_usd' => 'Honorarios USD',
+          'caption_crc' => 'Honorarios CRC',
+          'caption_dolarizado' => 'Honorarios Dolarizados',
+          'subCaption' => implode(' | ', $subCaption),
+      ];
   }
 
   public function render()
@@ -244,18 +232,16 @@ class HonorariosAnno extends Component
       DB::raw('MONTH(transaction_date) AS month'),
       DB::raw("
             ROUND(SUM(
-                CASE 
-                    WHEN transactions.currency_id = " . Currency::DOLARES . " AND transactions.department_id = casos.department_id
-                        THEN (totalHonorarios - totalDiscount + totalTax)
+                CASE
+                    WHEN transactions.currency_id = " . Currency::DOLARES . " THEN (totalHonorarios - totalDiscount + totalTax)
                     ELSE 0
                 END
             ), 2) AS total_usd
         "),
       DB::raw("
             ROUND(SUM(
-                CASE 
-                    WHEN transactions.currency_id = " . Currency::COLONES . " AND transactions.department_id = casos.department_id
-                        THEN (totalHonorarios - totalDiscount + totalTax)
+                CASE
+                    WHEN transactions.currency_id = " . Currency::COLONES . " THEN (totalHonorarios - totalDiscount + totalTax)
                     ELSE 0
                 END
             ), 2) AS total_crc
@@ -263,6 +249,7 @@ class HonorariosAnno extends Component
     )
       ->join('casos', 'transactions.caso_id', '=', 'casos.id')
       ->where('proforma_status', Transaction::FACTURADA)
+      ->where('transactions.proforma_type', 'HONORARIO')
       ->whereIn('document_type', [
         Transaction::PROFORMA,
         Transaction::FACTURAELECTRONICA,
@@ -271,16 +258,6 @@ class HonorariosAnno extends Component
       ->whereNotNull('transaction_date')
       ->whereYear('transaction_date', '>=', $this->firstYear)
       ->whereYear('transaction_date', '<=', $this->lastYear);
-
-    // Aplicar filtros de departamento
-    if (!empty($this->department)) {
-      $baseQuery->where('transactions.department_id', $this->department);
-    } elseif (!empty($this->departments)) {
-      $ids = collect($this->departments)->pluck('id')->toArray();
-      if (!empty($ids)) {
-        $baseQuery->whereIn('transactions.department_id', $ids);
-      }
-    }
 
     // Ejecutar consulta y obtener resultados
     $results = $baseQuery
@@ -305,13 +282,6 @@ class HonorariosAnno extends Component
     // Preparar estructura para columnas (meses)
     $columns = [];
     foreach ($months as $month) {
-
-      // Usar Carbon para obtener el nombre del mes en español
-      /*
-      $monthName = Carbon::createFromDate(null, $month, null)
-        ->locale('es') // Establecer localización en español
-        ->monthName;   // Obtener nombre completo del mes
-      */
 
       // Forma alternativa para nombre abreviado:
       $monthName = ucfirst(Carbon::createFromDate(null, $month, null)
@@ -366,10 +336,6 @@ class HonorariosAnno extends Component
     $caption_crc = 'Facturación Anual por Mes (CRC)';
     $subCaption = [];
 
-    if (!empty($this->departmentName)) {
-      $subCaption[] = "Departamento: {$this->departmentName}";
-    }
-
     $subCaption[] = "Desde: {$this->firstYear}";
     $subCaption[] = "Hasta: {$this->lastYear}";
 
@@ -406,18 +372,16 @@ class HonorariosAnno extends Component
       DB::raw('MONTH(transaction_date) AS month'),
       DB::raw("
             ROUND(SUM(
-                CASE 
-                    WHEN transactions.currency_id = " . Currency::DOLARES . " AND transactions.department_id = casos.department_id
-                        THEN (totalHonorarios - totalDiscount + totalTax)
+                CASE
+                    WHEN transactions.currency_id = " . Currency::DOLARES . " THEN (totalHonorarios - totalDiscount + totalTax)
                     ELSE 0
                 END
             ), 2) AS total_usd
         "),
       DB::raw("
             ROUND(SUM(
-                CASE 
-                    WHEN transactions.currency_id = " . Currency::COLONES . " AND transactions.department_id = casos.department_id
-                        THEN (totalHonorarios - totalDiscount + totalTax)
+                CASE
+                    WHEN transactions.currency_id = " . Currency::COLONES . " THEN (totalHonorarios - totalDiscount + totalTax)
                     ELSE 0
                 END
             ), 2) AS total_crc
@@ -425,6 +389,7 @@ class HonorariosAnno extends Component
     )
       ->join('casos', 'transactions.caso_id', '=', 'casos.id')
       ->where('proforma_status', Transaction::FACTURADA)
+      ->where('transactions.proforma_type', 'HONORARIO')
       ->whereIn('document_type', [
         Transaction::PROFORMA,
         Transaction::FACTURAELECTRONICA,
@@ -438,16 +403,6 @@ class HonorariosAnno extends Component
       ->orderBy('bank_id')
       ->orderBy('year')
       ->orderBy('month');
-
-    // Aplicar filtros de departamento
-    if (!empty($this->department)) {
-      $baseQuery->where('transactions.department_id', $this->department);
-    } elseif (!empty($this->departments)) {
-      $ids = collect($this->departments)->pluck('id')->toArray();
-      if (!empty($ids)) {
-        $baseQuery->whereIn('transactions.department_id', $ids);
-      }
-    }
 
     // Ejecutar consulta y obtener resultados
     $results = $baseQuery->get();
@@ -523,10 +478,6 @@ class HonorariosAnno extends Component
     $caption_usd = 'Facturación por Banco y Mes (USD)';
     $caption_crc = 'Facturación por Banco y Mes (CRC)';
     $subCaption = [];
-
-    if (!empty($this->departmentName)) {
-      $subCaption[] = "Departamento: {$this->departmentName}";
-    }
 
     $subCaption[] = "Desde: {$this->firstYear}";
     $subCaption[] = "Hasta: {$this->lastYear}";
