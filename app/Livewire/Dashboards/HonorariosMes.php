@@ -5,7 +5,6 @@ namespace App\Livewire\Dashboards;
 use App\Helpers\Helpers;
 use App\Models\Caso;
 use App\Models\Currency;
-use App\Models\Department;
 use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
@@ -16,15 +15,12 @@ use Livewire\Component;
 
 class HonorariosMes extends Component
 {
-  public $department;
-  public $departments = [];
   public $years = [];      // Lista de años disponibles para el filtro
   public $firstYear;       // Año inicial del filtro (por defecto, año anterior al actual)
   public $lastYear;        // Año final del filtro (por defecto, año actual)
   public $month;           // Mes de análisis (por defecto mes actual)
   public $chartTheme = 'zune'; // Valor por defecto
   public $chartsPerRow = 2; // por defecto 2 gráficos por fila
-  public $departmentName;
   public $months;
   public $monthName;
 
@@ -43,14 +39,6 @@ class HonorariosMes extends Component
     $this->total_iva = 0;
     $this->total_descuento = 0;
     $this->total_transaction = 0;
-
-    // Obtener departamentos y bancos de la sesión
-    $departments = Session::get('current_department', []);
-
-    $this->departments = Department::where('active', 1)
-      ->whereIn('id', $departments)
-      ->orderBy('name', 'ASC')
-      ->get();
 
     // Obtener años únicos desde la columna created_at
     $this->years = Transaction::select(DB::raw('YEAR(transaction_date) as year'))
@@ -96,7 +84,7 @@ class HonorariosMes extends Component
 
   public function updated($property)
   {
-    if (in_array($property, ['department', 'firstYear', 'lastYear', 'month', 'chartTheme'])) {
+    if (in_array($property, ['firstYear', 'lastYear', 'month', 'chartTheme'])) {
       $this->js(<<<JS
           Livewire.dispatch('updateFusionCharts', {$this->getChartDataJson()});
       JS);
@@ -113,7 +101,6 @@ class HonorariosMes extends Component
 
   public function getChartData(): array
   {
-    $this->departmentName = Department::find($this->department)?->name ?? '';
     $this->monthName = $this->getNombreMes();
 
     $line = $this->getDataLine();
@@ -147,10 +134,6 @@ class HonorariosMes extends Component
     $caption = 'Resumen de indicadores';
     $subCaption = [];
 
-    if (!empty($this->departmentName)) {
-      $subCaption[] = "Departamento: {$this->departmentName}";
-    }
-
     if (!empty($this->monthName))
       $subCaption[] = "$this->monthName";
     $subCaption[] = "de {$this->lastYear}";
@@ -171,13 +154,9 @@ class HonorariosMes extends Component
 
   public function getDataLine(): array
   {
-    // Convertir códigos a array para usar en whereIn
-    $codigosArray = ['01', '02', '03', '05', '06', '07', '19', '20', '21', '23', '24'];
-
     // Subconsulta para comisiones
     $comisionesSubquery = DB::table('transactions_commissions as fc')
       ->join('centro_costos as cc', 'fc.centro_costo_id', '=', 'cc.id')
-      ->whereIn('cc.codigo', $codigosArray)
       ->select('fc.transaction_id', DB::raw('SUM(fc.percent) / 100 as total_percent'))
       ->groupBy('fc.transaction_id');
 
@@ -185,6 +164,7 @@ class HonorariosMes extends Component
       $join->on('transactions.id', '=', 'comisiones.transaction_id');
     })
       ->where('proforma_status', Transaction::FACTURADA)
+      ->where('proforma_type', 'HONORARIO')
       ->whereIn('document_type', [
         Transaction::PROFORMA,
         Transaction::FACTURAELECTRONICA,
@@ -194,29 +174,31 @@ class HonorariosMes extends Component
       ->whereYear('transaction_date', '>=', $this->firstYear)
       ->whereYear('transaction_date', '<=', $this->lastYear);
 
-    // Filtro por departamento
-    if (!empty($this->department)) {
-      $query->where('department_id', $this->department);
-    } elseif (!empty($this->departments)) {
-      $ids = collect($this->departments)->pluck('id')->toArray();
-      if (!empty($ids)) {
-        $query->whereIn('department_id', $ids);
-      }
-    }
-
     $data = $query
       ->select(
         DB::raw('YEAR(transaction_date) AS year'),
         DB::raw('MONTH(transaction_date) AS month'),
-        DB::raw("SUM(
-            CASE
-                WHEN transactions.currency_id = 1 
-                    THEN (transactions.totalHonorarios - transactions.totalDiscount + transactions.totalTax) * 
-                      COALESCE(comisiones.total_percent, 0)
-                ELSE ((transactions.totalHonorarios - transactions.totalDiscount + transactions.totalTax) / 
-                  transactions.proforma_change_type) * COALESCE(comisiones.total_percent, 0)
-            END
-        ) AS total")
+        DB::raw("
+            SUM(
+                CASE
+                    WHEN transactions.currency_id = 1 THEN
+                        (
+                            COALESCE(transactions.totalHonorarios, 0)
+                            - COALESCE(transactions.totalDiscount, 0)
+                            + COALESCE(transactions.totalTax, 0)
+                        ) * COALESCE(comisiones.total_percent, 0)
+                    ELSE
+                        (
+                            (
+                                COALESCE(transactions.totalHonorarios, 0)
+                                - COALESCE(transactions.totalDiscount, 0)
+                                + COALESCE(transactions.totalTax, 0)
+                            ) /
+                            NULLIF(COALESCE(transactions.proforma_change_type, 1), 0)
+                        ) * COALESCE(comisiones.total_percent, 0)
+                END
+            ) AS total
+        ")
       )
       ->groupBy(DB::raw('YEAR(transaction_date), MONTH(transaction_date)'))
       ->orderBy('year')
@@ -227,10 +209,6 @@ class HonorariosMes extends Component
 
     $caption = 'Honorarios facturados por meses en USD';
     $subCaption = [];
-
-    if (!empty($this->departmentName)) {
-      $subCaption[] = "Departamento: {$this->departmentName}";
-    }
 
     $subCaption[] = "Desde: {$this->firstYear}";
     $subCaption[] = "Hasta: {$this->lastYear}";
@@ -245,14 +223,9 @@ class HonorariosMes extends Component
 
   public function getDataPie(): array
   {
-    // Definir la lista de códigos como variable PHP
-    // Convertir códigos a array para usar en whereIn
-    $codigosArray = ['01', '02', '03', '05', '06', '07', '19', '20', '21', '23', '24'];
-
     // Subconsulta para comisiones
     $comisionesSubquery = DB::table('transactions_commissions as fc')
       ->join('centro_costos as cc', 'fc.centro_costo_id', '=', 'cc.id')
-      ->whereIn('cc.codigo', $codigosArray)
       ->select('fc.transaction_id', DB::raw('SUM(fc.percent) / 100 as total_percent'))
       ->groupBy('fc.transaction_id');
 
@@ -261,6 +234,7 @@ class HonorariosMes extends Component
         $join->on('transactions.id', '=', 'comisiones.transaction_id');
       })
       ->where('proforma_status', Transaction::FACTURADA)
+      ->where('proforma_type', 'HONORARIO')
       ->whereIn('document_type', [
         Transaction::PROFORMA,
         Transaction::FACTURAELECTRONICA,
@@ -270,34 +244,52 @@ class HonorariosMes extends Component
       ->whereMonth('transaction_date', $this->month)
       ->whereYear('transaction_date', $this->lastYear);
 
-    // Filtros por departamento
-    if (!empty($this->department)) {
-      $query->where('department_id', $this->department);
-    } elseif (!empty($this->departments)) {
-      $ids = collect($this->departments)->pluck('id')->toArray();
-      $query->whereIn('department_id', $ids);
-    }
-
     $result = $query->select(
-      'banks.name AS bank',
-      DB::raw("SUM(
+        'banks.name AS bank',
+        DB::raw("
+            SUM(
                 CASE
-                    WHEN transactions.currency_id = 1 
-                        THEN (transactions.totalHonorarios - transactions.totalDiscount + transactions.totalTax) 
-                    ELSE (transactions.totalHonorarios - transactions.totalDiscount + transactions.totalTax) / transactions.proforma_change_type
-                END * COALESCE(comisiones.total_percent, 0)
-            ) AS total")
+                    WHEN transactions.currency_id = 1 THEN
+                        (
+                            COALESCE(transactions.totalHonorarios, 0)
+                            - COALESCE(transactions.totalDiscount, 0)
+                            + COALESCE(transactions.totalTax, 0)
+                        ) * COALESCE(comisiones.total_percent, 0)
+                    ELSE
+                        (
+                            (
+                                COALESCE(transactions.totalHonorarios, 0)
+                                - COALESCE(transactions.totalDiscount, 0)
+                                + COALESCE(transactions.totalTax, 0)
+                            ) / NULLIF(COALESCE(transactions.proforma_change_type, 1), 0)
+                        ) * COALESCE(comisiones.total_percent, 0)
+                END
+            ) AS total
+        ")
     )
-      ->groupBy('banks.name')
-      ->orderBy('bank')
-      ->havingRaw('SUM(
+    ->groupBy('banks.name')
+    ->orderBy('bank')
+    ->havingRaw("
+        SUM(
             CASE
-                WHEN transactions.currency_id = 1 
-                    THEN (transactions.totalHonorarios - transactions.totalDiscount + transactions.totalTax) 
-                ELSE (transactions.totalHonorarios - transactions.totalDiscount + transactions.totalTax) / transactions.proforma_change_type
-            END * COALESCE(comisiones.total_percent, 0)
-        ) > 0')
-      ->get();
+                WHEN transactions.currency_id = 1 THEN
+                    (
+                        COALESCE(transactions.totalHonorarios, 0)
+                        - COALESCE(transactions.totalDiscount, 0)
+                        + COALESCE(transactions.totalTax, 0)
+                    ) * COALESCE(comisiones.total_percent, 0)
+                ELSE
+                    (
+                        (
+                            COALESCE(transactions.totalHonorarios, 0)
+                            - COALESCE(transactions.totalDiscount, 0)
+                            + COALESCE(transactions.totalTax, 0)
+                        ) / NULLIF(COALESCE(transactions.proforma_change_type, 1), 0)
+                    ) * COALESCE(comisiones.total_percent, 0)
+            END
+        ) > 0
+    ")
+    ->get();
 
     $data = $result->map(function ($item) {
       return [
@@ -308,10 +300,6 @@ class HonorariosMes extends Component
 
     $caption = 'Honorarios USD facturado por banco';
     $subCaption = [];
-
-    if (!empty($this->departmentName)) {
-      $subCaption[] = "Departamento: {$this->departmentName}";
-    }
 
     if (!empty($this->monthName))
       $subCaption[] = "$this->monthName";
@@ -326,13 +314,9 @@ class HonorariosMes extends Component
 
   public function getDataStack(): array
   {
-    // Definir los códigos como array
-    $codigosArray = ['01', '02', '03', '05', '06', '07', '19', '20', '21', '23', '24'];
-
     // Subconsulta para comisiones
     $comisionesSubquery = DB::table('transactions_commissions as fc')
       ->join('centro_costos as cc', 'fc.centro_costo_id', '=', 'cc.id')
-      ->whereIn('cc.codigo', $codigosArray)
       ->select(
         'fc.transaction_id',
         'cc.descrip',  // Mantenemos la descripción para el JOIN
@@ -355,37 +339,52 @@ class HonorariosMes extends Component
       ->select(
         'comisiones.descrip AS centroCosto',  // Usamos la descripción de la subconsulta
         DB::raw('MONTH(transactions.transaction_date) AS month'),
-        DB::raw("SUM(
-            CASE 
-                WHEN transactions.proforma_type = 'HONORARIO' AND transactions.currency_id = 1 
-                    THEN (transactions.totalHonorarios - transactions.totalDiscount + transactions.totalTax) * comisiones.total_percent
-                WHEN transactions.proforma_type = 'HONORARIO' AND transactions.currency_id != 1 
-                    THEN ((transactions.totalHonorarios - transactions.totalDiscount + transactions.totalTax) / 
-                      transactions.proforma_change_type) * comisiones.total_percent
-                ELSE 0 
-            END) AS total_honorario"),
-        DB::raw("SUM(
-            CASE 
-                WHEN transactions.proforma_type = 'GASTO' AND transactions.currency_id = 1 
-                    THEN (transactions.totalTimbres - transactions.totalDiscount + transactions.totalTax) * comisiones.total_percent
-                WHEN transactions.proforma_type = 'GASTO' AND transactions.currency_id != 1 
-                    THEN ((transactions.totalTimbres - transactions.totalDiscount + transactions.totalTax) / 
-                      transactions.proforma_change_type) * comisiones.total_percent
-                ELSE 0 
-            END) AS total_gasto")
+        DB::raw("
+            SUM(
+                CASE
+                    WHEN transactions.proforma_type = 'HONORARIO' AND transactions.currency_id = 1 THEN
+                        (
+                            COALESCE(transactions.totalHonorarios, 0)
+                            - COALESCE(transactions.totalDiscount, 0)
+                            + COALESCE(transactions.totalTax, 0)
+                        ) * COALESCE(comisiones.total_percent, 0)
+                    WHEN transactions.proforma_type = 'HONORARIO' AND transactions.currency_id != 1 THEN
+                        (
+                            (
+                                COALESCE(transactions.totalHonorarios, 0)
+                                - COALESCE(transactions.totalDiscount, 0)
+                                + COALESCE(transactions.totalTax, 0)
+                            ) / NULLIF(COALESCE(transactions.proforma_change_type, 1), 0)
+                        ) * COALESCE(comisiones.total_percent, 0)
+                    ELSE 0
+                END
+            ) AS total_honorario
+        "),
+
+        DB::raw("
+            SUM(
+                CASE
+                    WHEN transactions.proforma_type = 'GASTO' AND transactions.currency_id = 1 THEN
+                        (
+                            COALESCE(transactions.totalTimbres, 0)
+                            - COALESCE(transactions.totalDiscount, 0)
+                            + COALESCE(transactions.totalTax, 0)
+                        ) * COALESCE(comisiones.total_percent, 0)
+                    WHEN transactions.proforma_type = 'GASTO' AND transactions.currency_id != 1 THEN
+                        (
+                            (
+                                COALESCE(transactions.totalTimbres, 0)
+                                - COALESCE(transactions.totalDiscount, 0)
+                                + COALESCE(transactions.totalTax, 0)
+                            ) / NULLIF(COALESCE(transactions.proforma_change_type, 1), 0)
+                        ) * COALESCE(comisiones.total_percent, 0)
+                    ELSE 0
+                END
+            ) AS total_gasto
+        ")
       )
       ->groupBy('comisiones.descrip', DB::raw('MONTH(transactions.transaction_date)'))
       ->orderBy('comisiones.descrip');
-
-    // Filtro por departamento (igual que antes)
-    if (!empty($this->department)) {
-      $query->where('department_id', $this->department);
-    } elseif (!empty($this->departments)) {
-      $ids = collect($this->departments)->pluck('id')->toArray();
-      if (!empty($ids)) {
-        $query->whereIn('department_id', $ids);
-      }
-    }
 
     $data = $query->get();
 
@@ -393,10 +392,6 @@ class HonorariosMes extends Component
 
     $caption = 'Honorarios facturados por centro de costo en USD';
     $subCaption = [];
-
-    if (!empty($this->departmentName)) {
-      $subCaption[] = "Departamento: {$this->departmentName}";
-    }
 
     if (!empty($this->monthName))
       $subCaption[] = "$this->monthName";
@@ -516,8 +511,7 @@ class HonorariosMes extends Component
       'categories' => $categories,
       'dataset' => $dataset,
       'caption'    => 'Honoarios facturado por centro de costo USD',
-      'subCaption' => "$this->monthName de {$this->lastYear}" .
-        (!empty($this->departmentName) ? " | Departamento: {$this->departmentName}" : '')
+      'subCaption' => "$this->monthName de {$this->lastYear}"
     ];
   }
 
@@ -531,91 +525,96 @@ class HonorariosMes extends Component
 
   public function getTransactionTotal(): array
   {
-    // Definir los códigos como array
-    $codigosArray = ['01', '02', '03', '05', '06', '07', '19', '20', '21', '23', '24'];
-
-    // Subconsulta para comisiones
     $comisionesSubquery = DB::table('transactions_commissions as fc')
-      ->join('centro_costos as cc', 'fc.centro_costo_id', '=', 'cc.id')
-      ->whereIn('cc.codigo', $codigosArray)
-      ->select(
-        'fc.transaction_id',
-        DB::raw('SUM(fc.percent) / 100 as total_percent')
-      )
-      ->groupBy('fc.transaction_id');
+        ->join('centro_costos as cc', 'fc.centro_costo_id', '=', 'cc.id')
+        ->select(
+            'fc.transaction_id',
+            DB::raw('SUM(fc.percent) / 100 as total_percent')
+        )
+        ->groupBy('fc.transaction_id');
 
     $query = Transaction::leftJoinSub($comisionesSubquery, 'comisiones', function ($join) {
-      $join->on('transactions.id', '=', 'comisiones.transaction_id');
+        $join->on('transactions.id', '=', 'comisiones.transaction_id');
     })
-      ->where('proforma_status', Transaction::FACTURADA)
-      ->whereIn('document_type', [
+    ->where('proforma_status', Transaction::FACTURADA)
+    ->whereIn('document_type', [
         Transaction::PROFORMA,
         Transaction::FACTURAELECTRONICA,
         Transaction::TIQUETEELECTRONICO
-      ])
-      ->whereNotNull('transaction_date')
-      ->whereMonth('transaction_date', $this->month)
-      ->whereYear('transaction_date', $this->lastYear)
-      ->select(
+    ])
+    ->whereNotNull('transaction_date')
+    ->whereMonth('transaction_date', $this->month)
+    ->whereYear('transaction_date', $this->lastYear)
+    ->select(
         // Total Honorario con IVA
-        DB::raw("SUM(
-            CASE 
-                WHEN transactions.proforma_type = 'HONORARIO' AND transactions.currency_id = " . Currency::DOLARES . "
-                    THEN (transactions.totalHonorarios - transactions.totalDiscount + transactions.totalTax) * COALESCE(comisiones.total_percent, 0)
-                WHEN transactions.proforma_type = 'HONORARIO' AND transactions.currency_id != " . Currency::DOLARES . "
-                    THEN ((transactions.totalHonorarios - transactions.totalDiscount + transactions.totalTax) / transactions.proforma_change_type) * COALESCE(comisiones.total_percent, 0)
-                ELSE 0 
-            END) AS total_honorario_iva"),
+        DB::raw("
+            SUM(
+                CASE
+                    WHEN transactions.proforma_status = 'ANULADA' THEN 0
+                    WHEN transactions.proforma_type = 'HONORARIO' AND transactions.currency_id = " . Currency::DOLARES . "
+                        THEN (((COALESCE(transactions.totalHonorarios,0) - COALESCE(transactions.totalDiscount,0)) * COALESCE(comisiones.total_percent,0)) + (COALESCE(transactions.totalTax,0) * COALESCE(comisiones.total_percent,0)))
+                    WHEN transactions.proforma_type = 'HONORARIO' AND transactions.currency_id != " . Currency::DOLARES . "
+                        THEN ((((COALESCE(transactions.totalHonorarios,0) - COALESCE(transactions.totalDiscount,0)) * COALESCE(comisiones.total_percent,0)) + (COALESCE(transactions.totalTax,0) * COALESCE(comisiones.total_percent,0))) / NULLIF(COALESCE(transactions.proforma_change_type,1),0))
+                    ELSE 0
+                END
+            ) AS total_honorario_iva
+        "),
 
         // Total Honorario neto
-        DB::raw("SUM(
-            CASE 
-                WHEN transactions.proforma_type = 'HONORARIO' AND transactions.currency_id = " . Currency::DOLARES . " 
-                    THEN (transactions.totalHonorarios - transactions.totalDiscount) * COALESCE(comisiones.total_percent, 0)
-                WHEN transactions.proforma_type = 'HONORARIO' AND transactions.currency_id != " . Currency::DOLARES . " 
-                    THEN ((transactions.totalHonorarios - transactions.totalDiscount) / transactions.proforma_change_type) * COALESCE(comisiones.total_percent, 0)
-                ELSE 0 
-            END) AS total_honorario"),
+        DB::raw("
+            SUM(
+                CASE
+                    WHEN transactions.proforma_status = 'ANULADA' THEN 0
+                    WHEN transactions.proforma_type = 'HONORARIO' AND transactions.currency_id = " . Currency::DOLARES . "
+                        THEN ((COALESCE(transactions.totalHonorarios,0) - COALESCE(transactions.totalDiscount,0)) * COALESCE(comisiones.total_percent,0))
+                    WHEN transactions.proforma_type = 'HONORARIO' AND transactions.currency_id != " . Currency::DOLARES . "
+                        THEN ((COALESCE(transactions.totalHonorarios,0) - COALESCE(transactions.totalDiscount,0)) * COALESCE(comisiones.total_percent,0)) / NULLIF(COALESCE(transactions.proforma_change_type,1),0)
+                    ELSE 0
+                END
+            ) AS total_honorario
+        "),
 
         // Total Gastos
-        DB::raw("SUM(
-            CASE 
-                WHEN transactions.proforma_type = 'GASTO' AND transactions.currency_id = " . Currency::DOLARES . " 
-                    THEN (transactions.totalTimbres - transactions.totalDiscount + transactions.totalTax) * COALESCE(comisiones.total_percent, 0)
-                WHEN transactions.proforma_type = 'GASTO' AND transactions.currency_id != " . Currency::DOLARES . "
-                    THEN ((transactions.totalTimbres - transactions.totalDiscount + transactions.totalTax) / transactions.proforma_change_type) * COALESCE(comisiones.total_percent, 0)
-                ELSE 0 
-            END) AS total_gasto"),
+        DB::raw("
+            SUM(
+                CASE
+                    WHEN transactions.proforma_status = 'ANULADA' THEN 0
+                    WHEN transactions.proforma_type = 'GASTO' AND transactions.currency_id = " . Currency::DOLARES . "
+                        THEN (COALESCE(transactions.totalTimbres,0) * COALESCE(comisiones.total_percent,0))
+                    WHEN transactions.proforma_type = 'GASTO' AND transactions.currency_id != " . Currency::DOLARES . "
+                        THEN (COALESCE(transactions.totalTimbres,0) * COALESCE(comisiones.total_percent,0)) / NULLIF(COALESCE(transactions.proforma_change_type,1),0)
+                    ELSE 0
+                END
+            ) AS total_gasto
+        "),
 
-        // Total IVA (para todos los tipos)
-        DB::raw("SUM(
-            CASE 
-                WHEN transactions.currency_id = 1 
-                    THEN transactions.totalTax * COALESCE(comisiones.total_percent, 0)
-                ELSE (transactions.totalTax / transactions.proforma_change_type) * COALESCE(comisiones.total_percent, 0)
-            END) AS total_iva"),
+        // Total IVA
+        DB::raw("
+            SUM(
+                CASE
+                    WHEN transactions.proforma_status = 'ANULADA' THEN 0
+                    WHEN transactions.currency_id = " . Currency::DOLARES . "
+                        THEN COALESCE(transactions.totalTax,0) * COALESCE(comisiones.total_percent,0)
+                    ELSE (COALESCE(transactions.totalTax,0) * COALESCE(comisiones.total_percent,0)) / NULLIF(COALESCE(transactions.proforma_change_type,1),0)
+                END
+            ) AS total_iva
+        "),
 
-        // Total Descuentos (para todos los tipos)
-        DB::raw("SUM(
-            CASE 
-                WHEN transactions.currency_id = 1 
-                    THEN transactions.totalDiscount * COALESCE(comisiones.total_percent, 0)
-                ELSE (transactions.totalDiscount / transactions.proforma_change_type) * COALESCE(comisiones.total_percent, 0)
-            END) AS total_descuento"),
+        // Total Descuento
+        DB::raw("
+            SUM(
+                CASE
+                    WHEN transactions.proforma_status = 'ANULADA' THEN 0
+                    WHEN transactions.currency_id = " . Currency::DOLARES . "
+                        THEN COALESCE(transactions.totalDiscount,0) * COALESCE(comisiones.total_percent,0)
+                    ELSE (COALESCE(transactions.totalDiscount,0) * COALESCE(comisiones.total_percent,0)) / NULLIF(COALESCE(transactions.proforma_change_type,1),0)
+                END
+            ) AS total_descuento
+        "),
 
-        // Conteo correcto de transacciones
+        // Conteo de transacciones
         DB::raw("COUNT(DISTINCT transactions.id) as total_transaction")
-      );
-
-    // Filtro por departamento
-    if (!empty($this->department)) {
-      $query->where('department_id', $this->department);
-    } elseif (!empty($this->departments)) {
-      $ids = collect($this->departments)->pluck('id')->toArray();
-      if (!empty($ids)) {
-        $query->whereIn('department_id', $ids);
-      }
-    }
+    );
 
     $data = $query->first();
 
@@ -635,18 +634,6 @@ class HonorariosMes extends Component
     $formatMoney = function ($value) {
       return '$' . number_format($value, 2, ',', '.');
     };
-
-    // Definir colores para cada indicador
-    /*
-    $colors = [
-      'total_honorario_iva' => '#6baa01',
-      'total_honorario' => '#f8bd19',
-      'total_gasto' => '#e44a00',
-      'total_iva' => '#1aaf5d',
-      'total_descuento' => '#f2c500',
-      'total_transaction' => '#008ee4'
-    ];
-    */
 
     // Etiquetas para cada indicador
     $labels = [
