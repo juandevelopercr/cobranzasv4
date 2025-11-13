@@ -3,7 +3,7 @@ use App\Models\User;
 ?>
 <div>
     <div class="card mb-6">
-      <h5 class="card-header pb-0 text-md-start text-center">{{ __('Honorarios departamentos') }}</h5>
+      <h5 class="card-header pb-0 text-md-start text-center">{{ __('Honorarios') }}</h5>
       <div class="card-datatable text-nowrap">
         <div class="dataTables_wrapper dt-bootstrap5 no-footer">
           <div class="row mt-3 mb-6">

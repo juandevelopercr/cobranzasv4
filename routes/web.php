@@ -198,11 +198,15 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
   Route::get('banks/cuentas', [CuentaController::class, 'index'])->name('banks-cuentas');
 
   // DASHBOARD
-  Route::get('dashboard/firmas', [GraficoController::class, 'firmas'])->name('dashboard-firmas.index');
-  Route::get('dashboard/honorarios-anno', [GraficoController::class, 'honorariosAnno'])->name('dashboard-honorarios-anno.index');
+  Route::get('dashboard/formalizaciones-bancos', [GraficoController::class, 'formalizacionesBanco'])->name('dashboard-formalizaciones-bancos.index');
+  Route::get('dashboard/formalizaciones-productos', [GraficoController::class, 'formalizacionesProducto'])->name('dashboard-formalizaciones-productos.index');
   Route::get('dashboard/honorarios-mes', [GraficoController::class, 'honorariosMes'])->name('dashboard-honorarios-mes.index');
+  Route::get('dashboard/honorarios-anno', [GraficoController::class, 'honorariosAnno'])->name('dashboard-honorarios-anno.index');
+    Route::get('dashboard/carga-trabajo', [GraficoController::class, 'cargaTrabajo'])->name('dashboard-carga-trabajo.index');
+
+
+  Route::get('dashboard/firmas', [GraficoController::class, 'firmas'])->name('dashboard-firmas.index');
   Route::get('dashboard/control-mensual', [GraficoController::class, 'controlMensual'])->name('dashboard-control-mensual.index');
-  Route::get('dashboard/carga-trabajo', [GraficoController::class, 'cargaTrabajo'])->name('dashboard-carga-trabajo.index');
   Route::get('dashboard/formalizaciones', [GraficoController::class, 'formalizaciones'])->name('dashboard-formalizaciones.index');
   Route::get('dashboard/tipos-caratulas', [GraficoController::class, 'tiposCaratulas'])->name('dashboard-tipos-caratulas.index');
   Route::get('dashboard/volumen-banco', [GraficoController::class, 'volumenBanco'])->name('dashboard-volumen-banco.index');

@@ -339,16 +339,10 @@
       "icon": "menu-icon tf-icons bx bx-image",
       "slug": "dashboard",
       "permissions": [
-        "view-firmas-dashboard",
         "view-honorarios-dashboard",
-        "view-control-mensual-dashboard",
         "view-carga-trabajo-dashboard",
-        "view-formalizaciones-dashboard",
-        "view-tipos-caratulas-dashboard",
-        "view-volumen-banco-dashboard",
-        "view-facturacion-abogado-dashboard",
-        "view-tipos-garantias-dashboard",
-        "view-facturacion-centro-costo-dashboard"
+        "view-formalizaciones-bancos-dashboard",
+        "view-formalizaciones-productos-dashboard"
       ],
       "submenu": [
         {
@@ -365,6 +359,22 @@
           "slug": "dashboard-carga-trabajo.index",
           "permissions": [
             "view-carga-trabajo-dashboard"
+          ]
+        },
+        {
+          "url": "dashboard/formalizaciones-bancos",
+          "name": "Formalizaciones Bancos",
+          "slug": "dashboard-formalizaciones-bancos.index",
+          "permissions": [
+            "view-formalizaciones-bancos-dashboard"
+          ]
+        },
+        {
+          "url": "dashboard/formalizaciones-productos",
+          "name": "Formalizaciones Productos",
+          "slug": "dashboard-formalizaciones-productos.index",
+          "permissions": [
+            "view-formalizaciones-productos-dashboard"
           ]
         }
       ]

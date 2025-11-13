@@ -9,14 +9,14 @@ use Illuminate\Support\Str;
 
 class GraficoController extends Controller
 {
-  public function firmas()
+  public function formalizacionesBanco()
   {
-    return view('dashboard.firmas', []);
+    return view('dashboard.formalizaciones-bancos', []);
   }
 
-  public function honorariosAnno()
+  public function formalizacionesProducto()
   {
-    return view('dashboard.honorarios-anno', []);
+    return view('dashboard.formalizaciones-productos', []);
   }
 
   public function honorariosMes()
@@ -24,14 +24,19 @@ class GraficoController extends Controller
     return view('dashboard.honorarios-mes', []);
   }
 
-  public function controlMensual()
+  public function honorariosAnno()
   {
-    return view('dashboard.control-mensual', []);
+    return view('dashboard.honorarios-anno', []);
   }
 
   public function cargaTrabajo()
   {
     return view('dashboard.carga-trabajo', []);
+  }
+
+  public function controlMensual()
+  {
+    return view('dashboard.control-mensual', []);
   }
 
   public function formalizaciones()
