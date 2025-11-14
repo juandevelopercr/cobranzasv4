@@ -29,7 +29,7 @@
             <td>{{ $dato->numero_cuenta }}</td>
             <td>{{ $dato->perosna_sociedad }}</td>
             <td>{{ $dato->moneda }}</td>
-            <td style="text-align:right;">{{ (float) ($dato->getBalance() ?? 0) }}</td>
+            <td style="text-align:right;">{{ (float) ($dato->getBalance(false) ?? 0) }}</td>
             <td>{{ $dato->ultimo_cheque }}</td>
           </tr>
         @endforeach

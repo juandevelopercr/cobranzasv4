@@ -233,7 +233,7 @@ class Cuenta extends Model
     return $html;
   }
 
-  public function getBalance()
+  public function getBalance($format = true)
   {
     if ($this->id) {
       $status = 'REGISTRADO';
