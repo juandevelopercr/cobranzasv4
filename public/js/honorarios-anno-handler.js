@@ -111,7 +111,7 @@ window.renderFusionCharts = function (chartData) {
               </div>
               <h3 class="no-data-title">No hay datos disponibles</h3>
               <p class="no-data-message">
-                ${chartData.bar_usd?.caption || ''} 
+                ${chartData.bar_usd?.caption || ''}
                 ${chartData.bar_usd?.subCaption ? '| ' + chartData.bar_usd.subCaption : ''}
               </p>
               <p class="no-data-message">Intenta con otros filtros o parámetros</p>
@@ -220,7 +220,7 @@ window.renderFusionCharts = function (chartData) {
               </div>
               <h3 class="no-data-title">No hay datos disponibles</h3>
               <p class="no-data-message">
-                ${chartData.bar_crc?.caption || ''} 
+                ${chartData.bar_crc?.caption || ''}
                 ${chartData.bar_crc?.subCaption ? '| ' + chartData.bar_crc.subCaption : ''}
               </p>
               <p class="no-data-message">Intenta con otros filtros o parámetros</p>
@@ -332,7 +332,7 @@ window.renderFusionCharts = function (chartData) {
               </div>
               <h3 class="no-data-title">No hay datos disponibles</h3>
               <p class="no-data-message">
-                ${chartData.heatmap_usd?.caption || ''} 
+                ${chartData.heatmap_usd?.caption || ''}
                 ${chartData.heatmap_usd?.subCaption ? '| ' + chartData.heatmap_usd.subCaption : ''}
               </p>
               <p class="no-data-message">Intenta con otros filtros o parámetros</p>
@@ -475,7 +475,7 @@ window.renderFusionCharts = function (chartData) {
               </div>
               <h3 class="no-data-title">No hay datos disponibles</h3>
               <p class="no-data-message">
-                ${chartData.heatmap_bank_usd?.caption || ''} 
+                ${chartData.heatmap_bank_usd?.caption || ''}
                 ${chartData.heatmap_bank_usd?.subCaption ? '| ' + chartData.heatmap_bank_usd.subCaption : ''}
               </p>
               <p class="no-data-message">Intenta con otros filtros o parámetros</p>
@@ -618,7 +618,7 @@ window.renderFusionCharts = function (chartData) {
               </div>
               <h3 class="no-data-title">No hay datos disponibles</h3>
               <p class="no-data-message">
-                ${chartData.heatmap_crc?.caption || ''} 
+                ${chartData.heatmap_crc?.caption || ''}
                 ${chartData.heatmap_crc?.subCaption ? '| ' + chartData.heatmap_crc.subCaption : ''}
               </p>
               <p class="no-data-message">Intenta con otros filtros o parámetros</p>
@@ -748,7 +748,7 @@ window.renderFusionCharts = function (chartData) {
 
   if (heatmapBankCrcContainer) {
     // Verificar si hay datos para mostrar
-    const hasDataHeatmapCrc = chartData.heatmap_bank_usd?.dataset?.some(d =>
+    const hasDataHeatmapCrc = chartData.heatmap_bank_crc?.dataset?.some(d =>
       d.data?.some(v => v.value !== 0 && v.value !== null)
     );
 
@@ -761,7 +761,7 @@ window.renderFusionCharts = function (chartData) {
               </div>
               <h3 class="no-data-title">No hay datos disponibles</h3>
               <p class="no-data-message">
-                ${chartData.heatmap_bank_crc?.caption || ''} 
+                ${chartData.heatmap_bank_crc?.caption || ''}
                 ${chartData.heatmap_bank_crc?.subCaption ? '| ' + chartData.heatmap_bank_crc.subCaption : ''}
               </p>
               <p class="no-data-message">Intenta con otros filtros o parámetros</p>

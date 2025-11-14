@@ -619,7 +619,7 @@ window.renderFusionCharts = function (chartData) {
               placeXAxisLabelsOnTop: '1',
               mapByCategory: '0',
               showLegend: '1',
-              plotToolText: '<b>$displayValue</b> facturado en <b>$rowlabel</b>',
+              plotToolText: '<b>$displayValue</b> cantidad en <b>$rowlabel</b>',
               valueBgAlpha: '40',
 
               // Configuración clave para mostrar nombres de meses
@@ -686,6 +686,292 @@ window.renderFusionCharts = function (chartData) {
         window.fusionChartInstances[heatmapCurrencyContainerId].render();
       } catch (error) {
         heatmapCurrencyContainer.innerHTML = `
+                <div class="chart-error">
+                    <i class="fas fa-exclamation-triangle text-danger"></i>
+                    <h3>Error en el gráfico</h3>
+                    <p>${error.message || 'Por favor intenta nuevamente'}</p>
+                </div>`;
+      }
+    }
+  }
+
+  //*******************************************************************************************************//
+  //******************************** Gráfico de Heatmap Bank USD ******************************************//
+  //*******************************************************************************************************//
+
+  const heatmapBankUsdContainerId = 'formalizaciones_banco_usd_heatmap';
+  const heatmapBankUsdContainer = document.getElementById(heatmapBankUsdContainerId);
+
+  if (heatmapBankUsdContainer) {
+    // Verificar si hay datos para mostrar
+    const hasDataHeatmapUsd = chartData.heatmap_bank_usd?.dataset?.some(d =>
+      d.data?.some(v => v.value !== 0 && v.value !== null)
+    );
+
+    if (!hasDataHeatmapUsd) {
+      heatmapBankUsdContainer.innerHTML = `
+        <div class="no-data-container">
+            <div class="no-data-content">
+              <div class="no-data-icon">
+                <i class="fas fa-chart-heatmap"></i>
+              </div>
+              <h3 class="no-data-title">No hay datos disponibles</h3>
+              <p class="no-data-message">
+                ${chartData.heatmap_bank_usd?.caption || ''}
+                ${chartData.heatmap_bank_usd?.subCaption ? '| ' + chartData.heatmap_bank_usd.subCaption : ''}
+              </p>
+              <p class="no-data-message">Intenta con otros filtros o parámetros</p>
+            </div>
+          </div>
+        `;
+
+      if (window.fusionChartInstances[heatmapBankUsdContainerId]) {
+        window.fusionChartInstances[heatmapBankUsdContainerId].dispose();
+        delete window.fusionChartInstances[heatmapBankUsdContainerId];
+      }
+    } else {
+      if (window.fusionChartInstances[heatmapBankUsdContainerId]) {
+        window.fusionChartInstances[heatmapBankUsdContainerId].dispose();
+      }
+
+      heatmapBankUsdContainer.innerHTML = `
+            <div class="chart-loader">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando gráfico...</span>
+                </div>
+                <p>Cargando visualización...</p>
+            </div>`;
+
+      try {
+        // Dentro del try del heatmap
+        const chartConfig = {
+          type: 'heatmap',
+          renderAt: heatmapBankUsdContainerId,
+          width: '100%',
+          height: '800', // Aumentamos la altura para mejor visualización
+          dataFormat: 'json',
+          dataSource: {
+            chart: {
+              caption: chartData.heatmap_bank_usd.caption || '-',
+              subCaption: chartData.heatmap_bank_usd.subCaption || '',
+              theme: chartData.theme || 'zune',
+              valueFontSize: '12',
+              showLabels: '1',
+              showValues: '1',
+              showPlotBorder: '1',
+              placeXAxisLabelsOnTop: '1',
+              mapByCategory: '0',
+              showLegend: '1',
+              plotToolText: '<b>$displayValue</b> facturado en <b>$rowlabel</b>',
+              valueBgAlpha: '40',
+
+              // Configuración clave para mostrar nombres de meses
+              xAxisName: 'Meses',
+              xAxisNameFontSize: '14',
+              xAxisNameFontBold: '1',
+              labelDisplay: 'WRAP',
+              labelWrap: '1',
+              labelMaxWidth: '60',
+              useEllipsesWhenOverflow: '1',
+              rotateLabels: '0', // No rotar etiquetas
+
+              // Control de tamaño de celdas y espacios
+
+              cellHeight: '30',
+              cellWidth: '50',
+              cellPadding: '5',
+              plotSpacePercent: '50', // Más espacio para etiquetas
+              canvasPadding: '30',
+              canvasTopPadding: '40', // Espacio extra arriba para meses
+
+              // Formato numérico
+              formatNumber: '1',
+              numberPrefix: '$',
+              decimals: '2',
+              forceDecimals: '1',
+
+              // Configuraciones de estilo
+              baseFontSize: '14',
+              captionFontSize: '20',
+              subCaptionFontSize: '16',
+              labelFontSize: '13',
+              legendItemFontSize: '14',
+              outCnvBaseFontSize: '14',
+              labelPadding: '10', // Más espacio entre etiquetas
+              showBorder: '1',
+              borderColor: '#CCCCCC',
+              borderThickness: '1',
+              borderAlpha: '50',
+
+              // Mejorar visualización de valores
+              valueFontColor: '#333333',
+              valueBgColor: '#FFFFFF90'
+            },
+            rows: chartData.heatmap_bank_usd.rows || { row: [] },
+            columns: chartData.heatmap_bank_usd.columns || { column: [] },
+            dataset: chartData.heatmap_bank_usd.dataset || [],
+            colorrange: chartData.heatmap_bank_usd.colorrange || {
+              gradient: '1',
+              minvalue: '0',
+              code: '#FCFBFF',
+              color: [
+                { code: '#FBE1EA', minvalue: '0', maxvalue: '10' },
+                { code: '#FEB0BA', minvalue: '10', maxvalue: '20' },
+                { code: '#f7f8fd', minvalue: '20', maxvalue: '30' },
+                { code: '#DCE8F4', minvalue: '30', maxvalue: '40' },
+                { code: '#6B96CB', minvalue: '40', maxvalue: '50' }
+              ]
+            }
+          }
+        };
+
+        window.fusionChartInstances[heatmapBankUsdContainerId] = new FusionCharts(chartConfig);
+        window.fusionChartInstances[heatmapBankUsdContainerId].render();
+      } catch (error) {
+        heatmapBankUsdContainer.innerHTML = `
+                <div class="chart-error">
+                    <i class="fas fa-exclamation-triangle text-danger"></i>
+                    <h3>Error en el gráfico</h3>
+                    <p>${error.message || 'Por favor intenta nuevamente'}</p>
+                </div>`;
+      }
+    }
+  }
+
+  //*******************************************************************************************************//
+  //******************************** Gráfico de Heatmap Bank CRC ******************************************//
+  //*******************************************************************************************************//
+
+  const heatmapBankCrcContainerId = 'formalizaciones_banco_crc_heatmap';
+  const heatmapBankCrcContainer = document.getElementById(heatmapBankCrcContainerId);
+
+  if (heatmapBankCrcContainer) {
+    // Verificar si hay datos para mostrar
+    const hasDataHeatmapCrc = chartData.heatmap_bank_crc?.dataset?.some(d =>
+      d.data?.some(v => v.value !== 0 && v.value !== null)
+    );
+
+    if (!hasDataHeatmapCrc) {
+      heatmapBankCrcContainer.innerHTML = `
+        <div class="no-data-container">
+            <div class="no-data-content">
+              <div class="no-data-icon">
+                <i class="fas fa-chart-heatmap"></i>
+              </div>
+              <h3 class="no-data-title">No hay datos disponibles</h3>
+              <p class="no-data-message">
+                ${chartData.heatmap_bank_crc?.caption || ''}
+                ${chartData.heatmap_bank_crc?.subCaption ? '| ' + chartData.heatmap_bank_crc.subCaption : ''}
+              </p>
+              <p class="no-data-message">Intenta con otros filtros o parámetros</p>
+            </div>
+          </div>
+        `;
+
+      if (window.fusionChartInstances[heatmapBankCrcContainerId]) {
+        window.fusionChartInstances[heatmapBankCrcContainerId].dispose();
+        delete window.fusionChartInstances[heatmapBankCrcContainerId];
+      }
+    } else {
+      if (window.fusionChartInstances[heatmapBankCrcContainerId]) {
+        window.fusionChartInstances[heatmapBankCrcContainerId].dispose();
+      }
+
+      heatmapBankCrcContainer.innerHTML = `
+            <div class="chart-loader">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando gráfico...</span>
+                </div>
+                <p>Cargando visualización...</p>
+            </div>`;
+
+      try {
+        // Dentro del try del heatmap
+        const chartConfig = {
+          type: 'heatmap',
+          renderAt: heatmapBankCrcContainerId,
+          width: '100%',
+          height: '800', // Aumentamos la altura para mejor visualización
+          dataFormat: 'json',
+          dataSource: {
+            chart: {
+              caption: chartData.heatmap_bank_crc.caption || '-',
+              subCaption: chartData.heatmap_bank_crc.subCaption || '',
+              theme: chartData.theme || 'zune',
+              valueFontSize: '12',
+              showLabels: '1',
+              showValues: '1',
+              showPlotBorder: '1',
+              placeXAxisLabelsOnTop: '1',
+              mapByCategory: '0',
+              showLegend: '1',
+              plotToolText: '<b>$displayValue</b> facturado en <b>$rowlabel</b>',
+              valueBgAlpha: '40',
+
+              // Configuración clave para mostrar nombres de meses
+              xAxisName: 'Meses',
+              xAxisNameFontSize: '14',
+              xAxisNameFontBold: '1',
+              labelDisplay: 'WRAP',
+              labelWrap: '1',
+              labelMaxWidth: '60',
+              useEllipsesWhenOverflow: '1',
+              rotateLabels: '0', // No rotar etiquetas
+
+              // Control de tamaño de celdas y espacios
+
+              cellHeight: '30',
+              cellWidth: '50',
+              cellPadding: '5',
+              plotSpacePercent: '50', // Más espacio para etiquetas
+              canvasPadding: '30',
+              canvasTopPadding: '40', // Espacio extra arriba para meses
+
+              // Formato numérico
+              formatNumber: '1',
+              numberPrefix: '$',
+              decimals: '2',
+              forceDecimals: '1',
+
+              // Configuraciones de estilo
+              baseFontSize: '14',
+              captionFontSize: '20',
+              subCaptionFontSize: '16',
+              labelFontSize: '13',
+              legendItemFontSize: '14',
+              outCnvBaseFontSize: '14',
+              labelPadding: '10', // Más espacio entre etiquetas
+              showBorder: '1',
+              borderColor: '#CCCCCC',
+              borderThickness: '1',
+              borderAlpha: '50',
+
+              // Mejorar visualización de valores
+              valueFontColor: '#333333',
+              valueBgColor: '#FFFFFF90'
+            },
+            rows: chartData.heatmap_bank_crc.rows || { row: [] },
+            columns: chartData.heatmap_bank_crc.columns || { column: [] },
+            dataset: chartData.heatmap_bank_crc.dataset || [],
+            colorrange: chartData.heatmap_bank_crc.colorrange || {
+              gradient: '1',
+              minvalue: '0',
+              code: '#FCFBFF',
+              color: [
+                { code: '#FBE1EA', minvalue: '0', maxvalue: '10' },
+                { code: '#FEB0BA', minvalue: '10', maxvalue: '20' },
+                { code: '#f7f8fd', minvalue: '20', maxvalue: '30' },
+                { code: '#DCE8F4', minvalue: '30', maxvalue: '40' },
+                { code: '#6B96CB', minvalue: '40', maxvalue: '50' }
+              ]
+            }
+          }
+        };
+
+        window.fusionChartInstances[heatmapBankCrcContainerId] = new FusionCharts(chartConfig);
+        window.fusionChartInstances[heatmapBankCrcContainerId].render();
+      } catch (error) {
+        heatmapBankCrcContainer.innerHTML = `
                 <div class="chart-error">
                     <i class="fas fa-exclamation-triangle text-danger"></i>
                     <h3>Error en el gráfico</h3>

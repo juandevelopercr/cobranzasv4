@@ -2,16 +2,17 @@
 
 namespace App\Livewire\Dashboards;
 
-use App\Helpers\Helpers;
+use Carbon\Carbon;
+use App\Models\Bank;
 use App\Models\Caso;
+use App\Models\User;
+use Livewire\Component;
+use App\Helpers\Helpers;
 use App\Models\Currency;
 use App\Models\Transaction;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use Livewire\Component;
 
 class FormalizacionBanco extends Component
 {
@@ -90,6 +91,8 @@ class FormalizacionBanco extends Component
 
     $heatmapCurrency = $this->getHeatmapCurrencyByMonthData();
 
+    $heatmapCasosPorBanco = $this->getHeatmapCasosPorBancoData();
+
     return [
       'pie_formalizaciones_bank_mes_usd'  => $pie_formalizaciones_bank_mes_usd,
       'pie_formalizaciones_bank_mes_crc'  => $pie_formalizaciones_bank_mes_crc,
@@ -97,6 +100,8 @@ class FormalizacionBanco extends Component
       'pie_formalizaciones_bank_year_crc' => $pie_formalizaciones_bank_year_crc,
 
       'heatmapCurrency' => $heatmapCurrency,
+      'heatmap_bank_usd' => $heatmapCasosPorBanco['data_usd'],
+      'heatmap_bank_crc' => $heatmapCasosPorBanco['data_crc'],
     ];
   }
 
@@ -264,7 +269,6 @@ class FormalizacionBanco extends Component
 
     $subCaption[] = "Año: {$this->year}";
 
-
     $data = [
       'caption' => $caption,
       'subCaption' => implode(' | ', $subCaption),
@@ -275,6 +279,153 @@ class FormalizacionBanco extends Component
     ];
 
     return $data;
+  }
+
+  public function getHeatmapCasosPorBancoData(): array
+  {
+    // Obtener los datos base agrupados por banco y mes
+    $baseQuery = Caso::select(
+      'casos.bank_id', // Agregamos el campo bank_id
+      DB::raw('YEAR(afecha_terminacion) AS year'),
+      DB::raw('MONTH(afecha_terminacion) AS month'),
+      DB::raw("
+            SUM(
+                CASE
+                    WHEN casos.currency_id = " . Currency::DOLARES . " THEN 1
+                    ELSE 0
+                END
+            ) AS total_usd
+        "),
+      DB::raw("
+            SUM(
+                CASE
+                    WHEN casos.currency_id = " . Currency::COLONES . " THEN 1
+                    ELSE 0
+                END
+            ) AS total_crc
+        ")
+    )
+      ->whereYear('afecha_terminacion', '=', $this->year)
+      ->with('bank') // Cargar relación con el banco
+      ->groupBy('bank_id', DB::raw('YEAR(afecha_terminacion)'), DB::raw('MONTH(afecha_terminacion)'))
+      ->orderBy('bank_id')
+      ->orderBy('year')
+      ->orderBy('month');
+
+    // Ejecutar consulta y obtener resultados
+    $results = $baseQuery->get();
+
+    // Obtener todos los bancos únicos
+    $bankIds = $results->pluck('bank_id')->unique();
+    $banks = Bank::whereIn('id', $bankIds)->get()->keyBy('id');
+
+    // Obtener todos los meses posibles en el rango
+    $months = range(1, 12);
+
+    // Preparar estructura para filas (bancos)
+    $rows = [];
+    foreach ($banks as $bank) {
+      $rows[] = [
+        'id' => (string)$bank->id,
+        'label' => $bank->name
+      ];
+    }
+
+    // Preparar estructura para columnas (meses)
+    $columns = [];
+    foreach ($months as $month) {
+      $monthName = ucfirst(Carbon::createFromDate(null, $month, null)
+        ->locale('es')
+        ->shortMonthName);
+
+      $columns[] = [
+        'id' => (string)$month,
+        'label' => $monthName
+      ];
+    }
+
+    $columns[] = [
+      'id' => -1,
+      'label' => 'Total'
+    ];
+
+    // Preparar dataset con valores
+    $dataset_usd = [];
+    $dataset_crc = [];
+
+    // Para cada banco y cada mes, buscar el valor
+    foreach ($banks as $bankId => $bank) {
+      $total_usd = 0;
+      $total_crc = 0;
+      foreach ($columns as $col) {
+        // Buscar el resultado correspondiente
+        $result = $results->first(function ($item) use ($bankId, $col) {
+          return $item->bank_id == $bankId && $item->month == $col['id'];
+        });
+
+        // Determinar el valor a mostrar
+        $value_usd = $result ? (float)$result->total_usd : 0;
+        $value_crc = $result ? (float)$result->total_crc : 0;
+
+        if ($col['id'] != -1) {
+          $total_usd += $value_usd;
+          $total_crc += $value_crc;
+        } else {
+          $value_usd = $total_usd;
+          $value_crc = $total_crc;
+        }
+
+        $dataset_usd[] = [
+          'rowid' => (string)$bankId,
+          'columnid' => (string)$col['id'],
+          'value' => $value_usd,
+          'displayvalue' => number_format($value_usd, 2)
+        ];
+
+        $dataset_crc[] = [
+          'rowid' => (string)$bankId,
+          'columnid' => (string)$col['id'],
+          'value' => $value_crc,
+          'displayvalue' => number_format($value_crc, 2)
+        ];
+      }
+    }
+
+    // Calcular valor máximo para la escala de colores
+    $maxValueUsd = $results->max('total_usd') ?? 1;
+    $maxValueCrc = $results->max('total_crc') ?? 1;
+
+    // Obtener el tema activo
+    $theme = $this->chartTheme ?? 'zune';
+
+    $caption_usd = 'Formalizaciones por Banco y Mes (USD)';
+    $caption_crc = 'Formalizaciones por Banco y Mes (CRC)';
+    $subCaption = [];
+
+    $subCaption[] = "Año: {$this->year}";
+
+    $data_usd = [
+      'caption' => $caption_usd,
+      'subCaption' => implode(' | ', $subCaption),
+      'rows' => ['row' => $rows],
+      'columns' => ['column' => $columns],
+      'dataset' => [['data' => $dataset_usd]],
+      'colorrange' => $this->generateColorRange($maxValueUsd, $theme)
+    ];
+
+    $data_crc = [
+      'caption' => $caption_crc,
+      'subCaption' => implode(' | ', $subCaption),
+      'rows' => ['row' => $rows],
+      'columns' => ['column' => $columns],
+      'dataset' => [['data' => $dataset_crc]],
+      'colorrange' => $this->generateColorRange($maxValueCrc, $theme)
+    ];
+
+    return [
+      'data_usd' => $data_usd,
+      'data_crc' => $data_crc
+    ];
   }
 
   private function generateColorRange(float $maxValue, string $theme): array

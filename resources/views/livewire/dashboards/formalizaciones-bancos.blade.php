@@ -91,6 +91,14 @@ use App\Models\User;
               <div class="col-md-12">
                 @include('dashboard.components.chart-wrapper', ['chartId' => 'formalizaciones_moneda_heatmap'])
               </div>
+
+              <div class="col-md-12">
+                @include('dashboard.components.chart-wrapper', ['chartId' => 'formalizaciones_banco_usd_heatmap'])
+              </div>
+
+              <div class="col-md-12">
+                @include('dashboard.components.chart-wrapper', ['chartId' => 'formalizaciones_banco_crc_heatmap'])
+              </div>
             </div>
           </div>
         <div>

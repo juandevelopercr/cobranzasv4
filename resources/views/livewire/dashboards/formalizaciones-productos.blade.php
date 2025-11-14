@@ -88,6 +88,14 @@ use App\Models\User;
                   </div>
                 @endforeach
             </div>
+
+            <div class="col-md-12">
+              @include('dashboard.components.chart-wrapper', ['chartId' => 'formalizaciones_product_usd_heatmap'])
+            </div>
+
+            <div class="col-md-12">
+              @include('dashboard.components.chart-wrapper', ['chartId' => 'formalizaciones_producto_crc_heatmap'])
+            </div>
           </div>
         <div>
       </div>
