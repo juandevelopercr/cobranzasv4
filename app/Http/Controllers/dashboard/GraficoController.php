@@ -34,6 +34,11 @@ class GraficoController extends Controller
     return view('dashboard.carga-trabajo', []);
   }
 
+  public function casosResuelto()
+  {
+    return view('dashboard.casos-resueltos', []);
+  }
+
   public function controlMensual()
   {
     return view('dashboard.control-mensual', []);

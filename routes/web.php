@@ -202,7 +202,8 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
   Route::get('dashboard/formalizaciones-productos', [GraficoController::class, 'formalizacionesProducto'])->name('dashboard-formalizaciones-productos.index');
   Route::get('dashboard/honorarios-mes', [GraficoController::class, 'honorariosMes'])->name('dashboard-honorarios-mes.index');
   Route::get('dashboard/honorarios-anno', [GraficoController::class, 'honorariosAnno'])->name('dashboard-honorarios-anno.index');
-    Route::get('dashboard/carga-trabajo', [GraficoController::class, 'cargaTrabajo'])->name('dashboard-carga-trabajo.index');
+  Route::get('dashboard/carga-trabajo', [GraficoController::class, 'cargaTrabajo'])->name('dashboard-carga-trabajo.index');
+  Route::get('dashboard/casos-resueltos', [GraficoController::class, 'casosResuelto'])->name('dashboard-casos-resueltos.index');
 
 
   Route::get('dashboard/firmas', [GraficoController::class, 'firmas'])->name('dashboard-firmas.index');

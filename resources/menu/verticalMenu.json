@@ -376,6 +376,14 @@
           "permissions": [
             "view-formalizaciones-productos-dashboard"
           ]
+        },
+        {
+          "url": "dashboard/casos-resueltos",
+          "name": "Casos Resueltos",
+          "slug": "dashboard-casos-resueltos.index",
+          "permissions": [
+            "view-casos-resueltos-dashboard"
+          ]
         }
       ]
     },

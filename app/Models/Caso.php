@@ -3,23 +3,27 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use App\Models\Bank;
 use App\Models\User;
 use App\Models\Contact;
 use App\Models\Currency;
 use App\Models\CasoEstado;
 use App\Models\CasoJuzgado;
 use App\Models\CasoProceso;
+use App\Models\Transaction;
 use App\Models\CasoProducto;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Bank;
+use App\Models\CasoSituacion;
+use App\Models\CasoExpectativa;
+use App\Models\TransactionLine;
+use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Caso extends Model implements HasMedia
 {
@@ -443,6 +447,14 @@ class Caso extends Model implements HasMedia
   {
     return $this->hasMany(CasoSituacion::class, 'caso_id')
       ->where('tipo', 'DEFECTUOSO');
+  }
+
+  public function transactions() {
+    return $this->hasMany(Transaction::class, 'caso_id');
+  }
+
+  public function transactionLines() {
+      return $this->hasMany(TransactionLine::class, 'caso_id');
   }
 
   // app/Models/Caso.php
