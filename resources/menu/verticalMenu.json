@@ -342,7 +342,8 @@
         "view-honorarios-dashboard",
         "view-carga-trabajo-dashboard",
         "view-formalizaciones-bancos-dashboard",
-        "view-formalizaciones-productos-dashboard"
+        "view-formalizaciones-productos-dashboard",
+        "view-casos-resueltos-dashboard"
       ],
       "submenu": [
         {
