@@ -144,7 +144,7 @@ abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithC
 
                 // --- IDENTIFICATION como TEXTO ---
                 foreach ($this->columns() as $index => $col) {
-                    if (($col['field'] ?? '') === 'identification') {
+                    if (($col['field'] ?? '') === 'identification' || ($col['field'] ?? '') === 'pnumero_operacion1') {
                         $colLetter = $this->columnLetter($index);
                         for ($row = 4; $row <= $lastRow; $row++) {
                             $sheet->setCellValueExplicit(

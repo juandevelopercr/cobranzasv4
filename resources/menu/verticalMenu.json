@@ -406,7 +406,10 @@
         "view-iva-reports",
         "view-iva90-reports",
         "view-ivaMas90-reports",
-        "view-repofirmas-reports"
+        "view-repofirmas-reports",
+        "view-casos-reports",
+        "view-facturacion-abogados-reports",
+        "view-casos-scotiabank-reports"
       ],
       "submenu": [
         {
@@ -514,6 +517,38 @@
                 "view-ivaMas90-reports"
               ]
             }
+          ]
+        },
+        {
+          "url": "reports/casos",
+          "name": "Casos",
+          "slug": "reports.casos.index",
+          "permissions": [
+            "view-casos-reports"
+          ]
+        },
+        {
+          "url": "reports/facturacion-abogado",
+          "name": "Facturación Abogados",
+          "slug": "reports.facturacion-abogados.index",
+          "permissions": [
+            "view-facturacion-abogados-reports"
+          ]
+        },
+        {
+          "url": "reports/casos-scotiabank",
+          "name": "Casos Scotiabank",
+          "slug": "reports.casos-scotiabank.index",
+          "permissions": [
+            "view-casos-scotiabank-reports"
+          ]
+        },
+        {
+          "url": "reports/casos-scotiabank-bch",
+          "name": "Casos Scotiabank BCH",
+          "slug": "reports.casos-scotiabank-bch.index",
+          "permissions": [
+            "view-casos-scotiabank-bch-reports"
           ]
         }
       ]

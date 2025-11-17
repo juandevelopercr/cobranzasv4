@@ -40,6 +40,7 @@ use App\Http\Controllers\classifiers\SectorController;
 use App\Http\Controllers\classifiers\TimbreController;
 use App\Http\Controllers\customers\CustomerController;
 use App\Http\Controllers\reports\ReportCasoController;
+use App\Http\Controllers\reports\ReportJefeController;
 use App\Http\Controllers\authentications\RegisterBasic;
 use App\Http\Controllers\reports\ReportGastoController;
 use App\Http\Controllers\reports\ReportIva90Controller;
@@ -332,13 +333,26 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
 
     // Reporte de IVA
     Route::get('/iva-mes', [ReportIvaController::class, 'index'])
-        ->name('iva-mes.index'); // ✅ nombre correcto
+        ->name('iva-mes.index');
 
     Route::get('/iva-90', [ReportIva90Controller::class, 'index'])
-        ->name('iva-90.index'); // ✅ nombre correcto
+        ->name('iva-90.index');
 
     Route::get('/iva-mas90', [ReportIvaMas90Controller::class, 'index'])
-        ->name('iva-mas90.index'); // ✅ nombre correcto
+        ->name('iva-mas90.index');
+
+    // Reportes de casos
+    Route::get('/casos', [ReportJefeController::class, 'casos'])
+        ->name('casos.index');
+
+    Route::get('/facturacion-abogado', [ReportJefeController::class, 'facturacionAbogado'])
+        ->name('facturacion-abogado.index');
+
+    Route::get('/casos-scotiabank', [ReportJefeController::class, 'casoScotiabank'])
+        ->name('casos-scotiabank.index');
+
+    Route::get('/casos-scotiabank-bch', [ReportJefeController::class, 'casoScotiabankBch'])
+        ->name('casos-scotiabank-bch.index');
   });
 });
 
