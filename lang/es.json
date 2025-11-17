@@ -521,5 +521,9 @@
   "View-ivaMas90": "Ver reporte de iva más de 90 días",
   "View-formalizaciones-bancos": "Ver dashboard formalizaciones bancos",
   "View-formalizaciones-productos": "Ver dashboard formalizaciones productos",
-  "View-casos-resueltos": "Ver dashboard de casos resueltos"
+  "View-casos-resueltos": "Ver dashboard de casos resueltos",
+  "View-casos": "Ver reporte de casos",
+  "View-facturacion-abogados": "Ver reporte de facturación por abogado",
+  "View-casos-scotiabank": "Ver reporte de casos de scotiabank",
+  "View-casos-scotiabank-bch": "Ver reporte de casos de scotiabank bhc"
 }

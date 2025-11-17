@@ -409,7 +409,8 @@
         "view-repofirmas-reports",
         "view-casos-reports",
         "view-facturacion-abogados-reports",
-        "view-casos-scotiabank-reports"
+        "view-casos-scotiabank-reports",
+        "view-casos-scotiabank-bch-reports"
       ],
       "submenu": [
         {
