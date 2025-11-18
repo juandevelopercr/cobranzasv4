@@ -525,5 +525,12 @@
   "View-casos": "Ver reporte de casos",
   "View-facturacion-abogados": "Ver reporte de facturación por abogado",
   "View-casos-scotiabank": "Ver reporte de casos de scotiabank",
-  "View-casos-scotiabank-bch": "Ver reporte de casos de scotiabank bhc"
+  "View-casos-scotiabank-bch": "Ver reporte de casos de scotiabank bhc",
+  "View-casos-lafise-activos": "Ver reporte de casos activos de Lafise",
+  "View-casos-lafise-terminados": "Ver reporte de casos terminados de Lafise",
+  "View-casos-lafise-incobrables": "Ver reporte de casos incobrables de Lafise",
+  "View-casos-davivienda-pago-ce": "Ver reporte de casos Pagos CE Davivienda",
+  "View-casos-davivienda-pago-tc": "Ver reporte de casos Pagos TC Davivienda",
+  "View-casos-davivienda-file-master": "Ver reporte de casos File Master Davivienda",
+  "View-casos-davivienda-matriz": "Ver reporte de casos Matriz TC y CE Davivienda"
 }
