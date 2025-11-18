@@ -410,7 +410,8 @@
         "view-casos-reports",
         "view-facturacion-abogados-reports",
         "view-casos-scotiabank-reports",
-        "view-casos-scotiabank-bch-reports"
+        "view-casos-scotiabank-bch-reports",
+        "view-casos-bac-cuentas-gestionadas-reports"
       ],
       "submenu": [
         {
@@ -550,6 +551,110 @@
           "slug": "reports.casos-scotiabank-bch.index",
           "permissions": [
             "view-casos-scotiabank-bch-reports"
+          ]
+        },
+        {
+          "name": "BAC",
+          "slug": "reports.casos-bac-cuentas",
+          "permissions": [
+            "view-casos-bac-cuentas-gestionadas-reports"
+          ],
+          "submenu": [
+            {
+              "url": "reports/casos-bac-cuentas-gestionadas",
+              "name": "Cuentas Gestionadas",
+              "slug": "reports.casos-bac-cuentas-gestionadas.index",
+              "permissions": [
+                "view-casos-bac-cuentas-gestionadas-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-bac-cuentas-terminadas",
+              "name": "Cuentas Terminadas",
+              "slug": "reports.casos-bac-cuentas-terminadas.index",
+              "permissions": [
+                "view-casos-bac-cuentas-terminadas-reports"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Lafise",
+          "slug": "reports.casos-lafise",
+          "permissions": [
+            "view-casos-lafise-activos-reports",
+            "view-casos-lafise-terminados-reports",
+            "view-casos-lafise-incobrables-reports"
+          ],
+          "submenu": [
+            {
+              "url": "reports/casos-lafise-activos",
+              "name": "Casos Activos",
+              "slug": "reports.casos-lafise-activos.index",
+              "permissions": [
+                "view-casos-lafise-activos-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-lafise-terminados",
+              "name": "Casos Terminados",
+              "slug": "reports.casos-lafise-terminados.index",
+              "permissions": [
+                "view-casos-lafise-terminados-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-lafise-incobrables",
+              "name": "Casos Incobrables",
+              "slug": "reports.casos-lafise-incobrables.index",
+              "permissions": [
+                "view-casos-lafise-incobrables-reports"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Davivienda",
+          "slug": "reports.casos-davivienda",
+          "permissions": [
+            "view-casos-davivienda-pago-ce-reports",
+            "view-casos-davivienda-pago-tc-reports",
+            "view-casos-davivienda-file-master-reports",
+            "view-casos-davivienda-matriz-reports"
+          ],
+          "submenu": [
+            {
+              "url": "reports/casos-davivienda-pago-ce",
+              "name": "Arreglo Pago CE",
+              "slug": "reports.casos-davivienda-pago-ce.index",
+              "permissions": [
+                "view-casos-davivienda-pago-ce-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-davivienda-pago-tc",
+              "name": "Arreglo Pago TC",
+              "slug": "reports.casos-davivienda-pago-tc.index",
+              "permissions": [
+                "view-casos-davivienda-pago-tc-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-davivienda-file-master",
+              "name": "File Master",
+              "slug": "reports.casos-davivienda-file-master.index",
+              "permissions": [
+                "view-casos-davivienda-file-master-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-davivienda-matriz",
+              "name": "Matriz CE y TC",
+              "slug": "reports.casos-davivienda-matriz.index",
+              "permissions": [
+                "view-casos-davivienda-matriz-reports"
+              ]
+            }
           ]
         }
       ]

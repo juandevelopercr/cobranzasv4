@@ -353,6 +353,33 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
 
     Route::get('/casos-scotiabank-bch', [ReportJefeController::class, 'casoScotiabankBch'])
         ->name('casos-scotiabank-bch.index');
+
+    Route::get('/casos-bac-cuentas-gestionadas', [ReportJefeController::class, 'casoBacCuentasGestionada'])
+        ->name('casos-bac-cuentas-gestionadas.index');
+
+    Route::get('/casos-bac-cuentas-terminadas', [ReportJefeController::class, 'casoBacCuentasTerminada'])
+        ->name('casos-bac-cuentas-terminadas.index');
+
+    Route::get('/casos-lafise-activos', [ReportJefeController::class, 'casoLafiseActivo'])
+        ->name('casos-lafise-activos.index');
+
+    Route::get('/casos-lafise-terminados', [ReportJefeController::class, 'casoLafiseTerminado'])
+        ->name('casos-lafise-terminados.index');
+
+    Route::get('/casos-lafise-incobrables', [ReportJefeController::class, 'casoLafiseIncobrable'])
+        ->name('casos-lafise-incobrables.index');
+
+    Route::get('/casos-davivienda-pago-ce', [ReportJefeController::class, 'casoDaviviendaPagoCe'])
+        ->name('casos-davivienda-pago-ce.index');
+
+    Route::get('/casos-davivienda-pago-tc', [ReportJefeController::class, 'casoDaviviendaPagoTc'])
+        ->name('casos-davivienda-pago-tc.index');
+
+    Route::get('/casos-davivienda-file-master', [ReportJefeController::class, 'casoDaviviendaFileMaster'])
+        ->name('casos-davivienda-file-master.index');
+
+    Route::get('/casos-davivienda-matriz', [ReportJefeController::class, 'casoDaviviendaMatriz'])
+        ->name('casos-davivienda-matriz.index');
   });
 });
 
