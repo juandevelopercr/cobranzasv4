@@ -557,7 +557,8 @@
           "name": "BAC",
           "slug": "reports.casos-bac-cuentas",
           "permissions": [
-            "view-casos-bac-cuentas-gestionadas-reports"
+            "view-casos-bac-cuentas-gestionadas-reports",
+            "view-casos-bac-cuentas-terminadas-reports"
           ],
           "submenu": [
             {
