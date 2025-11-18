@@ -530,5 +530,7 @@
   "View-casos-davivienda-pago-ce": "Ver reporte de casos Pagos CE Davivienda",
   "View-casos-davivienda-pago-tc": "Ver reporte de casos Pagos TC Davivienda",
   "View-casos-davivienda-file-master": "Ver reporte de casos File Master Davivienda",
-  "View-casos-davivienda-matriz": "Ver reporte de casos Matriz TC y CE Davivienda"
+  "View-casos-davivienda-matriz": "Ver reporte de casos Matriz TC y CE Davivienda",
+  "View-casos-bac-cuentas-gestionadas": "Ver reporte de casos cuentas gestionadas de BAC",
+  "View-casos-bac-cuentas-terminadas": "Ver reporte de casos cuentas terminadas de BAC"
 }
