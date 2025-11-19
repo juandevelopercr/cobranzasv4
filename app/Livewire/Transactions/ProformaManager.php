@@ -849,7 +849,9 @@ class ProformaManager extends TransactionManager
       //'pay_term_number'     => 'nullable|integer|min:0',
       //'pay_term_number'       => 'required_if:condition_sale,02|numeric|min:1|max:100',
       //'pay_term_number' => 'sometimes|required_if:condition_sale,02|numeric|max:100',
-      'proforma_change_type'  => 'nullable|numeric|required_if:document_type,PR|min:0.1|max:999999999999999.99999',
+      //'proforma_change_type'  => 'nullable|numeric|required_if:document_type,PR|min:0.1|max:999999999999999.99999',
+      //'factura_change_type'   => 'nullable|numeric|min:0|max:999999999999999.99999',
+      'proforma_change_type' => 'present|required|numeric|min:0.1|max:999999999999999.99999',
       'factura_change_type'   => 'nullable|numeric|min:0|max:999999999999999.99999',
       //'num_request_hacienda_set' => 'nullable|integer|min:0',
       //'num_request_hacienda_get' => 'nullable|integer|min:0',
@@ -1497,6 +1499,8 @@ class ProformaManager extends TransactionManager
 
     // Tipo de cambio del día
     $transaction->factura_change_type = Session::get('exchange_rate');
+    if (!$transaction->factura_change_type)
+       $transaction->factura_change_type = $transaction->proforma_change_type;
 
     // Obtener la secuencia que le corresponde según tipo de comprobante
     $secuencia = DocumentSequenceService::generateConsecutive(
