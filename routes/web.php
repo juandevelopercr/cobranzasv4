@@ -380,6 +380,15 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
 
     Route::get('/casos-davivienda-matriz', [ReportJefeController::class, 'casoDaviviendaMatriz'])
         ->name('casos-davivienda-matriz.index');
+
+    Route::get('/casos-cafsa-activos', [ReportJefeController::class, 'casoCafsaActivo'])
+        ->name('casos-cafsa-activos.index');
+
+    Route::get('/casos-cafsa-terminados', [ReportJefeController::class, 'casoCafsaTerminado'])
+        ->name('casos-cafsa-terminados.index');
+
+    Route::get('/casos-cafsa-incobrables', [ReportJefeController::class, 'casoCafsaIncobrable'])
+        ->name('casos-cafsa-incobrables.index');
   });
 });
 

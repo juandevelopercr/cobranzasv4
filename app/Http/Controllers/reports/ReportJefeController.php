@@ -72,4 +72,19 @@ class ReportJefeController extends Controller
   {
     return view('content.reports.casos-davivienda-matriz');
   }
+
+  public function casoCafsaActivo()
+  {
+    return view('content.reports.casos-cafsa-activos');
+  }
+
+  public function casoCafsaTerminado()
+  {
+    return view('content.reports.casos-cafsa-terminados');
+  }
+
+  public function casoCafsaIncobrable()
+  {
+    return view('content.reports.casos-cafsa-incobrables');
+  }
 }

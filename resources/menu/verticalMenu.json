@@ -657,6 +657,41 @@
               ]
             }
           ]
+        },
+        {
+          "name": "Cafsa",
+          "slug": "reports.casos-cafsa",
+          "permissions": [
+            "view-casos-cafsa-activos-reports",
+            "view-casos-cafsa-terminados-reports",
+            "view-casos-cafsa-incobrables-reports"
+          ],
+          "submenu": [
+            {
+              "url": "reports/casos-cafsa-activos",
+              "name": "Casos Activos",
+              "slug": "reports.casos-cafsa-activos.index",
+              "permissions": [
+                "view-casos-cafsa-activos-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-cafsa-terminados",
+              "name": "Casos Terminados",
+              "slug": "reports.casos-cafsa-terminados.index",
+              "permissions": [
+                "view-casos-cafsa-terminados-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-cafsa-incobrables",
+              "name": "Casos Incobrables",
+              "slug": "reports.casos-cafsa-incobrables.index",
+              "permissions": [
+                "view-casos-cafsa-incobrables-reports"
+              ]
+            }
+          ]
         }
       ]
     },

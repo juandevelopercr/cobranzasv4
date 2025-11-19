@@ -13,61 +13,28 @@ class CasoDaviviendaPagoTCReport extends BaseReport
   {
     return [
       ['label' => 'ID', 'field' => 'id', 'type' => 'integer', 'align' => 'left', 'width' => 10],
-      ['label' => 'Número de caso', 'field' => 'pnumero', 'type' => 'string', 'align' => 'left', 'width' => 15],
-      ['label' => 'Número de Operación', 'field' => 'pnumero_operacion1', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Número de tarjeta', 'field' => 'pnumero_tarjeta', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Apellidos y nombre del deudor', 'field' => 'pnombre_demandado', 'type' => 'string', 'align' => 'left', 'width' => 60],
-      ['label' => 'Documento de Identificación', 'field' => 'pnumero_cedula', 'type' => 'string', 'align' => 'left', 'width' => 15],
-      ['label' => 'Nombre de la persona Jurídica', 'field' => 'pnombre_persona_juridica', 'type' => 'string', 'align' => 'left', 'width' => 15],
-      ['label' => 'Número de cédula jurídica', 'field' => 'pnumero_cedula_juridica', 'type' => 'string', 'align' => 'left', 'width' => 15],
-      ['label' => 'Datos de los Codeudores', 'field' => 'pdatos_codeudor1', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Datos de los Fiadores', 'field' => 'pdatos_codeudor2', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Tipo de crédito', 'field' => 'producto', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Tipo de Proceso', 'field' => 'proceso', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Tipo de moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 15],
-      ['label' => 'Expectativa de Recuperación', 'field' => 'expectaviva_recuperacion', 'type' => 'string', 'align' => 'center', 'width' => 15],
-      ['label' => 'Estatus de Operación', 'field' => 'aestado_operacion', 'type' => 'string', 'align' => 'center', 'width' => 15],
-      ['label' => 'Número de expediente', 'field' => 'pnumero_expediente_judicial', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Despacho judicial', 'field' => 'pdespacho_judicial_juzgado', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Comprador', 'field' => 'pcomprador', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Poderdante', 'field' => 'poderdante', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de ingreso a cobro judicial', 'field' => 'pfecha_ingreso_cobro_judicial', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de escrito de demanda', 'field' => 'pfecha_escrito_demanda', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de presentación de la demanda', 'field' => 'pfecha_presentacion_demanda', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de traslado de la demanda', 'field' => 'nfecha_traslado_juzgado', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de finalización del proceso', 'field' => 'afecha_terminacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de notificación de las partes', 'field' => 'nfecha_notificacion_todas_partes', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Estado actual de la primera notificación de los demandados', 'field' => 'estado_notificacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Estado_ID', 'field' => 'proceso_general', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Oposición de Demanda', 'field' => 'noposicion_demanda', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de Audiencia', 'field' => 'nfecha_audiencia', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de última acción judicial', 'field' => 'afecha_informe_ultima_gestion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Avances en orden cronológico del proceso', 'field' => 'pavance_cronologico', 'type' => 'string', 'align' => 'left', 'width' => 100],
-      ['label' => 'Tipo de Garantía', 'field' => 'ntipo_garantia', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Detalle de la Garantía', 'field' => 'pdetalle_garantia', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Monto Avaluo', 'field' => 'amonto_avaluo', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha Avaluo', 'field' => 'afecha_avaluo', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Embargos cuentas', 'field' => 'aembargo_cuentas', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Embargos Salarios', 'field' => 'aembargo_salarios', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Embargos Muebles', 'field' => 'aembargo_muebles', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Embargos Inmuebles', 'field' => 'aembargo_inmuebles', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Retenciones con giro', 'field' => 'aretenciones_con_giro', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de último giro', 'field' => 'afecha_ultimo_giro', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Captura', 'field' => 'sfecha_captura', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => '1° Remate', 'field' => 'remate_1', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => '2° Remate', 'field' => 'remate_2', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => '3° Remate', 'field' => 'remate_3', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de firmeza de aprobación de remate', 'field' => 'afecha_aprobacion_remate', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Bienes Adjudicados', 'field' => 'abienes_adjudicados', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha señalamiento de puesta en posesión', 'field' => 'afecha_senalamiento_puesta_posesion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Puesta en posesión', 'field' => 'apuesta_posesion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Saldo Capital de la Operación', 'field' => 'asaldo_capital_operacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Estimación en colones de la Demanda', 'field' => 'pmonto_estimacion_demanda_colones', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Estimación en dólares de la Demanda', 'field' => 'pmonto_estimacion_demanda_dolares', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Estimación dolarizada de la Demanda', 'field' => 'psaldo_dolarizado', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Gastos legales', 'field' => 'agastos_legales', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Honorarios totales', 'field' => 'ahonorarios_totales', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Bufete', 'field' => 'abufete', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Número', 'field' => 'pnumero', 'type' => 'string', 'align' => 'left', 'width' => 15],
+      ['label' => 'Fecha de asignación de Caso', 'field' => 'fecha_asignacion_caso', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Mes', 'field' => 'mes', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Identificación', 'field' => 'pcedula_deudor', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'No. de Operación corta', 'field' => 'pnumero_operacion1', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'No. de Operación larga', 'field' => 'pnumero_operacion2', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'Ente', 'field' => 'pente', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'Deudor', 'field' => 'pnombre_apellidos_deudor', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'Producto', 'field' => 'producto', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'Estimación de la demanda Colones', 'field' => 'aestimacion_demanda_en_presentacion', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'Estimación de la demanda Dólares', 'field' => 'aestimacion_demanda_en_presentacion_usd', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'Estado Procesal', 'field' => 'proceso_general', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'Expediente Judicial', 'field' => 'pnumero_expediente_judicial', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'Estado OP (Activo-Incobrable)', 'field' => 'pestatus_operacion', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'Fecha de inicio', 'field' => 'pfecha_ingreso_cobro_judicial', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Monto Prima', 'field' => 'pmonto_prima', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Plazo del Arreglo de Pago', 'field' => 'pplazo_arreglo_pago', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Monto del Arreglo de Pago', 'field' => 'pmonto_arreglo_pago', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
+      ['label' => 'Monto Cuota', 'field' => 'pmonto_cuota', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
+      ['label' => 'No. Cuota', 'field' => 'pno_cuota', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
+      ['label' => 'Bufete', 'field' => 'abufete', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'Estado de Arreglo', 'field' => 'pestado_arreglo', 'type' => 'string', 'align' => 'left', 'width' => 25],
       ['label' => 'Usuario que creó el caso', 'field' => 'user_create', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Usuario de última actualización', 'field' => 'user_update', 'type' => 'string', 'align' => 'center', 'width' => 25]
     ];
@@ -75,6 +42,10 @@ class CasoDaviviendaPagoTCReport extends BaseReport
 
   public function query(): \Illuminate\Database\Eloquent\Builder
   {
+    $TARJETACREDITO = 17;
+
+    $listProductos = [$TARJETACREDITO];
+
     $query = Caso::query()
     ->select([
         'casos.id',
@@ -89,12 +60,20 @@ class CasoDaviviendaPagoTCReport extends BaseReport
         'ua2.name as asistente2',
         'casos.pnombre_demandado',
         'casos.pnumero_operacion1',
+        'casos.pnumero_operacion2',
+        'pente',
         'currencies.code as moneda',
         'product.nombre as producto',
         'proceso.nombre as proceso',
         'casos.pplazo_arreglo_pago',
         'casos.aestado_operacion',
         'pcomprador',
+        'pcedula_deudor',
+        'pnombre_apellidos_deudor',
+        'pmonto_prima',
+        'pmonto_arreglo_pago',
+        'aestimacion_demanda_en_presentacion',
+        'aestimacion_demanda_en_presentacion_usd',
         'casos_poderdantes.nombre as poderdante',
         'casos_estados_notificaciones.nombre as estado_notificacion',
         'noposicion_demanda',
@@ -181,6 +160,7 @@ class CasoDaviviendaPagoTCReport extends BaseReport
         'user_create',
         'user_update',
         DB::raw("DATE_FORMAT(casos.pfecha_asignacion_caso, '%d-%m-%Y') AS fecha_asignacion_caso"),
+        DB::raw("MONTHNAME(casos.pfecha_asignacion_caso) AS mes"),
         DB::raw("DATE_FORMAT(casos.pfecha_ingreso_cobro_judicial, '%d-%m-%Y') AS pfecha_ingreso_cobro_judicial")
     ])
     // --- Honorarios CRC ---
@@ -228,8 +208,8 @@ class CasoDaviviendaPagoTCReport extends BaseReport
     ->leftJoin('casos_estados_notificaciones', 'casos.nestado_id', '=', 'casos_estados_notificaciones.id')
     ->join('currencies', 'casos.currency_id', '=', 'currencies.id')
     ->join('banks', 'casos.bank_id', '=', 'banks.id')
-    ->where('casos.bank_id', Bank::LAFISE)
-    ->where('casos.aestado_operacion', '=', 'ACTIVO')
+    ->where('casos.bank_id', Bank::DAVIVIENDA)
+    ->whereIn('casos.product_id', $listProductos)
     ->with('fechasRemate');
 
     // --- FILTROS SEGURAMENTE ---

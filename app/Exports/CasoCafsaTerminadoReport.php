@@ -7,34 +7,38 @@ use App\Models\Bank;
 use App\Models\Caso;
 use Illuminate\Support\Facades\DB;
 
-class CasoDaviviendaPagoCEReport extends BaseReport
+class CasoCafsaTerminadoReport extends BaseReport
 {
   protected function columns(): array
   {
     return [
       ['label' => 'ID', 'field' => 'id', 'type' => 'integer', 'align' => 'left', 'width' => 10],
-      ['label' => 'Número', 'field' => 'pnumero', 'type' => 'string', 'align' => 'left', 'width' => 15],
-      ['label' => 'Fecha de asignación de Caso', 'field' => 'fecha_asignacion_caso', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Mes', 'field' => 'mes', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Identificación', 'field' => 'pcedula_deudor', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'No. de Operación corta', 'field' => 'pnumero_operacion1', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'No. de Operación larga', 'field' => 'pnumero_operacion2', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Ente', 'field' => 'pente', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Deudor', 'field' => 'pnombre_apellidos_deudor', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Producto', 'field' => 'producto', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Estimación de la demanda Colones', 'field' => 'aestimacion_demanda_en_presentacion', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Estimación de la demanda Dólares', 'field' => 'aestimacion_demanda_en_presentacion_usd', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Estado Procesal', 'field' => 'proceso_general', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Expediente Judicial', 'field' => 'pnumero_expediente_judicial', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Estado OP (Activo-Incobrable)', 'field' => 'pestatus_operacion', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Fecha de inicio', 'field' => 'pfecha_ingreso_cobro_judicial', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Monto Prima', 'field' => 'pmonto_prima', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Plazo del Arreglo de Pago', 'field' => 'pplazo_arreglo_pago', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Monto del Arreglo de Pago', 'field' => 'pmonto_arreglo_pago', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-      ['label' => 'Monto Cuota', 'field' => 'pmonto_cuota', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-      ['label' => 'No. Cuota', 'field' => 'pno_cuota', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-      ['label' => 'Bufete', 'field' => 'abufete', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Estado de Arreglo', 'field' => 'pestado_arreglo', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'Número de caso', 'field' => 'pnumero', 'type' => 'string', 'align' => 'left', 'width' => 15],
+      ['label' => 'Número de Operación 1', 'field' => 'pnumero_operacion1', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'Nombre del demandado', 'field' => 'pnombre_demandado', 'type' => 'string', 'align' => 'left', 'width' => 60],
+      ['label' => 'Cédula del demandado', 'field' => 'pnumero_cedula', 'type' => 'string', 'align' => 'left', 'width' => 15],
+      ['label' => 'Proceso', 'field' => 'proceso', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'Número de expediente judicial', 'field' => 'pnumero_expediente_judicial', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Despacho judicial juzgado', 'field' => 'pdespacho_judicial_juzgado', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Fecha de ingreso a cobro judicial', 'field' => 'pfecha_ingreso_cobro_judicial', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Fecha de escrito de demanda', 'field' => 'pfecha_escrito_demanda', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Fecha de presentación de la demanda', 'field' => 'pfecha_presentacion_demanda', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Estado', 'field' => 'estado_notificacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Estado Proceso General', 'field' => 'proceso_general', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Fecha de terminación', 'field' => 'afecha_terminacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Estado ID', 'field' => 'pestadoid', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Avance cronológico', 'field' => 'pavance_cronologico', 'type' => 'string', 'align' => 'left', 'width' => 100],
+      ['label' => 'Detalle de la Garantía', 'field' => 'pdetalle_garantia', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Fecha de Captura', 'field' => 'sfecha_captura', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => '1° Remate', 'field' => 'remate_1', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => '2° Remate', 'field' => 'remate_2', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => '3° Remate', 'field' => 'remate_3', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Fecha de aprobación de remate', 'field' => 'afecha_aprobacion_remate', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 15],
+      ['label' => 'Monto estimación de la Demanda', 'field' => 'pmonto_estimacion_demanda', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Saldo Capital de la Operación', 'field' => 'asaldo_capital_operacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Espectativas de la recuperación', 'field' => 'expectaviva_recuperacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Mes de avance judicial', 'field' => 'ames_avance_judicial', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Usuario que creó el caso', 'field' => 'user_create', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Usuario de última actualización', 'field' => 'user_update', 'type' => 'string', 'align' => 'center', 'width' => 25]
     ];
@@ -42,14 +46,8 @@ class CasoDaviviendaPagoCEReport extends BaseReport
 
   public function query(): \Illuminate\Database\Eloquent\Builder
   {
-    $CREDITO_COMERCIAL = 23;
-    $CREDITO_CREDIFACIL = 49;
-    $CREDITO_CONSUMO = 18;
-    $CREDITO_LIBRANZA = 26;
-    $CREDITO_PERSONAL = 22;
-
-    $listProductos = [$CREDITO_COMERCIAL, $CREDITO_CREDIFACIL, $CREDITO_CONSUMO, $CREDITO_LIBRANZA, $CREDITO_PERSONAL];
-
+    $ESTADO_TERMINADO = 32;
+    $listaEstados = [$ESTADO_TERMINADO];
     $query = Caso::query()
     ->select([
         'casos.id',
@@ -64,20 +62,13 @@ class CasoDaviviendaPagoCEReport extends BaseReport
         'ua2.name as asistente2',
         'casos.pnombre_demandado',
         'casos.pnumero_operacion1',
-        'casos.pnumero_operacion2',
-        'pente',
         'currencies.code as moneda',
         'product.nombre as producto',
         'proceso.nombre as proceso',
         'casos.pplazo_arreglo_pago',
         'casos.aestado_operacion',
         'pcomprador',
-        'pcedula_deudor',
-        'pnombre_apellidos_deudor',
-        'pmonto_prima',
-        'pmonto_arreglo_pago',
-        'aestimacion_demanda_en_presentacion',
-        'aestimacion_demanda_en_presentacion_usd',
+        'ames_avance_judicial',
         'casos_poderdantes.nombre as poderdante',
         'casos_estados_notificaciones.nombre as estado_notificacion',
         'noposicion_demanda',
@@ -164,7 +155,6 @@ class CasoDaviviendaPagoCEReport extends BaseReport
         'user_create',
         'user_update',
         DB::raw("DATE_FORMAT(casos.pfecha_asignacion_caso, '%d-%m-%Y') AS fecha_asignacion_caso"),
-        DB::raw("MONTHNAME(casos.pfecha_asignacion_caso) AS mes"),
         DB::raw("DATE_FORMAT(casos.pfecha_ingreso_cobro_judicial, '%d-%m-%Y') AS pfecha_ingreso_cobro_judicial")
     ])
     // --- Honorarios CRC ---
@@ -212,9 +202,10 @@ class CasoDaviviendaPagoCEReport extends BaseReport
     ->leftJoin('casos_estados_notificaciones', 'casos.nestado_id', '=', 'casos_estados_notificaciones.id')
     ->join('currencies', 'casos.currency_id', '=', 'currencies.id')
     ->join('banks', 'casos.bank_id', '=', 'banks.id')
-    ->where('casos.bank_id', Bank::DAVIVIENDA)
-    ->whereIn('casos.product_id', $listProductos)
+    ->where('casos.bank_id', Bank::FINANCIERACAFSA)
+    ->whereNotIn('casos.aestado_proceso_general_id', $listaEstados)
     ->with('fechasRemate');
+
 
     // --- FILTROS SEGURAMENTE ---
     $filters = $this->filters ?? [];
@@ -232,29 +223,6 @@ class CasoDaviviendaPagoCEReport extends BaseReport
         }
     }
      */
-
-    // Filtros de fechas (se asegura formato y rango)
-    $dateFields = [
-        'filter_date' => 'pfecha_ingreso_cobro_judicial',
-    ];
-
-    foreach ($dateFields as $filterKey => $column) {
-        if (!empty($filters[$filterKey])) {
-            $range = explode(' to ', $filters[$filterKey]);
-            try {
-                if (count($range) === 2) {
-                    $start = Carbon::createFromFormat('d-m-Y', trim($range[0]))->startOfDay();
-                    $end   = Carbon::createFromFormat('d-m-Y', trim($range[1]))->endOfDay();
-                    $query->whereBetween("$column", [$start, $end]);
-                } else {
-                    $singleDate = Carbon::createFromFormat('d-m-Y', trim($filters[$filterKey]));
-                    $query->whereDate("$column", $singleDate->format('Y-m-d'));
-                }
-            } catch (\Exception $e) {
-                // ignorar error si fecha inválida
-            }
-        }
-    }
 
     // Otros filtros simples
     $simpleFilters = [

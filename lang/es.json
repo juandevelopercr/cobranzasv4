@@ -534,5 +534,8 @@
   "View-casos-davivienda-file-master": "Ver reporte de casos File Master Davivienda",
   "View-casos-davivienda-matriz": "Ver reporte de casos Matriz TC y CE Davivienda",
   "View-casos-bac-cuentas-gestionadas": "Ver reporte de casos cuentas gestionadas de BAC",
-  "View-casos-bac-cuentas-terminadas": "Ver reporte de casos cuentas terminadas de BAC"
+  "View-casos-bac-cuentas-terminadas": "Ver reporte de casos cuentas terminadas de BAC",
+  "View-casos-cafsa-activos": "Ver reporte de casos activos de Cafsa",
+  "View-casos-cafsa-terminados": "Ver reporte de casos terminados de Cafsa",
+  "View-casos-cafsa-incobrables": "Ver reporte de casos incobrables de Cafsa"
 }
