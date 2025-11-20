@@ -537,5 +537,10 @@
   "View-casos-bac-cuentas-terminadas": "Ver reporte de casos cuentas terminadas de BAC",
   "View-casos-cafsa-activos": "Ver reporte de casos activos de Cafsa",
   "View-casos-cafsa-terminados": "Ver reporte de casos terminados de Cafsa",
-  "View-casos-cafsa-incobrables": "Ver reporte de casos incobrables de Cafsa"
+  "View-casos-cafsa-incobrables": "Ver reporte de casos incobrables de Cafsa",
+  "View-casos-tercero-activos": "Ver reporte de casos activos de terceros",
+  "View-casos-tercero-terminados": "Ver reporte de casos terminados",
+  "View-casos-tercero-incobrables": "Ver reporte de casos incobrables",
+  "View-casos-tercero-pago": "Ver reporte de casos arreglo de pagos",
+  "View-casos-tercero-prescrito": "Ver reporte de casos tercero prescrito"
 }

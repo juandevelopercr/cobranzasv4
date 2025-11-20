@@ -692,6 +692,59 @@
               ]
             }
           ]
+        },
+        {
+          "name": "Terceros",
+          "slug": "reports.casos-tercero",
+          "permissions": [
+            "view-casos-tercero-activos-reports",
+            "view-casos-tercero-terminados-reports",
+            "view-casos-tercero-incobrables-reports",
+            "view-casos-tercero-pago-reports",
+            "view-casos-tercero-prescrito-reports"
+          ],
+          "submenu": [
+            {
+              "url": "reports/casos-tercero-activos",
+              "name": "Casos Activos",
+              "slug": "reports.casos-tercero-activos.index",
+              "permissions": [
+                "view-casos-tercero-activos-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-tercero-terminados",
+              "name": "Casos Terminados",
+              "slug": "reports.casos-tercero-terminados.index",
+              "permissions": [
+                "view-casos-tercero-terminados-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-tercero-incobrables",
+              "name": "Casos Incobrables",
+              "slug": "reports.casos-tercero-incobrables.index",
+              "permissions": [
+                "view-casos-tercero-incobrables-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-tercero-pago",
+              "name": "Casos Arreglo Pago",
+              "slug": "reports.casos-tercero-pago.index",
+              "permissions": [
+                "view-casos-tercero-pago-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-tercero-prescrito",
+              "name": "Casos Prescritos",
+              "slug": "reports.casos-tercero-prescrito.index",
+              "permissions": [
+                "view-casos-tercero-prescrito-reports"
+              ]
+            }
+          ]
         }
       ]
     },

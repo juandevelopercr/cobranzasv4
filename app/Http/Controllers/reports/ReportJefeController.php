@@ -87,4 +87,29 @@ class ReportJefeController extends Controller
   {
     return view('content.reports.casos-cafsa-incobrables');
   }
+
+  public function casoTerceroActivo()
+  {
+    return view('content.reports.casos-tercero-activos');
+  }
+
+  public function casoTerceroTerminado()
+  {
+    return view('content.reports.casos-tercero-terminados');
+  }
+
+  public function casoTerceroIncobrable()
+  {
+    return view('content.reports.casos-tercero-incobrables');
+  }
+
+  public function casoTerceroPago()
+  {
+    return view('content.reports.casos-tercero-pago');
+  }
+
+  public function casoTerceroPrescrito()
+  {
+    return view('content.reports.casos-tercero-prescrito');
+  }
 }

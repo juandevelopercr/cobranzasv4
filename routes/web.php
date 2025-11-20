@@ -389,6 +389,21 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
 
     Route::get('/casos-cafsa-incobrables', [ReportJefeController::class, 'casoCafsaIncobrable'])
         ->name('casos-cafsa-incobrables.index');
+
+    Route::get('/casos-tercero-activos', [ReportJefeController::class, 'casoTerceroActivo'])
+        ->name('casos-tercero-activos.index');
+
+    Route::get('/casos-tercero-terminados', [ReportJefeController::class, 'casoTerceroTerminado'])
+        ->name('casos-tercero-terminados.index');
+
+    Route::get('/casos-tercero-incobrables', [ReportJefeController::class, 'casoTerceroIncobrable'])
+        ->name('casos-tercero-incobrables.index');
+
+    Route::get('/casos-tercero-pago', [ReportJefeController::class, 'casoTerceroPago'])
+        ->name('casos-tercero-pago.index');
+
+    Route::get('/casos-tercero-prescrito', [ReportJefeController::class, 'casoTerceroPrescrito'])
+        ->name('casos-tercero-prescrito.index');
   });
 });
 

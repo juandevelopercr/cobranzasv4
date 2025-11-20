@@ -1,5 +1,5 @@
 <div class="card">
-  <h4 class="card-header pb-0 text-md-start text-center ms-n2">{{ __('Reporte de Casos de Tercero Activos') }}</h4>
+  <h4 class="card-header pb-0 text-md-start text-center ms-n2">{{ __('Reporte de Casos de Tercero Terminados') }}</h4>
   <div class="card-datatable text-nowrap">
     <div class="dataTables_wrapper dt-bootstrap5 no-footer">
       <form wire:submit.prevent="exportExcel">
@@ -64,6 +64,21 @@
           </div>
 
           <div class="col-md-3 select2-primary fv-plugins-icon-container">
+            <label class="form-label" for="filter_contact">{{ __('Cliente') }}</label>
+            <div wire:ignore>
+              <select wire:model="filter_contact" id="filter_contact" class="select2 form-select @error('filter_contact') is-invalid @enderror">
+                <option value="">{{ __('Seleccione...') }}</option>
+                @foreach ($this->contacts as $contact)
+                  <option value="{{ $contact['id'] }}">{{ $contact['name'] }}</option>
+                @endforeach
+              </select>
+            </div>
+            @error('filter_contact')
+            <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="col-md-3 select2-primary fv-plugins-icon-container">
             <label class="form-label" for="filter_currency">{{ __('Currency') }}</label>
             <div wire:ignore>
               <select wire:model="filter_currency" id="filter_currency" class="select2 form-select @error('filter_currency') is-invalid @enderror">
@@ -113,7 +128,8 @@
         'filter_abogado',
         'filter_asistente',
         'filter_banco',
-        'filter_currency'
+        'filter_currency',
+        'filter_contact'
       ];
 
       selects.forEach((id) => {
@@ -130,7 +146,7 @@
             if (newValue !== livewireValue) {
               // Actualiza Livewire solo si es el select2 de `condition_sale`
               // Hay que poner wire:ignore en el select2 para que todo vaya bien
-              const specificIds = ['filter_abogado','filter_asistente', 'filter_banco', 'filter_currency']; // Lista de IDs específicos
+              const specificIds = ['filter_abogado','filter_asistente', 'filter_banco', 'filter_currency', 'filter_contact']; // Lista de IDs específicos
 
               if (specificIds.includes(id)) {
                 @this.set(id, newValue);
