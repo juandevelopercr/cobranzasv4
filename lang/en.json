@@ -540,5 +540,10 @@
   "View-casos-tercero-terminados": "Ver reporte de casos terminados",
   "View-casos-tercero-incobrables": "Ver reporte de casos incobrables",
   "View-casos-tercero-pago": "Ver reporte de casos arreglo de pagos",
-  "View-casos-tercero-prescrito": "Ver reporte de casos tercero prescrito"
+  "View-casos-tercero-prescrito": "Ver reporte de casos tercero prescrito",
+  "View-casos-coocique-activos": "Ver reporte de casos coocique activos",
+  "View-casos-coocique-terminados": "Ver reporte de casos coocique terminados",
+  "View-casos-coocique-incobrables": "Ver reporte de casos coocique incobrables",
+  "View-casos-coocique-pago": "Ver reporte de casos coocique arreglo de pago",
+  "View-casos-coocique-prescrito": "Ver reporte de casos coocique prescrito"
 }
