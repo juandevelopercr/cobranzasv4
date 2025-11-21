@@ -745,6 +745,59 @@
               ]
             }
           ]
+        },
+        {
+          "name": "Coocique",
+          "slug": "reports.casos-coocique",
+          "permissions": [
+            "view-casos-coocique-activos-reports",
+            "view-casos-coocique-terminados-reports",
+            "view-casos-coocique-incobrables-reports",
+            "view-casos-coocique-pago-reports",
+            "view-casos-coocique-prescrito-reports"
+          ],
+          "submenu": [
+            {
+              "url": "reports/casos-coocique-activos",
+              "name": "Casos Activos",
+              "slug": "reports.casos-coocique-activos.index",
+              "permissions": [
+                "view-casos-coocique-activos-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-coocique-terminados",
+              "name": "Casos Terminados",
+              "slug": "reports.casos-coocique-terminados.index",
+              "permissions": [
+                "view-casos-coocique-terminados-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-coocique-incobrables",
+              "name": "Casos Incobrables",
+              "slug": "reports.casos-coocique-incobrables.index",
+              "permissions": [
+                "view-casos-coocique-incobrables-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-coocique-pago",
+              "name": "Casos Arreglo Pago",
+              "slug": "reports.casos-coocique-pago.index",
+              "permissions": [
+                "view-casos-coocique-pago-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-coocique-prescrito",
+              "name": "Casos Prescritos",
+              "slug": "reports.casos-coocique-prescrito.index",
+              "permissions": [
+                "view-casos-coocique-prescrito-reports"
+              ]
+            }
+          ]
         }
       ]
     },

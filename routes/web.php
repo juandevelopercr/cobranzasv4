@@ -404,6 +404,21 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
 
     Route::get('/casos-tercero-prescrito', [ReportJefeController::class, 'casoTerceroPrescrito'])
         ->name('casos-tercero-prescrito.index');
+
+    Route::get('/casos-coocique-activos', [ReportJefeController::class, 'casoCoociqueActivo'])
+        ->name('casos-coocique-activos.index');
+
+    Route::get('/casos-coocique-terminados', [ReportJefeController::class, 'casoCoociqueTerminado'])
+        ->name('casos-coocique-terminados.index');
+
+    Route::get('/casos-coocique-incobrables', [ReportJefeController::class, 'casoCoociqueIncobrable'])
+        ->name('casos-coocique-incobrables.index');
+
+    Route::get('/casos-coocique-pago', [ReportJefeController::class, 'casoCoociquePago'])
+        ->name('casos-coocique-pago.index');
+
+    Route::get('/casos-coocique-prescrito', [ReportJefeController::class, 'casoCoociquePrescrito'])
+        ->name('casos-coocique-prescrito.index');
   });
 });
 
