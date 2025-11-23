@@ -426,7 +426,6 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
 });
 
 //Route::get('/usuarios', [UserCrud::class, 'index'])->name('usuarios.index');
-
 Route::get('/test-mail', function () {
   Mail::to('caceresvega@gmail.com')->send(new TestMail());
   return 'Correo enviado con MFA';
