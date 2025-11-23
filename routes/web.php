@@ -424,7 +424,6 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
         ->name('casos-coocique-prescrito.index');
   });
 });
-
 //Route::get('/usuarios', [UserCrud::class, 'index'])->name('usuarios.index');
 Route::get('/test-mail', function () {
   Mail::to('caceresvega@gmail.com')->send(new TestMail());
