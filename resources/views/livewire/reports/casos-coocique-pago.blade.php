@@ -114,6 +114,26 @@
             </div>
           </div>
         </div>
+        <div class="row g-6">
+          <div class="col-md-12 mt-4">
+            <div class="p-3 border rounded bg-light">
+              <p class="text-dark mb-2" style="font-size: 0.9rem;">
+                <strong>Leyenda:</strong> Para que se desplieguen los datos debe cumplir con:
+              </p>
+
+              <ol class="text-dark" style="font-size: 0.9rem; padding-left: 20px;">
+                <li>Tener fecha de asignación del caso.</li>
+                <li>
+                  En la casilla de expectativa de recuperación, seleccionar para los casos activos:
+                  <em>Probable, Posible, Remota, Alta, Baja, Media o Poca</em>.
+                </li>
+                <li>
+                  Para casos como: <em>incobrables, arreglos de pago, prescritos o terminados</em>, seleccionar el ítem correspondiente.
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   </div>

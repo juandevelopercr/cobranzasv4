@@ -50,7 +50,7 @@ class CasoScotiabankReport extends BaseReport
       ['label' => 'Código de activación', 'field' => 'codigo_activacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Motivo de Terminación', 'field' => 'motivo_terminacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Honorarios Legales Dólares', 'field' => 'honorarios_legales_dolares', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-      ['label' => 'Honorarios Totales', 'field' => 'ahonorarios_totales', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
+      ['label' => 'Honorarios Legales Colones', 'field' => 'ahonorarios_totales', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
       ['label' => 'Usuario que creó el caso', 'field' => 'user_create', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Usuario de última actualización', 'field' => 'user_update', 'type' => 'string', 'align' => 'center', 'width' => 25]
     ];
@@ -71,7 +71,13 @@ class CasoScotiabankReport extends BaseReport
         'ua2.name as asistente2',
         'casos.pnombre_demandado',
         'casos.pnumero_operacion1',
-        'currencies.code as moneda',
+        'casos.pdespacho_judicial_juzgado',
+        DB::raw("
+            CASE
+                WHEN currencies.code = 'USD' THEN 2
+                ELSE 1
+            END AS moneda
+        "),
         'product.nombre as producto',
         'proceso.nombre as proceso',
         DB::raw("'BUFETE LACLE' AS buffete"),
@@ -194,10 +200,10 @@ class CasoScotiabankReport extends BaseReport
 
     // Otros filtros simples
     $simpleFilters = [
-        'filter_numero_caso' => 'abogado_cargo_id',
-        'filter_abogado' => 'abogado_revisor_id',
-        'filter_asistente' => 'casos.bank_id',
-        'filter_banco' => 'sucursal',
+        'filter_numero_caso' => 'pnumero',
+        'filter_abogado' => 'abogado_id',
+        'filter_asistente' => 'asistente1_id',
+        'filter_banco' => 'bank_id',
         'filter_currency' => 'currency_id'
     ];
 

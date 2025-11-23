@@ -99,6 +99,25 @@
             </div>
           </div>
         </div>
+        <div class="row g-6">
+          <div class="col-md-12 mt-4">
+            <div class="p-3 border rounded bg-light">
+              <p class="text-dark mb-2" style="font-size: 0.9rem;">
+                <strong>Leyenda:</strong> Para que se desplieguen los datos debe cumplir con:
+              </p>
+
+              <ol class="text-dark" style="font-size: 0.9rem; padding-left: 20px;">
+                <li>
+                  Obtiene los casos donde los estados del Proceso General y el status de la operación
+                  sean igual a <em>"TERMINADO"</em>.
+                </li>
+                <li>
+                  Deben tener asignado <em>fecha de terminación</em>.
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   </div>

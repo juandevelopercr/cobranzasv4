@@ -4,8 +4,10 @@
     <div class="dataTables_wrapper dt-bootstrap5 no-footer">
       <form wire:submit.prevent="exportExcel">
         <div class="row g-6">
+          @php
+          /*
           <div class="col-md-3 fv-plugins-icon-container">
-            <label class="form-label" for="filter_date">{{ __('Fecha de asignación de caso') }}</label>
+            <label class="form-label" for="filter_date">{{ __('Fecha de ingreso a cobro judicial') }}</label>
             <div class="input-group input-group-merge has-validation">
               <span class="input-group-text"><i class="bx bx-calendar"></i></span>
               <input type="text" id="filter_date"
@@ -20,6 +22,8 @@
             <div class="text-danger mt-1">{{ $message }}</div>
             @enderror
           </div>
+          */
+          @endphp
 
           <div class="col-md-3 fv-plugins-icon-container">
             <label class="form-label" for="filter_numero_caso">{{ __('Número de Caso') }}</label>
@@ -97,6 +101,20 @@
             <div wire:loading>
                 Generando reporte... ⏳
             </div>
+          </div>
+        </div>
+        <div class="row g-6">
+          <div class="col-md-12 mt-4">
+            <p class="text-secondary" style="font-size: 0.9rem; margin-bottom: 0;">
+              <strong>Leyenda:</strong> Para que se desplieguen los datos debe cumplir con lo siguiente:
+            </p>
+
+            <ol class="text-secondary mt-1" style="font-size: 0.9rem; padding-left: 18px; line-height: 1.4;">
+              <li>
+                En la casilla de status de la operación debe tener asignado:
+                <em>INCOBRABLE</em>.
+              </li>
+            </ol>
           </div>
         </div>
       </form>

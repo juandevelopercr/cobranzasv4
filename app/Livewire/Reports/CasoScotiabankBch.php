@@ -64,6 +64,13 @@ class CasoScotiabankBch extends Component
 
   public function exportExcel()
   {
+    // Validar que los campos requeridos estén llenos
+    $this->validate([
+        'filter_date' => 'required',
+    ], [
+        'filter_date.required' => 'Debe seleccionar un rango de fechas.',
+    ]);
+
     $this->loading = true;
 
     // Generar y descargar el Excel

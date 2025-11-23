@@ -22,15 +22,12 @@ class CasoBacTerminadaReport extends BaseReport
       ['label' => 'Monto Demanda', 'field' => 'pmonto_estimacion_demanda', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
       ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Expediente', 'field' => 'pnumero_expediente_judicial', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Juzgado', 'field' => 'pdespacho_judicial_juzgado', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Estado procesal', 'field' => 'proceso_general', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Avance cronológico', 'field' => 'pavance_cronologico', 'type' => 'string', 'align' => 'left', 'width' => 100],
-      ['label' => 'Arreglo de Pago', 'field' => 'pplazo_arreglo_pago', 'type' => 'string', 'align' => 'left', 'width' => 60],
       ['label' => 'F. Asignación', 'field' => 'fecha_asignacion_caso', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'F. Demanda', 'field' => 'pfecha_presentacion_demanda', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'F. Curso demanda', 'field' => 'pfecha_curso_demanda', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'F. Notificación', 'field' => 'nfecha_notificacion_todas_partes', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'F. Última liquidación', 'field' => 'nfecha_ultima_liquidacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'F. 1° Giro', 'field' => 'pfecha_primer_giro', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'F. Remate', 'field' => 'sfecha_remate', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'F. Aprob. Remate', 'field' => 'afecha_aprobacion_remate', 'type' => 'string', 'align' => 'center', 'width' => 25],
@@ -42,9 +39,11 @@ class CasoBacTerminadaReport extends BaseReport
       ['label' => 'Inmueble', 'field' => 'pinmueble', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Vehículo', 'field' => 'pvehiculo', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'F. Captura', 'field' => 'sfecha_captura', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'F. Terminación', 'field' => 'afecha_terminacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Comentarios OCE', 'field' => 'ncomentarios', 'type' => 'string', 'align' => 'center', 'width' => 100],
       ['label' => 'Fecha de activación', 'field' => 'fecha_activacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Código de activación', 'field' => 'codigo_activacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'F. Última liquidación', 'field' => 'nfecha_ultima_liquidacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Usuario que creó el caso', 'field' => 'user_create', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Usuario de última actualización', 'field' => 'user_update', 'type' => 'string', 'align' => 'center', 'width' => 25]
     ];
@@ -70,6 +69,7 @@ class CasoBacTerminadaReport extends BaseReport
         'product.nombre as producto',
         'proceso.nombre as proceso',
         'casos.pplazo_arreglo_pago',
+        'casos.pdespacho_judicial_juzgado',
         DB::raw("'BUFETE LACLE' AS buffete"),
         DB::raw("DATE_FORMAT(casos.pfecha_presentacion_demanda, '%d-%m-%Y') AS pfecha_presentacion_demanda"),
         DB::raw("DATE_FORMAT(casos.nfecha_traslado_juzgado, '%d-%m-%Y') AS nfecha_traslado_juzgado"),
@@ -200,10 +200,10 @@ class CasoBacTerminadaReport extends BaseReport
 
     // Otros filtros simples
     $simpleFilters = [
-        'filter_numero_caso' => 'abogado_cargo_id',
-        'filter_abogado' => 'abogado_revisor_id',
-        'filter_asistente' => 'casos.bank_id',
-        'filter_banco' => 'sucursal',
+        'filter_numero_caso' => 'pnumero',
+        'filter_abogado' => 'abogado_id',
+        'filter_asistente' => 'asistente1_id',
+        'filter_banco' => 'bank_id',
         'filter_currency' => 'currency_id'
     ];
 

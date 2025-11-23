@@ -27,7 +27,7 @@ class CasoCafsaActivoReport extends BaseReport
       ['label' => 'Estado Proceso General', 'field' => 'proceso_general', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Fecha de terminación', 'field' => 'afecha_terminacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Estado ID', 'field' => 'pestadoid', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Avance cronológico', 'field' => 'pavance_cronologico', 'type' => 'string', 'align' => 'left', 'width' => 100],
+      ['label' => 'Avance cronológico', 'field' => 'pavance_cronologico', 'type' => 'string', 'align' => 'left', 'width' => 150],
       ['label' => 'Detalle de la Garantía', 'field' => 'pdetalle_garantia', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Fecha de Captura', 'field' => 'sfecha_captura', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => '1° Remate', 'field' => 'remate_1', 'type' => 'string', 'align' => 'center', 'width' => 25],
@@ -74,6 +74,8 @@ class CasoCafsaActivoReport extends BaseReport
         'casos_poderdantes.nombre as poderdante',
         'casos_estados_notificaciones.nombre as estado_notificacion',
         'noposicion_demanda',
+        'casos.pdespacho_judicial_juzgado',
+        'pestadoid',
         DB::raw("'BUFETE LACLE' AS buffete"),
         DB::raw("DATE_FORMAT(casos.pfecha_presentacion_demanda, '%d-%m-%Y') AS pfecha_presentacion_demanda"),
         DB::raw("DATE_FORMAT(casos.nfecha_traslado_juzgado, '%d-%m-%Y') AS nfecha_traslado_juzgado"),
@@ -147,7 +149,6 @@ class CasoCafsaActivoReport extends BaseReport
         'pmonto_estimacion_demanda_colones',
         'pmonto_estimacion_demanda_dolares',
         'psaldo_dolarizado',
-        'agastos_legales',
         'agastos_legales',
         DB::raw("DATE_FORMAT(casos.fecha_activacion, '%d-%m-%Y') AS fecha_activacion"),
         'codigo_activacion',
@@ -228,10 +229,10 @@ class CasoCafsaActivoReport extends BaseReport
 
     // Otros filtros simples
     $simpleFilters = [
-        'filter_numero_caso' => 'abogado_cargo_id',
-        'filter_abogado' => 'abogado_revisor_id',
-        'filter_asistente' => 'casos.bank_id',
-        'filter_banco' => 'sucursal',
+        'filter_numero_caso' => 'pnumero',
+        'filter_abogado' => 'abogado_id',
+        'filter_asistente' => 'asistente1_id',
+        'filter_banco' => 'bank_id',
         'filter_currency' => 'currency_id'
     ];
 

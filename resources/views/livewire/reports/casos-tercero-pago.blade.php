@@ -114,6 +114,21 @@
             </div>
           </div>
         </div>
+        <div class="row g-6">
+          <div class="col-md-12 mt-15">
+            <p class="text-info" style="font-size: 0.9rem; margin-bottom: 0;">
+              <strong>Leyenda:</strong> Para que se desplieguen los datos debe cumplir con las siguientes condiciones en el formulario:
+            </p>
+
+            <ol class="text-info mt-1" style="font-size: 0.9rem; padding-left: 18px; line-height: 1.4; margin-bottom: 0;">
+              <li>Tener fecha de asignación del caso.</li>
+              <li>En la casilla de expectativa de recuperación escoger para los casos activos:
+                <em>Probable, Posible, Remota, Alta, Baja, Media o Poca</em>.
+              </li>
+              <li>Para reportes como incobrables, arreglos de pago, prescritos o terminados, simplemente escoger el ítem respectivo.</li>
+            </ol>
+          </div>
+        </div>
       </form>
     </div>
   </div>

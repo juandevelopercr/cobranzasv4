@@ -76,6 +76,13 @@ class CasoCoociquePrescrito extends Component
 
   public function exportExcel()
   {
+    // Validar que los campos requeridos estén llenos
+    $this->validate([
+        'filter_date' => 'required',
+    ], [
+        'filter_date.required' => 'Debe seleccionar un rango de fechas.',
+    ]);
+
     $this->loading = true;
     $this->filter_type = 'OTROS';
     if ($this->filter_contact && ($this->filter_contact == 4 || $this->filter_contact == 723)) // CEFA CENTRAL FARMACEUTICA S.A. //COCA COLA FEMSA DE COSTA RICA SOCIEDAD ANONIMA

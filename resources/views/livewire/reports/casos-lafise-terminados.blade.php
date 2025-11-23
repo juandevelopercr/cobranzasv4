@@ -4,8 +4,10 @@
     <div class="dataTables_wrapper dt-bootstrap5 no-footer">
       <form wire:submit.prevent="exportExcel">
         <div class="row g-6">
+          @php
+          /*
           <div class="col-md-3 fv-plugins-icon-container">
-            <label class="form-label" for="filter_date">{{ __('Fecha de asignación de caso') }}</label>
+            <label class="form-label" for="filter_date">{{ __('Fecha de ingreso a cobro judicial') }}</label>
             <div class="input-group input-group-merge has-validation">
               <span class="input-group-text"><i class="bx bx-calendar"></i></span>
               <input type="text" id="filter_date"
@@ -20,6 +22,8 @@
             <div class="text-danger mt-1">{{ $message }}</div>
             @enderror
           </div>
+          */
+          @endphp
 
           <div class="col-md-3 fv-plugins-icon-container">
             <label class="form-label" for="filter_numero_caso">{{ __('Número de Caso') }}</label>
@@ -96,6 +100,22 @@
             <!-- Spinner de carga -->
             <div wire:loading>
                 Generando reporte... ⏳
+            </div>
+          </div>
+        </div>
+        <div class="row g-6">
+          <div class="col-md-12 mt-4">
+            <div class="p-3 border rounded bg-light">
+              <p class="text-dark mb-2" style="font-size: 0.9rem;">
+                <strong>Leyenda:</strong> Para que se desplieguen los datos debe cumplir con:
+              </p>
+
+              <ol class="text-dark" style="font-size: 0.9rem; padding-left: 20px;">
+                <li>
+                  En la casilla de <em>status de la operación</em> debe tener asignado:
+                  <em>CANCELADO</em>.
+                </li>
+              </ol>
             </div>
           </div>
         </div>

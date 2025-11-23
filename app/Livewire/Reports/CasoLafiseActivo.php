@@ -38,7 +38,7 @@ class CasoLafiseActivo extends Component
       ->orderBy('name', 'ASC')
       ->get();
 
-    $this->currencies = Currency::where('active', 1)->get();
+    $this->currencies = Currency::where('active', 1)->whereIn('id', [1,16])->get();
 
     // Primer día del mes actual
     $startOfMonth = Carbon::now()->startOfMonth()->format('d-m-Y');
@@ -65,6 +65,13 @@ class CasoLafiseActivo extends Component
 
   public function exportExcel()
   {
+    // Validar que los campos requeridos estén llenos
+    $this->validate([
+        'filter_date' => 'required',
+    ], [
+        'filter_date.required' => 'Debe seleccionar un rango de fechas.',
+    ]);
+
     $this->loading = true;
 
     // Generar y descargar el Excel

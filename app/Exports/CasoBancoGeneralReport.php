@@ -56,6 +56,7 @@ class CasoBancoGeneralReport extends BaseReport
         'abienes_adjudicados',
         'pdetalle_garantia',
         'bgastos_proceso',
+        'casos.pdespacho_judicial_juzgado',
         DB::raw("'BUFETE LACLE' AS buffete"),
         DB::raw("DATE_FORMAT(casos.pfecha_presentacion_demanda, '%d-%m-%Y') AS pfecha_presentacion_demanda"),
         DB::raw("DATE_FORMAT(casos.nfecha_traslado_juzgado, '%d-%m-%Y') AS nfecha_traslado_juzgado"),
@@ -211,10 +212,10 @@ class CasoBancoGeneralReport extends BaseReport
 
     // Otros filtros simples
     $simpleFilters = [
-        'filter_numero_caso' => 'abogado_cargo_id',
-        'filter_abogado' => 'abogado_revisor_id',
-        'filter_asistente' => 'casos.bank_id',
-        'filter_banco' => 'sucursal',
+        'filter_numero_caso' => 'pnumero',
+        'filter_abogado' => 'abogado_id',
+        'filter_asistente' => 'asistente1_id',
+        'filter_banco' => 'bank_id',
         'filter_currency' => 'currency_id'
     ];
 

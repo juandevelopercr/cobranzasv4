@@ -144,7 +144,7 @@ abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithC
 
                 // --- IDENTIFICATION como TEXTO ---
                 foreach ($this->columns() as $index => $col) {
-                    if (($col['field'] ?? '') === 'identification' || ($col['field'] ?? '') === 'pnumero_operacion1') {
+                    if (($col['field'] ?? '') === 'identification' || ($col['field'] ?? '') === 'pnumero_operacion1' || ($col['field'] ?? '') === 'pnumero_operacion2') {
                         $colLetter = $this->columnLetter($index);
                         for ($row = 4; $row <= $lastRow; $row++) {
                             $sheet->setCellValueExplicit(
@@ -156,7 +156,6 @@ abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithC
                         $sheet->getStyle("{$colLetter}4:{$colLetter}{$lastRow}")
                               ->getNumberFormat()
                               ->setFormatCode(NumberFormat::FORMAT_TEXT);
-                        break;
                     }
                 }
 

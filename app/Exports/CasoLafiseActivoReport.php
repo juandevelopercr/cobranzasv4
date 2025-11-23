@@ -18,7 +18,7 @@ class CasoLafiseActivoReport extends BaseReport
       ['label' => 'Número de tarjeta', 'field' => 'pnumero_tarjeta', 'type' => 'string', 'align' => 'left', 'width' => 25],
       ['label' => 'Apellidos y nombre del deudor', 'field' => 'pnombre_demandado', 'type' => 'string', 'align' => 'left', 'width' => 60],
       ['label' => 'Documento de Identificación', 'field' => 'pnumero_cedula', 'type' => 'string', 'align' => 'left', 'width' => 15],
-      ['label' => 'Nombre de la persona Jurídica', 'field' => 'pnombre_persona_juridica', 'type' => 'string', 'align' => 'left', 'width' => 15],
+      ['label' => 'Nombre de la persona Jurídica', 'field' => 'pnombre_persona_juridica', 'type' => 'string', 'align' => 'left', 'width' => 40],
       ['label' => 'Número de cédula jurídica', 'field' => 'pnumero_cedula_juridica', 'type' => 'string', 'align' => 'left', 'width' => 15],
       ['label' => 'Datos de los Codeudores', 'field' => 'pdatos_codeudor1', 'type' => 'string', 'align' => 'left', 'width' => 25],
       ['label' => 'Datos de los Fiadores', 'field' => 'pdatos_codeudor2', 'type' => 'string', 'align' => 'left', 'width' => 25],
@@ -28,7 +28,7 @@ class CasoLafiseActivoReport extends BaseReport
       ['label' => 'Expectativa de Recuperación', 'field' => 'expectaviva_recuperacion', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Estatus de Operación', 'field' => 'aestado_operacion', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Número de expediente', 'field' => 'pnumero_expediente_judicial', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Despacho judicial', 'field' => 'pdespacho_judicial_juzgado', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Despacho judicial', 'field' => 'pdespacho_judicial_juzgado', 'type' => 'string', 'align' => 'left', 'width' => 60],
       ['label' => 'Comprador', 'field' => 'pcomprador', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Poderdante', 'field' => 'poderdante', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Fecha de ingreso a cobro judicial', 'field' => 'pfecha_ingreso_cobro_judicial', 'type' => 'string', 'align' => 'center', 'width' => 25],
@@ -95,6 +95,10 @@ class CasoLafiseActivoReport extends BaseReport
         'casos.pplazo_arreglo_pago',
         'casos.aestado_operacion',
         'pcomprador',
+        'pnumero_cedula_juridica',
+        'pdatos_codeudor1',
+        'pdatos_codeudor2',
+        'casos.pdespacho_judicial_juzgado',
         'casos_poderdantes.nombre as poderdante',
         'casos_estados_notificaciones.nombre as estado_notificacion',
         'noposicion_demanda',
@@ -171,7 +175,6 @@ class CasoLafiseActivoReport extends BaseReport
         'pmonto_estimacion_demanda_colones',
         'pmonto_estimacion_demanda_dolares',
         'psaldo_dolarizado',
-        'agastos_legales',
         'agastos_legales',
         DB::raw("DATE_FORMAT(casos.fecha_activacion, '%d-%m-%Y') AS fecha_activacion"),
         'codigo_activacion',
@@ -274,10 +277,10 @@ class CasoLafiseActivoReport extends BaseReport
 
     // Otros filtros simples
     $simpleFilters = [
-        'filter_numero_caso' => 'abogado_cargo_id',
-        'filter_abogado' => 'abogado_revisor_id',
-        'filter_asistente' => 'casos.bank_id',
-        'filter_banco' => 'sucursal',
+        'filter_numero_caso' => 'pnumero',
+        'filter_abogado' => 'abogado_id',
+        'filter_asistente' => 'asistente1_id',
+        'filter_banco' => 'bank_id',
         'filter_currency' => 'currency_id'
     ];
 

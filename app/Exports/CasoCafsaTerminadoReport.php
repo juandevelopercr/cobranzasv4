@@ -68,6 +68,7 @@ class CasoCafsaTerminadoReport extends BaseReport
         'casos.pplazo_arreglo_pago',
         'casos.aestado_operacion',
         'pcomprador',
+        'casos.pdespacho_judicial_juzgado',
         'ames_avance_judicial',
         'casos_poderdantes.nombre as poderdante',
         'casos_estados_notificaciones.nombre as estado_notificacion',
@@ -146,7 +147,7 @@ class CasoCafsaTerminadoReport extends BaseReport
         'pmonto_estimacion_demanda_dolares',
         'psaldo_dolarizado',
         'agastos_legales',
-        'agastos_legales',
+        'pestadoid',
         DB::raw("DATE_FORMAT(casos.fecha_activacion, '%d-%m-%Y') AS fecha_activacion"),
         'codigo_activacion',
         'motivo_terminacion',
@@ -226,10 +227,10 @@ class CasoCafsaTerminadoReport extends BaseReport
 
     // Otros filtros simples
     $simpleFilters = [
-        'filter_numero_caso' => 'abogado_cargo_id',
-        'filter_abogado' => 'abogado_revisor_id',
-        'filter_asistente' => 'casos.bank_id',
-        'filter_banco' => 'sucursal',
+        'filter_numero_caso' => 'pnumero',
+        'filter_abogado' => 'abogado_id',
+        'filter_asistente' => 'asistente1_id',
+        'filter_banco' => 'bank_id',
         'filter_currency' => 'currency_id'
     ];
 

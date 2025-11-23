@@ -148,6 +148,7 @@ class CasoCoociqueActivoReport extends BaseReport
         'casos_poderdantes.nombre as poderdante',
         'casos_estados_notificaciones.nombre as estado_notificacion',
         'noposicion_demanda',
+        'casos.pdespacho_judicial_juzgado',
         DB::raw("'BUFETE LACLE' AS buffete"),
         DB::raw("DATE_FORMAT(casos.pfecha_presentacion_demanda, '%d-%m-%Y') AS pfecha_presentacion_demanda"),
         DB::raw("DATE_FORMAT(casos.nfecha_traslado_juzgado, '%d-%m-%Y') AS nfecha_traslado_juzgado"),
@@ -225,7 +226,6 @@ class CasoCoociqueActivoReport extends BaseReport
         'pmonto_estimacion_demanda_colones',
         'pmonto_estimacion_demanda_dolares',
         'psaldo_dolarizado',
-        'agastos_legales',
         'agastos_legales',
         DB::raw("DATE_FORMAT(casos.fecha_activacion, '%d-%m-%Y') AS fecha_activacion"),
         'codigo_activacion',
@@ -328,10 +328,10 @@ class CasoCoociqueActivoReport extends BaseReport
 
     // Otros filtros simples
     $simpleFilters = [
-        'filter_numero_caso' => 'abogado_cargo_id',
-        'filter_abogado' => 'abogado_revisor_id',
-        'filter_asistente' => 'casos.bank_id',
-        'filter_banco' => 'sucursal',
+        'filter_numero_caso' => 'pnumero',
+        'filter_abogado' => 'abogado_id',
+        'filter_asistente' => 'asistente1_id',
+        'filter_banco' => 'bank_id',
         'filter_currency' => 'currency_id',
         'filter_contact' => 'contact_id',
     ];
