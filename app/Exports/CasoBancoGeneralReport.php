@@ -7,7 +7,7 @@ use App\Models\Bank;
 use App\Models\Caso;
 use Illuminate\Support\Facades\DB;
 
-class CasoScotiabankBchReport extends BaseReport
+class CasoBancoGeneralReport extends BaseReport
 {
   protected function columns(): array
   {
@@ -15,44 +15,23 @@ class CasoScotiabankBchReport extends BaseReport
       ['label' => 'ID', 'field' => 'id', 'type' => 'integer', 'align' => 'left', 'width' => 10],
       ['label' => 'Número de caso', 'field' => 'pnumero', 'type' => 'string', 'align' => 'left', 'width' => 15],
       ['label' => 'Número de Operación', 'field' => 'pnumero_operacion1', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Tipo de Producto', 'field' => 'producto', 'type' => 'string', 'align' => 'left', 'width' => 30],
-      ['label' => 'Nombre del Cliente', 'field' => 'pnombre_demandado', 'type' => 'string', 'align' => 'left', 'width' => 60],
-      ['label' => 'Número de Identificación', 'field' => 'pnumero_cedula', 'type' => 'string', 'align' => 'left', 'width' => 15],
-      ['label' => 'Monto de la Demanda', 'field' => 'pmonto_estimacion_demanda', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-      ['label' => 'Buffete', 'field' => 'buffete', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-      ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 15],
-      ['label' => 'Fecha de asignación del caso', 'field' => 'fecha_asignacion_caso', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de presentación demanda', 'field' => 'pfecha_presentacion_demanda', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de traslado', 'field' => 'nfecha_traslado_juzgado', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de captura', 'field' => 'sfecha_captura', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de notificación todas las partes', 'field' => 'nfecha_notificacion_todas_partes', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'F. Última liquidación', 'field' => 'nfecha_ultima_liquidacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de inicio de retenciones', 'field' => 'fecha_inicio_retenciones', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de Prescripción', 'field' => 'fecha_prescripcion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de Pruebas', 'field' => 'fecha_pruebas', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de Remate', 'field' => 'sfecha_remate', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de aprobación de remate', 'field' => 'afecha_aprobacion_remate', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de registro', 'field' => 'afecha_registro', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de presentación protocolización', 'field' => 'afecha_protocolizacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de inscripción', 'field' => 'afecha_inscripcion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de presentación de levantamientos', 'field' => 'afecha_levantamiento', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de presentación de terminación', 'field' => 'afecha_terminacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de suspensión por arreglo', 'field' => 'afecha_aprobacion_arreglo', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Justificación casos protocolizado por embargo', 'field' => 'ajustificacion_casos_protocolizados_embargo', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Estado proceso general', 'field' => 'proceso_general', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Nombre del demandado', 'field' => 'pnombre_demandado', 'type' => 'string', 'align' => 'left', 'width' => 60],
+      ['label' => 'Producto', 'field' => 'producto', 'type' => 'string', 'align' => 'left', 'width' => 30],
+      ['label' => 'Proceso', 'field' => 'proceso', 'type' => 'string', 'align' => 'left', 'width' => 30],
+      ['label' => 'Despacho judicial juzgado', 'field' => 'pdespacho_judicial_juzgado', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Número expediente judicial', 'field' => 'pnumero_expediente_judicial', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Juzgado', 'field' => 'pdespacho_judicial_juzgado', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de informe', 'field' => 'pfecha_informe', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Comentarios', 'field' => 'pavance_cronologico', 'type' => 'string', 'align' => 'left', 'width' => 200],
-      ['label' => 'Tipo exp', 'field' => 'atipo_expediente', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Reasignaciones', 'field' => 'areasignaciones', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de activación', 'field' => 'fecha_activacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Código de activación', 'field' => 'codigo_activacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Motivo de Terminación', 'field' => 'motivo_terminacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Honorarios Legales Dólares', 'field' => 'honorarios_legales_dolares', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-      ['label' => 'Honorarios Totales', 'field' => 'ahonorarios_totales', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-      ['label' => 'Usuario que creó el caso', 'field' => 'user_create', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Usuario de última actualización', 'field' => 'user_update', 'type' => 'string', 'align' => 'center', 'width' => 25]
+      ['label' => 'Estado de la notificación de la demanda', 'field' => 'estado_notificacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Estado proceso general', 'field' => 'proceso_general', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Avances cronológicos', 'field' => 'pavance_cronologico', 'type' => 'string', 'align' => 'left', 'width' => 200],
+      ['label' => 'Detalle de la Garantía', 'field' => 'pdetalle_garantia', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Fecha de celebración de Primer remate', 'field' => 'remate_1', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Fecha de celebración de Segundo remate', 'field' => 'remate_2', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Fecha de celebración de Tercer remate', 'field' => 'remate_3', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Bienes Adjudicados', 'field' => 'abienes_adjudicados', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 15],
+      ['label' => 'Estimación de la Demanda en la Presentación', 'field' => 'pmonto_estimacion_demanda', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
+      ['label' => 'Estimación de Gastos', 'field' => 'bgastos_proceso', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
+      ['label' => 'Fecha conclusión del proceso', 'field' => 'afecha_terminacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
     ];
   }
 
@@ -74,6 +53,9 @@ class CasoScotiabankBchReport extends BaseReport
         'currencies.code as moneda',
         'product.nombre as producto',
         'proceso.nombre as proceso',
+        'abienes_adjudicados',
+        'pdetalle_garantia',
+        'bgastos_proceso',
         DB::raw("'BUFETE LACLE' AS buffete"),
         DB::raw("DATE_FORMAT(casos.pfecha_presentacion_demanda, '%d-%m-%Y') AS pfecha_presentacion_demanda"),
         DB::raw("DATE_FORMAT(casos.nfecha_traslado_juzgado, '%d-%m-%Y') AS nfecha_traslado_juzgado"),
@@ -92,6 +74,41 @@ class CasoScotiabankBchReport extends BaseReport
         DB::raw("DATE_FORMAT(casos.afecha_terminacion, '%d-%m-%Y') AS afecha_terminacion"),
         DB::raw("DATE_FORMAT(casos.afecha_aprobacion_arreglo, '%d-%m-%Y') AS afecha_aprobacion_arreglo"),
         DB::raw("DATE_FORMAT(casos.pfecha_informe, '%d-%m-%Y') AS pfecha_informe"),
+        DB::raw("(SELECT
+                    CONCAT(
+                        IF(casos.sfecha_captura IS NOT NULL, casos.sfecha_captura, ''),
+                        IF(casos.sfecha_captura IS NOT NULL, ': ', ''),
+                        IFNULL(DATE_FORMAT(r.fecha, '%d-%m-%Y'), '')
+                    )
+                  FROM casos_fecha_remate r
+                  WHERE r.caso_id = casos.id
+                  ORDER BY r.fecha ASC
+                  LIMIT 1 OFFSET 0
+                ) AS remate_1"),
+
+        DB::raw("(SELECT
+                    CONCAT(
+                        IF(casos.sfecha_captura IS NOT NULL, casos.sfecha_captura, ''),
+                        IF(casos.sfecha_captura IS NOT NULL, ': ', ''),
+                        IFNULL(DATE_FORMAT(r.fecha, '%d-%m-%Y'), '')
+                    )
+                  FROM casos_fecha_remate r
+                  WHERE r.caso_id = casos.id
+                  ORDER BY r.fecha ASC
+                  LIMIT 1 OFFSET 1
+                ) AS remate_2"),
+
+        DB::raw("(SELECT
+                    CONCAT(
+                        IF(casos.sfecha_captura IS NOT NULL, casos.sfecha_captura, ''),
+                        IF(casos.sfecha_captura IS NOT NULL, ': ', ''),
+                        IFNULL(DATE_FORMAT(r.fecha, '%d-%m-%Y'), '')
+                    )
+                  FROM casos_fecha_remate r
+                  WHERE r.caso_id = casos.id
+                  ORDER BY r.fecha ASC
+                  LIMIT 1 OFFSET 2
+                ) AS remate_3"),
         'ajustificacion_casos_protocolizados_embargo',
         'estado.name as proceso_general',
         'pnumero_expediente_judicial',
@@ -149,7 +166,7 @@ class CasoScotiabankBchReport extends BaseReport
     ->leftJoin('casos_estados as estado', 'casos.aestado_proceso_general_id', '=', 'estado.id')
     ->join('currencies', 'casos.currency_id', '=', 'currencies.id')
     ->join('banks', 'casos.bank_id', '=', 'banks.id')
-    ->where('casos.bank_id', Bank::SCOTIABANKBCH);
+    ->where('casos.bank_id', Bank::SCOTIABANKCR);
 
 
     // --- FILTROS SEGURAMENTE ---

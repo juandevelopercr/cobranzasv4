@@ -354,6 +354,9 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
     Route::get('/casos-scotiabank-bch', [ReportJefeController::class, 'casoScotiabankBch'])
         ->name('casos-scotiabank-bch.index');
 
+    Route::get('/casos-banco-general', [ReportJefeController::class, 'casoBancoGeneral'])
+        ->name('casos-banco-general.index');
+
     Route::get('/casos-bac-cuentas-gestionadas', [ReportJefeController::class, 'casoBacCuentasGestionada'])
         ->name('casos-bac-cuentas-gestionadas.index');
 

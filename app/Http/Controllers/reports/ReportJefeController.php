@@ -28,6 +28,11 @@ class ReportJefeController extends Controller
     return view('content.reports.casos-scotiabank-bch');
   }
 
+  public function casoBancoGeneral()
+  {
+    return view('content.reports.casos-banco-general');
+  }
+
   public function casoBacCuentasGestionada()
   {
     return view('content.reports.casos-bac-cuentas-gestionadas');

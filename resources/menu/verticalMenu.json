@@ -554,6 +554,14 @@
           ]
         },
         {
+          "url": "reports/casos-banco-general",
+          "name": "Casos Banco General",
+          "slug": "reports.casos-banco-general.index",
+          "permissions": [
+            "view-casos-banco-general-reports"
+          ]
+        },
+        {
           "name": "BAC",
           "slug": "reports.casos-bac-cuentas",
           "permissions": [

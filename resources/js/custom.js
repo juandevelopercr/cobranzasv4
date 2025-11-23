@@ -370,7 +370,7 @@ window.rangePickerLivewire = ({ wireEventName = 'dateRangeSelected' }) => ({
 
     el.flatpickrInstance = flatpickr(el, {
       mode: 'range',
-      allowInput: false,
+      allowInput: true,
       dateFormat: 'd-m-Y',
 
       onClose: function (selectedDates, dateStr) {

@@ -13,6 +13,7 @@ class CasoScotiabankReport extends BaseReport
   {
     return [
       ['label' => 'ID', 'field' => 'id', 'type' => 'integer', 'align' => 'left', 'width' => 10],
+      ['label' => 'Número de caso', 'field' => 'pnumero', 'type' => 'string', 'align' => 'left', 'width' => 15],
       ['label' => 'Número de Operación', 'field' => 'pnumero_operacion1', 'type' => 'string', 'align' => 'left', 'width' => 25],
       ['label' => 'Tipo de Producto', 'field' => 'producto', 'type' => 'string', 'align' => 'left', 'width' => 30],
       ['label' => 'Nombre del Cliente', 'field' => 'pnombre_demandado', 'type' => 'string', 'align' => 'left', 'width' => 60],
