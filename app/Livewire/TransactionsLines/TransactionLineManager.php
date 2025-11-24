@@ -514,6 +514,8 @@ class TransactionLineManager extends BaseComponent
     }
 
     try {
+      DB::beginTransaction();
+
       // Crear el registro
       $record = TransactionLine::create($validatedData);
 
@@ -554,7 +556,7 @@ class TransactionLineManager extends BaseComponent
         }
       }
 
-      $this->updateTransactionTotals($record);
+      $record->updateTransactionTotals($record->transaction->currency_id);
       $this->dispatch('productUpdated', $record->transaction_id);  // Emitir evento para otros componentes
 
       $this->resetControls();
@@ -565,8 +567,10 @@ class TransactionLineManager extends BaseComponent
         $this->edit($record->id);
       }
 
+      DB::commit();
       $this->dispatch('show-notification', ['type' => 'success', 'message' => __('The record has been created')]);
     } catch (\Exception $e) {
+      DB::rollBack();
       // Manejo de errores
       $this->dispatch('show-notification', ['type' => 'error', 'message' => __('An error occurred while creating the registro') . ' ' . $e->getMessage()]);
     }
@@ -731,6 +735,8 @@ class TransactionLineManager extends BaseComponent
     }
 
     try {
+      DB::beginTransaction();
+
       // Encuentra el registro existente
       $record = TransactionLine::findOrFail($recordId);
 
@@ -810,7 +816,7 @@ class TransactionLineManager extends BaseComponent
         }
       }
 
-      $this->updateTransactionTotals($record);
+      $record->updateTransactionTotals($record->transaction->currency_id);
       $this->dispatch('productUpdated', $record->transaction_id);  // Emitir evento para otros componentes
 
       // Restablece los controles y emite el evento para desplazar la página al inicio
@@ -818,6 +824,7 @@ class TransactionLineManager extends BaseComponent
       $this->dispatch('scroll-to-top');
       $this->dispatch('show-notification', ['type' => 'success', 'message' => __('The record has been updated')]);
 
+      DB::commit();
       if ($closeForm) {
         $this->action = 'list';
       } else {
@@ -825,6 +832,7 @@ class TransactionLineManager extends BaseComponent
         $this->edit($record->id);
       }
     } catch (\Exception $e) {
+      DB::rollBack();
       $this->dispatch('show-notification', ['type' => 'error', 'message' => __('An error occurred while updating the registro') . ' ' . $e->getMessage()]);
     }
   }
@@ -850,13 +858,6 @@ class TransactionLineManager extends BaseComponent
           throw new Exception("El campo 'ImpuestoUnidad' para el calculo del impuesto es obligatorio cuando se usan los códigos de impuesto (03, 04, 05 y 06)");
       }
     }
-  }
-
-  public function updateTransactionTotals($record)
-  {
-    $record->updateTransactionTotals($record->transaction->currency_id);
-
-    $this->dispatch('productUpdated', $record->transaction_id);  // Emitir evento para otros componentes
   }
 
   public function confirmarAccion($recordId, $metodo, $titulo, $mensaje, $textoBoton)

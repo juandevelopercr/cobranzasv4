@@ -2,12 +2,14 @@
 
 namespace App\Services\Hacienda;
 
+use Exception;
+use Carbon\Carbon;
 use App\Models\Comprobante;
 use App\Models\Transaction;
-use Carbon\Carbon;
-use Exception;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\ConnectionException;
 
 class ApiHacienda
 {
@@ -48,14 +50,22 @@ class ApiHacienda
     }
 
     try {
+      // En producción, siempre verificar SSL. En desarrollo, puede ser flexible.
+      $verifySsl = config('app.env') === 'production';
+
       $response = Http::withHeaders($headers)
         ->withOptions([
-          'verify' => false,  // Ignorar la verificación SSL
+          'verify' => $verifySsl,
         ])
         ->post($url_api, $payload);
 
       // Verificar respuesta exitosa
       if ($response->successful()) {
+        // Actualizar el contador de envíos en la transacción
+        if (isset($transaction->num_request_hacienda_set)) {
+            $transaction->increment('num_request_hacienda_set');
+        }
+
         return [
           'error' => 0,
           'mensaje' => __("El comprobante electrónico con key: [" . $key . "] se recibió correctamente, queda pendiente la validación de esta y el envío de la respuesta de  Hacienda."),
@@ -66,6 +76,15 @@ class ApiHacienda
       } else {
         return $this->handleError($response, $tipo_comprobante);
       }
+    } catch (ConnectionException $e) {
+      // Error específico de conexión
+      Log::error('Error de conexión al enviar comprobante a hacienda: ' . $e->getMessage());
+      return [
+        'error' => 1,
+        'mensaje' => __('Error de conexión al intentar enviar el comprobante. Verifique su conexión a internet o la disponibilidad de la API de Hacienda.'),
+        'type' => 'error',
+        'titulo' => 'Error de Conexión'
+      ];
     } catch (Exception $e) {
       // Log de errores
       Log::error('Error al enviar comprobante a hacienda: ' . $e->getMessage());
@@ -226,16 +245,24 @@ class ApiHacienda
     }
 
     try {
-      // Realizar la petición usando Laravel Http Client
-      // Realizar la petición usando Laravel Http Client
+      // En producción, siempre verificar SSL. En desarrollo, puede ser flexible.
+      $verifySsl = config('app.env') === 'production';
+
       $response = Http::withHeaders([
         'Authorization' => 'Bearer ' . $token,
         'Content-Type' => 'application/x-www-form-urlencoded',
       ])
         ->withOptions([
-          'verify' => false,  // Ignorar la verificación SSL
+          'verify' => $verifySsl,
         ])
         ->get($url . $key);
+
+      // Incrementar el contador de consultas de estado
+      if (isset($transaction->num_request_hacienda_get)) {
+          DB::table('transactions')
+              ->where('id', $transaction->id)
+              ->increment('num_request_hacienda_get');
+      }
 
       Log::info('Respuesta de la consulta de estado:', ['response' => $response]);
 
@@ -249,6 +276,15 @@ class ApiHacienda
 
       // Procesar la respuesta
       return $this->handleResponse($responseData, $transaction, $tipo_comprobante);
+    } catch (ConnectionException $e) {
+      // Error específico de conexión
+      Log::error('Error de conexión al consultar estado en Hacienda: ' . $e->getMessage());
+      return [
+        'error' => 1,
+        'mensaje' => __('Error de conexión al consultar el estado del comprobante. Verifique su conexión a internet o la disponibilidad de la API de Hacienda.'),
+        'type' => 'error',
+        'titulo' => 'Error de Conexión'
+      ];
     } catch (\Exception $e) {
       // Capturar errores de red o problemas al ejecutar la solicitud
       return $this->generateErrorResponse('Error al comunicarse con la API: ' . $e->getMessage());

@@ -1291,6 +1291,9 @@ class ProformaManager extends TransactionManager
     $validatedData = $this->validate();
 
     try {
+      // Iniciar la transacción para garantizar la atomicidad
+      DB::beginTransaction();
+
       // Encuentra el registro existente
       $record = Transaction::findOrFail($recordId);
 
@@ -1335,6 +1338,9 @@ class ProformaManager extends TransactionManager
 
       $closeForm = $this->closeForm;
 
+      // Confirmar la transacción
+      DB::commit();
+
       // Restablece los controles y emite el evento para desplazar la página al inicio
       $this->resetControls();
       $this->dispatch('scroll-to-top');
@@ -1348,6 +1354,8 @@ class ProformaManager extends TransactionManager
         $this->edit($record->id);
       }
     } catch (\Exception $e) {
+      // Revertir la transacción en caso de error
+      DB::rollBack();
       $this->dispatch('show-notification', ['type' => 'error', 'message' => __('An error occurred while updating the registro') . ' ' . $e->getMessage()]);
     }
   }
@@ -1519,12 +1527,8 @@ class ProformaManager extends TransactionManager
     //Loguearme en hacienda para obtener el token
     $username = $transaction->location->api_user_hacienda;
     $password = $transaction->location->api_password;
-    try {
-      $authService = new AuthService();
-      $token = $authService->getToken($username, $password);
-    } catch (\Exception $e) {
-      throw new \Exception("An error occurred when trying to obtain the token in the hacienda api" . ' ' . $e->getMessage());
-    }
+    $authService = new AuthService();
+    $token = $authService->getToken($username, $password); // Esto ya lanza una excepción detallada en caso de fallo
 
     $api = new ApiHacienda();
     $result = $api->send($xml, $token, $transaction, $transaction->location, Transaction::FE);
