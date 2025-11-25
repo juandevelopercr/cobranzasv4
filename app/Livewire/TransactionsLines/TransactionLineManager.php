@@ -213,7 +213,7 @@ class TransactionLineManager extends BaseComponent
     //$this->refresDatatable(); // Opcional: si quieres resetear las columnas también
   }
 
-  public function mount($canview, $cancreate, $canedit, $candelete, $canexport, $facturaCompra = false)
+  public function mount($canview, $cancreate, $canedit, $candelete, $canexport, $facturaCompra = false, $transaction_id = null)
   {
     $this->addTax();  // Inicializa con un tax vacío
     $this->canview = $canview;
@@ -222,6 +222,7 @@ class TransactionLineManager extends BaseComponent
     $this->candelete = $candelete;
     $this->canexport = $canexport;
     $this->facturaCompra = $facturaCompra;
+    $this->transaction_id = $transaction_id;
 
     // Intentar obtener de sesión primero
     if (session()->has('transaction_context')) {
@@ -233,6 +234,15 @@ class TransactionLineManager extends BaseComponent
 
   public function render()
   {
+    Log::info('TransactionLineManager render', [
+      'transaction_id' => $this->transaction_id,
+      'search' => $this->search,
+      'user_id' => auth()->id(),
+      'roles' => auth()->user()->getRoleNames(),
+      'canview' => $this->canview,
+      'filters' => $this->filters,
+    ]);
+
     $records = TransactionLine::search($this->search, $this->filters) // Utiliza el scopeSearch para la búsqueda
       ->where('transaction_id', '=', $this->transaction_id)
       ->orderBy($this->sortBy, $this->sortDir)

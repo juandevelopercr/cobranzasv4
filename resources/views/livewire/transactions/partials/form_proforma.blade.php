@@ -88,6 +88,7 @@ use App\Models\User;
                 id="navs-justified-services" role="tabpanel">
                 <div class="{{ $this->recordId ? '' : 'd-none' }}">
                   @livewire('transactions-lines.transaction-line-manager', [
+                    'transaction_id' => $this->recordId,
                     'canview'   => auth()->user()->can('view-lineas-proformas'),
                     'cancreate' => auth()->user()->can('create-lineas-proformas'),
                     'canedit'   => auth()->user()->can('edit-lineas-proformas'),
