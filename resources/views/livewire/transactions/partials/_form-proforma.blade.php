@@ -771,7 +771,24 @@ use App\Models\User;
             if (newValue !== livewireValue) {
               // Actualiza Livewire solo si es el select2 de `condition_sale`
               // Hay que poner wire:ignore en el select2 para que todo vaya bien
-              const specificIds = ['tipo_facturacion','condition_sale', 'location_id', 'proforma_status']; // Lista de IDs específicos
+              const specificIds = [
+                'condition_sale',
+                'invoice_type',
+                'codigo_contable_id',
+                'location_id',
+                'bank_id',
+                'currency_id',
+                'proforma_type',
+                'department_id',
+                'cuenta_id',
+                'showInstruccionesPago',
+                'contact_economic_activity_id',
+                'location_economic_activity_id',
+                'tipo_facturacion',
+                'created_by',
+                'proforma_status',
+                'area_id'
+              ]; // Lista de IDs específicos que requieren sincronización completa con Livewire
 
               if (specificIds.includes(id)) {
                 @this.set(id, newValue);
