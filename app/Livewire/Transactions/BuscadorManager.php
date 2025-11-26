@@ -32,6 +32,7 @@ class BuscadorManager extends TransactionManager
   public ?string $numeroDepositoPagoModal = null;
   public bool $showFechaModal = false;
   public $customer_text; // para mostrar el texto inicial
+  public $caso_text = ''; // para mostrar el texto inicial del caso
 
   public $document_type = ['PR', 'FE', 'TE'];
 
