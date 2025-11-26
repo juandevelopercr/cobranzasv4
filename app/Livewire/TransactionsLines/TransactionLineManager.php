@@ -267,10 +267,10 @@ class TransactionLineManager extends BaseComponent
     $this->action = 'create';
     $this->quantity = 1;
 
-    $this->dispatch('reinitFormControls');
+    $this->dispatch('reinitFormControls')->self();
 
     $text = '';
-    $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: $text);
+    $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: $text)->self();
 
     $this->dispatch('scroll-to-top');
   }
@@ -700,12 +700,12 @@ class TransactionLineManager extends BaseComponent
 
       if ($caso) {
         $this->caso_text = $caso->pnumero_text;
-        $this->dispatch('setSelect2Value', id: 'caso_id', value: $this->caso_id, text: $this->caso_text);
+        $this->dispatch('setSelect2Value', id: 'caso_id', value: $this->caso_id, text: $this->caso_text)->self();
       }
     }
     else{
       $this->caso_text = '';
-      $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: $this->caso_text);
+      $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: $this->caso_text)->self();
     }
 
     $this->calcularDesglose();
@@ -715,7 +715,7 @@ class TransactionLineManager extends BaseComponent
 
     $this->action = 'edit';
     $this->dispatch('refreshCleave');
-    $this->dispatch('reinitFormControls');
+    $this->dispatch('reinitFormControls')->self();
   }
 
   public function update()
