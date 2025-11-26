@@ -27,11 +27,11 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\On;
 
-class ProformaManager extends TransactionManager
-{
+class ProformaManager extends TransactionManager {
   public $tiposFacturacion = [];
   public $caso_text = ''; // para mostrar el texto inicial
   public $customer_text = ''; // para mostrar el texto inicial
+  public $activeTab = 'invoice'; // Pestaña activa por defecto
 
   public $filters = [
     'filter_action' => NULL,
@@ -67,8 +67,7 @@ class ProformaManager extends TransactionManager
 
   public $document_type = ['PR', 'FE', 'TE', 'NCE', 'NDE'];
 
-  public function mount()
-  {
+  public function mount() {
     parent::mount();
     $this->listaUsuarios = User::where('active', 1)->orderBy('name', 'ASC')->get();
     $this->statusOptions = [];
@@ -81,8 +80,11 @@ class ProformaManager extends TransactionManager
     // Aquí puedes agregar lógica específica para proformas
   }
 
-  public function refresDatatable()
-  {
+  public function changeTab($tab) {
+    $this->activeTab = $tab;
+  }
+
+  public function refresDatatable() {
     $config = DataTableConfig::where('user_id', Auth::id())
       ->where('datatable_name', 'proforma-datatable')
       ->first();
@@ -98,8 +100,7 @@ class ProformaManager extends TransactionManager
     }
   }
 
-  public function getDefaultColumns(): array
-  {
+  public function getDefaultColumns(): array {
     $this->defaultColumns = [
       [
         'field' => 'action',
@@ -462,7 +463,7 @@ class ProformaManager extends TransactionManager
         'width' => NULL,
         'visible' => true,
       ],
-[
+      [
         'field' => 'totalHonorariosIva',
         'orderName' => '',
         'label' => __('Total Honorarios Con IVA USD'),
@@ -657,14 +658,12 @@ class ProformaManager extends TransactionManager
     return $this->defaultColumns;
   }
 
-  protected function afterTransactionSaved()
-  {
+  protected function afterTransactionSaved() {
     // Lógica específica tras guardar una proforma
     // Ejemplo: generar PDF, enviar notificación, etc.
   }
 
-  protected function getFilteredQuery()
-  {
+  protected function getFilteredQuery() {
     $document_type = $this->document_type;
     if (!is_array($this->document_type)) {
       $document_type = [$this->document_type];
@@ -711,8 +710,7 @@ class ProformaManager extends TransactionManager
     return $query;
   }
 
-  public function render()
-  {
+  public function render() {
     $query = $this->getFilteredQuery();
 
     $allowedRoles = User::ROLES_ALL_BANKS;
@@ -749,8 +747,7 @@ class ProformaManager extends TransactionManager
     ]);
   }
 
-  public function create()
-  {
+  public function create() {
     $this->customer_text = '';
     $this->resetControls();
     $this->resetErrorBag(); // Limpia los errores de validación previos
@@ -792,8 +789,7 @@ class ProformaManager extends TransactionManager
   }
 
   // Definir reglas, mensajes y atributos
-  protected function rules()
-  {
+  protected function rules() {
     $rules = [
       // Foreign Keys
       'business_id'           => 'required|integer|exists:business,id',
@@ -923,8 +919,7 @@ class ProformaManager extends TransactionManager
   }
 
   // Mensajes de error personalizados
-  protected function messages()
-  {
+  protected function messages() {
     return [
       'required' => 'El campo :attribute es obligatorio.',
       'required_if' => 'El campo :attribute es obligatorio cuando el tipo es :value.',
@@ -944,8 +939,7 @@ class ProformaManager extends TransactionManager
   }
 
   // Atributos personalizados para los campos
-  protected function validationAttributes()
-  {
+  protected function validationAttributes() {
     $attributes = [
       'business_id'           => 'ID del negocio',
       'document_type'         => 'tipo de documento',
@@ -964,8 +958,7 @@ class ProformaManager extends TransactionManager
     return $attributes;
   }
 
-  public function store()
-  {
+  public function store() {
     // Limpia las claves foráneas antes de validar
     $this->cleanEmptyForeignKeys();
 
@@ -1055,8 +1048,7 @@ class ProformaManager extends TransactionManager
     }
   }
 
-  public function edit($recordId)
-  {
+  public function edit($recordId) {
     $recordId = $this->getRecordAction($recordId);
 
     if (!$recordId) {
@@ -1172,7 +1164,7 @@ class ProformaManager extends TransactionManager
     if ($contact) {
       $this->tipoIdentificacion = $contact->identificationType->name;
       $this->identificacion = $contact->identification;
-      $this->clientEmail = $record->contact ? $record->contact->email: '';
+      $this->clientEmail = $record->contact ? $record->contact->email : '';
 
       $this->customer_text = $contact->name;
       $text = $contact->name;
@@ -1249,8 +1241,7 @@ class ProformaManager extends TransactionManager
         ], fn($value) => $value !== null && $value !== ''))
       );
       $this->dispatch('setSelect2Value', id: 'caso_id', value: $this->caso_id, text: $this->caso_text);
-    }
-    else{
+    } else {
       $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: '');
     }
 
@@ -1260,8 +1251,7 @@ class ProformaManager extends TransactionManager
     $this->dispatch('reinitSelect2Caso');
   }
 
-  public function update()
-  {
+  public function update() {
     $recordId = $this->recordId;
 
     // Limpia las claves foráneas antes de validar
@@ -1361,8 +1351,7 @@ class ProformaManager extends TransactionManager
   }
 
   #[On('solicitarFacturacion')]
-  public function solicitarFacturacion($recordId)
-  {
+  public function solicitarFacturacion($recordId) {
     try {
       DB::transaction(function () use ($recordId) {
         $record = Transaction::findOrFail($recordId);
@@ -1404,8 +1393,7 @@ class ProformaManager extends TransactionManager
   }
 
   #[On('facturar')]
-  public function facturar($recordId)
-  {
+  public function facturar($recordId) {
     $record = Transaction::findOrFail($recordId);
 
     // Validación por tipo
@@ -1480,8 +1468,7 @@ class ProformaManager extends TransactionManager
     $this->resetControls();
   }
 
-  private function facturarHonorario($transaction)
-  {
+  private function facturarHonorario($transaction) {
     /*
     - Asignar el document_type a FE !importante para generar la key y el consecutivo
     - Obtener la key y el consecutivo del Documento
@@ -1508,7 +1495,7 @@ class ProformaManager extends TransactionManager
     // Tipo de cambio del día
     $transaction->factura_change_type = Session::get('exchange_rate');
     if (!$transaction->factura_change_type)
-       $transaction->factura_change_type = $transaction->proforma_change_type;
+      $transaction->factura_change_type = $transaction->proforma_change_type;
 
     // Obtener la secuencia que le corresponde según tipo de comprobante
     $secuencia = DocumentSequenceService::generateConsecutive(
@@ -1551,8 +1538,7 @@ class ProformaManager extends TransactionManager
     }
   }
 
-  private function facturarGasto($transaction)
-  {
+  private function facturarGasto($transaction) {
     $consecutive = DocumentSequenceService::generateConsecutiveGasto($transaction->document_type, null);
 
     if (!$consecutive) {
@@ -1569,8 +1555,7 @@ class ProformaManager extends TransactionManager
     }
   }
 
-  private function afterFacturarGasto($transaction)
-  {
+  private function afterFacturarGasto($transaction) {
     $sent = Helpers::sendReciboGastoEmail($transaction);
 
     if ($sent) {
@@ -1599,8 +1584,7 @@ class ProformaManager extends TransactionManager
     }
   }
 
-  public function resetControls()
-  {
+  public function resetControls() {
     $this->reset(
       //'business_id',
       'location_id',
@@ -1719,8 +1703,7 @@ class ProformaManager extends TransactionManager
     $this->recordId = '';
   }
 
-  public function updated($propertyName)
-  {
+  public function updated($propertyName) {
     // Si el campo condition_sale cambia
     if ($propertyName == 'condition_sale') {
       if ($this->condition_sale !== '02') {
@@ -1735,7 +1718,7 @@ class ProformaManager extends TransactionManager
     if ($propertyName == 'location_id') {
       if (!empty($this->location_id)) {
         $location = BusinessLocation::find($this->location_id);
-        if ($location && $location->notes && empty($this->notes)){
+        if ($location && $location->notes && empty($this->notes)) {
           $this->notes = $location->notes;
         }
       }
@@ -1764,23 +1747,23 @@ class ProformaManager extends TransactionManager
     if ($propertyName == 'contact_id' && $this->old_contact_id != $this->contact_id) {
       $this->old_contact_id = $this->contact_id;
       $contact = Contact::find($this->contact_id);
-      if ($contact){
+      if ($contact) {
         $this->customer_name = $contact->name;
         if (is_null($this->customer_comercial_name) || empty($this->customer_comercial_name))
           $this->customer_comercial_name = $contact->commercial_name;
         $this->invoice_type = $contact->invoice_type;
-        $this->condition_sale = $contact->conditionSale ? $contact->conditionSale->code: NULL;
+        $this->condition_sale = $contact->conditionSale ? $contact->conditionSale->code : NULL;
         $this->pay_term_number = $contact->pay_term_number;
         $this->email_cc = $contact->email_cc;
         $this->clientEmail = $contact->email;
         $this->customer_email = $contact->email;
-        $this->tipoIdentificacion = $contact->identificationType ? $contact->identificationType->name: NULL;
+        $this->tipoIdentificacion = $contact->identificationType ? $contact->identificationType->name : NULL;
         $this->identificacion = $contact->identification;
       }
 
       if ($this->contact_id == '' | is_null($this->contact_id))
         $this->contact_economic_activity_id = null;
-      else{
+      else {
         $this->setcontactEconomicActivities();
         if ($this->contact_economic_activity_id) {
           $activity = EconomicActivity::find($this->contact_economic_activity_id);
@@ -1800,7 +1783,7 @@ class ProformaManager extends TransactionManager
       //$this->setEnableControl();
     }
 
-    if ($propertyName == 'tipo_facturacion'){
+    if ($propertyName == 'tipo_facturacion') {
       $this->dispatch('reinitSelect2Caso');
       //$text = '';
       //$this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: $text);
@@ -1821,8 +1804,7 @@ class ProformaManager extends TransactionManager
     $this->resetErrorBag($propertyName);
   }
 
-  public function updatedCurrencyId($value)
-  {
+  public function updatedCurrencyId($value) {
     if ($value != $this->original_currency_id) {
       // Si la moneda cambia hay que recalcular todo
       $transacion = Transaction::find($this->recordId);
@@ -1842,8 +1824,7 @@ class ProformaManager extends TransactionManager
     }
   }
 
-  public function updatedEmails()
-  {
+  public function updatedEmails() {
     // Divide la cadena en correos separados por , o ;
     $emailList = preg_split('/[,;]+/', $this->email_cc);
 
@@ -1869,8 +1850,7 @@ class ProformaManager extends TransactionManager
     }
   }
 
-  public function getStatics()
-  {
+  public function getStatics() {
     $allowedRoles = User::ROLES_ALL_BANKS;
     $user = Auth::user();
     // Si el usuario tiene acceso completo, usar todos los bancos del departamento
@@ -1919,8 +1899,7 @@ class ProformaManager extends TransactionManager
     return $stats;
   }
 
-  public function beforeclonar()
-  {
+  public function beforeclonar() {
     $this->confirmarAccion(
       null,
       'clonar',
@@ -1931,8 +1910,7 @@ class ProformaManager extends TransactionManager
     );
   }
 
-  public function beforedelete()
-  {
+  public function beforedelete() {
     $this->confirmarAccion(
       null,
       'delete',
@@ -1942,8 +1920,7 @@ class ProformaManager extends TransactionManager
     );
   }
 
-  public function beforefacturar($id, $proformaNo)
-  {
+  public function beforefacturar($id, $proformaNo) {
     $this->confirmarAccion(
       $id,
       'facturar',
@@ -1953,8 +1930,7 @@ class ProformaManager extends TransactionManager
     );
   }
 
-  public function beforesolicitar($id, $proformaNo)
-  {
+  public function beforesolicitar($id, $proformaNo) {
     $this->confirmarAccion(
       $id,
       'solicitarFacturacion',
@@ -1964,14 +1940,12 @@ class ProformaManager extends TransactionManager
     );
   }
 
-  public function updatedShowTransactionDate($value)
-  {
+  public function updatedShowTransactionDate($value) {
     $this->show_transaction_date = $value;
   }
 
   #[On('clonar')]
-  public function clonar($recordId)
-  {
+  public function clonar($recordId) {
     $recordId = $this->getRecordAction($recordId, true);
 
     if (!$recordId) {
@@ -2011,7 +1985,7 @@ class ProformaManager extends TransactionManager
       $cloned->numero_deposito_pago = NULL;
       $cloned->numero_traslado_honorario = NULL;
       $cloned->numero_traslado_gasto = NULL;
-      $cloned->proforma_change_type = Session::get('exchange_rate') ? Session::get('exchange_rate'): $original->proforma_change_type;
+      $cloned->proforma_change_type = Session::get('exchange_rate') ? Session::get('exchange_rate') : $original->proforma_change_type;
       $cloned->factura_change_type = NULL;
       $cloned->num_request_hacienda_set = 0;
       $cloned->num_request_hacienda_get = 0;

@@ -19,11 +19,11 @@ use App\Models\User;
       </div>
       <div class="card-body">
         <div class="col-md-12">
-          <div class="nav-align-top nav-tabs-shadow mb-6">
+          <div class="nav-align-top nav-tabs-shadow mb-6" x-data="{ activeTab: 'invoice' }">
             <ul class="nav nav-tabs nav-fill" role="tablist">
               <li class="nav-item">
-                <button type="button" class="nav-link @if ($this->activeTab == 'invoice') show active @endif" role="tab"
-                  wire:click="changeTab('invoice')">
+                <button type="button" class="nav-link" :class="{ 'active': activeTab === 'invoice' }" role="tab"
+                  @click="activeTab = 'invoice'">
                   <span class="d-none d-sm-block"><i
                       class="tf-icons bx bx-info-circle bx-lg me-1_5 align-text-center"></i>
                     {{ __('General Information') }}
@@ -32,8 +32,8 @@ use App\Models\User;
                 </button>
               </li>
               <li class="nav-item">
-                <button type="button" class="nav-link @if ($this->activeTab == 'product') show active @endif" role="tab"
-                  wire:click="changeTab('product')">
+                <button type="button" class="nav-link" :class="{ 'active': activeTab === 'product' }" role="tab"
+                  @click="activeTab = 'product'">
                   <span class="d-none d-sm-block">
                     <i class="tf-icons bx bx-cog bx-lg me-1_5 align-text-center"></i>
                     {{ __('Services') }}
@@ -47,8 +47,8 @@ use App\Models\User;
                 </button>
               </li>
               <li class="nav-item">
-                <button type="button" class="nav-link @if ($this->activeTab == 'charges') show active @endif" role="tab"
-                  wire:click="changeTab('charges')">
+                <button type="button" class="nav-link" :class="{ 'active': activeTab === 'charges' }" role="tab"
+                  @click="activeTab = 'charges'">
                   <span class="d-none d-sm-block"><i class="tf-icons bx bx-dollar bx-lg me-1_5 align-text-center"></i>
                     {{ __('Other Charge') }}
                   </span>
@@ -57,8 +57,8 @@ use App\Models\User;
               </li>
               @if (auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
               <li class="nav-item">
-                <button type="button" class="nav-link @if ($this->activeTab == 'comisiones') show active @endif" role="tab"
-                  wire:click="changeTab('comisiones')">
+                <button type="button" class="nav-link" :class="{ 'active': activeTab === 'comisiones' }" role="tab"
+                  @click="activeTab = 'comisiones'">
                   <span class="d-none d-sm-block"><i class="tf-icons bx bx-chart bx-lg me-1_5 align-text-center"></i>
                     {{ __('Cost Centers and Commissions') }}
                   </span>
@@ -67,8 +67,8 @@ use App\Models\User;
               </li>
               @endif
               <li class="nav-item">
-                <button type="button" class="nav-link @if ($this->activeTab == 'documentos') show active @endif" role="tab"
-                  wire:click="changeTab('documentos')">
+                <button type="button" class="nav-link" :class="{ 'active': activeTab === 'documentos' }" role="tab"
+                  @click="activeTab = 'documentos'">
                   <span class="d-none d-sm-block">
                   <i class="tf-icons bx bx-file bx-lg me-1_5 align-text-center"></i>
                     {{ __('Attached Documents') }}
@@ -80,13 +80,11 @@ use App\Models\User;
 
 
             <div class="tab-content">
-              <div class="tab-pane fade @if ($this->activeTab == 'invoice') show active @endif"
-                  id="navs-justified-home" role="tabpanel">
+              <div class="tab-pane fade" :class="{ 'show active': activeTab === 'invoice' }" id="navs-justified-home" role="tabpanel">
                     @include('livewire.transactions.partials._form-proforma')
               </div>
-              <div class="tab-pane fade @if ($this->activeTab == 'product') show active @endif"
-                id="navs-justified-services" role="tabpanel">
-                <div class="{{ $this->recordId ? '' : 'd-none' }}">
+              <div class="tab-pane fade" :class="{ 'show active': activeTab === 'product' }" id="navs-justified-services" role="tabpanel">
+                @if($this->recordId)
                   @livewire('transactions-lines.transaction-line-manager', [
                     'transaction_id' => $this->recordId,
                     'canview'   => auth()->user()->can('view-lineas-proformas'),
@@ -94,22 +92,18 @@ use App\Models\User;
                     'canedit'   => auth()->user()->can('edit-lineas-proformas'),
                     'candelete' => auth()->user()->can('delete-lineas-proformas'),
                     'canexport' => auth()->user()->can('export-lineas-proformas')
-                  ])
-                </div>
-
-                <div class="{{ $this->recordId ? 'd-none' : '' }}">
+                  ], key('line-manager'))
+                @else
                   <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
                     <span class="alert-icon rounded-circle">
                       <i class="bx bx-xs bx-wallet"></i>
                     </span>
                     {{ __('Information will be displayed here after you have created the proforma') }}
                   </div>
-                </div>
+                @endif
               </div>
-              <div class="tab-pane fade @if ($this->activeTab == 'charges') show active @endif"
-                id="navs-justified-charge" role="tabpanel">
-
-                <div class="{{ $this->recordId ? '' : 'd-none' }}">
+              <div class="tab-pane fade" :class="{ 'show active': activeTab === 'charges' }" id="navs-justified-charges" role="tabpanel">
+                @if($this->recordId)
                   @livewire('transactions-charges.transaction-charge-manager', [
                     'transaction_id' => $this->recordId,
                     'canview'   => auth()->user()->can('view-cargos-proformas'),
@@ -117,21 +111,19 @@ use App\Models\User;
                     'canedit'   => auth()->user()->can('edit-cargos-proformas'),
                     'candelete' => auth()->user()->can('delete-cargos-proformas'),
                     'canexport' => auth()->user()->can('export-cargos-proformas'),
-                  ])
-                </div>
-
-                <div class="{{ $this->recordId ? 'd-none' : '' }}">
+                  ], key('charge-manager'))
+                @else
                   <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
                     <span class="alert-icon rounded-circle">
                       <i class="bx bx-xs bx-wallet"></i>
                     </span>
                     {{ __('Information will be displayed here after you have created the proforma') }}
                   </div>
-                </div>
+                @endif
               </div>
               @if (auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
-                <div class="tab-pane fade @if ($this->activeTab == 'comisiones') show active @endif" id="navs-justified-cost-center" role="tabpanel">
-                  <div class="{{ $this->recordId ? '' : 'd-none' }}">
+                <div class="tab-pane fade" :class="{ 'show active': activeTab === 'comisiones' }" id="navs-justified-comisiones" role="tabpanel">
+                  @if($this->recordId)
                     @livewire('transactions-commissions.transaction-commission-manager', [
                       'transaction_id' => $this->recordId,
                       'canview'   => auth()->user()->can('view-comision-proformas'),
@@ -139,20 +131,18 @@ use App\Models\User;
                       'canedit'   => auth()->user()->can('edit-comision-proformas'),
                       'candelete' => auth()->user()->can('delete-comision-proformas'),
                       'canexport' => auth()->user()->can('export-comision-proformas'),
-                    ], key('transaction-commission-'.$this->contador))
-                  </div>
-
-                  <div class="{{ $this->recordId ? 'd-none' : '' }}">
+                    ], key('commission-manager'))
+                  @else
                     <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
                       <span class="alert-icon rounded-circle">
                         <i class="bx bx-xs bx-wallet"></i>
                       </span>
                       {{ __('Information will be displayed here after you have created the proforma') }}
                     </div>
-                  </div>
+                  @endif
                 </div>
               @endif
-              <div class="tab-pane fade @if ($this->activeTab == 'documentos') show active @endif" id="navs-justified-document" role="tabpanel">
+              <div class="tab-pane fade" :class="{ 'show active': activeTab === 'documentos' }" id="navs-justified-documentos" role="tabpanel">
 
                 @if($this->recordId)
                   @livewire('transactions.documents-manager', [
@@ -206,25 +196,3 @@ use App\Models\User;
   </div>
 </div>
 @endif
-
-@script()
-<script>
-  (function () {
-      // Manejar cambios de pestaña con animaciones suaves
-      Livewire.on('tabChanged', (tab) => {
-          // Ocultar todas las pestañas primero
-          document.querySelectorAll('.tab-pane').forEach(pane => {
-              pane.style.opacity = '0';
-          });
-
-          // Mostrar la pestaña activa con una transición suave
-          setTimeout(() => {
-              const activePane = document.querySelector(`.tab-pane.${tab}`);
-              if (activePane) {
-                  activePane.style.opacity = '1';
-              }
-          }, 0);
-      });
-    })();
-</script>
-@endscript

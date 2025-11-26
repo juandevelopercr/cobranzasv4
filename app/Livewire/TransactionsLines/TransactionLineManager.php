@@ -37,8 +37,7 @@ use App\Models\TransactionLineDiscount;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 
-class TransactionLineManager extends BaseComponent
-{
+class TransactionLineManager extends BaseComponent {
   use WithFileUploads;
   use WithPagination;
 
@@ -139,19 +138,16 @@ class TransactionLineManager extends BaseComponent
     'datatableSettingChange' => 'refresDatatable',
   ];
 
-  protected function getModelClass(): string
-  {
+  protected function getModelClass(): string {
     return TransactionLine::class;
   }
 
-  public function handleCabyCodeSelected($code)
-  {
+  public function handleCabyCodeSelected($code) {
     $this->codigocabys = $code['code'];
   }
 
   #[Computed()]
-  public function products()
-  {
+  public function products() {
     $query = Product::query()
       ->select(['products.id as id', 'products.name as name'])
       ->join('product_honorarios_timbres', 'product_honorarios_timbres.product_id', '=', 'products.id')
@@ -169,52 +165,46 @@ class TransactionLineManager extends BaseComponent
   }
 
   #[Computed]
-  public function taxTypes()
-  {
+  public function taxTypes() {
     return TaxType::orderBy('code', 'ASC')->get();
   }
 
 
   #[Computed]
-  public function taxRates()
-  {
+  public function taxRates() {
     return TaxRate::where('active', 1)->orderBy('code', 'ASC')->get();
   }
 
   #[Computed]
-  public function exhonerations()
-  {
+  public function exhonerations() {
     return ExonerationType::where('active', 1)->orderBy('code', 'ASC')->get();
   }
 
   #[Computed]
-  public function institutes()
-  {
+  public function institutes() {
     return Institution::orderBy('code', 'ASC')->get();
   }
 
   #[Computed]
-  public function discountTypes()
-  {
+  public function discountTypes() {
     return DiscountType::orderBy('code', 'ASC')->get();
   }
 
   #[On('updateTransactionContext')]
-  public function handleUpdateContext($data)
-  {
+  public function handleUpdateContext($data) {
     // Aqui si entra cuando edito
     $this->transaction_id = $data['transaction_id'];
     $this->bank_id = $data['bank_id'];
     $this->type_notarial_act = $data['type_notarial_act'];
     $this->tipo_facturacion = $data['tipo_facturacion'];
+    Log::info('TransactionLineManager handleUpdateContext', ['data' => $data]);
     // Aquí puedes recargar los datos si es necesario
 
     $this->search = '';
     //$this->refresDatatable(); // Opcional: si quieres resetear las columnas también
   }
 
-  public function mount($canview, $cancreate, $canedit, $candelete, $canexport, $facturaCompra = false, $transaction_id = null)
-  {
+  public function mount($canview, $cancreate, $canedit, $candelete, $canexport, $facturaCompra = false, $transaction_id = null) {
     $this->addTax();  // Inicializa con un tax vacío
     $this->canview = $canview;
     $this->cancreate = $cancreate;
@@ -230,10 +220,10 @@ class TransactionLineManager extends BaseComponent
     }
 
     $this->refresDatatable();
+    Log::info('TransactionLineManager mounted', ['transaction_id' => $this->transaction_id, 'recordId' => $this->recordId]);
   }
 
-  public function render()
-  {
+  public function render() {
     Log::info('TransactionLineManager render', [
       'transaction_id' => $this->transaction_id,
       'search' => $this->search,
@@ -259,8 +249,7 @@ class TransactionLineManager extends BaseComponent
     ]);
   }
 
-  public function create()
-  {
+  public function create() {
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetControls();
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
@@ -276,14 +265,12 @@ class TransactionLineManager extends BaseComponent
   }
 
   #[On('bankChange')]
-  public function bankChange($bankId)
-  {
+  public function bankChange($bankId) {
     $this->bank_id = $bankId;
   }
 
   // Definir reglas, mensajes y atributos
-  protected function rules()
-  {
+  protected function rules() {
     $rules = [
       'transaction_id' => 'required|exists:transactions,id',
       'product_id' => 'required|exists:products,id',
@@ -415,8 +402,7 @@ class TransactionLineManager extends BaseComponent
   }
 
   // Mensajes de error personalizados
-  protected function messages()
-  {
+  protected function messages() {
     return [
       'required' => 'El campo :attribute es obligatorio.',
       'required_if' => 'El campo :attribute es obligatorio cuando el tipo es :value.',
@@ -434,8 +420,7 @@ class TransactionLineManager extends BaseComponent
   }
 
   // Atributos personalizados para los campos
-  protected function validationAttributes()
-  {
+  protected function validationAttributes() {
     $attributes = [
       'transaction_id' => 'ID de transacción',
       'product_id' => 'ID de producto',
@@ -500,8 +485,7 @@ class TransactionLineManager extends BaseComponent
     return $attributes;
   }
 
-  public function store()
-  {
+  public function store() {
     $this->cleanEmptyForeignKeys();
     $transaction = Transaction::find($this->transaction_id);
     $product = Product::where('id', $this->product_id)->first();
@@ -528,6 +512,7 @@ class TransactionLineManager extends BaseComponent
 
       // Crear el registro
       $record = TransactionLine::create($validatedData);
+      Log::info('TransactionLine created in DB', ['id' => $record->id, 'transaction_id' => $record->transaction_id]);
 
       $closeForm = $this->closeForm;
 
@@ -535,7 +520,7 @@ class TransactionLineManager extends BaseComponent
 
       if (in_array($transaction->document_type, [Transaction::PROFORMACOMPRA, Transaction::FACTURACOMPRAELECTRONICA]))
         $monto = $record->getMonto();
-      else{
+      else {
         $honorarios = $record->getHonorarios($transaction->bank_id, 'HONORARIO', $transaction->currency_id, $transaction->proforma_change_type, $record->porcientoDescuento);
         $porcientoDescuento = $record->porcientoDescuento;
         $descuentos = $record->calculaMontoDescuentos($honorarios, $porcientoDescuento);
@@ -586,8 +571,7 @@ class TransactionLineManager extends BaseComponent
     }
   }
 
-  public function edit($recordId)
-  {
+  public function edit($recordId) {
     $this->cleanEmptyForeignKeys();
     $recordId = $this->getRecordAction($recordId);
 
@@ -689,21 +673,20 @@ class TransactionLineManager extends BaseComponent
 
     if ($this->caso_id) {
       $caso = Caso::select(
-          'casos.*',
-          DB::raw("CONCAT_WS(' / ',
+        'casos.*',
+        DB::raw("CONCAT_WS(' / ',
               CONCAT_WS(' / ', pnumero, pnumero_operacion1),
               TRIM(CONCAT_WS(' ', pnombre_demandado, pnombre_apellidos_deudor))
           ) AS pnumero_text")
       )
-      ->where('id', $this->caso_id)
-      ->first();
+        ->where('id', $this->caso_id)
+        ->first();
 
       if ($caso) {
         $this->caso_text = $caso->pnumero_text;
         $this->dispatch('setSelect2Value', id: 'caso_id', value: $this->caso_id, text: $this->caso_text)->self();
       }
-    }
-    else{
+    } else {
       $this->caso_text = '';
       $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: $this->caso_text)->self();
     }
@@ -718,8 +701,7 @@ class TransactionLineManager extends BaseComponent
     $this->dispatch('reinitFormControls')->self();
   }
 
-  public function update()
-  {
+  public function update() {
     $recordId = $this->recordId;
     // Limpia las claves foráneas antes de validar
     $this->cleanEmptyForeignKeys();
@@ -776,8 +758,7 @@ class TransactionLineManager extends BaseComponent
 
       if (in_array($transaction->document_type, [Transaction::PROFORMACOMPRA, Transaction::FACTURACOMPRAELECTRONICA]))
         $monto = $record->getMonto();
-      else
-      {
+      else {
         $honorarios = $record->getHonorarios($transaction->bank_id, 'HONORARIO', $transaction->currency_id, $transaction->proforma_change_type, $record->porcientoDescuento);
         $porcientoDescuento = $record->porcientoDescuento;
         $descuentos = $record->calculaMontoDescuentos($honorarios, $porcientoDescuento);
@@ -847,8 +828,7 @@ class TransactionLineManager extends BaseComponent
     }
   }
 
-  private function validateTaxes($taxes)
-  {
+  private function validateTaxes($taxes) {
     foreach ($taxes as $tax) {
       $taxType = TaxType::find($tax['tax_type_id']);
       if (in_array($taxType->code, ['03', '04', '05', '06'])) {
@@ -870,8 +850,7 @@ class TransactionLineManager extends BaseComponent
     }
   }
 
-  public function confirmarAccion($recordId, $metodo, $titulo, $mensaje, $textoBoton)
-  {
+  public function confirmarAccion($recordId, $metodo, $titulo, $mensaje, $textoBoton) {
     $recordId = $this->getRecordAction($recordId);
 
     if (!$recordId) {
@@ -889,8 +868,7 @@ class TransactionLineManager extends BaseComponent
     ]);
   }
 
-  public function beforedelete()
-  {
+  public function beforedelete() {
     $this->confirmarAccion(
       null,
       'delete',
@@ -901,8 +879,7 @@ class TransactionLineManager extends BaseComponent
   }
 
   #[On('delete')]
-  public function delete($recordId)
-  {
+  public function delete($recordId) {
     try {
       $record = TransactionLine::findOrFail($recordId);
       $transaction_id = $record->transaction_id;
@@ -933,20 +910,17 @@ class TransactionLineManager extends BaseComponent
     }
   }
 
-  public function updatedPerPage($value)
-  {
+  public function updatedPerPage($value) {
     $this->resetPage(); // Resetea la página a la primera cada vez que se actualiza $perPage
   }
 
-  public function cancel()
-  {
+  public function cancel() {
     $this->action = 'list';
     $this->resetControls();
     $this->dispatch('scroll-to-top');
   }
 
-  public function resetControls()
-  {
+  public function resetControls() {
     $this->reset(
       'product_id',
       'codigocabys',
@@ -988,8 +962,7 @@ class TransactionLineManager extends BaseComponent
     $this->recordId = '';
   }
 
-  public function setSortBy($sortByField)
-  {
+  public function setSortBy($sortByField) {
     if ($this->sortBy === $sortByField) {
       $this->sortDir = ($this->sortDir == "ASC") ? 'DESC' : "ASC";
       return;
@@ -999,13 +972,11 @@ class TransactionLineManager extends BaseComponent
     $this->sortDir = 'DESC';
   }
 
-  public function updatedSearch()
-  {
+  public function updatedSearch() {
     $this->resetPage();
   }
 
-  public function updated($property)
-  {
+  public function updated($property) {
     // $property: The name of the current property that was updated
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
@@ -1145,13 +1116,11 @@ class TransactionLineManager extends BaseComponent
     $this->calcularDesglose();
   }
 
-  public function setCabyCode($code)
-  {
+  public function setCabyCode($code) {
     $this->codigocabys = $code;
   }
 
-  public function addTax()
-  {
+  public function addTax() {
     $this->taxes[] =
       [
         'id' => null,
@@ -1178,14 +1147,12 @@ class TransactionLineManager extends BaseComponent
       ];
   }
 
-  public function removeTax($index)
-  {
+  public function removeTax($index) {
     unset($this->taxes[$index]);
     $this->taxes = array_values($this->taxes);
   }
 
-  public function actualizarTaxAmount($honorarios)
-  {
+  public function actualizarTaxAmount($honorarios) {
     $this->honorarios = $honorarios;
     foreach ($this->taxes as $index => $tax) {
       switch ($tax['tax_rate_id']) {
@@ -1241,8 +1208,7 @@ class TransactionLineManager extends BaseComponent
   }
 
   #[On('tax-rate-changed')]
-  public function updateTaxRateFields($index, $value)
-  {
+  public function updateTaxRateFields($index, $value) {
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
 
@@ -1301,8 +1267,7 @@ class TransactionLineManager extends BaseComponent
     $this->dispatch('refreshCleave');
   }
 
-  public function addDiscount()
-  {
+  public function addDiscount() {
     $this->discounts[] = [
       'discount_type_id' => null,
       'discount_percent' => null,
@@ -1312,15 +1277,13 @@ class TransactionLineManager extends BaseComponent
     ];
   }
 
-  public function removeDiscount($index)
-  {
+  public function removeDiscount($index) {
     unset($this->discounts[$index]);
     $this->discounts = array_values($this->discounts);
   }
 
   #[On('discount-type-changed')]
-  public function updateDiscountTypeFields($index, $value)
-  {
+  public function updateDiscountTypeFields($index, $value) {
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
 
@@ -1328,8 +1291,7 @@ class TransactionLineManager extends BaseComponent
   }
 
   #[On('percent-changed')]
-  public function calculateDiscountAmount($index, $value)
-  {
+  public function calculateDiscountAmount($index, $value) {
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
 
@@ -1341,8 +1303,7 @@ class TransactionLineManager extends BaseComponent
     }
   }
 
-  public function refresDatatable()
-  {
+  public function refresDatatable() {
     $config = DataTableConfig::where('user_id', Auth::id())
       ->where('datatable_name', 'proformas-lines-datatable')
       ->first();
@@ -1374,8 +1335,7 @@ class TransactionLineManager extends BaseComponent
     'filter_total' => NULL,
   ];
 
-  public function getDefaultColumns()
-  {
+  public function getDefaultColumns() {
     $this->defaultColumns = [
       [
         'field' => 'codigocabys',
@@ -1648,8 +1608,7 @@ class TransactionLineManager extends BaseComponent
     return $this->defaultColumns;
   }
 
-  public function storeAndClose()
-  {
+  public function storeAndClose() {
     // para mantenerse en el formulario
     $this->closeForm = true;
 
@@ -1657,8 +1616,7 @@ class TransactionLineManager extends BaseComponent
     $this->store();
   }
 
-  public function updateAndClose()
-  {
+  public function updateAndClose() {
     // para mantenerse en el formulario
     $this->closeForm = true;
 
@@ -1666,19 +1624,16 @@ class TransactionLineManager extends BaseComponent
     $this->update();
   }
 
-  public function resetFilters()
-  {
+  public function resetFilters() {
     $this->reset('filters');
     $this->selectedIds = [];
   }
 
-  public function dateRangeSelected($id, $range)
-  {
+  public function dateRangeSelected($id, $range) {
     $this->filters[$id] = $range;
   }
 
-  public function calcularDesglose()
-  {
+  public function calcularDesglose() {
     // Variables iniciales
     $montoTotal = 0;
     $totalTimbres = 0;
@@ -1872,8 +1827,7 @@ class TransactionLineManager extends BaseComponent
     }
   }
 
-  protected function cleanEmptyForeignKeys()
-  {
+  protected function cleanEmptyForeignKeys() {
     // Lista de campos que pueden ser claves foráneas
     $foreignKeys = [
       'product_id',
