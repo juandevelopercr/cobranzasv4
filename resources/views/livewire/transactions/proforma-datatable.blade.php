@@ -4,8 +4,8 @@
   use Illuminate\Support\Facades\Auth;
   use Illuminate\Support\Facades\Session;
 @endphp
-<div>
-  @if($action == 'list')
+<div x-data="{ action: @entangle('action') }">
+  <div x-show="action === 'list'">
     <div class="card mb-6">
       <div class="card-widget-separator-wrapper">
         <div class="card-body card-widget-separator">
@@ -108,12 +108,10 @@
                   @endcan
 
                   <!-- Dropdown with icon -->
-                  <div x-data="{ action: @entangle('action') }">
-                    <div x-show="action === 'list'" x-cloak>
-                      @can("export-proformas")
-                        <livewire:transactions.transaction-datatable-export />
-                      @endcan
-                    </div>
+                  <div x-show="action === 'list'" x-cloak>
+                    @can("export-proformas")
+                      <livewire:transactions.transaction-datatable-export />
+                    @endcan
                   </div>
 
                   <!-- Dropdown with icon -->
@@ -242,7 +240,7 @@
         <div style="width: 1%;"></div>
       </div>
     </div>
-  @endif
+  </div>
 
   <livewire:modals.caby-modal />
 
@@ -256,18 +254,8 @@
           ], key('transaction-send-email'))
 
 
-  @php
-  /*
-  @if($action == 'create' || $action == 'edit')
+  <div x-show="action === 'create' || action === 'edit'" x-cloak>
     @include('livewire.transactions.partials.form_proforma')
-  @endif
-  */
-  @endphp
-
-  <div x-data="{ action: @entangle('action') }">
-    <div x-show="action === 'create' || action === 'edit'" x-cloak>
-      @include('livewire.transactions.partials.form_proforma')
-    </div>
   </div>
 
 </div>

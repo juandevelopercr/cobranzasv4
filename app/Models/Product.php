@@ -15,8 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Session;
 
-class Product extends Model
-{
+class Product extends Model {
   use HasFactory;
 
   // Definir los campos que pueden ser llenados (Mass Assignable)
@@ -60,8 +59,7 @@ class Product extends Model
   ];
 
   // Relación con otras tablas
-  public function business()
-  {
+  public function business() {
     return $this->belongsTo(Business::class);
   }
   /*
@@ -76,39 +74,32 @@ class Product extends Model
     }
     */
 
-  public function unitType()
-  {
+  public function unitType() {
     return $this->belongsTo(UnitType::class);
   }
 
-  public function createdBy()
-  {
+  public function createdBy() {
     return $this->belongsTo(User::class, 'created_by');
   }
 
-  public function banks()
-  {
+  public function banks() {
     return $this->belongsToMany(Bank::class, 'products_banks', 'product_id', 'bank_id');
   }
 
-  public function taxes()
-  {
+  public function taxes() {
     return $this->hasMany(ProductTax::class);
   }
 
-  public function productsBanks()
-  {
+  public function productsBanks() {
     return $this->hasMany(ProductsBank::class, 'product_id');
   }
 
-  public function honorariosTimbres()
-  {
+  public function honorariosTimbres() {
     return $this->hasMany(ProductHonorariosTimbre::class);
   }
 
   // En tu modelo
-  public function scopeSearch($query, $value, $filters = [])
-  {
+  public function scopeSearch($query, $value, $filters = []) {
     // Definir las columnas que quieres seleccionar
     $columns = [
       'products.id',
@@ -195,16 +186,14 @@ class Product extends Model
    *
    * @return generated sku (string)
    */
-  public function generateProductSku($string)
-  {
+  public function generateProductSku($string) {
     $business_id = Session::get('user.business_id');
     $sku_prefix = Business::where('id', $business_id)->value('sku_prefix');
 
     return $sku_prefix . str_pad($string, 4, '0', STR_PAD_LEFT);
   }
 
-  public function getHtmlColumnActive()
-  {
+  public function getHtmlColumnActive() {
     if ($this->active) {
       $output = '<i class="bx bx-check-circle text-success fs-4" title="Activo"></i>';
     } else {
@@ -213,8 +202,7 @@ class Product extends Model
     return $output;
   }
 
-  public function getHtmlcolumnDepartment()
-  {
+  public function getHtmlcolumnDepartment() {
     $htmlColumn = '';
     if ($this->departments->isNotEmpty())
       $htmlColumn = $this->departments->pluck('name')->join(', ');
@@ -223,8 +211,7 @@ class Product extends Model
     return $htmlColumn;
   }
 
-  public function getHtmlcolumnBank()
-  {
+  public function getHtmlcolumnBank() {
     $htmlColumn = '';
     if ($this->banks->isNotEmpty())
       $htmlColumn = $this->banks->pluck('name')->join(', ');
@@ -233,8 +220,7 @@ class Product extends Model
     return $htmlColumn;
   }
 
-  public function getHtmlColumnAction(): string
-  {
+  public function getHtmlColumnAction(): string {
     $user = auth()->user();
     $iconSize = 'bx-md';
 
@@ -289,8 +275,7 @@ class Product extends Model
     return $html;
   }
 
-  public function desgloseTimbreFormula($price, $quantity, $bank_id, $tipo, $currency, $changeType)
-  {
+  public function desgloseTimbreFormula($price, $quantity, $bank_id, $tipo, $currency, $changeType) {
     $monto = 0;
     $monto_con_descuento = 0;
     $summonto_sin_descuento = 0;
@@ -298,6 +283,12 @@ class Product extends Model
     $sum_item_con_descuento_seis_porciento = 0;
     $sum_item_sin_descuento_seis_porciento = 0;
     $datos = array();
+    $changeType = (float) $changeType;
+    $price = (float) $price;
+    $changeType = (float) $changeType;
+    if ($changeType == 0) {
+      $changeType = 1;
+    }
     // Es fórmula si define el monto y por cada, además no tiene marcado cascada, grada, Fin Cascada/Grada, Escalonado, Fijo
 
     if ($tipo != 'GASTO') { // Timbre no importa el banco, Honorario por si acaso lo puse para que quede general, pero para los honoarios no hay calculo de formula
@@ -367,8 +358,7 @@ class Product extends Model
     ];
   }
 
-  public function desgloseTablaAbogados($price, $quantity, $bank_id, $tipo, $currency, $changeType)
-  {
+  public function desgloseTablaAbogados($price, $quantity, $bank_id, $tipo, $currency, $changeType) {
     $monto = 0;
     $monto_con_descuento = 0;
     $summonto_sin_descuento = 0;
@@ -376,6 +366,12 @@ class Product extends Model
     $sum_item_con_descuento_seis_porciento = 0;
     $sum_item_sin_descuento_seis_porciento = 0;
     $datos = array();
+    $changeType = (float) $changeType;
+    $price = (float) $price;
+    $changeType = (float) $changeType;
+    if ($changeType == 0) {
+      $changeType = 1;
+    }
 
     if ($tipo != 'GASTO') { // Timbre no importa el banco, Honorario por si acaso lo puse para que quede general, pero para los honoarios no hay calculo de formula
       // Cuando el tipo no es 'GASTO'
@@ -465,8 +461,7 @@ class Product extends Model
     ];
   }
 
-  public function desgloseCalculosFijos($price, $quantity, $bank_id, $tipo, $currency, $changeType)
-  {
+  public function desgloseCalculosFijos($price, $quantity, $bank_id, $tipo, $currency, $changeType) {
     $monto = 0;
     $monto_con_descuento = 0;
     $summonto_sin_descuento = 0;
@@ -474,6 +469,10 @@ class Product extends Model
     $sum_item_con_descuento_seis_porciento = 0;
     $sum_item_sin_descuento_seis_porciento = 0;
     $datos = array();
+    $changeType = (float) $changeType;
+    if ($changeType == 0) {
+      $changeType = 1;
+    }
 
     // Es fórmula si define el monto y por cada, además no tiene marcado cascada, grada, Fin Cascada/Grada, Escalonado, Fijo
     if ($tipo != 'GASTO') { // Timbre no importa el banco, Honorario por si acaso lo puse para que quede general, pero para los honorarios no hay calculo de formula
@@ -533,8 +532,7 @@ class Product extends Model
     ];
   }
 
-  public function desgloseCalculaMontoManual($price, $quantity, $bank_id, $tipo, $currency, $changeType)
-  {
+  public function desgloseCalculaMontoManual($price, $quantity, $bank_id, $tipo, $currency, $changeType) {
     $monto = 0;
     $monto_con_descuento = 0;
     $summonto_sin_descuento = 0;
@@ -542,6 +540,10 @@ class Product extends Model
     $sum_item_con_descuento_seis_porciento = 0;
     $sum_item_sin_descuento_seis_porciento = 0;
     $datos = array();
+    $changeType = (float) $changeType;
+    if ($changeType == 0) {
+      $changeType = 1;
+    }
 
     // Es fórmula si define el monto y por cada, además no tiene marcado cascada, grada, Fin Cascada/Grada, Escalonado, Fijo
     if ($tipo != 'GASTO') {
@@ -576,7 +578,7 @@ class Product extends Model
     }
 
     // Los calculos siempre se hacen en colones
-    $precio = $this->getMontoColones($currency, $price, $changeType);
+    $precio = (float)$this->getMontoColones($currency, $price, $changeType);
 
     foreach ($honorario_timbres as $dato) {
       $monto = $precio;
@@ -607,8 +609,11 @@ class Product extends Model
     ];
   }
 
-  public function desgloseHonorarios($price, $quantity, $bank_id, $tipo, $currency, $changeType)
-  {
+  public function desgloseHonorarios($price, $quantity, $bank_id, $tipo, $currency, $changeType) {
+    $changeType = (float) $changeType;
+    if ($changeType == 0) {
+      $changeType = 1;
+    }
     $honorarios = ProductHonorariosTimbre::join('products_banks', 'products_banks.product_id', '=', 'product_honorarios_timbres.product_id')
       ->where('products_banks.bank_id', $bank_id)
       ->where('product_honorarios_timbres.product_id', $this->id)
@@ -675,9 +680,12 @@ class Product extends Model
     ];
   }
 
-  function desgloseCalculaHonorarioConTablaHonorarioBanco($price, $honorario, $bank_id, $currency, $changeType)
-  {
+  function desgloseCalculaHonorarioConTablaHonorarioBanco($price, $honorario, $bank_id, $currency, $changeType) {
     $monto = 0;
+    $changeType = (float) $changeType;
+    if ($changeType == 0) {
+      $changeType = 1;
+    }
     $honorarios_bancos = HonorarioReceta::join('honorarios_banks', 'honorarios_banks.honorario_id', '=', 'honorarios_recetas.honorario_id')
       ->where('honorarios_banks.bank_id', $bank_id)
       ->where('honorarios_recetas.honorario_id', $honorario->honorario_id)
@@ -707,8 +715,12 @@ class Product extends Model
     return round($monto, 2);
   }
 
-  protected function getMontoColones($currency, $amount, $changeType)
-  {
+  protected function getMontoColones($currency, $amount, $changeType) {
+    $amount = (float)$amount;
+    $changeType = (float) $changeType;
+    if ($changeType == 0) {
+      $changeType = 1;
+    }
     $result = $currency != Currency::COLONES ? $amount * $changeType : $amount;
     return $result;
   }

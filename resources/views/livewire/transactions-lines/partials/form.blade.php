@@ -273,6 +273,31 @@
 
     initSelect2();
 
+    // Initialize product select2 and load current value from Livewire
+    setTimeout(() => {
+      const $productSelect = $('#product_id');
+      if ($productSelect.length && !$productSelect.hasClass('select2-hidden-accessible')) {
+        console.log('🔌 Initializing Select2 for product_id');
+
+        // Initialize Select2
+        $productSelect.select2();
+
+        // Get current value from Livewire and set it
+        const productId = @this.get('product_id');
+        if (productId) {
+          console.log('  📥 Setting initial product_id from Livewire:', productId);
+          $productSelect.val(productId).trigger('change.select2');
+        }
+
+        // Sync changes to Livewire
+        $productSelect.on('change', function() {
+          const value = $(this).val();
+          console.log('🔄 Product select changed:', value);
+          @this.set('product_id', value);
+        });
+      }
+    }, 500);
+
     Livewire.on('setSelect2Value', ({ id, value, text }) => {
       const option = new Option(text, value, true, true);
       console.log("Entró al setSelect2Value con option: " + option);

@@ -80,12 +80,14 @@ use App\Models\User;
 
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="contact_economic_activity_id">{{ __('Contact Economic Activity') }}</label>
-      <select wire:model="contact_economic_activity_id" id="contact_economic_activity_id" class="select2 form-select @error('contact_economic_activity_id') is-invalid @enderror">
-        <option value="">{{ __('Seleccione...') }}</option>
-        @foreach ($this->contactEconomicActivities as $activity)
-          <option value="{{ $activity->id }}">{{ $activity->name }}</option>
-        @endforeach
-      </select>
+      <div wire:ignore>
+        <select id="contact_economic_activity_id" class="select2 form-select @error('contact_economic_activity_id') is-invalid @enderror">
+          <option value="">{{ __('Seleccione...') }}</option>
+          @foreach ($this->contactEconomicActivities as $activity)
+            <option value="{{ $activity->id }}">{{ $activity->name }}</option>
+          @endforeach
+        </select>
+      </div>
       @error('contact_economic_activity_id')
       <div class="text-danger mt-1">{{ $message }}</div>
       @enderror
@@ -111,7 +113,7 @@ use App\Models\User;
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="bank_id">{{ __('Bank') }}</label>
         <div wire:ignore>
-          <select wire:model="bank_id" id="bank_id" class="select2 form-select @error('bank_id') is-invalid @enderror" @if ($recordId) disabled @endif>
+          <select id="bank_id" class="select2 form-select @error('bank_id') is-invalid @enderror" @if ($recordId) disabled @endif>
             <option value="">{{ __('Seleccione...') }}</option>
             @foreach ($this->banks as $bank)
               <option value="{{ $bank->id }}">{{ $bank->name }}</option>
@@ -126,7 +128,7 @@ use App\Models\User;
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="currency_id">{{ __('Currency') }}</label>
       <div wire:ignore>
-        <select wire:model="currency_id" id="currency_id" class="select2 form-select @error('currency_id') is-invalid @enderror">
+        <select id="currency_id" class="select2 form-select @error('currency_id') is-invalid @enderror">
           <option value="">{{ __('Seleccione...') }}</option>
           @foreach ($this->currencies as $currency)
             <option value="{{ $currency->id }}">{{ $currency->code }}</option>
@@ -140,12 +142,14 @@ use App\Models\User;
 
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="condition_sale">{{ __('Condition Sale') }}</label>
-        <select wire:model="condition_sale" id="condition_sale" class="select2 form-select @error('condition_sale') is-invalid @enderror">
+        <div wire:ignore>
+        <select id="condition_sale" class="select2 form-select @error('condition_sale') is-invalid @enderror">
           <option value="">{{ __('Seleccione...') }}</option>
           @foreach ($this->conditionSales as $conditionSale)
             <option value="{{ $conditionSale->code }}">{{ $conditionSale->code .'-'. $conditionSale->name }}</option>
           @endforeach
         </select>
+        </div>
       @error('condition_sale')
       <div class="text-danger mt-1">{{ $message }}</div>
       @enderror
@@ -185,7 +189,7 @@ use App\Models\User;
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="invoice_type"><span class="badge bg-primary">{{ __('Tipo de factura electrónica') }}</span></label>
       <div wire:ignore>
-        <select wire:model="invoice_type" id="invoice_type" class="select2 form-select @error('invoice_type') is-invalid @enderror">
+        <select id="invoice_type" class="select2 form-select @error('invoice_type') is-invalid @enderror">
           <option value="">{{ __('Seleccione...') }}</option>
           <option value="FACTURA">Factura electrónica</option>
           <option value="TIQUETE">Tiquete electrónico</option>
@@ -198,7 +202,8 @@ use App\Models\User;
 
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="codigo_contable_id">{{ __('Accounting Code') }}</label>
-      <select wire:model="codigo_contable_id" id="codigo_contable_id" class="select2 form-select @error('codigo_contable_id') is-invalid @enderror"
+      <div wire:ignore>
+      <select id="codigo_contable_id" class="select2 form-select @error('codigo_contable_id') is-invalid @enderror"
         @if (!auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
           disabled
         @endif>
@@ -207,6 +212,7 @@ use App\Models\User;
           <option value="{{ $codigoContable->id }}">{{ $codigoContable->descrip }}</option>
         @endforeach
       </select>
+      </div>
       @error('codigo_contable_id')
       <div class="text-danger mt-1">{{ $message }}</div>
       @enderror
@@ -215,7 +221,7 @@ use App\Models\User;
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="tipo_facturacion">{{ __('Tipo de facturacion') }}</label>
       <div wire:ignore>
-        <select wire:model="tipo_facturacion" id="tipo_facturacion" class="select2 form-select @error('tipo_facturacion') is-invalid @enderror">
+        <select id="tipo_facturacion" class="select2 form-select @error('tipo_facturacion') is-invalid @enderror">
           <option value="">{{ __('Seleccione...') }}</option>
           @foreach ($this->tiposFacturacion as $tipo)
             <option value="{{ $tipo['id'] }}">{{ $tipo['name'] }}</option>
@@ -230,7 +236,7 @@ use App\Models\User;
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="proforma_type"><span class="badge bg-primary">{{ __('Type of Act') }}</span></label>
       <div wire:ignore>
-        <select wire:model="proforma_type" id="proforma_type" class="select2 form-select @error('proforma_type') is-invalid @enderror">
+        <select id="proforma_type" class="select2 form-select @error('proforma_type') is-invalid @enderror">
           <option value="">{{ __('Seleccione...') }}</option>
           <option value="HONORARIO">HONORARIO</option>
           <option value="GASTO">GASTO</option>
@@ -244,7 +250,7 @@ use App\Models\User;
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="location_id"><span class="badge bg-primary">{{ __('Issuer') }}</span></label>
       <div wire:ignore>
-        <select wire:model="location_id" id="location_id" class="select2 form-select @error('location_id') is-invalid @enderror"
+        <select id="location_id" class="select2 form-select @error('location_id') is-invalid @enderror"
           @if (!auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
             disabled
           @endif>
@@ -262,7 +268,7 @@ use App\Models\User;
     <div class="col-md-3 select2-primary fv-plugins-icon-container">
       <label class="form-label" for="location_economic_activity_id">{{ __('Location Economic Activity') }}</label>
         <div wire:ignore>
-          <select wire:model="location_economic_activity_id" id="location_economic_activity_id" class="select2 form-select @error('location_economic_activity_id') is-invalid @enderror"
+          <select id="location_economic_activity_id" class="select2 form-select @error('location_economic_activity_id') is-invalid @enderror"
             @if (!auth()->user()->hasAnyRole(User::ROLES_ALL_BANKS))
               disabled
             @endif>
@@ -713,107 +719,122 @@ use App\Models\User;
       }
     });
   })
+</script>
+@endscript
 
-  Livewire.on('setSelect2Value', ({ id, value, text }) => {
-    const option = new Option(text, value, true, true);
-    console.log("Entró al setSelect2Value con option: " + option);
-    $('#' + id).append(option).trigger('change');
-  });
+@script
+<script>
+    console.log('🔧 Initializing Proforma Form Scripts');
 
-  Livewire.on('updateSelect2Options', ({ id, options }) => {
-    const $select = $('#' + id);
-    $select.empty(); // Limpiar opciones
+    // Register Livewire event listeners for dynamic updates
+    console.log('📡 Registering Livewire event listeners...');
 
-    console.log("Se limpia el select2 " + id);
+    Livewire.on('updateSelect2Options', ({ id, options }) => {
+        console.log('📡 updateSelect2Options event received', { id, optionsCount: options.length });
+        const $select = $('#' + id);
+        if ($select.length) {
+            console.log('✓ Select element found:', id);
 
-    options.forEach(opt => {
-        const option = new Option(opt.text, opt.id, false, false);
-        $select.append(option);
-        console.log("Se adiciona el valor " + option);
+            // Save current value
+            const currentValue = $select.val();
+
+            // Clear and rebuild options
+            $select.empty();
+            $select.append(new Option('Seleccione...', '', false, false));
+            options.forEach(opt => {
+                $select.append(new Option(opt.text, opt.id, false, false));
+            });
+
+            // Restore value if it exists in new options
+            if (currentValue && $select.find("option[value='" + currentValue + "']").length) {
+                $select.val(currentValue);
+            }
+
+            $select.trigger('change.select2');
+            console.log('✓ Select updated with', options.length, 'options');
+        } else {
+            console.warn('⚠️ Select element NOT found:', id);
+        }
     });
 
-    $select.trigger('change');
-    console.log("Se dispara el change");
-  });
+    Livewire.on('setSelect2Value', ({ id, value, text }) => {
+        console.log('📡 setSelect2Value event received', { id, value, text });
+        const $select = $('#' + id);
+        if ($select.length) {
+            if ($select.find("option[value='" + value + "']").length) {
+                $select.val(value).trigger('change.select2');
+                console.log('✓ Value set from existing option:', value);
+            } else if (value) {
+                const option = new Option(text, value, true, true);
+                $select.append(option).trigger('change.select2');
+                console.log('✓ New option created and selected:', text);
+            } else {
+                $select.val('').trigger('change.select2');
+                console.log('✓ Value cleared');
+            }
+        } else {
+            console.warn('⚠️ Select element NOT found:', id);
+        }
+    });
 
+    console.log('✅ Event listeners registered successfully');
 
-  const initializeSelect2 = () => {
-      const selects = [
-        'condition_sale',
-        'invoice_type',
-        'codigo_contable_id',
-        'location_id',
-        'bank_id',
-        'currency_id',
-        'proforma_type',
-        'department_id',
-        'cuenta_id',
-        'showInstruccionesPago',
-        'contact_economic_activity_id',
-        'location_economic_activity_id',
-        'tipo_facturacion',
-        'created_by',
-        'proforma_status',
-        'area_id'
-      ];
+    // Initialize all Select2 elements when document is ready
+    $(document).ready(function() {
+        console.log('📦 Document ready - Initializing Select2 elements');
 
-      selects.forEach((id) => {
-        const element = document.getElementById(id);
-        if (element) {
-          //console.log(`Inicializando Select2 para: ${id}`);
-
-          $(`#${id}`).select2();
-
-          $(`#${id}`).on('change', function() {
-            const newValue = $(this).val();
-            const livewireValue = @this.get(id);
-
-            if (newValue !== livewireValue) {
-              // Actualiza Livewire solo si es el select2 de `condition_sale`
-              // Hay que poner wire:ignore en el select2 para que todo vaya bien
-              const specificIds = [
+        // Wait a bit for Livewire to be fully loaded
+        setTimeout(() => {
+            // List of all Select2 element IDs
+            const select2Elements = [
+                'bank_id',
+                'currency_id',
                 'condition_sale',
                 'invoice_type',
                 'codigo_contable_id',
-                'location_id',
-                'bank_id',
-                'currency_id',
-                'proforma_type',
-                'department_id',
-                'cuenta_id',
-                'showInstruccionesPago',
-                'contact_economic_activity_id',
-                'location_economic_activity_id',
                 'tipo_facturacion',
+                'proforma_type',
+                'location_id',
+                'location_economic_activity_id',
+                'contact_economic_activity_id',
                 'created_by',
                 'proforma_status',
-                'area_id'
-              ]; // Lista de IDs específicos que requieren sincronización completa con Livewire
+                'department_id',
+                'cuenta_id',
+                'showInstruccionesPago'
+            ];
 
-              if (specificIds.includes(id)) {
-                @this.set(id, newValue);
-              } else {
-                // Para los demás select2, actualiza localmente sin llamar al `updated`
-                @this.set(id, newValue, false);
-              }
-            }
-          });
-        }
+            select2Elements.forEach(id => {
+                const $el = $('#' + id);
+                if ($el.length && !$el.hasClass('select2-hidden-accessible')) {
+                    console.log('🔌 Initializing Select2:', id);
 
-        // Sincroniza el valor actual desde Livewire al Select2
-        const currentValue = @this.get(id);
-        $(`#${id}`).val(currentValue).trigger('change');
-      });
+                    // Initialize Select2
+                    $el.select2();
 
-    };
+                    // Get current value from Livewire and set it
+                    const livewireValue = @this.get(id);
+                    if (livewireValue) {
+                        console.log('  📥 Setting initial value from Livewire:', id, '=', livewireValue);
+                        $el.val(livewireValue).trigger('change.select2');
+                    }
 
-    // Re-ejecuta las inicializaciones después de actualizaciones de Livewire
-    Livewire.on('reinitSelect2Controls', () => {
-      console.log('Reinicializando select de casos');
-      setTimeout(() => {
-        initializeSelect2();
-      }, 300); // Retraso para permitir que el DOM se estabilice
+                    // Sync changes to Livewire
+                    $el.on('change', function() {
+                        const value = $(this).val();
+                        console.log('🔄 Select2 changed:', id, '→', value);
+                        console.log('  📤 Sending to Livewire...');
+                        @this.set(id, value).then(() => {
+                            console.log('  ✅ Value synchronized to Livewire:', id, '=', value);
+                        });
+                    });
+                }
+            });
+
+            console.log('✅ All Select2 elements initialized');
+        }, 500); // Wait 500ms for Livewire to load
     });
 </script>
 @endscript
 @endif
+```

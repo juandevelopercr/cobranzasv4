@@ -1058,13 +1058,70 @@ class ProformaManager extends TransactionManager {
     $record = Transaction::find($recordId);
     $this->recordId = $recordId;
 
+    Log::info('🔍 Edit - Record ID:', ['recordId' => $recordId]);
+    Log::info('🔍 Edit - Record Data:', [
+      'id' => $record->id,
+      'location_id' => $record->location_id,
+      'contact_id' => $record->contact_id,
+      'proforma_no' => $record->proforma_no
+    ]);
+
     $this->recordId = $recordId;
     //$this->transaction = $record;
     $this->business_id            = $record->business_id;
     $this->location_id            = $record->location_id;
+
+    Log::info('🔍 Edit - Location ID:', ['location_id' => $this->location_id]);
+
+    $this->setlocationEconomicActivities();
+    $activities = $this->locationsEconomicActivities;
+
+    Log::info('🔍 Edit - Location Activities:', ['count' => $activities->count()]);
+
+    $options = $activities->map(function ($activity) {
+      return [
+        'id' => $activity->id,
+        'text' => $activity->name,
+      ];
+    });
+
+    $this->dispatch('updateSelect2Options', id: 'location_economic_activity_id', options: $options);
+
     $this->location_economic_activity_id = $record->location_economic_activity_id;
+
+    if ($this->location_economic_activity_id) {
+      $activity = EconomicActivity::find($this->location_economic_activity_id);
+      if ($activity) {
+        $this->dispatch('setSelect2Value', id: 'location_economic_activity_id', value: $activity->id, text: $activity->name);
+      }
+    }
+
     $this->contact_id             = $record->contact_id;
+
+    Log::info('🔍 Edit - Contact ID:', ['contact_id' => $this->contact_id]);
+
+    $this->setcontactEconomicActivities();
+    $activities = $this->contactEconomicActivities;
+
+    Log::info('🔍 Edit - Contact Activities:', ['count' => $activities->count()]);
+
+    $options = $activities->map(function ($activity) {
+      return [
+        'id' => $activity->id,
+        'text' => $activity->name,
+      ];
+    });
+
+    $this->dispatch('updateSelect2Options', id: 'contact_economic_activity_id', options: $options);
+
     $this->contact_economic_activity_id = $record->contact_economic_activity_id;
+
+    if ($this->contact_economic_activity_id) {
+      $activity = EconomicActivity::find($this->contact_economic_activity_id);
+      if ($activity) {
+        $this->dispatch('setSelect2Value', id: 'contact_economic_activity_id', value: $activity->id, text: $activity->name);
+      }
+    }
     $this->cuenta_id              = $record->cuenta_id;
     $this->department_id          = $record->department_id;
     $this->currency_id            = $record->currency_id;
@@ -1721,6 +1778,31 @@ class ProformaManager extends TransactionManager {
         if ($location && $location->notes && empty($this->notes)) {
           $this->notes = $location->notes;
         }
+
+        $this->location_economic_activity_id = null;
+        $this->setlocationEconomicActivities();
+
+        $activities = $this->locationsEconomicActivities;
+        $options = $activities->map(function ($activity) {
+          return [
+            'id' => $activity->id,
+            'text' => $activity->name,
+          ];
+        });
+
+        $this->dispatch('updateSelect2Options', id: 'location_economic_activity_id', options: $options);
+
+        if (count($activities) == 1) {
+          $this->location_economic_activity_id = $activities[0]->id;
+          $this->dispatch('setSelect2Value', id: 'location_economic_activity_id', value: $activities[0]->id, text: $activities[0]->name);
+        } else {
+          $this->dispatch('setSelect2Value', id: 'location_economic_activity_id', value: '', text: 'Seleccione...');
+        }
+      } else {
+        $this->location_economic_activity_id = null;
+        $this->locationsEconomicActivities = [];
+        $this->dispatch('updateSelect2Options', id: 'location_economic_activity_id', options: []);
+        $this->dispatch('setSelect2Value', id: 'location_economic_activity_id', value: '', text: 'Seleccione...');
       }
     }
 
@@ -1761,18 +1843,36 @@ class ProformaManager extends TransactionManager {
         $this->identificacion = $contact->identification;
       }
 
-      if ($this->contact_id == '' | is_null($this->contact_id))
+      if ($this->contact_id == '' | is_null($this->contact_id)) {
         $this->contact_economic_activity_id = null;
-      else {
+        $this->dispatch('updateSelect2Options', id: 'contact_economic_activity_id', options: []);
+      } else {
         $this->setcontactEconomicActivities();
-        if ($this->contact_economic_activity_id) {
-          $activity = EconomicActivity::find($this->contact_economic_activity_id);
-          if ($activity) {
-            $this->dispatch('setSelect2Value', id: 'contact_economic_activity_id', value: $activity->id, text: $activity->name);
+
+        $activities = $this->contactEconomicActivities;
+        $options = $activities->map(function ($activity) {
+          return [
+            'id' => $activity->id,
+            'text' => $activity->name,
+          ];
+        });
+        $this->dispatch('updateSelect2Options', id: 'contact_economic_activity_id', options: $options);
+
+        if (count($activities) == 1) {
+          $this->contact_economic_activity_id = $activities[0]->id;
+          $this->dispatch('setSelect2Value', id: 'contact_economic_activity_id', value: $activities[0]->id, text: $activities[0]->name);
+        } else {
+          if ($this->contact_economic_activity_id) {
+            $activity = EconomicActivity::find($this->contact_economic_activity_id);
+            if ($activity) {
+              $this->dispatch('setSelect2Value', id: 'contact_economic_activity_id', value: $activity->id, text: $activity->name);
+            }
+          } else {
+            $this->dispatch('setSelect2Value', id: 'contact_economic_activity_id', value: '', text: 'Seleccione...');
           }
         }
       }
-      $this->dispatch('reinitSelect2Controls');
+      //$this->dispatch('reinitSelect2Controls');
     }
 
     if ($propertyName == 'email_cc') {

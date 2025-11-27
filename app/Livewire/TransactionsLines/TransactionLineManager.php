@@ -493,7 +493,9 @@ class TransactionLineManager extends BaseComponent {
       $this->codigo = $product->code;
       //$this->codigocabys = $product->caby_code;
       $currency_id = $transaction->currency_id;
-      $this->monto_cargo_adicional = $currency_id == 1 ? $product->additional_charge ?? 0 : $product->additional_charge ?? 0 * $this->record->proforma_change_type;
+      $additionalCharge = (float)($product->additional_charge ?? 0);
+      $changeType = (float)($transaction->proforma_change_type ?? 1);
+      $this->monto_cargo_adicional = $currency_id == 1 ? $additionalCharge : ($additionalCharge * $changeType);
     }
 
     if (empty($this->porcientoDescuento) || is_null($this->porcientoDescuento))
@@ -712,11 +714,15 @@ class TransactionLineManager extends BaseComponent {
       $this->codigo = $product->code;
       //$this->codigocabys = $product->caby_code;
       $currency_id = $transaction->currency_id;
-      $this->monto_cargo_adicional = $currency_id == 1 ? $product->additional_charge ?? 0 : $product->additional_charge ?? 0 * $this->record->proforma_change_type;
+      $additionalCharge = (float)($product->additional_charge ?? 0);
+      $changeType = (float)($transaction->proforma_change_type ?? 1);
+      $this->monto_cargo_adicional = $currency_id == 1 ? $additionalCharge : ($additionalCharge * $changeType);
     }
 
     if (empty($this->porcientoDescuento) || is_null($this->porcientoDescuento))
       $this->porcientoDescuento = 0;
+
+    //dd($this->product_id);
 
     // Validar
     $validatedData = $this->validate();
