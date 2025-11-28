@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-class TransactionTotals extends Component
-{
+class TransactionTotals extends Component {
   public $transaction_id;
+  public $proforma_type = 'HONORARIO'; // Default to HONORARIO
   public $totalHonorarios = 0;
   public $totalTimbres = 0;
   public $totalDiscount = 0;
@@ -43,18 +43,16 @@ class TransactionTotals extends Component
   public $currencyCode = '';
 
   #[On('updateTransactionContext')]
-  public function handleUpdateContext($data)
-  {
+  public function handleUpdateContext($data) {
     $this->resetControls();
     $this->transaction_id = $data['transaction_id'];
     $this->refreshTotal($this->transaction_id);
   }
 
-  public function mount($transaction_id)
-  {
+  public function mount($transaction_id) {
     $transaction = Transaction::find($transaction_id);
     if ($transaction) {
-
+      $this->proforma_type = $transaction->proforma_type;
       $this->totalHonorarios = Helpers::formatDecimal($transaction->totalHonorarios ?? 0);
       $this->totalTimbres = Helpers::formatDecimal($transaction->totalTimbres ?? 0);
       $this->totalAditionalCharge = Helpers::formatDecimal($transaction->totalAditionalCharge ?? 0);
@@ -90,12 +88,12 @@ class TransactionTotals extends Component
 
   #[On('productUpdated')]
   #[On('chargeUpdated')]
-  public function refreshTotal($transaction_id)
-  {
+  public function refreshTotal($transaction_id) {
     $this->resetControls();
-  //  dd($this);
+    //  dd($this);
     $transaction = Transaction::where('id', $transaction_id)->first();
     if ($transaction) {
+      $this->proforma_type = $transaction->proforma_type;
       $this->totalHonorarios = Helpers::formatDecimal($transaction->totalHonorarios ?? 0);
       $this->totalTimbres = Helpers::formatDecimal($transaction->totalTimbres ?? 0);
       $this->totalAditionalCharge = Helpers::formatDecimal($transaction->totalAditionalCharge ?? 0);
@@ -137,13 +135,11 @@ class TransactionTotals extends Component
     }
   }
 
-  public function render()
-  {
+  public function render() {
     return view('livewire.transactions.transaction-totals');
   }
 
-  public function resetControls()
-  {
+  public function resetControls() {
     $this->transaction_id = null;
 
     $this->totalHonorarios = 0;

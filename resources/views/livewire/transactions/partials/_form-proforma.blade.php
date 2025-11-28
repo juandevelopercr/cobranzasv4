@@ -777,64 +777,79 @@ use App\Models\User;
         }
     });
 
+    Livewire.on('reinitSelect2Controls', () => {
+        console.log('📡 reinitSelect2Controls event received');
+        initSelect2Controls();
+    });
+
+    function initSelect2Controls() {
+        console.log('🔌 Initializing Select2 Controls', new Date().toISOString());
+        const select2Elements = [
+            'bank_id',
+            'currency_id',
+            'condition_sale',
+            'invoice_type',
+            'codigo_contable_id',
+            'tipo_facturacion',
+            'proforma_type',
+            'location_id',
+            'location_economic_activity_id',
+            'contact_economic_activity_id',
+            'created_by',
+            'proforma_status',
+            'department_id',
+            'cuenta_id',
+            'showInstruccionesPago'
+        ];
+
+        select2Elements.forEach(id => {
+            const $el = $('#' + id);
+            if ($el.length) {
+                let isNew = false;
+
+                // Initialize if NOT already initialized
+                if (!$el.hasClass("select2-hidden-accessible")) {
+                    console.log('🔌 Initializing Select2:', id);
+                    $el.select2({
+                        width: '100%',
+                    });
+                    isNew = true;
+                }
+
+                // Only sync value from Livewire if it's a NEW initialization
+                // For existing elements, we trust the current DOM value (user input)
+                // to avoid overwriting it with stale Livewire data during race conditions.
+                if (isNew) {
+                    const livewireValue = @this.get(id);
+                    if (livewireValue !== undefined && livewireValue !== null) {
+                        console.log('  📥 Setting initial value from Livewire:', id, '=', livewireValue);
+                        $el.val(livewireValue).trigger('change.select2');
+                    }
+                }
+
+                // ALWAYS ensure event listener is attached using a namespace to avoid duplicates
+                // and to avoid removing other listeners (like specific field handlers)
+                $el.off('change.livewireSync').on('change.livewireSync', function(e) {
+                    // Ignore events triggered programmatically by us to avoid loops if needed
+                    // but usually checking value difference is enough.
+                    const value = $(this).val();
+                    console.log('🔄 Select2 changed:', id, '→', value);
+                    @this.set(id, value);
+                });
+            }
+        });
+        console.log('✅ All Select2 elements initialized/verified');
+    }
+
     console.log('✅ Event listeners registered successfully');
 
     // Initialize all Select2 elements when document is ready
     $(document).ready(function() {
         console.log('📦 Document ready - Initializing Select2 elements');
-
-        // Wait a bit for Livewire to be fully loaded
         setTimeout(() => {
-            // List of all Select2 element IDs
-            const select2Elements = [
-                'bank_id',
-                'currency_id',
-                'condition_sale',
-                'invoice_type',
-                'codigo_contable_id',
-                'tipo_facturacion',
-                'proforma_type',
-                'location_id',
-                'location_economic_activity_id',
-                'contact_economic_activity_id',
-                'created_by',
-                'proforma_status',
-                'department_id',
-                'cuenta_id',
-                'showInstruccionesPago'
-            ];
-
-            select2Elements.forEach(id => {
-                const $el = $('#' + id);
-                if ($el.length && !$el.hasClass('select2-hidden-accessible')) {
-                    console.log('🔌 Initializing Select2:', id);
-
-                    // Initialize Select2
-                    $el.select2();
-
-                    // Get current value from Livewire and set it
-                    const livewireValue = @this.get(id);
-                    if (livewireValue) {
-                        console.log('  📥 Setting initial value from Livewire:', id, '=', livewireValue);
-                        $el.val(livewireValue).trigger('change.select2');
-                    }
-
-                    // Sync changes to Livewire
-                    $el.on('change', function() {
-                        const value = $(this).val();
-                        console.log('🔄 Select2 changed:', id, '→', value);
-                        console.log('  📤 Sending to Livewire...');
-                        @this.set(id, value).then(() => {
-                            console.log('  ✅ Value synchronized to Livewire:', id, '=', value);
-                        });
-                    });
-                }
-            });
-
-            console.log('✅ All Select2 elements initialized');
+            initSelect2Controls();
         }, 500); // Wait 500ms for Livewire to load
     });
 </script>
 @endscript
 @endif
-```
