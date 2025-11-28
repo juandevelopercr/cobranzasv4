@@ -779,11 +779,11 @@ use App\Models\User;
 
     Livewire.on('reinitSelect2Controls', () => {
         console.log('📡 reinitSelect2Controls event received');
-        initSelect2Controls();
+        initSelect2Controls(true); // Force sync on explicit reinit request
     });
 
-    function initSelect2Controls() {
-        console.log('🔌 Initializing Select2 Controls', new Date().toISOString());
+    function initSelect2Controls(forceSync = false) {
+        console.log('🔌 Initializing Select2 Controls', new Date().toISOString(), 'ForceSync:', forceSync);
         const select2Elements = [
             'bank_id',
             'currency_id',
@@ -816,14 +816,17 @@ use App\Models\User;
                     isNew = true;
                 }
 
-                // Only sync value from Livewire if it's a NEW initialization
-                // For existing elements, we trust the current DOM value (user input)
-                // to avoid overwriting it with stale Livewire data during race conditions.
-                if (isNew) {
+                // Sync value from Livewire if it's a NEW initialization OR if forceSync is true
+                if (isNew || forceSync) {
                     const livewireValue = @this.get(id);
-                    if (livewireValue !== undefined && livewireValue !== null) {
-                        console.log('  📥 Setting initial value from Livewire:', id, '=', livewireValue);
-                        $el.val(livewireValue).trigger('change.select2');
+                    // We check for undefined/null, but if forceSync is true, we might want to allow clearing (setting to null/empty)
+                    // So we just check if livewireValue is defined (even if null/empty string)
+                    if (livewireValue !== undefined) {
+                         // Only update if value is actually different to avoid unnecessary triggers
+                         if ($el.val() != livewireValue) {
+                            console.log('  📥 Syncing value from Livewire:', id, livewireValue, 'ForceSync:', forceSync);
+                            $el.val(livewireValue).trigger('change.select2');
+                         }
                     }
                 }
 
