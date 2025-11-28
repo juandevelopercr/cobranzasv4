@@ -1874,6 +1874,15 @@ class ProformaManager extends TransactionManager {
       }
       //$this->dispatch('reinitSelect2Controls');
     }
+    else
+    {
+      $contact = Contact::find($this->contact_id);
+      if ($contact){
+        $this->customer_name = $contact->name;
+        if (is_null($this->customer_comercial_name) || empty($this->customer_comercial_name))
+          $this->customer_comercial_name = $contact->commercial_name;
+      }
+    }
 
     if ($propertyName == 'email_cc') {
       $this->updatedEmails();
