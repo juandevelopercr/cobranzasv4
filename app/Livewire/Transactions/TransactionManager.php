@@ -243,6 +243,11 @@ abstract class TransactionManager extends BaseComponent
       ->get();
 
     $this->locationsEconomicActivities = $activities;
+
+    // Si hay solo una actividad económica, asignarla automáticamente
+    if (count($activities) == 1) {
+      $this->location_economic_activity_id = $activities[0]->id;
+    }
   }
 
   public function setcontactEconomicActivities()
@@ -252,8 +257,11 @@ abstract class TransactionManager extends BaseComponent
       ->where('contacts_economic_activities.contact_id', $this->contact_id)
       ->orderBy('economic_activities.name', 'asc')
       ->get();
-    if (count($activities) == 1)
+    
+    // Si hay solo una actividad económica, asignarla automáticamente
+    if (count($activities) == 1) {
       $this->contact_economic_activity_id = $activities[0]->id;
+    }
 
     $this->contactEconomicActivities = $activities;
   }
@@ -331,6 +339,12 @@ abstract class TransactionManager extends BaseComponent
     });
 
     $this->dispatch('updateSelect2Options', id: 'contact_economic_activity_id', options: $options);
+
+    // Si hay solo una actividad económica, asignarla automáticamente
+    if (count($activities) == 1) {
+      $this->contact_economic_activity_id = $activities[0]->id;
+      $this->dispatch('setSelect2Value', id: 'contact_economic_activity_id', value: $activities[0]->id, text: $activities[0]->name);
+    }
 
     /*
     $options = $this->conditionSales->map(function ($condition) {
@@ -1109,6 +1123,12 @@ abstract class TransactionManager extends BaseComponent
     $this->location_economic_activity_id = null;
 
     $this->dispatch('updateSelect2Options', id: 'location_economic_activity_id', options: $options);
+
+    // Si hay solo una actividad económica, asignarla automáticamente
+    if (count($activities) == 1) {
+      $this->location_economic_activity_id = $activities[0]->id;
+      $this->dispatch('setSelect2Value', id: 'location_economic_activity_id', value: $activities[0]->id, text: $activities[0]->name);
+    }
   }
 
   public function getTipoDocumento($documentType)
