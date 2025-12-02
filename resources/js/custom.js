@@ -382,6 +382,16 @@ window.rangePickerLivewire = ({ wireEventName = 'dateRangeSelected' }) => ({
         }
       },
 
+      // Nueva línea: se dispara cuando el valor cambia (teclado, pegado, etc.)
+      onChange: function (selectedDates, dateStr) {
+        console.log('onChange:', selectedDates, dateStr);
+        if (selectedDates.length === 2) {
+          dispatchRange(dateStr);
+        } else if (selectedDates.length === 0 || el.value === '') {
+          dispatchRange('');
+        }
+      },      
+
       onValueUpdate: function () {
         // Detectar limpieza desde el botón de borrar
         if (el.value === '') {
