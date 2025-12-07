@@ -297,23 +297,38 @@ abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithC
                 $sheet = $event->sheet->getDelegate();
 
                 // --- LOGO ---
-                $logoPath = public_path('storage/assets/default-image.png');
+                // Prefer storage symlink path; fallback to committed public asset.
+                $logoCandidates = [
+                    public_path('storage/assets/default-image.png'),
+                    public_path('assets/default-image.png'),
+                ];
+                $logoPath = null;
                 if (method_exists($this, 'getLogoPath')) {
                     $customLogo = $this->getLogoPath();
                     if ($customLogo && file_exists($customLogo)) {
                         $logoPath = $customLogo;
                     }
                 }
-
-                $drawing = new Drawing();
-                $drawing->setName('Logo');
-                $drawing->setDescription('Logo de la empresa');
-                $drawing->setPath($logoPath);
-                $drawing->setHeight(50);
-                $drawing->setCoordinates('A1');
-                $drawing->setOffsetX(10);
-                $drawing->setOffsetY(5);
-                $drawing->setWorksheet($sheet);
+                if (!$logoPath) {
+                    foreach ($logoCandidates as $candidate) {
+                        if (file_exists($candidate)) {
+                            $logoPath = $candidate;
+                            break;
+                        }
+                    }
+                }
+                // If none found, skip drawing to avoid exceptions.
+                if ($logoPath) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Logo');
+                    $drawing->setDescription('Logo de la empresa');
+                    $drawing->setPath($logoPath);
+                    $drawing->setHeight(50);
+                    $drawing->setCoordinates('A1');
+                    $drawing->setOffsetX(10);
+                    $drawing->setOffsetY(5);
+                    $drawing->setWorksheet($sheet);
+                }
 
                 // --- TÍTULO ---
                 $lastColumnLetter = $this->columnLetter(count($this->columns()) - 1);
