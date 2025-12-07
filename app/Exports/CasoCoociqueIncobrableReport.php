@@ -11,10 +11,6 @@ class CasoCoociqueIncobrableReport extends BaseReport
 {
   protected function columns(): array
   {
-    /*
-    $filters = $this->filters ?? [];
-    if ($filters['filter_type'] == 'CEFA')
-    */
     return [
       ['label' => 'ID', 'field' => 'id', 'type' => 'integer', 'align' => 'left', 'width' => 10],
       ['label' => 'Número de caso', 'field' => 'pnumero', 'type' => 'string', 'align' => 'left', 'width' => 15],
@@ -53,47 +49,6 @@ class CasoCoociqueIncobrableReport extends BaseReport
       ['label' => 'Usuario que creó el caso', 'field' => 'user_create', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Usuario de última actualización', 'field' => 'user_update', 'type' => 'string', 'align' => 'center', 'width' => 25]
     ];
-    /*
-    else
-      return [
-      ['label' => 'ID', 'field' => 'id', 'type' => 'integer', 'align' => 'left', 'width' => 10],
-      ['label' => 'Número de caso', 'field' => 'pnumero', 'type' => 'string', 'align' => 'left', 'width' => 15],
-      ['label' => 'Cliente', 'field' => 'cliente', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Número de Producto', 'field' => 'pnumero_operacion1', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Tipo de Producto', 'field' => 'producto', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Nombre del Cliente', 'field' => 'pnombre_demandado', 'type' => 'string', 'align' => 'left', 'width' => 60],
-      ['label' => 'Número de Identificacióm', 'field' => 'pnumero_cedula', 'type' => 'string', 'align' => 'left', 'width' => 15],
-      ['label' => 'Monto de la demanda', 'field' => 'pmonto_estimacion_demanda', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Buffete', 'field' => 'buffete', 'type' => 'string', 'align' => 'left', 'width' => 60],
-      ['label' => 'Fecha de asignación', 'field' => 'pfecha_asignacion_caso', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de presentación de la demanda', 'field' => 'pfecha_presentacion_demanda', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de traslado', 'field' => 'nfecha_traslado_juzgado', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de Captura', 'field' => 'sfecha_captura', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de notificación todas las partes', 'field' => 'nfecha_notificacion_todas_partes', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de Última liquidación', 'field' => 'nfecha_ultima_liquidacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de remate', 'field' => 'sfecha_remate', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de aprobación de remate', 'field' => 'afecha_aprobacion_remate', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de registro', 'field' => 'afecha_registro', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de presentación protocolización', 'field' => 'afecha_protocolizacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de de inscripción', 'field' => 'afecha_inscripcion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de presentación de levantamientos', 'field' => 'afecha_levantamiento', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de presentación de terminación', 'field' => 'afecha_terminacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de suspensión por arreglo', 'field' => 'afecha_suspencion_arreglo', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Justificación casos protoclizado por embargo', 'field' => 'ajustificacion_casos_protocolizados_embargo', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Estado Proceso General', 'field' => 'proceso_general', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Número de expediente judicial', 'field' => 'pnumero_expediente_judicial', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Juzgado', 'field' => 'pdespacho_judicial_juzgado', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de informe', 'field' => 'pfecha_informe', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Avance cronológico', 'field' => 'pavance_cronologico', 'type' => 'string', 'align' => 'left', 'width' => 100],
-      ['label' => 'Comentarios', 'field' => 'acomentarios', 'type' => 'string', 'align' => 'left', 'width' => 100],
-      ['label' => 'Tipo expediente', 'field' => 'atipo_expediente', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Reasignaciones', 'field' => 'areasignaciones', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de activación', 'field' => 'fecha_activacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Código de activación', 'field' => 'codigo_activacion', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Usuario que creó el caso', 'field' => 'user_create', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Usuario de última actualización', 'field' => 'user_update', 'type' => 'string', 'align' => 'center', 'width' => 25]
-    ];
-    */
   }
 
 
@@ -229,7 +184,7 @@ class CasoCoociqueIncobrableReport extends BaseReport
         'ahonorarios_totales',
         'user_create',
         'user_update',
-        DB::raw("DATE_FORMAT(casos.pfecha_asignacion_caso, '%d-%m-%Y') AS fecha_asignacion_caso"),
+        DB::raw("DATE_FORMAT(casos.pfecha_asignacion_caso, '%d-%m-%Y') AS pfecha_asignacion_caso"),
         DB::raw("DATE_FORMAT(casos.pfecha_ingreso_cobro_judicial, '%d-%m-%Y') AS pfecha_ingreso_cobro_judicial")
     ])
     // --- Honorarios CRC ---
@@ -278,7 +233,7 @@ class CasoCoociqueIncobrableReport extends BaseReport
     ->join('currencies', 'casos.currency_id', '=', 'currencies.id')
     ->join('banks', 'casos.bank_id', '=', 'banks.id')
     ->where('casos.bank_id', Bank::COOCIQUE)
-    ->whereNotIn('casos.pexpectativa_recuperacion_id', $expectativas)
+    ->whereIn('casos.pexpectativa_recuperacion_id', $expectativas)
     ->with('fechasRemate');
 
     // --- FILTROS SEGURAMENTE ---
@@ -328,7 +283,6 @@ class CasoCoociqueIncobrableReport extends BaseReport
         'filter_asistente' => 'asistente1_id',
         'filter_banco' => 'bank_id',
         'filter_currency' => 'currency_id',
-        'filter_contact' => 'contact_id',
     ];
 
     foreach ($simpleFilters as $key => $column) {

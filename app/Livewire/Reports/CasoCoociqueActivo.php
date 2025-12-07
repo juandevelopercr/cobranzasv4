@@ -84,9 +84,6 @@ class CasoCoociqueActivo extends Component
     ]);
 
     $this->loading = true;
-    $this->filter_type = 'OTROS';
-    if ($this->filter_contact && ($this->filter_contact == 4 || $this->filter_contact == 723)) // CEFA CENTRAL FARMACEUTICA S.A. //COCA COLA FEMSA DE COSTA RICA SOCIEDAD ANONIMA
-      $this->filter_type = 'CEFA';
 
     // Generar y descargar el Excel
     return Excel::download(new CasoCoociqueActivoReport(
@@ -96,8 +93,6 @@ class CasoCoociqueActivo extends Component
         'filter_abogado' => $this->filter_abogado,
         'filter_asistente' => $this->filter_asistente,
         'filter_currency' => $this->filter_currency,
-        'filter_contact' => $this->filter_contact,
-        'filter_type' => $this->filter_type
       ],
       'REPORTE DE CASOS DE COOCIQUE ACTIVOS ' . $this->filter_date
     ), 'reporte-casos-coocique-activos.xlsx');

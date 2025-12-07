@@ -204,7 +204,7 @@ class CasoCafsaTerminadoReport extends BaseReport
     ->join('currencies', 'casos.currency_id', '=', 'currencies.id')
     ->join('banks', 'casos.bank_id', '=', 'banks.id')
     ->where('casos.bank_id', Bank::FINANCIERACAFSA)
-    ->whereNotIn('casos.aestado_proceso_general_id', $listaEstados)
+    ->whereIn('casos.aestado_proceso_general_id', $listaEstados)
     ->with('fechasRemate');
 
 

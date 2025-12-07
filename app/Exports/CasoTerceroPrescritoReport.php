@@ -223,7 +223,7 @@ class CasoTerceroPrescritoReport extends BaseReport
         'ahonorarios_totales',
         'user_create',
         'user_update',
-        DB::raw("DATE_FORMAT(casos.pfecha_asignacion_caso, '%d-%m-%Y') AS fecha_asignacion_caso"),
+        DB::raw("DATE_FORMAT(casos.pfecha_asignacion_caso, '%d-%m-%Y') AS pfecha_asignacion_caso"),
         DB::raw("DATE_FORMAT(casos.pfecha_ingreso_cobro_judicial, '%d-%m-%Y') AS pfecha_ingreso_cobro_judicial")
     ])
     // --- Honorarios CRC ---
@@ -272,7 +272,7 @@ class CasoTerceroPrescritoReport extends BaseReport
     ->join('currencies', 'casos.currency_id', '=', 'currencies.id')
     ->join('banks', 'casos.bank_id', '=', 'banks.id')
     ->where('casos.bank_id', Bank::TERCEROS)
-    ->whereNotIn('casos.pexpectativa_recuperacion_id', $expectativas)
+    ->whereIn('casos.pexpectativa_recuperacion_id', $expectativas)
     ->with('fechasRemate');
 
     // --- FILTROS SEGURAMENTE ---

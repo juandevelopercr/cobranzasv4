@@ -29,7 +29,7 @@ class CasoTerceroIncobrableReport extends BaseReport
       ['label' => 'Inmueble', 'field' => 'pinmueble', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Muebles', 'field' => 'pmueble', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Fecha de presentación de la demanda', 'field' => 'pfecha_presentacion_demanda', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de asignación', 'field' => 'pfilter_contact', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Fecha de asignación', 'field' => 'pfecha_asignacion_caso', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Fecha de traslado de juzgado', 'field' => 'nfecha_traslado_juzgado', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Fecha de notificación todas las partes', 'field' => 'nfecha_notificacion_todas_partes', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Fecha de Última liquidación', 'field' => 'nfecha_ultima_liquidacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
@@ -223,7 +223,7 @@ class CasoTerceroIncobrableReport extends BaseReport
         'ahonorarios_totales',
         'user_create',
         'user_update',
-        DB::raw("DATE_FORMAT(casos.pfecha_asignacion_caso, '%d-%m-%Y') AS fecha_asignacion_caso"),
+        DB::raw("DATE_FORMAT(casos.pfecha_asignacion_caso, '%d-%m-%Y') AS pfecha_asignacion_caso"),
         DB::raw("DATE_FORMAT(casos.pfecha_ingreso_cobro_judicial, '%d-%m-%Y') AS pfecha_ingreso_cobro_judicial")
     ])
     // --- Honorarios CRC ---
@@ -272,7 +272,7 @@ class CasoTerceroIncobrableReport extends BaseReport
     ->join('currencies', 'casos.currency_id', '=', 'currencies.id')
     ->join('banks', 'casos.bank_id', '=', 'banks.id')
     ->where('casos.bank_id', Bank::TERCEROS)
-    ->whereNotIn('casos.pexpectativa_recuperacion_id', $expectativas)
+    ->whereIn('casos.pexpectativa_recuperacion_id', $expectativas)
     ->with('fechasRemate');
 
     // --- FILTROS SEGURAMENTE ---

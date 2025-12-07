@@ -56,6 +56,9 @@ class ImportColumns
         'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
         'Nombre del notificador' => ['campo' => 'notificador_id', 'tipo' => 'string'],
         'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
+        'Fecha de celebración de Primer remate'=>['campo'=>'sfecha_primer_remate', 'tipo'=>'date'],
+        'Fecha de celebración de Segundo remate'=>['campo'=>'sfecha_segundo_remate', 'tipo'=>'date'],
+        'Fecha de celebración de Tercer remate'=>['campo'=>'sfecha_tercer_remate', 'tipo'=>'date'],
     ];
 
     public const COLUMNAS_DAVIVIENDA = [
@@ -174,6 +177,9 @@ class ImportColumns
         'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
         'Nombre del notificador' => ['campo' => 'notificador_id', 'tipo' => 'string'],
         'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
+        'Fecha de celebración de Primer remate'=>['campo'=>'sfecha_primer_remate', 'tipo'=>'date'],
+        'Fecha de celebración de Segundo remate'=>['campo'=>'sfecha_segundo_remate', 'tipo'=>'date'],
+        'Fecha de celebración de Tercer remate'=>['campo'=>'sfecha_tercer_remate', 'tipo'=>'date'],
     ];
 
 
@@ -214,6 +220,9 @@ class ImportColumns
         'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
         'Nombre del notificador' => ['campo' => 'notificador_id', 'tipo' => 'string'],
         'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
+        'Fecha de celebración de Primer remate'=>['campo'=>'sfecha_primer_remate', 'tipo'=>'date'],
+        'Fecha de celebración de Segundo remate'=>['campo'=>'sfecha_segundo_remate', 'tipo'=>'date'],
+        'Fecha de celebración de Tercer remate'=>['campo'=>'sfecha_tercer_remate', 'tipo'=>'date'],
     ];
 
     public const COLUMNAS_LAFISE = [
