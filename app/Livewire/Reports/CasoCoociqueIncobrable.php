@@ -94,7 +94,7 @@ class CasoCoociqueIncobrable extends Component
         'filter_asistente' => $this->filter_asistente,
         'filter_currency' => $this->filter_currency,
       ],
-      'REPORTE DE CASOS DE TERCERO COOCIQUE ' . $this->filter_date
+      'REPORTE DE CASOS DE COOCIQUE INCOBRABLES ' . $this->filter_date
     ), 'reporte-casos-coocique-incobrables.xlsx');
 
     // No necesitas $this->loading = false aquí,

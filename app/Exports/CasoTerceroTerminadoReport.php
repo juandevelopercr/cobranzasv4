@@ -29,7 +29,7 @@ class CasoTerceroTerminadoReport extends BaseReport
       ['label' => 'Inmueble', 'field' => 'pinmueble', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Muebles', 'field' => 'pmueble', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Fecha de presentación de la demanda', 'field' => 'pfecha_presentacion_demanda', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de asignación', 'field' => 'pfilter_contact', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Fecha de asignación', 'field' => 'pfecha_asignacion_caso', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Fecha de traslado de juzgado', 'field' => 'nfecha_traslado_juzgado', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Fecha de notificación todas las partes', 'field' => 'nfecha_notificacion_todas_partes', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Fecha de Última liquidación', 'field' => 'nfecha_ultima_liquidacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
