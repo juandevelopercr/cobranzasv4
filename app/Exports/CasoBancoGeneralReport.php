@@ -167,7 +167,7 @@ class CasoBancoGeneralReport extends BaseReport
     ->leftJoin('casos_estados as estado', 'casos.aestado_proceso_general_id', '=', 'estado.id')
     ->join('currencies', 'casos.currency_id', '=', 'currencies.id')
     ->join('banks', 'casos.bank_id', '=', 'banks.id')
-    ->where('casos.bank_id', Bank::SCOTIABANKCR);
+    ->where('casos.bank_id', Bank::BANCOGENERAL);
 
 
     // --- FILTROS SEGURAMENTE ---
