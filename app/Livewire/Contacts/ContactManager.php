@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Contacts;
 
 use App\Livewire\BaseComponent;
@@ -16,6 +15,7 @@ use App\Models\Institution;
 use App\Models\Province;
 use App\Models\TaxRate;
 use App\Models\TaxType;
+// ...existing code...
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -37,6 +37,7 @@ use Spatie\Permission\Models\Role;
 
 class ContactManager extends BaseComponent
 {
+
   use WithFileUploads;
   use WithPagination;
 
@@ -198,7 +199,14 @@ class ContactManager extends BaseComponent
 
   public function render()
   {
-    $records = Contact::search($this->search, $this->filters) // Utiliza el scopeSearch para la búsqueda
+    $records = Contact::search($this->search, $this->filters)
+      // Filtro de actividad económica
+      ->when(!empty($this->filters['filter_economic_activity']), function ($query) {
+        $activityId = $this->filters['filter_economic_activity'];
+        $query->whereHas('economicActivities', function ($q) use ($activityId) {
+          $q->where('economic_activities.id', $activityId);
+        });
+      })
       ->when($this->active !== '', function ($query) {
         $query->where('contacts.active', $this->active);
       })
@@ -241,18 +249,42 @@ class ContactManager extends BaseComponent
       'email_cc' => 'nullable|string',
       'condition_sale_id' => 'nullable|exists:condition_sales,id',
       'identification_type_id' => 'required|exists:identification_types,id',
-      'identification' => 'required|string|max:12',
-      'economicActivities' => 'nullable|array|min:0', // Verifica que al menos un rol sea seleccionado
-      'economicActivities.*' => 'exists:economic_activities,id', // Valida cada rol seleccionado
+      // Validación de identificación única solo al crear
+      'identification' => (
+        // Si el tipo es pasaporte (Extranjero No Domiciliado, código 05, id=5)
+        $this->identification_type_id == 5
+          ? [
+              'required',
+              'string',
+              'max:12',
+              'regex:/^[A-Za-z0-9]+$/',
+              $this->action === 'create'
+                ? 'unique:contacts,identification'
+                : 'unique:contacts,identification,' . $this->recordId
+            ]
+          : (
+              $this->action === 'create'
+                ? 'required|string|max:12|unique:contacts,identification'
+                : 'required|string|max:12|unique:contacts,identification,' . $this->recordId
+            )
+      ),
+      'economicActivities' => 'nullable|array|min:0',
+      'economicActivities.*' => 'exists:economic_activities,id',
       'country_id' => 'required|exists:countries,id',
-      'province_id' => 'nullable|exists:provinces,id', // Permite que province_id sea null, pero si no es null debe existir en la tabla 'provinces'
+      'province_id' => 'nullable|exists:provinces,id',
       'canton_id' => 'nullable|exists:cantons,id|required_with:province_id',
       'district_id' => 'nullable|exists:districts,id|required_with:canton_id',
       'other_signs' => 'required|string|min:5|max:160',
       'address' => 'nullable|string',
       'zip_code' => 'nullable|string|max:191',
       'dob' => 'nullable|date',
-      'phone' => 'nullable|string|max:191',
+       'phone' => [
+        'nullable',
+        'digits_between:8,20',
+        'regex:/^[0-9]+$/', // Solo números
+        'not_regex:/\s/', // Sin espacios
+        'not_regex:/-/', // Sin guiones
+      ],
       'invoice_type' => 'required|in:FACTURA,TIQUETE',
       'pay_term_number' => 'nullable|integer|min:0',
       'pay_term_number' => $this->condition_sale_id == 2 ? 'required|integer|min:0' : 'nullable|integer|min:0',
@@ -266,9 +298,13 @@ class ContactManager extends BaseComponent
       'customer_group_id' => 'nullable|exists:customer_groups,id',
       'is_default' => 'nullable|boolean',
       'active' => 'required|integer|in:0,1',
-      'created_by' => 'required|integer', // Asegurándote de que sea requerido y sea un entero
+      'created_by' => 'required|integer',
       'exoneration_type_id' => 'nullable|exists:exoneration_types,id'
     ];
+
+    // Validación de tipo de cédula según Facturación Electrónica CR v4.4
+    $validTypes = [1,2,3,4,5,6]; // 01 Física, 02 Jurídica, 03 DIMEX, 04 NITE, 05 Extranjero, 06 No Contribuyente
+    $rules['identification_type_id'] .= '|in:'.implode(",",$validTypes);
 
     if ($this->exoneration_type_id) {
       $rules['exoneration_percent'] = 'required|numeric|min:0.01|max:100';
@@ -316,7 +352,10 @@ class ContactManager extends BaseComponent
       'date' => 'El campo :attribute debe ser una fecha válida.',
       'max' => 'El campo :attribute no puede exceder los :max caracteres.',
       'min' => 'El campo :attribute debe ser al menos :min.',
+      'digits_between' => 'El campo :attribute debe tener entre :min y :max dígitos.',
+      'phone.digits_between' => 'El teléfono debe tener entre 8 y 20 dígitos.',
       'identification.regex' => 'El campo identificación debe tener el formato adecuado para el tipo de identificación seleccionado.',
+      'identification.unique' => 'La identificación ya existe en el sistema.',
     ];
   }
 
@@ -339,65 +378,7 @@ class ContactManager extends BaseComponent
       'canton_id' => 'cantón',
       'district_id' => 'distrito',
       'other_signs' => 'otros señas',
-      'address' => 'dirección',
-      'zip_code' => 'código postal',
-      'dob' => 'fecha de nacimiento',
-      'phone' => 'teléfono',
-      'invoice_type' => 'tipo de factura',
-      'pay_term_number' => 'plazo de pago (número)',
-      'pay_term_type' => 'plazo de pago (tipo)',
-      'credit_limit' => 'límite de crédito',
-      'balance' => 'saldo',
-      'total_rp' => 'total de puntos de recompensa',
-      'total_rp_used' => 'puntos de recompensa usados',
-      'total_rp_expired' => 'puntos de recompensa expirados',
-      'shipping_address' => 'dirección de envío',
-      'customer_group_id' => 'grupo de clientes',
-      'is_default' => 'es predeterminado',
-      'active' => 'activo',
-      'exoneration_type_id' => 'exoneration type',
-      'exoneration_institution_id' => 'institution',
-      'exoneration_institute_other' => 'other institution',
-      'exoneration_doc' => 'document',
-      'exoneration_article' => 'articulo',
-      'exoneration_inciso' => 'inciso',
-      'exoneration_doc_other' => 'otros',
-      'exoneration_date' => 'date',
-      'exoneration_percent' => 'percent',
     ];
-  }
-
-  public function store()
-  {
-    $this->created_by = Auth::user()->id; // Asignar el usuario logueado
-
-    $this->validateAdditionalRules();
-
-    $this->exoneration_date = !empty($this->exoneration_date) ? Carbon::parse($this->exoneration_date)->format('Y-m-d') : null;
-    $this->exoneration_percent = empty($this->exoneration_percent) ? NULL : $this->exoneration_percent;
-
-    if (empty($this->exoneration_type_id) || is_null($this->exoneration_type_id)) {
-      $this->exoneration_type_id = NULL;
-      $this->exoneration_percent = NULL;
-      $this->exoneration_doc = NULL;
-      $this->exoneration_date = NULL;
-      $this->exoneration_institution_id = NULL;
-    }
-
-    // Validar primero
-    $validatedData = $this->validate();
-
-    $validatedData['created_by'] = $this->created_by;
-
-    // Autocompletar identificación antes de guardar
-    /*
-    $validatedData['identification'] = $this->autofillIdentification(
-      $validatedData['identification_type_id'],
-      $validatedData['identification']
-    );
-    */
-
-    // Convertir valores vacíos a null
     $validatedData['province_id'] = empty($validatedData['province_id']) ? null : $validatedData['province_id'];
     $validatedData['canton_id'] = empty($validatedData['canton_id']) ? null : $validatedData['canton_id'];
     $validatedData['district_id'] = empty($validatedData['district_id']) ? null : $validatedData['district_id'];
@@ -429,6 +410,51 @@ class ContactManager extends BaseComponent
       $this->dispatch('show-notification', ['type' => 'error', 'message' => __('An error occurred while creating the registro') . ' ' . $e->getMessage()]);
     }
   }
+
+  // ...existing code...
+  public function store()
+  {
+    $this->created_by = Auth::user()->id;
+    $this->validateCedulaFE();
+    $this->validateAdditionalRules();
+    $this->exoneration_date = !empty($this->exoneration_date) ? Carbon::parse($this->exoneration_date)->format('Y-m-d') : null;
+    $this->exoneration_percent = empty($this->exoneration_percent) ? NULL : $this->exoneration_percent;
+    if (empty($this->exoneration_type_id) || is_null($this->exoneration_type_id)) {
+      $this->exoneration_type_id = NULL;
+      $this->exoneration_percent = NULL;
+      $this->exoneration_doc = NULL;
+      $this->exoneration_date = NULL;
+      $this->exoneration_institution_id = NULL;
+    }
+    $validatedData = $this->validate();
+    $validatedData['created_by'] = $this->created_by;
+    $validatedData['province_id'] = empty($validatedData['province_id']) ? null : $validatedData['province_id'];
+    $validatedData['canton_id'] = empty($validatedData['canton_id']) ? null : $validatedData['canton_id'];
+    $validatedData['district_id'] = empty($validatedData['district_id']) ? null : $validatedData['district_id'];
+    $validatedData['pay_term_number'] = empty($validatedData['pay_term_number']) ? null : $validatedData['pay_term_number'];
+    try {
+      $record = Contact::create($validatedData);
+      $closeForm = $this->closeForm;
+      if ($record) {
+        $record->economicActivities()->sync($validatedData['economicActivities'] ?? []);
+      }
+      $this->resetControls();
+      if ($closeForm) {
+        $this->action = 'list';
+      } else {
+        $this->action = 'edit';
+        $this->edit($record->id);
+      }
+      $this->dispatch('show-notification', ['type' => 'success', 'message' => __('The record has been created')]);
+    } catch (\Exception $e) {
+      $this->dispatch('show-notification', ['type' => 'error', 'message' => __('Ocurrió un error al crear el registro: ') . $e->getMessage()]);
+    }
+  }
+  /**
+   * Returns the HTML for the Economic Activity column in the datatable.
+   * @param $record The Contact model instance for the row
+   * @return string
+   */
 
   public function edit($recordId)
   {
@@ -502,16 +528,12 @@ class ContactManager extends BaseComponent
   public function update()
   {
     $recordId = $this->recordId;
-
-    // Desautocompletar temporalmente (remover ceros)
     $this->identification = $this->stripLeadingZeros($this->identification);
-    $this->created_by = !$this->created_by ? Auth::user()->id : $this->created_by; // Asignar el usuario logueado
-
+    $this->created_by = !$this->created_by ? Auth::user()->id : $this->created_by;
+    $this->validateCedulaFE();
     $this->validateAdditionalRules();
-
     $this->exoneration_date = !empty($this->exoneration_date) ? Carbon::parse($this->exoneration_date)->format('Y-m-d') : null;
     $this->exoneration_percent = empty($this->exoneration_percent) ? NULL : $this->exoneration_percent;
-
     if (empty($this->exoneration_type_id) || is_null($this->exoneration_type_id)) {
       $this->exoneration_type_id = NULL;
       $this->exoneration_percent = NULL;
@@ -519,38 +541,22 @@ class ContactManager extends BaseComponent
       $this->exoneration_date = NULL;
       $this->exoneration_institution_id = NULL;
     }
-
-    // Validar
     $validatedData = $this->validate();
-
     $validatedData['created_by'] = $this->created_by;
-
-
-    // Convertir valores vacíos a null
     $validatedData['province_id'] = empty($validatedData['province_id']) ? null : $validatedData['province_id'];
     $validatedData['canton_id'] = empty($validatedData['canton_id']) ? null : $validatedData['canton_id'];
     $validatedData['district_id'] = empty($validatedData['district_id']) ? null : $validatedData['district_id'];
     $validatedData['pay_term_number'] = empty($validatedData['pay_term_number']) ? null : $validatedData['pay_term_number'];
-
     try {
-      // Encuentra el registro existente
       $record = Contact::findOrFail($recordId);
-
-      // Actualizar
       $record->update($validatedData);
-
       $closeForm = $this->closeForm;
-
       if ($record) {
         $record->economicActivities()->sync($validatedData['economicActivities'] ?? []);
       }
-
-      // Restablece los controles y emite el evento para desplazar la página al inicio
       $this->resetControls();
-
       $this->dispatch('scroll-to-top');
       $this->dispatch('show-notification', ['type' => 'success', 'message' => __('The record has been updated')]);
-
       if ($closeForm) {
         $this->action = 'list';
       } else {
@@ -559,6 +565,52 @@ class ContactManager extends BaseComponent
       }
     } catch (\Exception $e) {
       $this->dispatch('show-notification', ['type' => 'error', 'message' => __('An error occurred while updating the registro') . ' ' . $e->getMessage()]);
+    }
+  }
+
+  /**
+   * Valida el tipo de cédula según los tipos admitidos por la FE de Costa Rica
+   */
+  protected function validateCedulaFE()
+  {
+    $tiposValidos = [1,2,3,4,5,6];
+    if (!in_array((int)$this->identification_type_id, $tiposValidos)) {
+      throw \Illuminate\Validation\ValidationException::withMessages([
+        'identification_type_id' => 'El tipo de identificación seleccionado no es válido para la Factura Electrónica de Costa Rica v4.4.'
+      ]);
+    }
+    $regex = null;
+    $error = null;
+    switch ((int)$this->identification_type_id) {
+      case 1:
+        $regex = '/^[1-9][0-9]{8}$/';
+        $error = 'La cédula física debe tener exactamente 9 dígitos y no puede empezar en 0.';
+        break;
+      case 2:
+        $regex = '/^[0-9]{10}$/';
+        $error = 'La cédula jurídica debe tener exactamente 10 dígitos.';
+        break;
+      case 3:
+        $regex = '/^[0-9]{11,12}$/';
+        $error = 'El DIMEX debe tener 11 o 12 dígitos.';
+        break;
+      case 4:
+        $regex = '/^[0-9]{10}$/';
+        $error = 'El NITE debe tener exactamente 10 dígitos.';
+        break;
+      case 5:
+        $regex = null;
+        $error = null;
+        break;
+      case 6:
+        $regex = '/^[0-9]{9,12}$/';
+        $error = 'El número de no contribuyente debe tener entre 9 y 12 dígitos.';
+        break;
+    }
+    if ($regex && !preg_match($regex, $this->identification)) {
+      throw \Illuminate\Validation\ValidationException::withMessages([
+        'identification' => $error ?? 'El formato de la identificación no es válido para el tipo seleccionado.'
+      ]);
     }
   }
 
@@ -1104,6 +1156,7 @@ class ContactManager extends BaseComponent
     'filter_condition_sale_name' => NULL,
     'filter_email' => NULL,
     'filter_email_cc' => NULL,
+    'filter_economic_activity' => NULL,
     'filter_created_at' => NULL,
     'filter_active' => NULL,
   ];
@@ -1121,12 +1174,12 @@ class ContactManager extends BaseComponent
         'filter_source_field' => '',
         'columnType' => 'string',
         'columnAlign' => '',
-        'columnClass' => '',
+        'columnClass' => 'wrap-col-400',
         'function' => '',
         'parameters' => [],
         'sumary' => '',
-        'openHtmlTab' => '<span class="emp_name text-truncate">',
-        'closeHtmlTab' => '</span>',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
         'width' => NULL,
         'visible' => true,
       ],
@@ -1245,6 +1298,25 @@ class ContactManager extends BaseComponent
         'visible' => true,
       ],
       [
+        'field' => 'economic_activity',
+        'orderName' => '',
+        'label' => __('Economic Activity'),
+        'filter' => 'filter_economic_activity',
+        'filter_type' => 'select',
+        'filter_sources' => 'listEconomicActivities',
+        'filter_source_field' => 'name',
+        'columnType' => 'string',
+        'columnAlign' => '',
+        'columnClass' => '',
+        'function' => 'getHtmlColumnEconomicActivities',
+        'parameters' => [],
+        'sumary' => '',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
         'field' => 'created_at',
         'orderName' => 'contacts.created_at',
         'label' => __('Created at'),
@@ -1305,6 +1377,7 @@ class ContactManager extends BaseComponent
 
     return $this->defaultColumns;
   }
+
 
   public function storeAndClose()
   {

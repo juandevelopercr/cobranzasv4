@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -20,7 +19,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
 class Contact extends Model
+
 {
+  use HasFactory, SoftDeletes;
+
+  // ...existing code...
   use HasFactory, SoftDeletes;
 
   const CUSTOMER = 'customer';
@@ -339,5 +342,34 @@ class Contact extends Model
 
     $html .= '</div>';
     return $html;
+  }
+
+  /**
+   * Scope para filtrar por actividad económica (many-to-many)
+   */
+  public function scopeFilterEconomicActivity($query, $activityId)
+  {
+    if (!empty($activityId)) {
+      $query->whereHas('economicActivities', function ($q) use ($activityId) {
+        $q->where('economic_activities.id', $activityId);
+      });
+    }
+    return $query;
+  }
+
+  public function getHtmlColumnEconomicActivities()
+  {
+    if ($this->relationLoaded('economicActivities')) {
+      $activities = $this->economicActivities;
+    } else {
+      $activities = $this->economicActivities()->get();
+    }
+    if ($activities->isEmpty()) {
+      return '<span class="text-muted">-</span>';
+    }
+    // Separar por guion y salto de línea
+    return $activities->pluck('name')->map(function($name) {
+      return '— ' . $name;
+    })->implode('<br>');
   }
 }
