@@ -249,18 +249,25 @@ class TransactionLineManager extends BaseComponent {
   }
 
   public function create() {
+    Log::info('═══════════════════════════════════════════════════════');
+    Log::info('🆕 TransactionLineManager::create() called');
+    Log::info('═══════════════════════════════════════════════════════');
+
     $this->resetErrorBag(); // Limpia los errores de validación previos
     $this->resetControls();
     $this->resetValidation(); // También puedes reiniciar los valores previos de val
     $this->action = 'create';
     $this->quantity = 1;
 
-    $this->dispatch('reinitFormControls')->self();
+    Log::info('📤 Dispatching reinitFormControls event');
+    $this->dispatch('reinitFormControls');
 
     $text = '';
-    $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: $text)->self();
+    Log::info('📤 Dispatching setSelect2Value event', ['id' => 'caso_id', 'value' => '', 'text' => $text]);
+    $this->dispatch('setSelect2Value', id: 'caso_id', value: '', text: $text);
 
     $this->dispatch('scroll-to-top');
+    Log::info('✅ create() method completed');
   }
 
   #[On('bankChange')]
@@ -557,14 +564,17 @@ class TransactionLineManager extends BaseComponent {
 
       $this->resetControls();
       if ($closeForm) {
+        Log::info('💾 store() - closeForm is TRUE, setting action to list');
         $this->action = 'list';
       } else {
+        Log::info('💾 store() - closeForm is FALSE, setting action to edit');
         $this->action = 'edit';
         $this->edit($record->id);
       }
 
       DB::commit();
       $this->dispatch('show-notification', ['type' => 'success', 'message' => __('The record has been created')]);
+      Log::info('✅ store() completed successfully', ['record_id' => $record->id, 'closeForm' => $closeForm]);
     } catch (\Exception $e) {
       DB::rollBack();
       // Manejo de errores
@@ -699,7 +709,7 @@ class TransactionLineManager extends BaseComponent {
 
     $this->action = 'edit';
     $this->dispatch('refreshCleave');
-    $this->dispatch('reinitFormControls')->self();
+    $this->dispatch('reinitFormControls');
   }
 
   public function update() {
@@ -910,7 +920,7 @@ class TransactionLineManager extends BaseComponent {
         $this->dispatch('show-notification', ['type' => 'success', 'message' => __('The record has been deleted')]);
         // Re-inicializar controles y select2 tras eliminar
         $this->resetControls();
-        $this->dispatch('reinitFormControls')->self();
+        $this->dispatch('reinitFormControls');
       }
     } catch (\Exception $e) {
       // Registrar el error y mostrar un mensaje de error al usuario
@@ -923,10 +933,18 @@ class TransactionLineManager extends BaseComponent {
   }
 
   public function cancel() {
+    Log::info('═══════════════════════════════════════════════════════');
+    Log::info('❌ TransactionLineManager::cancel() called');
+    Log::info('═══════════════════════════════════════════════════════');
+
     $this->action = 'list';
     $this->resetControls();
-    $this->dispatch('reinitFormControls')->self();
+
+    Log::info('📤 Dispatching reinitFormControls event from cancel()');
+    $this->dispatch('reinitFormControls');
     $this->dispatch('scroll-to-top');
+
+    Log::info('✅ cancel() method completed');
   }
 
   public function resetControls() {

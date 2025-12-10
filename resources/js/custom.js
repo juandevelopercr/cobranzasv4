@@ -390,7 +390,7 @@ window.rangePickerLivewire = ({ wireEventName = 'dateRangeSelected' }) => ({
         } else if (selectedDates.length === 0 || el.value === '') {
           dispatchRange('');
         }
-      },      
+      },
 
       onValueUpdate: function () {
         // Detectar limpieza desde el botón de borrar
@@ -752,3 +752,44 @@ Livewire.on('updateDatePicker', data => {
   }
 });
 */
+
+// TransactionLineManager caso_id select2 handler
+Livewire.on('reinitFormControls', () => {
+  console.log('🔄 reinitFormControls received in custom.js - Reinitializing caso_id select2');
+  setTimeout(() => {
+    const $caso = $('#caso_id');
+    if ($caso.length === 0) {
+      console.log('⚠️ #caso_id not found');
+      return;
+    }
+
+    if ($caso.hasClass('select2-hidden-accessible')) {
+      console.log('🔄 Destroying existing select2');
+      $caso.select2('destroy');
+    }
+
+    console.log('🔌 Initializing Select2 for caso_id');
+    $caso
+      .select2({
+        placeholder: 'Buscar caso...',
+        minimumInputLength: 2,
+        ajax: {
+          url: '/api/casos/search',
+          dataType: 'json',
+          delay: 250,
+          data: params => ({ q: params.term, bank_id: $('#bank_id').val() }),
+          processResults: data => ({ results: data })
+        }
+      })
+      .off('change')
+      .on('change', function () {
+        const val = $(this).val();
+        const wireId = $(this).closest('[wire\\:id]').attr('wire:id');
+        if (wireId && window.Livewire) {
+          window.Livewire.find(wireId)?.set('caso_id', val);
+        }
+      });
+
+    console.log('✅ caso_id select2 reinitialized');
+  }, 500);
+});

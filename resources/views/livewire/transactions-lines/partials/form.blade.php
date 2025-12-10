@@ -235,10 +235,17 @@
 @if($action == 'create' || $action == 'edit')
 @script()
 <script>
+  let initSelect2; // Declare outside to make it accessible
+
   $(document).ready(function() {
-    function initSelect2() {
-      $('#caso_id').select2({
-        placeholder: $('#caso_id').data('placeholder'),
+    initSelect2 = function() {
+      const $caso = $('#caso_id');
+      if ($caso.length && $caso.hasClass('select2-hidden-accessible')) {
+        $caso.select2('destroy');
+      }
+
+      $caso.select2({
+        placeholder: $caso.data('placeholder'),
         minimumInputLength: 2,
         ajax: {
           url: '/api/casos/search',
@@ -269,7 +276,7 @@
           $wire.set('caso_id', val);
         }
       });
-    }
+    };
 
     initSelect2();
 
@@ -319,15 +326,18 @@
       $select.trigger('change');
       console.log("Se dispara el change");
     });
+  });
 
-    // Re-ejecuta las inicializaciones después de actualizaciones de Livewire
-    Livewire.on('reinitFormControls', () => {
-      console.log('Reinicializando controles después de Livewire update reinitFormControls');
-      setTimeout(() => {
+  // MOVED OUTSIDE document.ready - Re-ejecuta las inicializaciones después de actualizaciones de Livewire
+  Livewire.on('reinitFormControls', () => {
+    console.log('🔄 reinitFormControls event received - Reinitializing caso_id select2');
+    setTimeout(() => {
+      if (typeof initSelect2 === 'function') {
         initSelect2();
-      }, 300); // Retraso para permitir que el DOM se estabilice
-    });
-
+      } else {
+        console.error('❌ initSelect2 function not available');
+      }
+    }, 300);
   });
 </script>
 @endscript

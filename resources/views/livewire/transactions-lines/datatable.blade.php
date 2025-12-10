@@ -178,8 +178,7 @@
 @push('scripts')
 <script>
   function printTable() {
-      // Selecciona el contenido que deseas imprimir. Ajusta `#table-content` según el ID de tu tabla.
-      const printContent = document.getElementById('transaction-line-table').innerHTML;
+      const printContent = document.getElementById('transaction-line-manager').innerHTML;
       const originalContent = document.body.innerHTML;
 
       document.body.innerHTML = printContent;
