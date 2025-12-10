@@ -227,8 +227,7 @@ class TransactionLineManager extends BaseComponent {
     Log::info('TransactionLineManager render', [
       'transaction_id' => $this->transaction_id,
       'search' => $this->search,
-      'user_id' => auth()->id(),
-      'roles' => auth()->user()->getRoleNames(),
+      'user_id' => Auth::id(),
       'canview' => $this->canview,
       'filters' => $this->filters,
     ]);
@@ -909,6 +908,9 @@ class TransactionLineManager extends BaseComponent {
 
         // Puedes emitir un evento para redibujar el datatable o actualizar la lista
         $this->dispatch('show-notification', ['type' => 'success', 'message' => __('The record has been deleted')]);
+        // Re-inicializar controles y select2 tras eliminar
+        $this->resetControls();
+        $this->dispatch('reinitFormControls')->self();
       }
     } catch (\Exception $e) {
       // Registrar el error y mostrar un mensaje de error al usuario
@@ -923,6 +925,7 @@ class TransactionLineManager extends BaseComponent {
   public function cancel() {
     $this->action = 'list';
     $this->resetControls();
+    $this->dispatch('reinitFormControls')->self();
     $this->dispatch('scroll-to-top');
   }
 
