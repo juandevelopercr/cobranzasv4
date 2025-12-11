@@ -453,7 +453,7 @@ class CasoTerceros extends CasoManager
       'pdatos_codeudor2' => ['nullable', 'string', 'max:190'],
 
       'fechasRemate' => 'nullable|array|min:0',
-      'fechasRemate.*.fecha' => 'nullable|date|after_or_equal:today',
+      'fechasRemate.*.fecha' => 'nullable|date',
       'fechasRemate.*.titulo' => 'nullable|string|max:100',
       /*
       'fechasRemate' => 'nullable|array|min:0',
