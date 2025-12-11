@@ -489,7 +489,7 @@ class MovimientoManager extends BaseComponent
           $record->diferencia = 0;
           $record->total_general = 0;
           $record->impuesto = 0;
-          $record->descripcion = 'NULO: ' . $record->descripcion;
+          $record->descripcion = "<span style='color:red;font-weight:bold;'>NULO:</span> " . $record->descripcion;
         }
 
         $record->save(); // Llama automáticamente al observer
@@ -1020,7 +1020,7 @@ class MovimientoManager extends BaseComponent
         'columnType' => 'string',
         'columnAlign' => '',
         'columnClass' => 'wrap-col-500',
-        'function' => '',
+        'function' => 'getHtmlDescripcionColumn',
         'parameters' => [],
         'sumary' => '',
         'openHtmlTab' => '',

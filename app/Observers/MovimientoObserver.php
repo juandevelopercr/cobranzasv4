@@ -114,7 +114,7 @@ class MovimientoObserver
       $movimiento->diferencia = 0;
       $movimiento->total_general = 0;
       $movimiento->impuesto = 0;
-      $movimiento->descripcion = 'NULO: ' . $movimiento->descripcion;
+      $movimiento->descripcion = "<span style='color:red;font-weight:bold;'>NULO:</span> " . $movimiento->descripcion;
 
       $movimiento->save();
 

@@ -636,4 +636,9 @@ class Movimiento extends Model implements HasMedia
 
     return $html;
   }
+
+  function getHtmlDescripcionColumn()
+  {
+    return $this->descripcion;
+  }
 }
