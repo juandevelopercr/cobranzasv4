@@ -239,7 +239,15 @@
       "icon": "menu-icon tf-icons bx bx-wallet",
       "slug": "casos",
       "permissions": [
-        "view-scotiabank-casos"
+        "view-scotiabank-casos",
+        "view-scotiabank-bch-casos",
+        "view-bac-casos",
+        "view-banco-general-casos",
+        "view-terceros-casos",
+        "view-coocique-casos",
+        "view-davivienda-casos",
+        "view-lafise-casos",
+        "view-cafsa-casos"
       ],
       "submenu": [
         {
