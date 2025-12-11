@@ -57,7 +57,6 @@ class CasoScotiabank extends CasoManager
     $LETRADECAMBIO = 31;
     $PAGARE        = 32;
 
-    /*
     if (auth()->user()->hasAnyRole(['ASIGNACIONES'])) {
       $this->productos = CasoProducto::join('casos_productos_bancos', 'casos_productos_bancos.product_id', '=', 'casos_productos.id')
         ->where('casos_productos_bancos.bank_id', '=', $this->bank_id)
@@ -67,15 +66,23 @@ class CasoScotiabank extends CasoManager
     } else {
       $this->productos = CasoProducto::join('casos_productos_bancos', 'casos_productos_bancos.product_id', '=', 'casos_productos.id')
         ->where('casos_productos_bancos.bank_id', '=', $this->bank_id)
+        ->orderBy('nombre', 'ASC')
+        ->get();
+      /*
+      $this->productos = CasoProducto::join('casos_productos_bancos', 'casos_productos_bancos.product_id', '=', 'casos_productos.id')
+        ->where('casos_productos_bancos.bank_id', '=', $this->bank_id)
         ->whereNotIn('casos_productos.id', [$LETRADECAMBIO, $PAGARE])
         ->orderBy('nombre', 'ASC')
         ->get();
+      */
     }
-    */
+
+    /*
     $this->productos = CasoProducto::join('casos_productos_bancos', 'casos_productos_bancos.product_id', '=', 'casos_productos.id')
         ->where('casos_productos_bancos.bank_id', '=', $this->bank_id)
         ->orderBy('nombre', 'ASC')
         ->get();
+        */
 
     $this->clientes = Contact::where('active', 1)->orderby('name', 'ASC')->get();
 
