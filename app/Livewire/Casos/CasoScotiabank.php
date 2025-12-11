@@ -754,12 +754,10 @@ class CasoScotiabank extends CasoManager
 
   public function store()
   {
+    $this->cleanEmptyForeignKeys();
     $this->validate();
-
     $this->formatDateForStorageDB();
-
     $this->user_create = auth()->user()->name;
-
     $validatedData = $this->validate();
 
     // Generar consecutivo
@@ -836,13 +834,10 @@ class CasoScotiabank extends CasoManager
 
   public function update()
   {
-    //Campos de fecha
+    $this->cleanEmptyForeignKeys();
     $this->validate();
-
     $this->formatDateForStorageDB();
-
     $this->user_update = auth()->user()->name;
-
     $validatedData = $this->validate();
 
     DB::beginTransaction();

@@ -1136,30 +1136,20 @@ class CasoManager extends BaseComponent
 
   protected function cleanEmptyForeignKeys()
   {
-    // Lista de campos que pueden ser claves foráneas
-    $foreignKeys = [
-      'contact_id',
-      'bank_id',
-      'product_id',
-      'currency_id',
-      'abogado_id',
-      'pexpectativa_recuperacion_id',
-      'asistente1_id',
-      'asistente2_id',
-      'aestado_proceso_general_id',
-      'proceso_id',
-      'testado_proceso_id',
-      'lestado_levantamiento_id',
-      'ddespacho_judicial_juzgado_id',
-      'bestado_levantamiento_id',
-      'ldespacho_judicial_juzgado_id',
-      'ppoderdante_id',
-      'nestado_id',
-      'estado_id',
+    // Lista ampliada de campos tipo entero (claves foráneas y otros int)
+    $integerFields = [
+      // Claves foráneas
+      'contact_id', 'bank_id', 'product_id', 'currency_id', 'abogado_id', 'pexpectativa_recuperacion_id',
+      'asistente1_id', 'asistente2_id', 'aestado_proceso_general_id', 'proceso_id', 'testado_proceso_id',
+      'lestado_levantamiento_id', 'ddespacho_judicial_juzgado_id', 'bestado_levantamiento_id',
+      'ldespacho_judicial_juzgado_id', 'ppoderdante_id', 'nestado_id', 'estado_id',
+      // Otros campos int comunes en casos
+      'pnumero', 'caso_servicio_capturador_id', 'caso_servicio_notificador_id', 'capturador_id', 'notificador_id',
+      // Agrega aquí cualquier otro campo int relevante
     ];
 
-    foreach ($foreignKeys as $key) {
-      if (isset($this->$key) && $this->$key === '') {
+    foreach ($integerFields as $key) {
+      if (isset($this->$key) && ($this->$key === '' || $this->$key === null || $this->$key === false)) {
         $this->$key = null;
       }
     }
