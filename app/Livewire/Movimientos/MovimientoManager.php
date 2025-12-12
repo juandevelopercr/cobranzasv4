@@ -225,6 +225,11 @@ class MovimientoManager extends BaseComponent
     'datatableSettingChange' => 'refresDatatable',
   ];
 
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * Reinicia los controles del formulario y prepara el componente para crear un nuevo movimiento
+ */
+/*******  6675a390-5608-4c41-9a6f-6b6007a7eed1  *******/
   public function create()
   {
     $this->resetControls();
@@ -420,6 +425,7 @@ class MovimientoManager extends BaseComponent
         $this->resetControls();
 
         $this->action = $closeForm ? 'list' : 'edit';
+        $this->closeForm = false;
 
         if (!$closeForm) {
           $this->edit($record->id);
@@ -513,6 +519,7 @@ class MovimientoManager extends BaseComponent
         ]);
 
         $this->action = $closeForm ? 'list' : 'edit';
+        $this->closeForm = false;
         if (!$closeForm) {
           $this->edit($record->id);
         }

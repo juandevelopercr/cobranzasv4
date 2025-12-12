@@ -1,44 +1,7 @@
 <!-- Formulario para productos -->
 <div class="card mb-6">
-    <form wire:submit.prevent="preSyncAndSubmit" class="card-body">
-        @push('scripts')
-            <script>
-                // Sincroniza todos los campos del repeater de centros de costo antes de guardar
-                function syncCentroCostoRepeater() {
-                    // Sincroniza todos los amount
-                    document.querySelectorAll('[id^="amount_"').forEach(function(input) {
-                        if (input && input.dispatchEvent) {
-                            input.dispatchEvent(new Event('input', {
-                                bubbles: true
-                            }));
-                        }
-                    });
-                    // Sincroniza todos los select2 de centro_costo_id y codigo_contable_id
-                    document.querySelectorAll('[id^="centro_costo_"], [id^="codigo_contable_id_"]').forEach(function(select) {
-                        if (select && select.dispatchEvent) {
-                            select.dispatchEvent(new Event('change', {
-                                bubbles: true
-                            }));
-                        }
-                    });
-                }
-
-                window.preSyncAndSubmit = function(e) {
-                    e.preventDefault();
-                    syncCentroCostoRepeater();
-                    // Espera breve para asegurar sincronización, luego dispara el submit real
-                    setTimeout(function() {
-                        @this.call('{{ $action == 'edit' ? 'update' : 'store' }}');
-                    }, 150);
-                }
-
-                // Escucha confirmación de guardado de centros de costo
-                Livewire.on('centrosGuardadosOk', function() {
-                    window.dispatchEvent(new CustomEvent('centros-costo-guardados-ok'));
-                    if (window.toastr) toastr.success('Centros de costo guardados correctamente');
-                });
-            </script>
-        @endpush
+    <form wire:submit.prevent="{{ $action == 'edit' ? 'update' : 'store' }}" class="card-body">
+        <!-- ...existing code... -->
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-0"><span class="badge bg-primary">{{ __('General Information') }}</span></h4>
             <div>
@@ -359,8 +322,7 @@
             <div class="col-md-3 fv-plugins-icon-container">
                 <div class="form-check form-switch ms-2 my-3">
                     <input type="checkbox" class="form-check-input" id="comprobante_pendiente"
-                        wire:model.live="comprobante_pendiente"
-                        {{ $comprobante_pendiente == 1 ? 'checked' : '' }} />
+                        wire:model.live="comprobante_pendiente" {{ $comprobante_pendiente == 1 ? 'checked' : '' }} />
                     <label for="comprobante_pendiente" class="switch-label">{{ __('Comprobante Pendiente') }}</label>
                 </div>
             </div>
