@@ -353,7 +353,7 @@ class ContactManager extends BaseComponent
       'max' => 'El campo :attribute no puede exceder los :max caracteres.',
       'min' => 'El campo :attribute debe ser al menos :min.',
       'digits_between' => 'El campo :attribute debe tener entre :min y :max dígitos.',
-      'phone.digits_between' => 'El teléfono debe tener entre 8 y 20 dígitos.',
+      'phone.digits_between' => 'El teléfono debe tener entre 8 y 20 dígitos y debe ser numérico, sin espacios ni guiones.',
       'identification.regex' => 'El campo identificación debe tener el formato adecuado para el tipo de identificación seleccionado.',
       'identification.unique' => 'La identificación ya existe en el sistema.',
     ];
