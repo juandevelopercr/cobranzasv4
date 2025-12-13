@@ -348,6 +348,9 @@ class CotizacionManager extends TransactionManager
       if (!empty($allowedBanks)) {
         $query->whereIn('transactions.bank_id', $allowedBanks);
       }
+
+      // Mostrar transacciones creadas por el usuario
+      $query->where('transactions.created_by', auth()->user()->id);
     }
 
     return $query;

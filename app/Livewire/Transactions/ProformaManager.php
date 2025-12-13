@@ -705,6 +705,9 @@ class ProformaManager extends TransactionManager {
           ->whereColumn('role_user.user_id', 'transactions.created_by')
           ->whereIn('roles.name', $allowedRoles);
       });
+
+      // Mostrar transacciones creadas por el usuario
+      $query->where('transactions.created_by', auth()->user()->id);
     }
 
     return $query;

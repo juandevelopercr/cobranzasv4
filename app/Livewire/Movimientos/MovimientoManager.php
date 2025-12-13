@@ -225,11 +225,6 @@ class MovimientoManager extends BaseComponent
     'datatableSettingChange' => 'refresDatatable',
   ];
 
-/*************  ✨ Windsurf Command ⭐  *************/
-/**
- * Reinicia los controles del formulario y prepara el componente para crear un nuevo movimiento
- */
-/*******  6675a390-5608-4c41-9a6f-6b6007a7eed1  *******/
   public function create()
   {
     $this->resetControls();
@@ -338,6 +333,12 @@ class MovimientoManager extends BaseComponent
   #[On('respuesta-validacion-centros')]
   public function setValidacionCentros($valido)
   {
+    Log::info('setValidacionCentros', [
+      'valido' => $valido,
+      'monto' => $this->monto,
+      'centros_costo' => $this->centros_costo ?? null,
+      'recordId' => $this->recordId
+    ]);
     if (!$valido) {
       $this->addError('centros', 'Revise los centros de costo antes de guardar.');
       $this->dispatch('show-notification', ['type' => 'error', 'message' => 'Revise los centros de costo antes de guardar']);
@@ -349,6 +350,39 @@ class MovimientoManager extends BaseComponent
     } else {
       $this->crearMovimiento();
     }
+  }
+
+  #[On('centrosGuardadosOk')]
+  public function onCentrosGuardadosOk()
+  {
+      $closeForm = $this->closeForm;
+      $recordId = $this->recordId;
+
+      $this->resetControls();
+
+      $this->action = $closeForm ? 'list' : 'edit';
+      $this->closeForm = false;
+
+      if (!$closeForm) {
+          $this->edit($recordId);
+      }
+
+      $this->dispatch('show-notification', [
+          'type' => 'success',
+          'message' => __('El registro ha sido guardado correctamente.')
+      ]);
+
+      $this->dispatch('actualizarSumary');
+      $this->dispatch('scroll-to-top');
+  }
+
+  #[On('centrosGuardadosFail')]
+  public function onCentrosGuardadosFail()
+  {
+       $this->dispatch('show-notification', [
+          'type' => 'error',
+          'message' => __('El movimiento se guardó, pero hubo un error al guardar los centros de costo.')
+      ]);
   }
 
   public function store()
@@ -392,6 +426,11 @@ class MovimientoManager extends BaseComponent
 
   public function crearMovimiento()
   {
+    Log::info('crearMovimiento', [
+      'monto' => $this->monto,
+      'centros_costo' => $this->centros_costo ?? null,
+      'recordId' => $this->recordId
+    ]);
     $this->monto = floatval(str_replace(',', '', $this->monto));
     $this->fecha = Carbon::parse($this->fecha)->format('Y-m-d');
 
@@ -417,25 +456,11 @@ class MovimientoManager extends BaseComponent
 
         $record = Movimiento::create($validatedData);
 
+        // Actualizamos el ID para que esté disponible
+        $this->recordId = $record->id;
+
         // Emite evento para que el componente hijo actualice centros de costo
         $this->dispatch('save-centros-costo', ['id' => $record->id]);
-
-        // Reset de estado
-        $closeForm = $this->closeForm;
-        $this->resetControls();
-
-        $this->action = $closeForm ? 'list' : 'edit';
-        $this->closeForm = false;
-
-        if (!$closeForm) {
-          $this->edit($record->id);
-          $this->dispatch('$refresh');
-        }
-
-        $this->dispatch('show-notification', [
-          'type' => 'success',
-          'message' => __('The record has been created')
-        ]);
       });
     } catch (\Exception $e) {
       $this->dispatch('show-notification', [
@@ -450,6 +475,11 @@ class MovimientoManager extends BaseComponent
 
   public function updateMovimiento()
   {
+    Log::info('updateMovimiento', [
+      'monto' => $this->monto,
+      'centros_costo' => $this->centros_costo ?? null,
+      'recordId' => $this->recordId
+    ]);
     // Quitar separadores de miles si vienen como string
     $this->monto = floatval(str_replace(',', '', $this->monto));
     $this->impuesto = floatval(str_replace(',', '', $this->impuesto));
@@ -508,21 +538,7 @@ class MovimientoManager extends BaseComponent
         // Emite evento para que el componente hijo actualice centros de costo
         $this->dispatch('save-centros-costo', ['id' => $record->id]);
 
-        // Reset de estado
-        $closeForm = $this->closeForm;
-        $this->resetControls();
         $this->dispatch('scroll-to-top');
-
-        $this->dispatch('show-notification', [
-          'type' => 'success',
-          'message' => __('The record has been updated')
-        ]);
-
-        $this->action = $closeForm ? 'list' : 'edit';
-        $this->closeForm = false;
-        if (!$closeForm) {
-          $this->edit($record->id);
-        }
       });
     } catch (\Exception $e) {
       $this->dispatch('show-notification', [
@@ -1175,6 +1191,7 @@ class MovimientoManager extends BaseComponent
 
   public function storeAndClose()
   {
+    Log::info('Entró a storeAndClose');
     // para mantenerse en el formulario
     $this->closeForm = true;
 
@@ -1184,6 +1201,7 @@ class MovimientoManager extends BaseComponent
 
   public function updateAndClose()
   {
+    Log::info('Entró a updateAndClose');
     // para mantenerse en el formulario
     $this->closeForm = true;
 
@@ -1419,35 +1437,6 @@ class MovimientoManager extends BaseComponent
       __('Sí, proceed')
     );
   }
-
-  /*
-  function getRecordAction($recordId)
-  {
-    if (!isset($recordId) || is_null($recordId)) {
-      if (empty($this->selectedIds)) {
-        $this->dispatch('show-notification', [
-          'type' => 'error',
-          'message' => 'Debe seleccionar un registro.'
-        ]);
-        return;
-      }
-
-      if (count($this->selectedIds) > 1) {
-        $this->dispatch('show-notification', [
-          'type' => 'error',
-          'message' => 'Solo se permite seleccionar un registro.'
-        ]);
-        return;
-      }
-
-      if (count($this->selectedIds) == 1) {
-        $recordId = $this->selectedIds[0];
-      }
-    }
-
-    return $recordId;
-  }
-  */
 
   public function toggleExpand($recordId)
   {

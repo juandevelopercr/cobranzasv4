@@ -749,6 +749,9 @@ class HistoryManager extends TransactionManager
               Transaction::ANULADA,
           ]);
       }
+
+      // Mostrar transacciones creadas por el usuario
+      $query->where('transactions.created_by', auth()->user()->id);
     }
 
     return $query;
