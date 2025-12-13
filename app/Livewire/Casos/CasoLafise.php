@@ -127,6 +127,23 @@ class CasoLafise extends CasoManager
     $query = Caso::search($this->search, $this->filters ?? [])
       ->where('casos.bank_id', $this->bank_id);
 
+    if (
+        in_array($this->bank_id, [1, 13]) &&
+        auth()->user()->hasAnyRole(['ASIGNACIONES'])
+    ) {
+        $query->join(
+                'casos_productos_bancos',
+                'casos_productos_bancos.bank_id',
+                '=',
+                'casos.bank_id'
+            )
+            ->whereColumn(
+                'casos_productos_bancos.product_id',
+                'casos.product_id'
+            )
+            ->where('casos.product_id', 78);
+    }
+
     $query->orderBy($this->sortBy, $this->sortDir);
 
     $records = $query->paginate($this->perPage);
