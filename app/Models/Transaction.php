@@ -1095,8 +1095,40 @@ public function getTotalHonorarioIva($currencyCode, $format = false)
     }
 
     // Mostrar NOTA DE CREDITO
-    if ($user->can('download-pdf-proformas') && in_array($this->proforma_status, [self::ANULADA]) && $this->proforma_type === 'GASTO') {
+    // Mostrar NOTA DE CREDITO
+    if ($user->can('download-pdf-proformas') && in_array($this->proforma_status, [self::ANULADA])) {
       // Mostrar el icono de la nota de crédito
+      if ($this->reference_id) {
+        if ($this->proforma_type == 'GASTO') {
+          $title = 'Nota de crédito';
+          $html .= <<<HTML
+              <button type="button"
+                  class="btn btn-link p-0 me-2 text-danger"
+                  title= "{$title}"
+                  wire:click="downloadProformaDetallada({$this->reference_id})"
+                  wire:loading.attr="disabled"
+                  wire:target="downloadProformaDetallada">
+                  <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="downloadProformaDetallada({$this->reference_id})"></i>
+                  <i class="bx bxs-file-pdf {$iconSize}" wire:loading.remove wire:target="downloadProformaDetallada({$this->reference_id})"></i>
+              </button>
+          HTML;
+        } else {
+          $title = 'Nota de crédito electrónica';
+          //dd($this->reference_id);
+          $html .= <<<HTML
+              <button type="button"
+                  class="btn p-0 me-2 text-danger"
+                  title="{$title}"
+                  wire:click="downloadInvoice({$this->reference_id})"
+                  wire:loading.attr="disabled"
+                  wire:target="downloadInvoice">
+                  <i class="bx bx-loader bx-spin {$iconSize}" wire:loading wire:target="downloadInvoice({$this->reference_id})"></i>
+                  <i class="bx bxs-file-pdf {$iconSize}" wire:loading.remove wire:target="downloadInvoice({$this->reference_id})"></i>
+              </button>
+          HTML;
+        }
+      }
+      /*
       if ($this->reference_id)
         $html .= <<<HTML
             <button type="button"
@@ -1109,6 +1141,7 @@ public function getTotalHonorarioIva($currencyCode, $format = false)
                 <i class="bx bxs-file-pdf {$iconSize}" wire:loading.remove wire:target="downloadProformaDetallada({$this->reference_id})"></i>
             </button>
         HTML;
+      */
     }
 
     // Enviar Email
@@ -1965,7 +1998,7 @@ public function getTotalHonorarioIva($currencyCode, $format = false)
     }
 
     // Mostrar NOTA DE CREDITO
-    if ($user->can('download-pdf-proformas') && in_array($this->proforma_status, [self::ANULADA]) && $this->proforma_type === 'GASTO') {
+    if ($user->can('download-pdf-proformas') && in_array($this->proforma_status, [self::ANULADA])) {
       // Mostrar el icono de la nota de crédito
       if ($this->reference_id) {
         if ($this->proforma_type == 'GASTO') {
