@@ -327,6 +327,7 @@ class CasoProductManager extends BaseComponent
 
   public $filters = [
     'filter_name' => NULL,
+    'filter_bank' => NULL,
     'filter_active' => NULL,
   ];
 
@@ -345,6 +346,25 @@ class CasoProductManager extends BaseComponent
         'columnAlign' => '',
         'columnClass' => '',
         'function' => '',
+        'parameters' => [],
+        'sumary' => '',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'bancos',
+        'orderName' => '',
+        'label' => __('Banks'),
+        'filter' => 'filter_bank',
+        'filter_type' => 'input',
+        'filter_sources' => '',
+        'filter_source_field' => '',
+        'columnType' => 'string',
+        'columnAlign' => '',
+        'columnClass' => 'wrap-col-400',
+        'function' => 'getHtmlBancos',
         'parameters' => [],
         'sumary' => '',
         'openHtmlTab' => '',

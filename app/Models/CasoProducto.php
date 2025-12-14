@@ -83,6 +83,12 @@ class CasoProducto extends Model
       $query->where('nombre', 'like', '%' . $filters['filter_name'] . '%');
     }
 
+    if (!empty($filters['filter_bank'])) {
+      $query->whereHas('banks', function ($q) use ($filters) {
+        $q->where('name', 'like', '%' . $filters['filter_bank'] . '%');
+      });
+    }
+
     if (isset($filters['filter_active']) && !is_null($filters['filter_active'])  && $filters['filter_active'] !== '') {
       $query->where('activo', '=', $filters['filter_active']);
     }
@@ -139,5 +145,14 @@ class CasoProducto extends Model
 
     $html .= '</div>';
     return $html;
+  }
+
+  public function getHtmlBancos()
+  {
+      $bancos = $this->banks()->pluck('name');
+
+      return $bancos->isNotEmpty()
+          ? $bancos->implode(', ')
+          : "<span class=\"text-gray-500\">-</span>";
   }
 }

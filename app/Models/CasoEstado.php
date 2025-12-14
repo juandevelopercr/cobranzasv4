@@ -55,8 +55,16 @@ class CasoEstado extends Model
       $query->where('name', 'like', '%' . $filters['filter_name'] . '%');
     }
 
-    if (!empty($filters['filter_description'])) {
-      $query->where('description', 'like', '%' . $filters['filter_description'] . '%');
+    if (!empty($filters['filter_bank'])) {
+      $query->whereHas('banks', function ($q) use ($filters) {
+        $q->where('name', 'like', '%' . $filters['filter_bank'] . '%');
+      });
+    }
+
+    if (!empty($filters['filter_producto'])) {
+      $query->whereHas('products', function ($q) use ($filters) {
+        $q->where('nombre', 'like', '%' . $filters['filter_producto'] . '%');
+      });
     }
 
     if (isset($filters['filter_active']) && !is_null($filters['filter_active'])  && $filters['filter_active'] !== '') {
