@@ -1965,15 +1965,14 @@ class ProformaManager extends TransactionManager {
   public function getStatics() {
     $allowedRoles = User::ROLES_ALL_BANKS;
     $user = Auth::user();
-    // Si el usuario tiene acceso completo, usar todos los bancos del departamento
-    if ($user->hasAnyRole($allowedRoles)) {
-      // Usuarios con acceso a todos los departamentos
+    $currentRole = session('current_role_name');
+    $isAllBanks = $user->hasAnyRole($allowedRoles) || in_array($currentRole, $allowedRoles);
+
+    if ($isAllBanks) {
+      $rolesList = "'" . implode("','", $allowedRoles) . "'";
       $stats = Transaction::where('document_type', $this->document_type)
-        ->whereHas('createdBy.roles', function ($query) use ($allowedRoles) {
-          $query->whereIn('name', $allowedRoles);
-        })
         ->select([
-          DB::raw("SUM(CASE WHEN proforma_status = 'PROCESO' THEN 1 ELSE 0 END) AS total_facturas_proceso"),
+          DB::raw("SUM(CASE WHEN proforma_status = 'PROCESO' AND EXISTS (SELECT 1 FROM role_user ru JOIN roles r ON r.id = ru.role_id WHERE ru.user_id = transactions.created_by AND r.name IN ($rolesList)) THEN 1 ELSE 0 END) AS total_facturas_proceso"),
           DB::raw("SUM(CASE WHEN proforma_status = 'SOLICITADA' THEN 1 ELSE 0 END) AS facturas_por_aprobar"),
           DB::raw("SUM(CASE WHEN proforma_status = 'FACTURADA' AND currency_id = " . Currency::DOLARES . " AND proforma_type = 'HONORARIO' THEN totalComprobante ELSE 0 END) AS totalUsdHonorario"),
           DB::raw("SUM(CASE WHEN proforma_status = 'FACTURADA' AND currency_id = " . Currency::COLONES . " AND proforma_type = 'HONORARIO' THEN totalComprobante ELSE 0 END) AS totalCrcHonorario"),
@@ -1982,17 +1981,13 @@ class ProformaManager extends TransactionManager {
         ])
         ->first();
     } else {
-      // Usuarios con acceso limitado - solo sus departamentos/bancos
       $banks = $user->banks->pluck('id');
-
       $stats = Transaction::where('document_type', $this->document_type)
         ->where(function ($query) use ($banks, $allowedRoles) {
-          // Filtrar por banco
           if (!empty($banks)) {
             $query->whereIn('bank_id', $banks);
           }
-
-          // Excluir usuarios con roles de todos los departamentos
+          $query->where('created_by', auth()->user()->id);
           $query->whereDoesntHave('createdBy.roles', function ($q) use ($allowedRoles) {
             $q->whereIn('name', $allowedRoles);
           });
