@@ -47,6 +47,7 @@ class DocumentsManager extends Component
           'file.max' => 'El archivo es demasiado grande. Máximo 100 MB.',
           'title.required' => 'Debe indicar un título.',
           'title.max' => 'El título no puede superar 100 caracteres.',
+          'file.uploaded' => 'No se pudo subir el archivo. El tamaño excede el límite permitido por el servidor (Revise php.ini upload_max_filesize).',
       ];
   }
 
@@ -106,6 +107,11 @@ class DocumentsManager extends Component
         'url' => $doc->getUrl(),
       ];
     })->toArray();
+  }
+
+  public function updatedFile()
+  {
+      $this->resetValidation();
   }
 
   public function saveDocument()
