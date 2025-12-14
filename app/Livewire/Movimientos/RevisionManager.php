@@ -346,6 +346,39 @@ class RevisionManager extends BaseComponent
     }
   }
 
+  #[On('centrosGuardadosOk')]
+  public function onCentrosGuardadosOk()
+  {
+      $closeForm = $this->closeForm;
+      $recordId = $this->recordId;
+
+      $this->resetControls();
+
+      $this->action = $closeForm ? 'list' : 'edit';
+      $this->closeForm = false;
+
+      if (!$closeForm) {
+          $this->edit($recordId);
+      }
+
+      $this->dispatch('show-notification', [
+          'type' => 'success',
+          'message' => __('El registro ha sido guardado correctamente.')
+      ]);
+
+      $this->dispatch('actualizarSumary');
+      $this->dispatch('scroll-to-top');
+  }
+
+  #[On('centrosGuardadosFail')]
+  public function onCentrosGuardadosFail()
+  {
+       $this->dispatch('show-notification', [
+          'type' => 'error',
+          'message' => __('El movimiento se guardó, pero hubo un error al guardar los centros de costo.')
+      ]);
+  }
+
   public function store()
   {
     $this->monto = floatval(str_replace(',', '', $this->monto));
@@ -408,24 +441,11 @@ class RevisionManager extends BaseComponent
 
         $record = Movimiento::create($validatedData);
 
+        // Actualizamos el ID para que esté disponible
+        $this->recordId = $record->id;
+
         // Emite evento para que el componente hijo actualice centros de costo
         $this->dispatch('save-centros-costo', ['id' => $record->id]);
-
-        // Reset de estado
-        $closeForm = $this->closeForm;
-        $this->resetControls();
-
-        $this->action = $closeForm ? 'list' : 'edit';
-
-        if (!$closeForm) {
-          $this->edit($record->id);
-          $this->dispatch('$refresh');
-        }
-
-        $this->dispatch('show-notification', [
-          'type' => 'success',
-          'message' => __('The record has been created')
-        ]);
       });
     } catch (\Exception $e) {
       $this->dispatch('show-notification', [
@@ -496,20 +516,7 @@ class RevisionManager extends BaseComponent
         // Emite evento para que el componente hijo actualice centros de costo
         $this->dispatch('save-centros-costo', ['id' => $record->id]);
 
-        // Reset de estado
-        $closeForm = $this->closeForm;
-        $this->resetControls();
         $this->dispatch('scroll-to-top');
-
-        $this->dispatch('show-notification', [
-          'type' => 'success',
-          'message' => __('The record has been updated')
-        ]);
-
-        $this->action = $closeForm ? 'list' : 'edit';
-        if (!$closeForm) {
-          $this->edit($record->id);
-        }
       });
     } catch (\Exception $e) {
       $this->dispatch('show-notification', [

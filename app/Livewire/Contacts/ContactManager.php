@@ -1123,6 +1123,10 @@ class ContactManager extends BaseComponent
         $type = 4; // Cédula NITE
         $founded = true;
         break;
+      case 'DIMEX/NITE':
+        $type = 3; // Cédula NITE
+        $founded = true;
+        break;
     }
 
     if ($founded)
