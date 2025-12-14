@@ -1287,15 +1287,17 @@ class RevisionManager extends BaseComponent
 
   public function confirmarAccionListoAprobar($recordId, $metodo, $titulo, $mensaje, $textoBoton)
   {
+    /*
     $recordId = $this->getRecordAction($recordId);
 
     if (!$recordId) {
       return; // Ya se lanzó la notificación desde getRecordAction
     }
+      */
 
     // static::getName() devuelve automáticamente el nombre del componente Livewire actual, útil para dispatchTo.
     $this->dispatch('show-confirmation-dialog', [
-      'recordId' => $recordId,
+      'recordId' => null,
       'componentName' => static::getName(), // o puedes pasarlo como string
       'methodName' => $metodo,
       'title' => $titulo,
@@ -1547,33 +1549,53 @@ class RevisionManager extends BaseComponent
   #[On('listoAprobar')]
   public function listoAprobar($recordId)
   {
-    $revision = \App\Models\Movimiento::findOrFail($recordId);
-    if ($revision->status != 'RECHAZADO') {
-      $revision->listo_para_aprobar = 1;
-      $revision->save();
+    $recordIds = $this->getRecordListAction();
+    if (empty($recordIds)) {
+      return;
+    }
 
+    $noAprobados = [];
+    DB::beginTransaction();
+    try {
+      $revisiones = \App\Models\Movimiento::whereIn('id', $recordIds)->get();
+      foreach ($revisiones as $revision) {
+        if ($revision->status != 'RECHAZADO') {
+          $revision->listo_para_aprobar = 1;
+          $revision->save();
+        } else {
+          $noAprobados[] = $revision->numero ?? $revision->id;
+        }
+      }
+      if (count($noAprobados) > 0) {
+        DB::rollBack();
+        $this->dispatch('show-notification', [
+          'type' => 'error',
+          'message' => __('No se pudieron poner en listo para aprobar los siguientes cheques: ') . implode(', ', $noAprobados)
+        ]);
+        return;
+      }
+      DB::commit();
+
+      // Quitar de la lista de seleccionados
+      $this->selectedIds = array_filter(
+        $this->selectedIds,
+        fn($selectedId) => !in_array($selectedId, $recordIds)
+      );
+      if (empty($this->selectedIds)) {
+        $this->selectAll = false;
+      }
+      $this->dispatch('updateSelectedIds', $this->selectedIds);
       $this->dispatch('show-notification', [
         'type' => 'success',
-        'message' => __('The record has been updated')
+        'message' => __('Cheques marcados como listos para aprobar correctamente.')
       ]);
-    } else {
+    } catch (\Throwable $e) {
+      DB::rollBack();
       $this->dispatch('show-notification', [
         'type' => 'error',
-        'message' => __('Los cheques rechazadas no pueden seleccionarse como listas para aprobar')
+        'message' => __('Error al marcar cheques como listos para aprobar: ') . $e->getMessage()
       ]);
     }
-
-    // 4. Quitar de la lista de seleccionados
-    $this->selectedIds = array_filter(
-      $this->selectedIds,
-      fn($selectedId) => $selectedId != $recordId
-    );
-
-    if (empty($this->selectedIds)) {
-      $this->selectAll = false;
-    }
-
-    $this->dispatch('updateSelectedIds', $this->selectedIds);
   }
 
   #[On('saldoActualizado')]

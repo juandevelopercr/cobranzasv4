@@ -206,66 +206,7 @@
                                                 'record' => $record,
                                                 'canedit' => auth()->user()->can('edit-services'),
                                             ])
-
-                                            @php
-                                                /*
-                    <td>
-                      <div class="action-icons d-flex justify-content-center align-items-center">
-                          @can('edit-movimiento')
-<button wire:click="edit({{ $record->id }})"
-                                wire:loading.attr="disabled" wire:target="edit({{ $record->id }})"
-                                class="btn btn-icon item-edit" data-bs-toggle="tooltip" data-bs-offset="0,8"
-                                data-bs-placement="top" data-bs-custom-class="tooltip-dark"
-                                data-bs-original-title="{{ __('Edit') }}">
-
-                                <!-- Ícono normal (visible cuando no está en loading) -->
-                                <span wire:loading.remove wire:target="edit({{ $record->id }})">
-                                    <i class="bx bx-edit bx-md"></i>
-                                </span>
-
-                                <!-- Ícono de carga (visible cuando está en loading) -->
-                                <span wire:loading wire:target="edit({{ $record->id }})">
-                                    <i class="spinner-border spinner-border-sm me-1" role="status"></i>
-                                </span>
-                              </button>
-@endcan
-
-                          @can('edit-movimiento')
-<button wire:click.prevent="confirmarAccion({{ $record->id }}, 'clonar',
-                                                          '{{ __('You are sure you want to clone service with code:') }}  {{ $record->code }}?',
-                                                          '{{ __('After confirmation, the service will be cloned') }}',
-                                                          '{{ __('Yes, proceed') }}')"
-                              class="btn btn-icon item-trash text-warning" data-bs-toggle="tooltip" data-bs-offset="0,8"
-                              data-bs-placement="top" data-bs-custom-class="tooltip-dark"
-                              data-bs-original-title="{{ __('Clonar Servicio') }}">
-                              <i class="bx bx-copy bx-md"></i>
-                            </button>
-@endcan
-
-                          @can('delete-movimiento')
-<button wire:click.prevent="confirmarAccion(
-                                  {{ $record->id }},
-                                  'delete',
-                                  '{{ __('Are you sure you want to delete this record') }} ?',
-                                  '{{ __('After confirmation, the record will be deleted') }}',
-                                  '{{ __('Yes, proceed') }}'
-                                )"
-                                class="btn btn-icon item-trash text-danger"
-                                data-bs-toggle="tooltip"
-                                data-bs-offset="0,8"
-                                data-bs-placement="top"
-                                data-bs-custom-class="tooltip-dark"
-                                data-bs-original-title="{{ __('Delete') }}"
-                              >
-                              <i class="bx bx-trash bx-md"></i>
-                            </button>
-@endcan
-                      </div>
-                    </td>
-                    */
-                                            @endphp
                                         </tr>
-
                                         @php
                                             $expandColumn = collect($columns)->firstWhere('columnType', 'expand');
                                         @endphp
@@ -279,26 +220,6 @@
                                                 </td>
                                             </tr>
                                         @endif
-                                        @php
-                                            /*
-                  @if (in_array($record->id, $expandedRows ?? []))
-<tr class="table-row-expanded">
-                      <td colspan="{{ count($columns) }}">
-                        {{-- Aquí tu subtabla o detalles personalizados --}}
-                        <table class="table table-sm table-bordered">
-                          <thead>
-                            <tr><th>Campo</th><th>Valor</th></tr>
-                          </thead>
-                          <tbody>
-                            <tr><td>ID Movimiento</td><td>{{ $record->id }}</td></tr>
-                            <tr><td>Detalle</td><td>{{ $record->descripcion }}</td></tr>
-                          </tbody>
-                        </table>
-                      </td>
-                    </tr>
-@endif
-                  */
-                                        @endphp
                                     @endforeach
                                 </tbody>
                             </table>
@@ -382,11 +303,11 @@
                             $(`#${id}`).on('change', function() {
                                 const newValue = $(this).val();
                                 const livewireValue = @this.get(
-                                `filters.${id}`); // Cambiar acceso a filters
+                                    `filters.${id}`); // Cambiar acceso a filters
 
                                 if (newValue !== livewireValue) {
                                     @this.set(`filters.${id}`,
-                                    newValue); // Actualizar filters correctamente
+                                        newValue); // Actualizar filters correctamente
                                 }
                             });
                         }
@@ -568,7 +489,7 @@
                 printWindow.document.write('<html><head><title>Imprimir Cheque</title>');
                 printWindow.document.write(
                     '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">'
-                    );
+                );
                 printWindow.document.write('</head><body class="kv-wrap">');
                 printWindow.document.write(content);
                 printWindow.document.write('</body></html>');
