@@ -1,17 +1,20 @@
 @php
-    function getFileIconClass($mimeType)
-    {
-        $icons = [
-            'application/pdf' => 'bxs-file-pdf text-danger',
-            'application/vnd.ms-excel' => 'bxs-file text-success',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'bxs-file text-success',
-            'application/msword' => 'bxs-file-doc text-primary',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'bxs-file-doc text-primary',
-            'image/jpeg' => 'bxs-image text-warning',
-            'image/png' => 'bxs-image text-warning',
-            'text/plain' => 'bxs-file-txt text-secondary',
-        ];
-        return $icons[$mimeType] ?? 'bxs-file text-secondary';
+    if (!function_exists('getFileIconClass')) {
+        function getFileIconClass($mimeType)
+        {
+            $icons = [
+                'application/pdf' => 'bxs-file-pdf text-danger',
+                'application/vnd.ms-excel' => 'bxs-file text-success',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'bxs-file text-success',
+                'application/msword' => 'bxs-file-doc text-primary',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document' =>
+                    'bxs-file-doc text-primary',
+                'image/jpeg' => 'bxs-image text-warning',
+                'image/png' => 'bxs-image text-warning',
+                'text/plain' => 'bxs-file-txt text-secondary',
+            ];
+            return $icons[$mimeType] ?? 'bxs-file text-secondary';
+        }
     }
 @endphp
 
