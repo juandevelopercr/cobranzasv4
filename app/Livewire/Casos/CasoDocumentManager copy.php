@@ -177,11 +177,6 @@ class CasoDocumentManager extends Component
         ->toArray();
   }
 
-  public function updatedFileByCollection()
-  {
-      $this->resetValidation();
-  }
-
   public function saveDocument()
   {
       $file = $this->file_by_collection[$this->collection] ?? null;
