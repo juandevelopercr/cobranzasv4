@@ -331,7 +331,10 @@
                     @endforeach
                     @else
                     @php
-                      $totalTimbres += $desglose_formula_timbres['monto_con_descuento'];
+                        //$totalTimbres += $desglose_formula_timbres['monto_con_descuento'];
+                        foreach ($desglose_formula_timbres['datos'] as $data) {
+                           $totalTimbres += $data['monto_con_descuento'];
+                        }
                     @endphp
                     @endif
 
@@ -357,7 +360,11 @@
                     @endforeach
                     @else
                     @php
-                    $totalTimbres += $desglose_tabla_abogados_timbres['monto_con_descuento'];
+                        //$totalTimbres += $desglose_tabla_abogados_timbres['monto_con_descuento'];
+
+                        foreach ($desglose_tabla_abogados_timbres['datos'] as $data) {
+                           $totalTimbres += $data['monto_con_descuento'];
+                        }
                     @endphp
                     @endif
 
@@ -383,7 +390,11 @@
                     @endforeach
                     @else
                     @php
-                    $totalTimbres += $desglose_calculos_fijos_timbres['monto_con_descuento'];
+                         //$totalTimbres += $desglose_calculos_fijos_timbres['monto_con_descuento'];
+
+                         foreach ($desglose_calculos_fijos_timbres['datos'] as $data) {
+                           $totalTimbres += $data['monto_con_descuento'];
+                        }
                     @endphp
                     @endif
 
@@ -409,7 +420,11 @@
                     @endforeach
                     @else
                     @php
-                    $totalTimbres += $desglose_calculos_monto_manual_timbres['monto_con_descuento'];
+                        //$totalTimbres += $desglose_calculos_monto_manual_timbres['monto_con_descuento'];
+
+                        foreach ($desglose_calculos_monto_manual_timbres['datos'] as $data) {
+                           $totalTimbres += $data['monto_con_descuento'];
+                        }
                     @endphp
                     @endif
 
@@ -435,7 +450,11 @@
                     @endforeach
                     @else
                       @php
-                        $totalHonorarios += $desglose_honorarios['monto_con_descuento'];
+                          //$totalHonorarios += $desglose_honorarios['monto_con_descuento'];
+
+                          foreach ($desglose_honorarios['datos'] as $data) {
+                              $totalHonorarios += $data['monto_con_descuento'];
+                          }
                       @endphp
                     @endif
 
@@ -461,7 +480,11 @@
                     @endforeach
                     @else
                       @php
-                        $totalHonorarios += $desglose_calculo_monto_manual_honorarios['monto_con_descuento'];
+                          //$totalHonorarios += $desglose_calculo_monto_manual_honorarios['monto_con_descuento'];
+
+                          foreach ($desglose_calculo_monto_manual_honorarios['datos'] as $data) {
+                              $totalHonorarios += $data['monto_con_descuento'];
+                          }
                       @endphp
                     @endif
 
