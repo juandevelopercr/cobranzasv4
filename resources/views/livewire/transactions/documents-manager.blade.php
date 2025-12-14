@@ -194,37 +194,34 @@
                                         {{ $document['name'] }}
                                     </h6>
 
-                                    <!-- Options Dropdown -->
-                                    <div class="dropdown ms-2">
-                                        <button class="btn p-0" type="button" data-bs-toggle="dropdown"
-                                            aria-expanded="false">
-                                            <i class="bx bx-dots-vertical-rounded"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                                            <li><a class="dropdown-item" href="{{ $document['url'] }}"
-                                                    target="_blank"><i
-                                                        class="bx bx-download me-2"></i>{{ __('Descargar') }}</a></li>
-                                            @if ($this->onlyview == false)
-                                                @if ($canedit)
-                                                    <li><a class="dropdown-item" href="javascript:void(0);"
-                                                            wire:click="editDocument({{ $document['id'] }})"><i
-                                                                class="bx bx-edit me-2"></i>{{ __('Editar Detalles') }}</a>
-                                                    </li>
-                                                @endif
-                                                @if ($candelete)
-                                                    <li>
-                                                        <hr class="dropdown-divider">
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item text-danger"
-                                                            href="javascript:void(0);"
-                                                            wire:click.prevent="confirmarAccion({{ $document['id'] }}, 'delete', '{{ __('¿Eliminar Documento?') }}', '{{ __('Esta acción no se puede deshacer.') }}', '{{ __('Sí, Eliminar') }}')">
-                                                            <i class="bx bx-trash me-2"></i>{{ __('Eliminar') }}
-                                                        </a>
-                                                    </li>
-                                                @endif
+                                    <!-- Options -->
+                                    <div class="d-flex align-items-center ms-2 gap-2">
+                                        <!-- Download -->
+                                        <a href="{{ $document['url'] }}" target="_blank"
+                                            class="btn p-0 text-secondary" data-bs-toggle="tooltip"
+                                            title="{{ __('Descargar') }}">
+                                            <i class="bx bx-download"></i>
+                                        </a>
+
+                                        @if ($this->onlyview == false)
+                                            <!-- Edit -->
+                                            @if ($canedit)
+                                                <button class="btn p-0 text-primary"
+                                                    wire:click="editDocument({{ $document['id'] }})"
+                                                    data-bs-toggle="tooltip" title="{{ __('Editar Detalles') }}">
+                                                    <i class="bx bx-edit"></i>
+                                                </button>
                                             @endif
-                                        </ul>
+
+                                            <!-- Delete -->
+                                            @if ($candelete)
+                                                <button class="btn p-0 text-danger"
+                                                    wire:click.prevent="confirmarAccion({{ $document['id'] }}, 'delete', '{{ __('¿Eliminar Documento?') }}', '{{ __('Esta acción no se puede deshacer.') }}', '{{ __('Sí, Eliminar') }}')"
+                                                    data-bs-toggle="tooltip" title="{{ __('Eliminar') }}">
+                                                    <i class="bx bx-trash"></i>
+                                                </button>
+                                            @endif
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="text-muted small mb-2 d-flex flex-column">
