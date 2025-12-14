@@ -138,7 +138,7 @@
                                             rowspan="1" colspan="1" style="width: 18px;" data-col="1"
                                             aria-label="">
                                             <input type="checkbox" class="form-check-input" id="select-all"
-                                                wire:click="toggleSelectAll">
+                                                wire:model.live="selectAll">
                                         </th>
 
                                         @include('livewire.includes.headers', [

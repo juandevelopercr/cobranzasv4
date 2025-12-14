@@ -630,10 +630,7 @@ class MovimientoManager extends BaseComponent
     // ✅ No continuar aquí. La lógica sigue en setValidacionCentros()
   }
 
-  public function updatedPerPage($value)
-  {
-    $this->resetPage(); // Resetea la página a la primera cada vez que se actualiza $perPage
-  }
+
 
   public function cancel()
   {
@@ -1216,6 +1213,7 @@ class MovimientoManager extends BaseComponent
     }
 
     $this->selectedIds = [];
+    $this->selectAll = false;
 
     $this->reset('filterFecha');
     $this->reset('filterCuentas');
@@ -1445,5 +1443,39 @@ class MovimientoManager extends BaseComponent
     } else {
       $this->expandedRows[] = $recordId;
     }
+  }
+
+  public function updatedPerPage($value)
+  {
+      $this->resetPage();
+      if ($this->selectAll) {
+          $this->selectedIds = Movimiento::search($this->search, $this->filters, $this->defaultStatus)
+              ->orderBy('fecha', 'desc')
+              ->orderByRaw('CASE WHEN numero REGEXP "^[0-9]+$" THEN CAST(numero AS UNSIGNED) ELSE 99999999999 END DESC')
+              ->paginate($value) // Use the new perPage value
+              ->pluck('id')
+              ->toArray();
+          $this->dispatch('updateSelectedIds', $this->selectedIds);
+      } else {
+        // Opción segura: desmarcar si cambia la paginación para evitar confusiones
+        $this->selectAll = false;
+        $this->selectedIds = [];
+        $this->dispatch('updateSelectedIds', $this->selectedIds);
+      }
+  }
+
+  public function updatedSelectAll($value): void
+  {
+      if ($value) {
+          $this->selectedIds = Movimiento::search($this->search, $this->filters, $this->defaultStatus)
+              ->orderBy('fecha', 'desc')
+              ->orderByRaw('CASE WHEN numero REGEXP "^[0-9]+$" THEN CAST(numero AS UNSIGNED) ELSE 99999999999 END DESC')
+              ->paginate($this->perPage)
+              ->pluck('id')
+              ->toArray();
+      } else {
+          $this->selectedIds = [];
+      }
+      $this->dispatch('updateSelectedIds', $this->selectedIds);
   }
 }
