@@ -975,7 +975,7 @@ class RevisionManager extends BaseComponent
         'filter_source_field' => '',
         'columnType' => 'decimal',
         'columnAlign' => 'right',
-        'columnClass' => '',
+        'columnClass' => 'wrap-col-200',
         'function' => 'getColumnMonto',
         'parameters' => [],
         'sumary' => 'tMonto',

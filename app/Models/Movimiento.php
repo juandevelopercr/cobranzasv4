@@ -185,7 +185,14 @@ class Movimiento extends Model implements HasMedia
     }
 
     if (!empty($filters['filter_monto'])) {
-      $query->where('movimientos.monto', '=', $filters['filter_monto']);
+      $query->whereRaw(
+          "CASE
+              WHEN movimientos.tipo_movimiento = 'DEPOSITO'
+              THEN movimientos.monto
+              ELSE movimientos.total_general
+          END = ?",
+          [$filters['filter_monto']]
+      );
     }
 
     if (!empty($filters['filter_type'])) {
