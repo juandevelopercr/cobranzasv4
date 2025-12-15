@@ -446,6 +446,20 @@ class CuentaPorCobrarManager extends TransactionManager
     return $query;
   }
 
+  /**
+   * Return the filtered query for export usage.
+   * Accepts an array of params to populate component state before building the query.
+   */
+  public function getQueryForExport(array $params = []): \Illuminate\Database\Eloquent\Builder
+  {
+    if (isset($params['search'])) $this->search = $params['search'];
+    if (isset($params['filters']) && is_array($params['filters'])) $this->filters = $params['filters'];
+    if (isset($params['document_type'])) $this->document_type = $params['document_type'];
+    if (isset($params['filter_cuenta_cobrar_type'])) $this->filter_cuenta_cobrar_type = $params['filter_cuenta_cobrar_type'];
+
+    return $this->getFilteredQuery();
+  }
+
   public function render()
   {
     $query = $this->getFilteredQuery();
@@ -1446,4 +1460,29 @@ class CuentaPorCobrarManager extends TransactionManager
   {
     $this->counter++;
   }
+
+  public function exportVisible()
+  {
+    $key = uniqid('export_', true);
+
+    $params = [
+      'search' => $this->search ?? '',
+      'filters' => $this->filters ?? [],
+      'selectedIds' => $this->selectedIds ?? [],
+      'sortBy' => $this->sortBy ?? 'transactions.transaction_date',
+      'sortDir' => $this->sortDir ?? 'DESC',
+      'perPage' => $this->perPage ?? 10,
+      'page' => property_exists($this, 'page') && $this->page ? (int)$this->page : 1,
+      'document_type' => $this->document_type ?? null,
+      'filter_cuenta_cobrar_type' => $this->filter_cuenta_cobrar_type ?? null,
+    ];
+
+    cache()->put($key, $params, now()->addMinutes(5));
+
+    $url = route('exportacion.transacciones.preparar.visible', ['key' => $key]);
+    $downloadBase = '/descargar-exportacion-transacciones';
+
+    $this->dispatch('exportReady', ['prepareUrl' => $url, 'downloadBase' => $downloadBase]);
+  }
+
 }

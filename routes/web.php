@@ -248,6 +248,9 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
   Route::get('/descargar-exportacion-transacciones/{filename}', [ReportTransactionController::class, 'descargarExportacionTransacciones'])
     ->name('exportacion.transacciones.descargar');
 
+  Route::get('/preparar-exportacion-transacciones-visible/{key}', [ReportTransactionController::class, 'prepararExportacionTransaccionesVisible'])
+    ->name('exportacion.transacciones.preparar.visible');
+
   // Estado de cuenta
   Route::get('/preparar-exportacion-estado-cuenta/{key}', [ReportProformaController::class, 'prepararExportacionEstadoCuenta'])
     ->name('exportacion.proforma.estado.cuenta.preparar');

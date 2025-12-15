@@ -69,6 +69,72 @@ class ReportTransactionController extends Controller
     }
   }
 
+  public function prepararExportacionTransaccionesVisible($key)
+  {
+    try {
+      $params = Cache::pull($key);
+
+      if (!is_array($params)) {
+        abort(404, 'Clave de exportación inválida o expirada');
+      }
+
+      ini_set('memory_limit', '-1');
+      ini_set('max_execution_time', '360');
+
+      // Build query using the same filters as the Livewire component
+      $manager = new \App\Livewire\Transactions\CuentaPorCobrarManager();
+      // hydrate manager with params where applicable
+      $manager->search = $params['search'] ?? '';
+      $manager->filters = $params['filters'] ?? [];
+
+      $sortBy = $params['sortBy'] ?? 'transactions.transaction_date';
+      $sortDir = $params['sortDir'] ?? 'DESC';
+      $perPage = $params['perPage'] ?? 10;
+      $page = $params['page'] ?? 1;
+      $selectedIds = $params['selectedIds'] ?? [];
+
+      $baseQuery = $manager->getQueryForExport($params)->orderBy($sortBy, $sortDir);
+
+      // If the user selected specific ids, use them. Otherwise compute the visible page IDs
+      if (!empty($selectedIds)) {
+        $baseQuery->whereIn('transactions.id', $selectedIds);
+        $externalQuery = $baseQuery;
+      } else {
+        $offset = max(((int)$page - 1) * (int)$perPage, 0);
+
+        // Clone base query to fetch only the IDs for the current page
+        $idsQuery = clone $baseQuery;
+        $visibleIds = $idsQuery->skip($offset)->take((int)$perPage)->pluck('transactions.id')->toArray();
+
+        if (!empty($visibleIds)) {
+          // Use the manager's query so the same selects/joins are preserved
+          $externalQuery = $manager->getQueryForExport($params)
+            ->whereIn('transactions.id', $visibleIds)
+            ->orderBy($sortBy, $sortDir);
+          // Also set selectedIds in params so the report mapping uses the same set when needed
+          $params['selectedIds'] = $visibleIds;
+        } else {
+          // No visible IDs — build an empty query
+          $externalQuery = \App\Models\Transaction::whereRaw('1 = 0');
+        }
+      }
+
+      $title = 'Cuentas por Cobrar';
+      $report = new \App\Exports\CuentasPorCobrarReport($params, $title, $externalQuery);
+
+      $filename = 'cuentas-por-cobrar-' . now()->format('Ymd_His') . '.xlsx';
+      $relativePath = "exports/$filename";
+      $storagePath = "public/$relativePath";
+
+      Excel::store($report, $storagePath);
+
+      return response()->json(['filename' => $filename]);
+    } catch (Throwable $e) {
+      Log::error("Error al preparar exportación de transacciones visible: " . $e->getMessage());
+      return response()->json(['error' => 'Error al generar el archivo'], 500);
+    }
+  }
+
   public function descargarExportacionTransacciones($filename)
   {
     $path = storage_path("app/public/exports/$filename");

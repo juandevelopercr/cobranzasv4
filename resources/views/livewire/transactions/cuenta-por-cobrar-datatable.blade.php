@@ -49,6 +49,7 @@
 
                                     @can('export-cuentascobrar')
                                         @include('livewire.includes.button-exportPdf')
+                                        @include('livewire.includes.button-export-visible')
                                     @endcan
 
                                     <!-- Dropdown with icon -->
