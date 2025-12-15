@@ -53,6 +53,41 @@ class CuentaPorCobrarManager extends TransactionManager
 
   public $listaUsuarios;
 
+  public function updatedSelectAll($value)
+  {
+    if ($value) {
+      $this->selectedIds = $this->getCurrentPageIds();
+    } else {
+      $this->selectedIds = [];
+    }
+  }
+
+  public function updatedPerPage($value)
+  {
+    $this->resetPage();
+    if ($this->selectAll) {
+      $this->selectedIds = $this->getFilteredQuery()
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->paginate($value)
+        ->pluck('id')
+        ->toArray();
+      $this->dispatch('updateSelectedIds', $this->selectedIds);
+    } else {
+      $this->selectAll = false;
+      $this->selectedIds = [];
+      $this->dispatch('updateSelectedIds', $this->selectedIds);
+    }
+  }
+
+  public function getCurrentPageIds()
+  {
+    $query = $this->getFilteredQuery();
+    $records = $query
+      ->orderBy($this->sortBy, $this->sortDir)
+      ->paginate($this->perPage);
+    return $records->pluck('id')->toArray();
+  }
+
 
   public function mount()
   {
@@ -421,6 +456,10 @@ class CuentaPorCobrarManager extends TransactionManager
       ->paginate($this->perPage);
 
     $this->dispatch('reinitSelect2Controls');
+
+    // Mantener selectAll sincronizado con los ids visibles
+    $currentPageIds = $records->pluck('id')->toArray();
+    $this->selectAll = !empty($currentPageIds) && !array_diff($currentPageIds, $this->selectedIds);
 
     return view('livewire.transactions.cuenta-por-cobrar-datatable', [
       'records' => $records,
