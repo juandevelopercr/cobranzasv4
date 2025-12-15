@@ -53,13 +53,17 @@
                                     @endcan
 
                                     <!-- Dropdown with icon -->
+                                    @php
+                                        /*
                                     <div x-data="{ action: @entangle('action') }">
                                         <div x-show="action === 'list'" x-cloak>
                                             @can('export-cuentasCobrar')
-                                                <livewire:transactions.transaction-datatable-export />
-                                            @endcan
+<livewire:transactions.transaction-datatable-export />
+@endcan
                                         </div>
                                     </div>
+                                    */
+                                    @endphp
 
                                     <!-- Dropdown with icon -->
                                     <div class="btn-group" role="group" aria-label="DataTable Actions">
