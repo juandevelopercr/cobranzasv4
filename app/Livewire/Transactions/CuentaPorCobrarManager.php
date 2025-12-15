@@ -1392,6 +1392,25 @@ class CuentaPorCobrarManager extends TransactionManager
     if (empty($transactionsIds)) {
       return; // Ya se lanzó la notificación desde getRecordListAction
     }
+
+    // Obtener información para notificar al usuario: cantidad de transacciones y clientes
+    try {
+      $transactions = \App\Models\Transaction::whereIn('id', $transactionsIds)
+        ->with('contact')
+        ->get();
+
+      $clientsCount = $transactions->pluck('contact_id')->filter()->unique()->count();
+      $transCount = $transactions->count();
+
+      $this->dispatch('show-notification', [
+        'type' => 'info',
+        'message' => __('Preparando estado de cuenta para :trans transacción(es) y :clients cliente(s).', ['trans' => $transCount, 'clients' => $clientsCount])
+      ]);
+    } catch (\Throwable $e) {
+      Log::warning('exportPdf - failed to fetch transactions: ' . $e->getMessage());
+    }
+
+    // La generación agrupa internamente por cliente en Helpers::generateEstadoCuentaPdf
     $this->prepareExportEstadoCuenta($transactionsIds);
   }
 
