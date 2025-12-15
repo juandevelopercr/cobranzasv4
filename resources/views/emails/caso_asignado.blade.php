@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <style>
@@ -25,7 +26,8 @@
             margin-top: 15px;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #ccc;
             padding: 8px 10px;
             text-align: left;
@@ -42,6 +44,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="header">
@@ -63,34 +66,39 @@
                     <th>Deudor</th>
                     <th>Banco</th>
                     <th>Tipo de garantía</th>
+                    <th>Monto</th>
                     <th>Moneda</th>
                 </tr>
             </thead>
             <tbody>
-              <tr>
-                  <td>1</td>
-                  <td>{{ $caso->numero }}</td>
-                  <td>{{ $caso->numero_gestion }}</td>
-                  <td>{{ $caso->deudor ?? '' }}</td>
-                  <td>{{ optional($caso->bank)?->name ?? '-'}}</td>
-                  <td>{{ optional($caso->garantia)?->name ?? '-' }}</td>
-                  <td>{{ optional($caso->currency)?->code ?? '-' }}</td>
-              </tr>
+                <tr>
+                    <td>1</td>
+                    <td>{{ $caso->numero }}</td>
+                    <td>{{ $caso->numero_gestion }}</td>
+                    <td>{{ $caso->deudor ?? '' }}</td>
+                    <td>{{ optional($caso->bank)?->name ?? '-' }}</td>
+                    <td>{{ optional($caso->garantia)?->name ?? '-' }}</td>
+                    <td>{{ number_format($caso->monto ?? 0, 2, '.', ',') }}</td>
+                    <td>{{ optional($caso->currency)?->code ?? '-' }}</td>
+                </tr>
             </tbody>
         </table>
 
         <div class="footer">
-          <p style="text-align:center">
-						Este correo electrónico y cualquier anexo al mismo, contiene información de caracter confidencial
-						exclusivamente dirigida a su destinatario o destinatarios. En el caso de haber recibido este correo electrónico
-						por error, se ruega la destrucción del mismo.
-					</p>
-					<p style="text-align:center">
-						Copyright © 2019 facturaelectronicacrc.com Powered By <a href="http://www.softwaresolutions.co.cr">softwaresolutions S.A</a><br />
-						Todos los derechos reservados
-					</p>
+            <p style="text-align:center">
+                Este correo electrónico y cualquier anexo al mismo, contiene información de caracter confidencial
+                exclusivamente dirigida a su destinatario o destinatarios. En el caso de haber recibido este correo
+                electrónico
+                por error, se ruega la destrucción del mismo.
+            </p>
+            <p style="text-align:center">
+                Copyright © 2019 facturaelectronicacrc.com Powered By <a
+                    href="http://www.softwaresolutions.co.cr">softwaresolutions S.A</a><br />
+                Todos los derechos reservados
+            </p>
         </div>
     </div>
 
 </body>
+
 </html>
