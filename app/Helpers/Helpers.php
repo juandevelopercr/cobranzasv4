@@ -1494,6 +1494,9 @@ class Helpers
     $bloqueadoUsd = 0;
     $bloqueadoCrc = 0;
 
+    $bloqueadoDepositoUsd = 0;
+    $bloqueadoDepositoCrc = 0;
+
     if ($sumarBloqueados) {
       $dataDebitoBloqueado = Movimiento::getDebito($cuentasId, $dateStart, $dateEnd, $status, true);
       $dataTransitoBloqueado = Movimiento::getTransito($cuentasId, $dateStart, $dateEnd, 'REVISION', true);
@@ -1501,6 +1504,9 @@ class Helpers
 
       $bloqueadoUsd = $dataDebitoBloqueado['total_debito_usd'] + $dataTransitoBloqueado['total_transito_usd'] + $dataCreditoBloqueado['total_credito_usd'];
       $bloqueadoCrc = $dataDebitoBloqueado['total_debito_crc'] + $dataTransitoBloqueado['total_transito_crc'] + $dataCreditoBloqueado['total_credito_crc'];
+
+      $bloqueadoDepositoUsd = $dataCreditoBloqueado['total_credito_usd'];
+      $bloqueadoDepositoCrc = $dataCreditoBloqueado['total_credito_crc'];
     }
 
     $saldoInicialUsd = $dataSaldo['total_saldo_usd'];
@@ -1529,6 +1535,10 @@ class Helpers
       'credito_usd' => $creditoUsd,
       'bloqueado_crc' => $bloqueadoCrc,
       'bloqueado_usd' => $bloqueadoUsd,
+
+      'bloqueado_deposito_crc' => $bloqueadoDepositoCrc,
+      'bloqueado_deposito_usd' => $bloqueadoDepositoUsd,
+
       'saldo_final_crc' => $saldoFinalCrc,
       'saldo_final_usd' => $saldoFinalUsd,
     ];

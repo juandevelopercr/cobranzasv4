@@ -29,6 +29,9 @@ class Sumary extends Component
   public $saldo_final_colones;
   public $saldo_final_dolares;
 
+  public $bloqueado_deposito_colones;
+  public $bloqueado_deposito_dolares;
+
   public $firstDate;
   public $lastDate;
 
@@ -83,6 +86,9 @@ class Sumary extends Component
 
     $this->bloqueado_colones = $data['bloqueado_crc'];
     $this->bloqueado_dolares = $data['bloqueado_usd'];
+
+    $this->bloqueado_deposito_colones = $data['bloqueado_deposito_crc'];
+    $this->bloqueado_deposito_dolares = $data['bloqueado_deposito_usd'];
 
     $this->saldo_final_colones = $data['saldo_final_crc'];
     $this->saldo_final_dolares = $data['saldo_final_usd'];
