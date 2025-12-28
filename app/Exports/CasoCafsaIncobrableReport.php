@@ -208,6 +208,21 @@ class CasoCafsaIncobrableReport extends BaseReport
     ->whereIn('casos.aestado_proceso_general_id', $listaEstados)
     ->with('fechasRemate');
 
+    // Filtro especial para rol Asignaciones
+    if (auth()->user() && auth()->user()->hasAnyRole(['ASIGNACIONES'])) {
+        $query->join(
+            'casos_productos_bancos',
+            'casos_productos_bancos.bank_id',
+            '=',
+            'casos.bank_id'
+        )
+        ->whereColumn(
+            'casos_productos_bancos.product_id',
+            'casos.product_id'
+        )
+        ->where('casos.product_id', 78);
+    }
+
     // --- FILTROS SEGURAMENTE ---
     $filters = $this->filters ?? [];
 

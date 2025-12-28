@@ -261,6 +261,27 @@ class Comprobante extends Model
       }
     }
 
+    if (!empty($filters['filter_fecha_recepcion'])) {
+      $range = explode(' to ', $filters['filter_fecha_recepcion']);
+
+      if (count($range) === 2) {
+        try {
+          $start = Carbon::createFromFormat('d-m-Y', $range[0])->startOfDay();
+          $end = Carbon::createFromFormat('d-m-Y', $range[1])->endOfDay();
+          $query->whereBetween('comprobantes.created_at', [$start, $end]);
+        } catch (\Exception $e) {
+          // Manejar error de formato de fecha
+        }
+      } else {
+        try {
+          $singleDate = Carbon::createFromFormat('d-m-Y', $filters['filter_fecha_recepcion'])->startOfDay();
+          $query->whereDate('comprobantes.created_at', $singleDate);
+        } catch (\Exception $e) {
+          // Manejar error de formato de fecha
+        }
+      }
+    }
+
     return $query;
   }
 

@@ -110,6 +110,7 @@ class ComprobanteManager extends Component
 
   protected $listeners = [
     'datatableSettingChange' => 'refresDatatable',
+    'dateRangeSelected' => 'dateRangeSelected',
   ];
 
   private $tipoDocumentoMap = [
@@ -214,6 +215,8 @@ class ComprobanteManager extends Component
         $item->tipo_documento_description = $item->tipo_documento_description;
         $item->estado_hacienda_description = $item->estado_hacienda_description;
         $item->fecha_emision_formatted = $item->fecha_emision;
+        // Formatear fecha de recepción (created_at)
+        $item->fecha_recepcion_formatted = $item->created_at;
         return $item;
       });
 
@@ -1020,6 +1023,7 @@ class ComprobanteManager extends Component
     'filter_emisor' => null,
     'filter_receptor' => null,
     'filter_fecha_emision' => null,
+    'filter_fecha_recepcion' => null,
     'filter_moneda' => null,
     'filter_total_impuesto' => null,
     'filter_total_descuento' => null,
@@ -1149,6 +1153,25 @@ class ComprobanteManager extends Component
         'orderName' => 'fecha_emision',
         'label' => __('Emmision Date'),
         'filter' => 'filter_fecha_emision',
+        'filter_type' => 'date',
+        'filter_sources' => '',
+        'filter_source_field' => '',
+        'columnType' => 'date',
+        'columnAlign' => '',
+        'columnClass' => '',
+        'function' => '',
+        'parameters' => [],
+        'sumary' => '',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'fecha_recepcion_formatted',
+        'orderName' => 'created_at',
+        'label' => __('Fecha de recepción'),
+        'filter' => 'filter_fecha_recepcion',
         'filter_type' => 'date',
         'filter_sources' => '',
         'filter_source_field' => '',
@@ -1563,5 +1586,10 @@ class ComprobanteManager extends Component
   public function updatedSearch()
   {
     $this->resetPage();
+  }
+
+  public function dateRangeSelected($id, $range)
+  {
+    $this->filters[$id] = $range;
   }
 }
