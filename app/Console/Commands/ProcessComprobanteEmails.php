@@ -185,6 +185,23 @@ class ProcessComprobanteEmails extends Command
       }
 
       if ($comprobanteData) {
+        // Validar que la fecha de emisión no tenga más de 15 días
+        if (!empty($comprobanteData['fecha_emision'])) {
+          try {
+            $fechaEmision = \Carbon\Carbon::parse($comprobanteData['fecha_emision']);
+            $hoy = \Carbon\Carbon::now();
+            if ($fechaEmision->diffInDays($hoy, false) > 15) {
+              $this->info("La fecha de emisión de la factura es mayor a los 15 días permitidos por Hacienda. No se procesará este comprobante.");
+              $message->move('RECHAZADOS');
+              return;
+            }
+          } catch (\Exception $e) {
+            $this->error("No se pudo validar la fecha de emisión del comprobante. No se procesará este comprobante.");
+            $message->move('RECHAZADOS');
+            return;
+          }
+        }
+
         // Verificar duplicado con más criterios (opcional)
         $existing = Comprobante::where('key', $comprobanteData['key'])
           ->where('status', '!=', 'ERROR')

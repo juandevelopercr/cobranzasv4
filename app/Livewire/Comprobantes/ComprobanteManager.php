@@ -397,6 +397,30 @@ class ComprobanteManager extends Component
       // Extraer datos básicos del comprobante
       $this->key = (string)($findElement('Clave') ?? '');
       $this->fecha_emision = date('Y-m-d\TH:i', strtotime((string)($findElement('FechaEmision') ?? now())));
+
+      // Validar que la fecha de emisión no tenga más de 15 días
+      $fechaEmisionRaw = (string)($findElement('FechaEmision') ?? null);
+      if ($fechaEmisionRaw) {
+        try {
+          $fechaEmisionDate = \Carbon\Carbon::parse($fechaEmisionRaw);
+          $hoy = \Carbon\Carbon::now();
+          if ($fechaEmisionDate->diffInDays($hoy, false) > 15) {
+            $this->dispatch('show-notification', [
+              'type' => 'error',
+              'message' => 'La fecha de emisión de la factura es mayor a los 15 días permitidos por Hacienda. No se puede subir esta factura.'
+            ]);
+            $this->reset('xmlFile');
+            return;
+          }
+        } catch (\Exception $e) {
+          $this->dispatch('show-notification', [
+            'type' => 'error',
+            'message' => 'No se pudo validar la fecha de emisión del XML.'
+          ]);
+          $this->reset('xmlFile');
+          return;
+        }
+      }
       $this->codigo_actividad = (string)($findElement('CodigoActividadEmisor') ?? '');
       $this->situacion_comprobante = (string)($findElement('SituacionComprobante') ?? '1');
 
