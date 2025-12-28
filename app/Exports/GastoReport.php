@@ -11,11 +11,11 @@ class GastoReport extends BaseReport
   {
     return [
       ['label' => 'ID', 'field' => 'id', 'type' => 'integer', 'align' => 'left', 'width' => 10],
-      ['label' => 'Fecha emisión comprobante', 'field' => 'fecha_emision_formateada', 'type' => 'string', 'align' => 'center', 'width' => 30],
-      ['label' => 'Fecha de recepción', 'field' => 'fecha_recepcion', 'type' => 'string', 'align' => 'center', 'width' => 30],
+      ['label' => 'Fecha emisión comprobante', 'field' => 'fecha_emision_formateada', 'type' => 'string', 'align' => 'center', 'width' => 15],
+      ['label' => 'Fecha de recepción', 'field' => 'fecha_recepcion', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Clave', 'field' => 'key', 'type' => 'string', 'align' => 'center', 'width' => 60],
-      ['label' => 'Consecutivo de factura', 'field' => 'consecutivo_factura', 'type' => 'string', 'align' => 'center', 'width' => 30],
-      ['label' => 'Consecutivo de gasto', 'field' => 'consecutivo', 'type' => 'string', 'align' => 'center', 'width' => 30],
+      ['label' => 'Consecutivo de factura', 'field' => 'consecutivo_factura', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Consecutivo de gasto', 'field' => 'consecutivo', 'type' => 'string', 'align' => 'center', 'width' => 25],
 
       ['label' => 'Receptor', 'field' => 'receptor_nombre', 'type' => 'string', 'align' => 'left', 'width' => 50],
       ['label' => 'Emisor', 'field' => 'emisor_nombre', 'type' => 'string', 'align' => 'left', 'width' => 50],
@@ -23,8 +23,8 @@ class GastoReport extends BaseReport
       ['label' => 'Identificación del emisor', 'field' => 'emisor_numero_identificacion', 'type' => 'string', 'align' => 'left', 'width' => 25],
 
 
-      ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 15],
-      ['label' => 'T.C', 'field' => 'tipo_cambio', 'type' => 'decimal', 'align' => 'right', 'width' => 15],
+      ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 10],
+      ['label' => 'T.C', 'field' => 'tipo_cambio', 'type' => 'decimal', 'align' => 'right', 'width' => 10],
       ['label' => 'Tipo de comprobante', 'field' => 'tipo_comprobante', 'type' => 'string', 'align' => 'right', 'width' => 15],
       ['label' => 'Descuento', 'field' => 'total_descuentos', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Subtotal', 'field' => 'subtotal', 'type' => 'decimal', 'align' => 'right', 'width' => 25],

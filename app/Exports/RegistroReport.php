@@ -26,13 +26,13 @@ class RegistroReport extends BaseReport implements WithEvents
     return [
       ['label' => 'ID', 'field' => 'id', 'type' => 'integer', 'align' => 'left', 'width' => 10],
       ['label' => 'Consecutivo', 'field' => 'consecutivo', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de emisión', 'field' => 'transaction_date', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Fecha de emisión', 'field' => 'transaction_date', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Cliente', 'field' => 'customer_name', 'type' => 'string', 'align' => 'left', 'width' => 45],
       ['label' => 'Deudor', 'field' => 'deudor', 'type' => 'string', 'align' => 'left', 'width' => 45],
       ['label' => 'O.C', 'field' => 'oc', 'type' => 'string', 'align' => 'left', 'width' => 40],
       ['label' => 'MIGO', 'field' => 'migo', 'type' => 'string', 'align' => 'left', 'width' => 40],
-      ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 15],
-      ['label' => 'T.C', 'field' => 'proforma_change_type', 'type' => 'decimal', 'align' => 'right', 'width' => 15],
+      ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 10],
+      ['label' => 'T.C', 'field' => 'proforma_change_type', 'type' => 'decimal', 'align' => 'right', 'width' => 10],
 
       ['label' => 'Linea de detalle', 'field' => 'detail', 'type' => 'decimal', 'align' => 'right', 'width' => 60],
       ['label' => 'Centro de Costo', 'field' => 'centroCosto', 'type' => 'decimal', 'align' => 'right', 'width' => 45],
@@ -40,15 +40,15 @@ class RegistroReport extends BaseReport implements WithEvents
       ['label' => 'Monto de Gastos', 'field' => 'gastos', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
       ['label' => 'Monto Honorarios Menos Descuento', 'field' => 'honorariosConDescuento', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
       ['label' => 'Total', 'field' => 'totalComprobante', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-      ['label' => 'Banco', 'field' => 'banco', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'Banco', 'field' => 'banco', 'type' => 'string', 'align' => 'left', 'width' => 15],
       ['label' => 'Emisor', 'field' => 'nombreEmisor', 'type' => 'string', 'align' => 'left', 'width' => 40],
       ['label' => 'Mensaje', 'field' => 'message', 'type' => 'string', 'align' => 'left', 'width' => 90],
       ['label' => 'Notas', 'field' => 'message', 'type' => 'string', 'align' => 'left', 'width' => 90],
-      ['label' => 'Fecha de Pago', 'field' => 'fecha_deposito_pago', 'type' => 'string', 'align' => 'left', 'width' => 35],
+      ['label' => 'Fecha de Pago', 'field' => 'fecha_deposito_pago', 'type' => 'string', 'align' => 'left', 'width' => 15],
       ['label' => 'Número de Depósito', 'field' => 'numero_deposito_pago', 'type' => 'string', 'align' => 'left', 'width' => 35],
-      ['label' => 'Fecha de traslado de gasto', 'field' => 'fecha_traslado_gasto', 'type' => 'string', 'align' => 'left', 'width' => 35],
+      ['label' => 'Fecha de traslado de gasto', 'field' => 'fecha_traslado_gasto', 'type' => 'string', 'align' => 'left', 'width' => 15],
       ['label' => 'Usuario', 'field' => 'usuario', 'type' => 'string', 'align' => 'left', 'width' => 35],
-      ['label' => 'Número de Proforma', 'field' => 'proforma_no', 'type' => 'string', 'align' => 'left', 'width' => 30],
+      ['label' => 'Número de Proforma', 'field' => 'proforma_no', 'type' => 'string', 'align' => 'left', 'width' => 25],
     ];
   }
 

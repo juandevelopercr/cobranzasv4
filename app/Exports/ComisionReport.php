@@ -17,18 +17,18 @@ class ComisionReport extends BaseReport
     return [
       ['label' => 'ID', 'field' => 'id', 'type' => 'integer', 'align' => 'left', 'width' => 10],
       ['label' => 'Factura', 'field' => 'consecutivo', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de emisión', 'field' => 'transaction_date', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Fecha de emisión', 'field' => 'transaction_date', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Cliente', 'field' => 'customer_name', 'type' => 'string', 'align' => 'left', 'width' => 45],
       ['label' => 'Emisor', 'field' => 'nombreEmisor', 'type' => 'string', 'align' => 'left', 'width' => 40],
       ['label' => 'Código del Emisor', 'field' => 'codigoEmisor', 'type' => 'string', 'align' => 'left', 'width' => 15],
-      ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 15],
-      ['label' => 'T.C', 'field' => 'proforma_change_type', 'type' => 'decimal', 'align' => 'right', 'width' => 15],
+      ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 10],
+      ['label' => 'T.C', 'field' => 'proforma_change_type', 'type' => 'decimal', 'align' => 'right', 'width' => 10],
       ['label' => 'Total Honorario', 'field' => 'honorariosConDescuento', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-      ['label' => 'Fecha de despósito', 'field' => 'fecha_deposito_pago', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Fecha de despósito', 'field' => 'fecha_deposito_pago', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Comisionista', 'field' => 'comisionista', 'type' => 'string', 'align' => 'left', 'width' => 25],
       ['label' => 'Porcentaje de comisión', 'field' => 'commission_percent', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
       ['label' => 'Estado', 'field' => 'estadoComision', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Fecha de Pago', 'field' => 'comision_pagada_date', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Fecha de Pago', 'field' => 'comision_pagada_date', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Total Comisión', 'field' => 'montoComision', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
     ];
   }

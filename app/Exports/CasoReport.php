@@ -23,8 +23,8 @@ class CasoReport extends BaseReport
       ['label' => 'Producto', 'field' => 'producto', 'type' => 'string', 'align' => 'left', 'width' => 30],
       ['label' => 'Proceso', 'field' => 'proceso', 'type' => 'string', 'align' => 'left', 'width' => 30],
       ['label' => 'Número de Operación', 'field' => 'pnumero_operacion1', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Fecha de asignación del caso', 'field' => 'fecha_asignacion_caso', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 15],
+      ['label' => 'Fecha de asignación del caso', 'field' => 'fecha_asignacion_caso', 'type' => 'string', 'align' => 'center', 'width' => 15],
+      ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 10],
       ['label' => 'Honorarios USD', 'field' => 'total_honorarios_usd', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
       ['label' => 'Honorarios CRC', 'field' => 'total_honorarios_crc', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
     ];
