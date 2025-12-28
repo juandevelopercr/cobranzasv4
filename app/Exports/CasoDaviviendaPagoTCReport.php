@@ -161,7 +161,7 @@ class CasoDaviviendaPagoTCReport extends BaseReport
         'user_create',
         'user_update',
         DB::raw("DATE_FORMAT(casos.pfecha_asignacion_caso, '%d-%m-%Y') AS fecha_asignacion_caso"),
-        DB::raw("MONTHNAME(casos.pfecha_asignacion_caso) AS mes"),
+        DB::raw("ELT(MONTH(casos.pfecha_asignacion_caso), 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre') AS mes"),
         DB::raw("DATE_FORMAT(casos.pfecha_ingreso_cobro_judicial, '%d-%m-%Y') AS pfecha_ingreso_cobro_judicial")
     ])
     // --- Honorarios CRC ---
