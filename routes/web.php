@@ -124,7 +124,10 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
 
   // CRUD CUSTOMERS
   Route::get('customers', [CustomerController::class, 'customer'])->name('customers.index');         // Listar usuarios
-  Route::get('suppliers', [CustomerController::class, 'supplier'])->name('suppliers.index');         // Listar usuarios
+
+  // RECEPCION DE DOCUMENTOS
+  Route::get('suppliers', [CustomerController::class, 'supplier'])->name('recepcion-de-documentos.index');         // Listar proveedores
+  Route::get('comprobantes-electronicos', [InvoiceController::class, 'comprobante'])->name('recepcion-de-documentos.comprobantes-electronicos');
 
   // CRUD PRODUCTS
   Route::get('products', [ProductController::class, 'index'])->name('products.index');         // Listar usuarios
@@ -146,7 +149,7 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
   Route::get('billing/recibo-pago', [InvoiceController::class, 'reciboPago'])->name('billing-recibo-pago');
   Route::get('billing/credit-note', [InvoiceController::class, 'creditNote'])->name('billing-credit-note');
   Route::get('billing/debit-note', [InvoiceController::class, 'debitNote'])->name('billing-debit-note');
-  Route::get('billing/comprobantes', [InvoiceController::class, 'comprobante'])->name('billing-comprobantes-electronicos');
+
 
   // CRUD PRODUCTS
   //Route::get('casos', [CasoController::class, 'scotiabank'])->name('casos.index');         // Listar usuarios

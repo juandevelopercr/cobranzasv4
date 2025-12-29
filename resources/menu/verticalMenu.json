@@ -46,15 +46,6 @@
       ]
     },
     {
-      "url": "suppliers",
-      "name": "Suppliers",
-      "icon": "menu-icon tf-icons bx bx-package",
-      "slug": "suppliers.index",
-      "permissions": [
-        "view-suppliers"
-      ]
-    },
-    {
       "url": "products",
       "name": "Products",
       "icon": "menu-icon tf-icons bx bx-cube",
@@ -172,11 +163,30 @@
           "permissions": [
             "view-notasdebitoelectronicas"
           ]
+        }
+      ]
+    },
+    {
+      "name": "Recepcion de Documentos",
+      "icon": "menu-icon tf-icons bx bx-wallet",
+      "slug": "recepcion-de-documentos",
+      "permissions": [
+        "view-suppliers",
+        "view-comprobantes"
+      ],
+      "submenu": [
+        {
+          "url": "suppliers",
+          "name": "Proveedores",
+          "slug": "recepcion-de-documentos.index",
+          "permissions": [
+            "view-suppliers"
+          ]
         },
         {
-          "url": "billing/comprobantes",
+          "url": "comprobantes-electronicos",
           "name": "Comprobantes electrónicos",
-          "slug": "billing-comprobantes-electronicos",
+          "slug": "recepcion-de-documentos.comprobantes-electronicos",
           "permissions": [
             "view-comprobantes"
           ]
