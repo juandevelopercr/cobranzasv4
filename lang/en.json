@@ -546,5 +546,11 @@
   "View-casos-coocique-incobrables": "Ver reporte de casos coocique incobrables",
   "View-casos-coocique-pago": "Ver reporte de casos coocique arreglo de pago",
   "View-casos-coocique-prescrito": "Ver reporte de casos coocique prescrito",
-  "View-casos-banco-general": "Ver reporte de casos de banco general"
+  "View-casos-banco-general": "Ver reporte de casos de banco general",
+  "View-coocique2": "Ver casos de Coocique 2",
+  "View-casos-coocique2-activos": "Ver reporte de casos coocique 2 activos",
+  "View-casos-coocique2-terminados": "Ver reporte de casos coocique 2 terminados",
+  "View-casos-coocique2-incobrables": "Ver reporte de casos coocique 2 incobrables",
+  "View-casos-coocique2-pago": "Ver reporte de casos coocique 2 arreglo de pago",
+  "View-casos-coocique2-prescrito": "Ver reporte de casos coocique 2 prescrito"
 }

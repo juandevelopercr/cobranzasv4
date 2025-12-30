@@ -39,6 +39,11 @@ class CasoController extends Controller
     return view('content.casos.coocique', []);
   }
 
+  public function coocique2()
+  {
+    return view('content.casos.coocique2', []);
+  }
+
   public function davivienda()
   {
     return view('content.casos.davivienda', []);

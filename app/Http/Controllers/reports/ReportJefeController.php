@@ -142,4 +142,30 @@ class ReportJefeController extends Controller
   {
     return view('content.reports.casos-coocique-prescrito');
   }
+
+  // Coocique2
+  public function casoCoocique2Activo()
+  {
+    return view('content.reports.casos-coocique2-activos');
+  }
+
+  public function casoCoocique2Terminado()
+  {
+    return view('content.reports.casos-coocique2-terminados');
+  }
+
+  public function casoCoocique2Incobrable()
+  {
+    return view('content.reports.casos-coocique2-incobrables');
+  }
+
+  public function casoCoocique2Pago()
+  {
+    return view('content.reports.casos-coocique2-pago');
+  }
+
+  public function casoCoocique2Prescrito()
+  {
+    return view('content.reports.casos-coocique2-prescrito');
+  }
 }

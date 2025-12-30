@@ -255,6 +255,7 @@
         "view-banco-general-casos",
         "view-terceros-casos",
         "view-coocique-casos",
+        "view-coocique2-casos",
         "view-davivienda-casos",
         "view-lafise-casos",
         "view-cafsa-casos"
@@ -306,6 +307,14 @@
           "slug": "casos-coocique",
           "permissions": [
             "view-coocique-casos"
+          ]
+        },
+        {
+          "url": "casos/coocique2",
+          "name": "Coocique 2",
+          "slug": "casos-coocique2",
+          "permissions": [
+            "view-coocique2-casos"
           ]
         },
         {
@@ -821,6 +830,59 @@
               "slug": "reports.casos-coocique-prescrito.index",
               "permissions": [
                 "view-casos-coocique-prescrito-reports"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Coocique 2",
+          "slug": "reports.casos-coocique2",
+          "permissions": [
+            "view-casos-coocique2-activos-reports",
+            "view-casos-coocique2-terminados-reports",
+            "view-casos-coocique2-incobrables-reports",
+            "view-casos-coocique2-pago-reports",
+            "view-casos-coocique2-prescrito-reports"
+          ],
+          "submenu": [
+            {
+              "url": "reports/casos-coocique2-activos",
+              "name": "Casos Activos",
+              "slug": "reports.casos-coocique2-activos.index",
+              "permissions": [
+                "view-casos-coocique2-activos-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-coocique2-terminados",
+              "name": "Casos Terminados",
+              "slug": "reports.casos-coocique2-terminados.index",
+              "permissions": [
+                "view-casos-coocique2-terminados-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-coocique2-incobrables",
+              "name": "Casos Incobrables",
+              "slug": "reports.casos-coocique2-incobrables.index",
+              "permissions": [
+                "view-casos-coocique2-incobrables-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-coocique2-pago",
+              "name": "Casos Arreglo Pago",
+              "slug": "reports.casos-coocique2-pago.index",
+              "permissions": [
+                "view-casos-coocique2-pago-reports"
+              ]
+            },
+            {
+              "url": "reports/casos-coocique2-prescrito",
+              "name": "Casos Prescritos",
+              "slug": "reports.casos-coocique2-prescrito.index",
+              "permissions": [
+                "view-casos-coocique2-prescrito-reports"
               ]
             }
           ]

@@ -190,6 +190,7 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
   Route::get('casos/banco-general', [CasoController::class, 'bancoGeneral'])->name('casos-banco-general');
   Route::get('casos/terceros', [CasoController::class, 'terceros'])->name('casos-terceros');
   Route::get('casos/coocique', [CasoController::class, 'coocique'])->name('casos-coocique');
+  Route::get('casos/coocique2', [CasoController::class, 'coocique2'])->name('casos-coocique2');
   Route::get('casos/davivienda', [CasoController::class, 'davivienda'])->name('casos-davivienda');
   Route::get('casos/lafise', [CasoController::class, 'lafise'])->name('casos-lafise');
   Route::get('casos/cafsa', [CasoController::class, 'cafsa'])->name('casos-cafsa');
@@ -428,6 +429,22 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
 
     Route::get('/casos-coocique-prescrito', [ReportJefeController::class, 'casoCoociquePrescrito'])
         ->name('casos-coocique-prescrito.index');
+
+    // Coocique2
+    Route::get('/casos-coocique2-activos', [ReportJefeController::class, 'casoCoocique2Activo'])
+        ->name('casos-coocique2-activos.index');
+
+    Route::get('/casos-coocique2-terminados', [ReportJefeController::class, 'casoCoocique2Terminado'])
+        ->name('casos-coocique2-terminados.index');
+
+    Route::get('/casos-coocique2-incobrables', [ReportJefeController::class, 'casoCoocique2Incobrable'])
+        ->name('casos-coocique2-incobrables.index');
+
+    Route::get('/casos-coocique2-pago', [ReportJefeController::class, 'casoCoocique2Pago'])
+        ->name('casos-coocique2-pago.index');
+
+    Route::get('/casos-coocique2-prescrito', [ReportJefeController::class, 'casoCoocique2Prescrito'])
+        ->name('casos-coocique2-prescrito.index');
   });
 });
 //Route::get('/usuarios', [UserCrud::class, 'index'])->name('usuarios.index');

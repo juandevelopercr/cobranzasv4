@@ -4,7 +4,7 @@
 
 @extends('layouts/layoutMaster')
 
-@section('title', __('Reporte de Casos de Coocique 2 Activos'))
+@section('title', __('Reporte de Casos de Coocique 2 Arreglo de Pago'))
 
 <!-- Vendor Styles -->
 @section('vendor-style')
@@ -25,7 +25,7 @@
         <div class="card-datatable text-nowrap">
             <div class="dataTables_wrapper dt-bootstrap5 no-footer">
 
-                <livewire:reports.casoCoocique2Activo />
+                <livewire:reports.casoCoocique2Pago />
 
             </div>
         </div>
