@@ -72,14 +72,14 @@ class AntiguedadReport extends BaseReport
           // Total ajustado
           DB::raw("SUM(($conversionCase) * COALESCE(cc_sum.percent,100)/100) AS totalComprobanteAjustado"),
 
-          // Saldo pendiente (total - pagos)
-          DB::raw("SUM((($conversionCase) * COALESCE(cc_sum.percent,100)/100 - $pagosCase)) AS saldoPendiente"),
+          // Saldo pendiente (total - pagos) - ambos ajustados por centro de costo
+          DB::raw("SUM((($conversionCase) * COALESCE(cc_sum.percent,100)/100 - ($pagosCase * COALESCE(cc_sum.percent,100)/100))) AS saldoPendiente"),
 
           // Rangos de vencimiento
           DB::raw("
               SUM(
                   CASE WHEN DATEDIFF(NOW(), transactions.transaction_date) - transactions.pay_term_number <= 0
-                      THEN (($conversionCase) * COALESCE(cc_sum.percent,100)/100 - $pagosCase)
+                      THEN (($conversionCase) * COALESCE(cc_sum.percent,100)/100 - ($pagosCase * COALESCE(cc_sum.percent,100)/100))
                       ELSE 0
                   END
               ) AS sin_vencer
@@ -87,7 +87,7 @@ class AntiguedadReport extends BaseReport
           DB::raw("
               SUM(
                   CASE WHEN DATEDIFF(NOW(), transactions.transaction_date) - transactions.pay_term_number BETWEEN 1 AND 30
-                      THEN (($conversionCase) * COALESCE(cc_sum.percent,100)/100 - $pagosCase)
+                      THEN (($conversionCase) * COALESCE(cc_sum.percent,100)/100 - ($pagosCase * COALESCE(cc_sum.percent,100)/100))
                       ELSE 0
                   END
               ) AS vencido_1_30
@@ -95,7 +95,7 @@ class AntiguedadReport extends BaseReport
           DB::raw("
               SUM(
                   CASE WHEN DATEDIFF(NOW(), transactions.transaction_date) - transactions.pay_term_number BETWEEN 31 AND 45
-                      THEN (($conversionCase) * COALESCE(cc_sum.percent,100)/100 - $pagosCase)
+                      THEN (($conversionCase) * COALESCE(cc_sum.percent,100)/100 - ($pagosCase * COALESCE(cc_sum.percent,100)/100))
                       ELSE 0
                   END
               ) AS vencido_31_45
@@ -103,7 +103,7 @@ class AntiguedadReport extends BaseReport
           DB::raw("
               SUM(
                   CASE WHEN DATEDIFF(NOW(), transactions.transaction_date) - transactions.pay_term_number BETWEEN 46 AND 60
-                      THEN (($conversionCase) * COALESCE(cc_sum.percent,100)/100 - $pagosCase)
+                      THEN (($conversionCase) * COALESCE(cc_sum.percent,100)/100 - ($pagosCase * COALESCE(cc_sum.percent,100)/100))
                       ELSE 0
                   END
               ) AS vencido_46_60
@@ -111,7 +111,7 @@ class AntiguedadReport extends BaseReport
           DB::raw("
               SUM(
                   CASE WHEN DATEDIFF(NOW(), transactions.transaction_date) - transactions.pay_term_number BETWEEN 61 AND 90
-                      THEN (($conversionCase) * COALESCE(cc_sum.percent,100)/100 - $pagosCase)
+                      THEN (($conversionCase) * COALESCE(cc_sum.percent,100)/100 - ($pagosCase * COALESCE(cc_sum.percent,100)/100))
                       ELSE 0
                   END
               ) AS vencido_61_90
@@ -119,7 +119,7 @@ class AntiguedadReport extends BaseReport
           DB::raw("
               SUM(
                   CASE WHEN DATEDIFF(NOW(), transactions.transaction_date) - transactions.pay_term_number BETWEEN 91 AND 120
-                      THEN (($conversionCase) * COALESCE(cc_sum.percent,100)/100 - $pagosCase)
+                      THEN (($conversionCase) * COALESCE(cc_sum.percent,100)/100 - ($pagosCase * COALESCE(cc_sum.percent,100)/100))
                       ELSE 0
                   END
               ) AS vencido_91_120
@@ -127,7 +127,7 @@ class AntiguedadReport extends BaseReport
           DB::raw("
               SUM(
                   CASE WHEN DATEDIFF(NOW(), transactions.transaction_date) - transactions.pay_term_number > 120
-                      THEN (($conversionCase) * COALESCE(cc_sum.percent,100)/100 - $pagosCase)
+                      THEN (($conversionCase) * COALESCE(cc_sum.percent,100)/100 - ($pagosCase * COALESCE(cc_sum.percent,100)/100))
                       ELSE 0
                   END
               ) AS vencido_121_mas
@@ -135,6 +135,12 @@ class AntiguedadReport extends BaseReport
       ])
       ->join('contacts', 'transactions.contact_id', '=', 'contacts.id')
       ->leftJoin(DB::raw($ccSubQuery), 'cc_sum.transaction_id', '=', 'transactions.id')
+      ->whereExists(function ($q) {
+          $q->select(DB::raw(1))
+            ->from('transactions_commissions')
+            ->whereColumn('transactions_commissions.transaction_id', 'transactions.id')
+            ->whereNotIn('transactions_commissions.centro_costo_id', [1,12,14,15,16,17]);
+      })
       ->whereIn('transactions.proforma_status', ['FACTURADA'])
       ->whereIn('transactions.document_type', ['PR','FE','TE'])
       ->whereNull('transactions.numero_deposito_pago')

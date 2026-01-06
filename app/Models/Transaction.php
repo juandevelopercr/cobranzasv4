@@ -431,19 +431,72 @@ class Transaction extends Model implements HasMedia
           LEFT JOIN centro_costos cc ON tc.centro_costo_id = cc.id
           WHERE tc.transaction_id = transactions.id
       ) as centros_costos_html"),
+
+      // Calcular el porcentaje del centro de costo filtrado (o 100% si no hay filtro)
+      DB::raw("COALESCE((
+          SELECT SUM(tc.percent)
+          FROM transactions_commissions tc
+          WHERE tc.transaction_id = transactions.id
+          " . (!empty($filters['filter_centro_costo']) ?
+              "AND tc.centro_costo_id = " . intval($filters['filter_centro_costo']) :
+              "") . "
+      ), 100) as centro_costo_percent"),
+
+      // Total ajustado por centro de costo
       DB::raw("(
-            SELECT COALESCE(SUM(tp.total_medio_pago), 0)
-            FROM transactions_payments tp
-            WHERE tp.transaction_id = transactions.id
-        ) as payment"),
+          COALESCE(transactions.totalComprobante, 0) *
+          COALESCE((
+              SELECT SUM(tc.percent)
+              FROM transactions_commissions tc
+              WHERE tc.transaction_id = transactions.id
+              " . (!empty($filters['filter_centro_costo']) ?
+                  "AND tc.centro_costo_id = " . intval($filters['filter_centro_costo']) :
+                  "") . "
+          ), 100) / 100
+      ) as totalComprobante_ajustado"),
+
+      // Pago ajustado por centro de costo
+      DB::raw("(
+          COALESCE((
+              SELECT SUM(tp.total_medio_pago)
+              FROM transactions_payments tp
+              WHERE tp.transaction_id = transactions.id
+          ), 0) *
+          COALESCE((
+              SELECT SUM(tc.percent)
+              FROM transactions_commissions tc
+              WHERE tc.transaction_id = transactions.id
+              " . (!empty($filters['filter_centro_costo']) ?
+                  "AND tc.centro_costo_id = " . intval($filters['filter_centro_costo']) :
+                  "") . "
+          ), 100) / 100
+      ) as payment"),
+
+      // Saldo pendiente ajustado por centro de costo
       DB::raw("ABS(
-            COALESCE(transactions.totalComprobante, 0) -
-            COALESCE((
-                SELECT SUM(tp.total_medio_pago)
-                FROM transactions_payments tp
-                WHERE tp.transaction_id = transactions.id
-            ), 0)
-        ) as pending_payment"),
+          (COALESCE(transactions.totalComprobante, 0) *
+           COALESCE((
+               SELECT SUM(tc.percent)
+               FROM transactions_commissions tc
+               WHERE tc.transaction_id = transactions.id
+               " . (!empty($filters['filter_centro_costo']) ?
+                   "AND tc.centro_costo_id = " . intval($filters['filter_centro_costo']) :
+                   "") . "
+           ), 100) / 100) -
+          (COALESCE((
+              SELECT SUM(tp.total_medio_pago)
+              FROM transactions_payments tp
+              WHERE tp.transaction_id = transactions.id
+          ), 0) *
+           COALESCE((
+               SELECT SUM(tc.percent)
+               FROM transactions_commissions tc
+               WHERE tc.transaction_id = transactions.id
+               " . (!empty($filters['filter_centro_costo']) ?
+                   "AND tc.centro_costo_id = " . intval($filters['filter_centro_costo']) :
+                   "") . "
+           ), 100) / 100)
+      ) as pending_payment"),
       DB::raw('DATEDIFF(NOW(), transactions.transaction_date) as dias_trascurridos'),
       DB::raw('(DATEDIFF(NOW(), transactions.transaction_date) - COALESCE(transactions.pay_term_number, 0)) as dias_vencidos'),
       'totalHonorarios',
