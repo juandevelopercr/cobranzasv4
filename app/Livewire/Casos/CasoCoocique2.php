@@ -1718,7 +1718,7 @@ class CasoCoocique2 extends CasoManager
     $headerRow = $sheet[0];
 
     // Obtener columnas según banco
-    $columns = ImportColumns::getColumnasPorBanco(Bank::COOCIQUE2);
+    $columns = ImportColumns::getColumnasPorBanco(Bank::COOCIQUE);
 
     // Claves esperadas
     $expectedHeaders = array_keys($columns);
