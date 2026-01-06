@@ -566,7 +566,7 @@
         },
         {
           "url": "reports/casos-scotiabank",
-          "name": "Casos Scotiabank",
+          "name": "Casos Davibank",
           "slug": "reports.casos-scotiabank.index",
           "permissions": [
             "view-casos-scotiabank-reports"
@@ -574,7 +574,7 @@
         },
         {
           "url": "reports/casos-scotiabank-bch",
-          "name": "Casos Scotiabank BCH",
+          "name": "Casos Davibank BCH",
           "slug": "reports.casos-scotiabank-bch.index",
           "permissions": [
             "view-casos-scotiabank-bch-reports"

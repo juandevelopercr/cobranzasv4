@@ -106,7 +106,7 @@ class CasoCoocique2 extends CasoManager
 
     $this->juzgados = CasoJuzgado::where('activo', 1)->orderBy('nombre', 'ASC')->get();
 
-    $this->expectedColumns = ImportColumns::getColumnasPorBanco(Bank::COOCIQUE2);
+    $this->expectedColumns = ImportColumns::getColumnasPorBanco(Bank::COOCIQUE);
 
     $this->notificadores = CasoNotificador::where('activo', 1)->orderBy('nombre', 'ASC')->get();
 
