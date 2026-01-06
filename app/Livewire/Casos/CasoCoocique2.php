@@ -1911,8 +1911,8 @@ class CasoCoocique2 extends CasoManager
 
   public function descargarPlantilla()
   {
-      $fileName = "plantilla_casos_coocique2.xlsx";
-      return Excel::download(new CasosTemplateExport(Bank::COOCIQUE2), $fileName);
+      $fileName = "plantilla_casos_coocique.xlsx";
+      return Excel::download(new CasosTemplateExport(Bank::COOCIQUE), $fileName);
   }
 
 }
