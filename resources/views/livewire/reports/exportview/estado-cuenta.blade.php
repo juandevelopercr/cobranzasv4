@@ -124,22 +124,24 @@
                 if ($filters['filter_currency'] == 1) {
                     // Mostrar en dólares
                     $totalesFacturaCRC += $factura->totalComprobante;
-                    $totalesAbonoCRC += $factura->payments->sum('amount');
+                    $totalesAbonoCRC += $factura->payments->sum('total_medio_pago');
                 } else {
                     // Convertir a colones
                     $totalesFacturaCRC += $factura->totalComprobante * ($factura->proforma_change_type ?: 1);
-                    $totalesAbonoCRC += $factura->payments->sum('amount') * ($factura->proforma_change_type ?: 1);
+                    $totalesAbonoCRC +=
+                        $factura->payments->sum('total_medio_pago') * ($factura->proforma_change_type ?: 1);
                 }
             } else {
                 // Factura en COLONES (currency_id == 16)
                 if ($filters['filter_currency'] == 16) {
                     // Mostrar en colones
                     $totalesFacturaCRC += $factura->totalComprobante;
-                    $totalesAbonoCRC += $factura->payments->sum('amount');
+                    $totalesAbonoCRC += $factura->payments->sum('total_medio_pago');
                 } else {
                     // Convertir a dólares
                     $totalesFacturaCRC += $factura->totalComprobante / ($factura->proforma_change_type ?: 1);
-                    $totalesAbonoCRC += $factura->payments->sum('amount') / ($factura->proforma_change_type ?: 1);
+                    $totalesAbonoCRC +=
+                        $factura->payments->sum('total_medio_pago') / ($factura->proforma_change_type ?: 1);
                 }
             }
         @endphp
