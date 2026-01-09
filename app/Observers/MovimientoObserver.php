@@ -56,8 +56,26 @@ class MovimientoObserver
     }
 
     // ✅ Si cambió algo relevante, marcar que debe recalcular
-    if ($montoNuevoTotal !== $montoAnteriorTotal || $clonando == 1) {
+    // Campos que afectan el saldo
+    $statusChanged = $original['status'] !== $movimiento->status;
+    $fechaChanged = $original['fecha'] !== $movimiento->fecha;
+    $cuentaChanged = $original['cuenta_id'] !== $movimiento->cuenta_id;
+    $bloqueoChanged = ($original['bloqueo_fondos'] ?? 0) != ($movimiento->bloqueo_fondos ?? 0);
+    $tipoChanged = $original['tipo_movimiento'] !== $movimiento->tipo_movimiento;
+    $montoChanged = $montoNuevoTotal !== $montoAnteriorTotal;
+
+    if ($montoChanged || $clonando == 1 || $statusChanged || $fechaChanged || $cuentaChanged || $bloqueoChanged || $tipoChanged) {
       $movimiento->recalcular_saldo = true;
+    }
+
+    // Manejo de cambios de contexto (Cuenta o Fecha) para recalcular el contexto anterior/antiguo
+    if ($cuentaChanged) {
+        $movimiento->_recalc_old_cuenta_id = $original['cuenta_id'];
+        $movimiento->_recalc_old_fecha = $original['fecha'];
+    }
+
+    if ($fechaChanged) {
+        $movimiento->_recalc_old_fecha_same_account = $original['fecha'];
     }
     /*
     Log::info('Observer -> updating()', [
@@ -75,7 +93,24 @@ class MovimientoObserver
   public function saved(Movimiento $movimiento): void
   {
     if ($movimiento->recalcular_saldo) {
-      Helpers::recalcularBalancesMensuales($movimiento->cuenta_id, $movimiento->fecha);
+      // 1. Si cambió la cuenta, recalcular el saldo de la cuenta ANTERIOR
+      if (isset($movimiento->_recalc_old_cuenta_id)) {
+        Helpers::recalcularBalancesMensuales(
+            $movimiento->_recalc_old_cuenta_id,
+            $movimiento->_recalc_old_fecha
+        );
+      }
+
+      // 2. Determinar la fecha desde la cual recalcular la cuenta ACTUAL
+      // Si la fecha cambió (y es la misma cuenta), debemos recalcular desde la fecha más antigua (la original o la nueva)
+      $fechaRecalculo = $movimiento->fecha;
+      if (isset($movimiento->_recalc_old_fecha_same_account)) {
+          if ($movimiento->_recalc_old_fecha_same_account < $fechaRecalculo) {
+              $fechaRecalculo = $movimiento->_recalc_old_fecha_same_account;
+          }
+      }
+
+      Helpers::recalcularBalancesMensuales($movimiento->cuenta_id, $fechaRecalculo);
 
       // ✅ Emite evento para Livewire
       $componentId = $movimiento->livewire_component_id ?? null;
