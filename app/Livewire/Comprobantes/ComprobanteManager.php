@@ -406,13 +406,24 @@ class ComprobanteManager extends Component
       if ($fechaEmisionRaw) {
         try {
           $fechaEmisionDate = \Carbon\Carbon::parse($fechaEmisionRaw);
-          $fechaLimite = $fechaEmisionDate->copy()->startOfMonth()->addMonth()->day(8)->endOfDay();
+          $fechaLimite = $fechaEmisionDate->copy()->startOfMonth()->addMonth();
+          $businessDays = 0;
+          while ($businessDays < 8) {
+            if ($fechaLimite->isWeekday()) {
+              $businessDays++;
+            }
+            if ($businessDays < 8) {
+              $fechaLimite->addDay();
+            }
+          }
+          $fechaLimite->endOfDay();
+
           $hoy = \Carbon\Carbon::now();
 
           if ($hoy->gt($fechaLimite)) {
             $this->dispatch('show-notification', [
               'type' => 'error',
-              'message' => 'La fecha de emisión de la factura ha expirado. (Válido hasta el 8 del mes siguiente a la emisión).'
+              'message' => 'La fecha de emisión de la factura ha expirado. (Válido hasta 8 días hábiles del mes siguiente a la emisión).'
             ]);
             $this->reset('xmlFile');
             return;

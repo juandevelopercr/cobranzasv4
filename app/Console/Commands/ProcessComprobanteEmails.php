@@ -189,11 +189,23 @@ class ProcessComprobanteEmails extends Command
         if (!empty($comprobanteData['fecha_emision'])) {
           try {
             $fechaEmision = \Carbon\Carbon::parse($comprobanteData['fecha_emision']);
-            $fechaLimite = $fechaEmision->copy()->startOfMonth()->addMonth()->day(8)->endOfDay();
+
+            $fechaLimite = $fechaEmision->copy()->startOfMonth()->addMonth();
+            $businessDays = 0;
+            while ($businessDays < 8) {
+              if ($fechaLimite->isWeekday()) {
+                $businessDays++;
+              }
+              if ($businessDays < 8) {
+                $fechaLimite->addDay();
+              }
+            }
+            $fechaLimite->endOfDay();
+
             $hoy = \Carbon\Carbon::now();
 
             if ($hoy->gt($fechaLimite)) {
-              $this->info("La fecha de emisión de la factura ha expirado. (Válido hasta el 8 del mes siguiente a la emisión). No se procesará este comprobante.");
+              $this->info("La fecha de emisión de la factura ha expirado. (Válido hasta 8 días hábiles del mes siguiente a la emisión). No se procesará este comprobante.");
               $message->move('RECHAZADOS');
               return;
             }
