@@ -22,6 +22,12 @@ class Movimiento extends Model implements HasMedia
   use InteractsWithMedia;
   use LogsActivity;
 
+  // Propiedades temporales para manejo de estado en Observers (no son columnas de BD)
+  public $_recalc_old_cuenta_id = null;
+  public $_recalc_old_fecha = null;
+  public $_recalc_old_fecha_same_account = null;
+  public $livewire_component_id = null; // También parece ser temporal
+
   const TYPE_DEPOSITO = 'DEPOSITO';
   const TYPE_ELECTRONICO = 'ELECTRONICO';
   const TYPE_CHEQUE = 'CHEQUE';
