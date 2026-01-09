@@ -401,16 +401,18 @@ class ComprobanteManager extends Component
       $this->key = (string)($findElement('Clave') ?? '');
       $this->fecha_emision = date('Y-m-d\TH:i', strtotime((string)($findElement('FechaEmision') ?? now())));
 
-      // Validar que la fecha de emisión no tenga más de 15 días
+      // Validar que la fecha de emisión no tenga más de 8 días del mes siguiente
       $fechaEmisionRaw = (string)($findElement('FechaEmision') ?? null);
       if ($fechaEmisionRaw) {
         try {
           $fechaEmisionDate = \Carbon\Carbon::parse($fechaEmisionRaw);
+          $fechaLimite = $fechaEmisionDate->copy()->startOfMonth()->addMonth()->day(8)->endOfDay();
           $hoy = \Carbon\Carbon::now();
-          if ($fechaEmisionDate->diffInDays($hoy, false) > 15) {
+
+          if ($hoy->gt($fechaLimite)) {
             $this->dispatch('show-notification', [
               'type' => 'error',
-              'message' => 'La fecha de emisión de la factura es mayor a los 15 días permitidos por Hacienda. No se puede subir esta factura.'
+              'message' => 'La fecha de emisión de la factura ha expirado. (Válido hasta el 8 del mes siguiente a la emisión).'
             ]);
             $this->reset('xmlFile');
             return;
