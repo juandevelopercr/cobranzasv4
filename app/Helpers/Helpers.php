@@ -2220,7 +2220,7 @@ class Helpers
             $total_medio_pago_payments_CRC += $payment_crc;
 
             // USD
-            if ($transaction->moneda_id == Currency::DOLARES) {
+            if ($transaction->currency_id == Currency::DOLARES) {
               $payment_usd = $payment->total_medio_pago;
             } else {
               $payment_usd = $payment->total_medio_pago / $transaction->proforma_change_type;
