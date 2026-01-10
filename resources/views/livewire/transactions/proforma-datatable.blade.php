@@ -39,6 +39,8 @@
               </div>
               <hr class="d-none d-sm-block d-lg-none">
             </div>
+<?php
+/*
             <div class="col-sm-6 col-lg-3">
               <div class="d-flex justify-content-between align-items-center border-end pb-4 pb-sm-0 card-widget-3">
                 <div>
@@ -71,6 +73,8 @@
                 </div>
               </div>
             </div>
+*/
+?>
           </div>
         </div>
       </div>
