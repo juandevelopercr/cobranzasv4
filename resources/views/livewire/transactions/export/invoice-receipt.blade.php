@@ -609,10 +609,17 @@
                         </td>
                       </tr>
                       <tr class="tm_gray_bg">
-                        <td class="tm_width_3 tm_primary_color">IVA</td>
-                        <td class="tm_width_3 tm_primary_color tm_text_right">
+                        <td class="tm_width_3 tm_primary_color tm_bold">IVA</td>
+                        <td class="tm_width_3 tm_primary_color tm_bold tm_text_right">
                           {{ $transaction->currency->symbol }}
                           {{ Helper::formatDecimal($transaction->totalTax) }}
+                        </td>
+                      </tr>
+                      <tr class="tm_gray_bg">
+                        <td class="tm_width_3 tm_primary_color tm_bold">Exonerado</td>
+                        <td class="tm_width_3 tm_primary_color tm_bold tm_text_right">
+                          {{ $transaction->currency->symbol }}
+                          {{ Helper::formatDecimal($transaction->totalExonerado ?? 0) }}
                         </td>
                       </tr>
                       <tr class="tm_accent_bg">

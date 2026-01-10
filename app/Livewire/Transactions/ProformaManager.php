@@ -1426,6 +1426,23 @@ class ProformaManager extends TransactionManager {
           $record->proforma_status = Transaction::SOLICITADA;
           $record->fecha_solicitud_factura = \Carbon\Carbon::now();
 
+          // Iterar sobre las líneas para buscar exoneraciones y agregarlas a las notas
+          $exonerationNotes = [];
+          foreach ($record->lines as $line) {
+            if ($line->porcentaje_exoneracion > 0) {
+              // Formatear la fecha
+              $fechaExoneracion = \Carbon\Carbon::parse($line->fecha_emision_doc)->format('d-m-Y');
+              $montoExonerado = number_format($line->monto_impuesto_exonerado, 2, '.', ',');
+
+              $note = "Se exonera: {$line->detail} con el documento No {$line->numero_documento_exoneracion} de la institución o entidad {$line->nombre_institucion_exoneracion} fecha exoneración {$fechaExoneracion} Monto exonerado {$montoExonerado}";
+              $exonerationNotes[] = $note;
+            }
+          }
+
+          if (!empty($exonerationNotes)) {
+            $record->notes .= "\n" . implode("\n", $exonerationNotes);
+          }
+
           if ($record->save()) {
             $this->dispatch('show-notification', [
               'type' => 'success',
