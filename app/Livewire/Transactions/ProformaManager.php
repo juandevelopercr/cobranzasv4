@@ -1662,6 +1662,16 @@ class ProformaManager extends TransactionManager {
   }
 
   public function resetControls() {
+    // Fix: Limpiar el contexto de la sesión para evitar que se carguen líneas de transacciones pasadas
+    session()->forget('transaction_context');
+
+    // Fix: Emitir evento para limpiar inmediatamente el componente hijo (TransactionLineManager)
+    $this->dispatch('updateTransactionContext', [
+        'transaction_id'    => null,
+        'department_id'     => null,
+        'bank_id'           => null,
+        'type_notarial_act' => null,
+    ]);
     $this->reset(
       //'business_id',
       'location_id',
