@@ -196,7 +196,7 @@ class TransactionLineManager extends BaseComponent {
     $this->transaction_id = $data['transaction_id'];
     $this->bank_id = $data['bank_id'];
     $this->type_notarial_act = $data['type_notarial_act'];
-    $this->tipo_facturacion = $data['tipo_facturacion'];
+    $this->tipo_facturacion = $data['tipo_facturacion'] ?? null;
     Log::info('TransactionLineManager handleUpdateContext', ['data' => $data]);
     // Aquí puedes recargar los datos si es necesario
 

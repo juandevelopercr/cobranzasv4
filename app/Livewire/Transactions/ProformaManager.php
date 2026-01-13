@@ -1671,6 +1671,7 @@ class ProformaManager extends TransactionManager {
         'department_id'     => null,
         'bank_id'           => null,
         'type_notarial_act' => null,
+        'tipo_facturacion'  => null,
     ]);
     $this->reset(
       //'business_id',
