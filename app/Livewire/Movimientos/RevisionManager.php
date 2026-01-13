@@ -298,6 +298,9 @@ class RevisionManager extends BaseComponent
 
       'status.required' => 'El estado es obligatorio.',
       'status.in' => 'El estado debe ser REVISION, ANULADO, REGISTRADO o RECHAZADO.',
+
+      'numero.required' => 'El número es obligatorio.',
+      'numero.string' => 'El número debe ser texto.',
     ];
   }
 
