@@ -49,42 +49,38 @@ class MovimientoManager extends BaseComponent
   #[Url()]
   public $perPage = 10;
 
-  public string $action = 'list';
+  public $action = 'list';
   public $recordId = '';
 
-  // Listados
-  public $cuentas;
-  public $currencies;
-  public $types;
-  public $liststatus;
+  // Listados (Ahora como Computed para evitar errores de hidratación)
   public $listActives;
 
-  public int $cuenta_id;
-  public int $moneda_id;
-  public ?string $tipo_movimiento = null;
-  public ?string $lugar = null;
-  public ?string $fecha = null;
-  public $monto = 0;
-  public string $monto_letras = '';
+  public $cuenta_id = null;
+  public $moneda_id = null;
+  public $tipo_movimiento = null;
+  public $lugar = null;
+  public $fecha = null;
+  public $monto = '0.00';
+  public $monto_letras = '';
 
-  public bool $tiene_retencion = false;
-  public $saldo_cancelar = 0;
-  public $diferencia = 0;
-  public ?string $descripcion = null;
-  public ?string $numero = null;
-  public ?string $beneficiario = null;
+  public $tiene_retencion = false;
+  public $saldo_cancelar = '0.00';
+  public $diferencia = '0.00';
+  public $descripcion = null;
+  public $numero = null;
+  public $beneficiario = null;
 
-  public bool $comprobante_pendiente = false;
-  public bool $bloqueo_fondos = false;
-  public $impuesto = 0;
-  public $total_general = 0;
+  public $comprobante_pendiente = false;
+  public $bloqueo_fondos = false;
+  public $impuesto = '0.00';
+  public $total_general = '0.00';
 
-  public string $status;
-  public bool $listo_para_aprobar = false;
-  public ?string $comentarios = null;
-  public ?string $concepto = null;
-  public ?string $email_destinatario = null;
-  public bool $clonando = false;
+  public $status = '';
+  public $listo_para_aprobar = false;
+  public $comentarios = null;
+  public $concepto = null;
+  public $email_destinatario = null;
+  public $clonando = false;
   public $recalcular_saldo = false;
 
   public $closeForm = false;
@@ -93,7 +89,7 @@ class MovimientoManager extends BaseComponent
   public $defaultColumns;
 
   public $filterFecha;
-  public array $filterCuentas = [];
+  public $filterCuentas = [];
 
   public $saldo_final_crc;
   public $saldo_final_usd;
@@ -106,7 +102,7 @@ class MovimientoManager extends BaseComponent
 
   public $centrosCostosValidos;
 
-  public array $expandedRows = [];
+  public $expandedRows = [];
 
   protected function getModelClass(): string
   {
@@ -115,8 +111,6 @@ class MovimientoManager extends BaseComponent
 
   public function mount($type)
   {
-    $this->cuentas = Cuenta::orderBy('nombre_cuenta', 'ASC')->get();
-    $this->currencies = Currency::orderBy('code', 'ASC')->get();
     $this->listActives = [['id' => 1, 'name' => 'Si'], ['id' => 0, 'name' => 'No']];
     $this->saldo_final_crc = 0;
     $this->saldo_final_usd = 0;
@@ -126,57 +120,16 @@ class MovimientoManager extends BaseComponent
     $this->movementType = $type;
 
     if ($this->movementType == 'MOVIMIENTOS') {
-
-      $this->types = [
-        [
-          'id'  => Movimiento::TYPE_DEPOSITO,
-          'name' => Movimiento::TYPE_DEPOSITO
-        ],
-        [
-          'id'  => Movimiento::TYPE_ELECTRONICO,
-          'name' => Movimiento::TYPE_ELECTRONICO
-        ],
-        [
-          'id'  => Movimiento::TYPE_CHEQUE,
-          'name' => Movimiento::TYPE_CHEQUE
-        ]
-      ];
-
       $this->defaultStatus = ['REGISTRADO', 'ANULADO'];
-      $this->liststatus = [
-        [
-          'id'  => Movimiento::STATUS_REGISTRADO,
-          'name' => Movimiento::STATUS_REGISTRADO
-        ],
-        [
-          'id'  => Movimiento::STATUS_ANULADO,
-          'name' => Movimiento::STATUS_ANULADO
-        ]
-      ];
     } else {
-
-      $this->types = [
-        [
-          'id'  => Movimiento::TYPE_CHEQUE,
-          'name' => Movimiento::TYPE_CHEQUE
-        ]
-      ];
-
       $this->defaultStatus = ['REVISION', 'RECHAZADO'];
-      $this->liststatus = [
-        [
-          'id'  => Movimiento::STATUS_REVISION,
-          'name' => Movimiento::STATUS_REVISION
-        ],
-        [
-          'id'  => Movimiento::STATUS_RECHAZADO,
-          'name' => Movimiento::STATUS_RECHAZADO
-        ],
-      ];
     }
-    $this->filters = session('datatable_filters.movimientos', $this->filters);
+    $savedFilters = session('datatable_filters.movimientos');
+    if (is_array($savedFilters)) {
+        $this->filters = array_merge($this->filters, $savedFilters);
+    }
     if (isset($this->filters['filterCuentas']))
-      $this->filterCuentas = $this->filters['filterCuentas'];
+      $this->filterCuentas = (array) $this->filters['filterCuentas'];
 
     if (isset($this->filters['filterFecha']))
       $this->filterFecha = $this->filters['filterFecha'];
@@ -204,19 +157,19 @@ class MovimientoManager extends BaseComponent
 
   public function updatedTieneRetencion($value)
   {
-    $this->tiene_retencion = (int) $value;
+    $this->tiene_retencion = (bool) $value;
 
-    $this->saldo_cancelar = Helpers::getSaldoCancelar($this->recordId, $this->tiene_retencion);
+    $this->saldo_cancelar = number_format((float)Helpers::getSaldoCancelar($this->recordId, (bool)$this->tiene_retencion), 2, '.', '');
   }
 
   public function updatedBloqueoFondos($value)
   {
-    $this->bloqueo_fondos = (int) $value;
+    $this->bloqueo_fondos = (bool) $value;
   }
 
   public function updatedComprobantePendiente($value)
   {
-    $this->comprobante_pendiente = (int) $value;
+    $this->comprobante_pendiente = (bool) $value;
   }
 
   // Escuha el evento del componente customerModal
@@ -483,11 +436,12 @@ class MovimientoManager extends BaseComponent
       'centros_costo' => $this->centros_costo ?? null,
       'recordId' => $this->recordId
     ]);
-    // Quitar separadores de miles si vienen como string
-    $this->monto = floatval(str_replace(',', '', $this->monto));
-    $this->impuesto = floatval(str_replace(',', '', $this->impuesto));
-    $this->diferencia = floatval(str_replace(',', '', $this->diferencia));
-    $this->saldo_cancelar = floatval(str_replace(',', '', $this->saldo_cancelar));
+    // Quitar separadores de miles y asegurar que queden como strings formateados
+    $this->monto = number_format((float)str_replace(',', '', (string)$this->monto), 2, '.', '');
+    $this->impuesto = number_format((float)str_replace(',', '', (string)$this->impuesto), 2, '.', '');
+    $this->diferencia = number_format((float)str_replace(',', '', (string)$this->diferencia), 2, '.', '');
+    $this->saldo_cancelar = number_format((float)str_replace(',', '', (string)$this->saldo_cancelar), 2, '.', '');
+    $this->total_general = number_format((float)$this->total_general, 2, '.', '');
     $this->recalcular_saldo = false;
 
     $this->fecha = Carbon::parse($this->fecha)->format('Y-m-d');
@@ -555,18 +509,20 @@ class MovimientoManager extends BaseComponent
 
   protected function aplicarPago(Movimiento $movimiento)
   {
-    foreach ($movimiento->transactions as $transaction) {
-      if ($transaction->tipo_recibo == 1) {
-        $transaction->is_retencion = $movimiento->tiene_retencion ? 1 : 0;
-      }
+      Log::info('Inicio aplicarPago', ['movimiento_id' => $movimiento->id, 'tipo' => $movimiento->tipo_movimiento]);
 
       if ($movimiento->tipo_movimiento === 'DEPOSITO') {
-        $transaction->fecha_deposito_pago = $movimiento->fecha;
-        $transaction->numero_deposito_pago = $movimiento->numero;
-      }
+          DB::statement("
+              UPDATE transactions t
+              INNER JOIN movimientos_facturas mf ON t.id = mf.transaction_id
+              SET t.fecha_deposito_pago = ?, t.numero_deposito_pago = ?
+              WHERE mf.movimiento_id = ?
+          ", [$movimiento->fecha, $movimiento->numero, $movimiento->id]);
 
-      $transaction->save();
-    }
+          Log::info('Fin aplicarPago - Transacciones actualizadas (Raw SQL executed)');
+      } else {
+          Log::info('Fin aplicarPago - No es DEPOSITO');
+      }
   }
 
   public function edit($recordId = null)
@@ -586,21 +542,21 @@ class MovimientoManager extends BaseComponent
     $this->lugar = $record->lugar;
     $this->fecha = Carbon::parse($record->fecha)->format('d-m-Y');
 
-    $this->monto = empty($record->monto) ? 0 : $record->monto;
-    $this->monto_letras = $record->monto_letras;
-    $this->tiene_retencion = $record->tiene_retencion;
-    $this->saldo_cancelar = empty($record->saldo_cancelar) ? 0 : $record->saldo_cancelar;
-    $this->diferencia = empty($record->diferencia) ? 0 : $record->diferencia;
+    $this->monto = empty($record->monto) ? '0.00' : number_format((float)$record->monto, 2, '.', '');
+    $this->monto_letras = (string)$record->monto_letras;
+    $this->tiene_retencion = (bool)$record->tiene_retencion;
+    $this->saldo_cancelar = empty($record->saldo_cancelar) ? '0.00' : number_format((float)$record->saldo_cancelar, 2, '.', '');
+    $this->diferencia = empty($record->diferencia) ? '0.00' : number_format((float)$record->diferencia, 2, '.', '');
     $this->descripcion = $record->descripcion;
     $this->numero = $record->numero;
     $this->beneficiario = $record->beneficiario;
 
-    $this->comprobante_pendiente = $record->comprobante_pendiente;
-    $this->bloqueo_fondos = $record->bloqueo_fondos;
-    $this->impuesto = empty($record->impuesto) ? 0 : $record->impuesto;
-    $this->total_general = empty($record->total_general) ? 0 : $record->total_general;
+    $this->comprobante_pendiente = (bool)$record->comprobante_pendiente;
+    $this->bloqueo_fondos = (bool)$record->bloqueo_fondos;
+    $this->impuesto = empty($record->impuesto) ? '0.00' : number_format((float)$record->impuesto, 2, '.', '');
+    $this->total_general = empty($record->total_general) ? '0.00' : number_format((float)$record->total_general, 2, '.', '');
 
-    $this->status = $record->status;
+    $this->status = (string)$record->status;
     $this->listo_para_aprobar = $record->listo_para_aprobar;
     $this->comentarios = $record->comentarios;
     $this->concepto = $record->concepto;
@@ -632,8 +588,6 @@ class MovimientoManager extends BaseComponent
 
     // ✅ No continuar aquí. La lógica sigue en setValidacionCentros()
   }
-
-
 
   public function cancel()
   {
@@ -731,7 +685,7 @@ class MovimientoManager extends BaseComponent
 
       if ($cuenta) {
         if ($this->tipo_movimiento == 'CHEQUE')
-          $this->numero = $cuenta->ultimo_cheque + 1;
+          $this->numero = (string)($cuenta->ultimo_cheque + 1);
         else
           $this->numero = null;
       }
@@ -749,9 +703,8 @@ class MovimientoManager extends BaseComponent
 
     if ($propertyName == 'tiene_retencion') {
       $saldoCancelar = Helpers::getSaldoCancelar($this->recordId, (int)$this->tiene_retencion);
-      $diferencia = $this->monto - $saldoCancelar;
-      //$this->saldo_cancelar = Helpers::formatDecimal($saldoCancelar);
-      //$this->diferencia = Helpers::formatDecimal($diferencia);
+      $diferencia = (float)$this->monto - (float)$saldoCancelar;
+      if (abs($diferencia) < 0.001) $diferencia = 0.0;
       $this->saldo_cancelar = number_format($saldoCancelar, 2, '.', '');
       $this->diferencia = number_format($diferencia, 2, '.', '');
     }
@@ -1465,6 +1418,46 @@ class MovimientoManager extends BaseComponent
         $this->selectedIds = [];
         $this->dispatch('updateSelectedIds', $this->selectedIds);
       }
+  }
+
+  #[Computed]
+  public function cuentas()
+  {
+    return \App\Models\Cuenta::orderBy('nombre_cuenta', 'ASC')->get()->toArray();
+  }
+
+  #[Computed]
+  public function currencies()
+  {
+    return \App\Models\Currency::orderBy('code', 'ASC')->get()->toArray();
+  }
+
+  #[Computed]
+  public function types()
+  {
+    if ($this->movementType == 'MOVIMIENTOS') {
+      return [
+        ['id' => Movimiento::TYPE_DEPOSITO, 'name' => Movimiento::TYPE_DEPOSITO],
+        ['id' => Movimiento::TYPE_ELECTRONICO, 'name' => Movimiento::TYPE_ELECTRONICO],
+        ['id' => Movimiento::TYPE_CHEQUE, 'name' => Movimiento::TYPE_CHEQUE]
+      ];
+    }
+    return [['id' => Movimiento::TYPE_CHEQUE, 'name' => Movimiento::TYPE_CHEQUE]];
+  }
+
+  #[Computed]
+  public function liststatus()
+  {
+    if ($this->movementType == 'MOVIMIENTOS') {
+      return [
+        ['id' => Movimiento::STATUS_REGISTRADO, 'name' => Movimiento::STATUS_REGISTRADO],
+        ['id' => Movimiento::STATUS_ANULADO, 'name' => Movimiento::STATUS_ANULADO]
+      ];
+    }
+    return [
+      ['id' => Movimiento::STATUS_REVISION, 'name' => Movimiento::STATUS_REVISION],
+      ['id' => Movimiento::STATUS_RECHAZADO, 'name' => Movimiento::STATUS_RECHAZADO]
+    ];
   }
 
   public function updatedSelectAll($value): void

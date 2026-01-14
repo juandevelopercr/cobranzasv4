@@ -35,7 +35,7 @@
                     class="select2 form-select @error('cuenta_id') is-invalid @enderror">
                     <option value="">{{ __('Seleccione...') }}</option>
                     @foreach ($this->cuentas as $cuenta)
-                        <option value="{{ $cuenta->id }}">{{ $cuenta->nombre_cuenta }}</option>
+                        <option value="{{ $cuenta['id'] }}">{{ $cuenta['nombre_cuenta'] }}</option>
                     @endforeach
                 </select>
                 @error('cuenta_id')
@@ -50,7 +50,7 @@
                     class="select2 form-select @error('moneda_id') is-invalid @enderror">
                     <option value="">{{ __('Seleccione...') }}</option>
                     @foreach ($this->currencies as $currency)
-                        <option value="{{ $currency->id }}">{{ $currency->code }}</option>
+                        <option value="{{ $currency['id'] }}">{{ $currency['code'] }}</option>
                     @endforeach
                 </select>
                 @error('moneda_id')
@@ -158,7 +158,7 @@
                         // lógica extra aquí si deseas
                         const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
                         if (component) {
-                            component.set('monto', val); // <- Esto envía el valor sin comas
+                            component.set('monto', val, false); // <- Esto envía el valor sin comas de forma diferida
                         }
                     }
                 })" x-init="init($refs.cleaveInput)">
@@ -179,12 +179,14 @@
                     postUpdate: false,
                     decimalScale: 2,
                     allowNegative: true,
+                    watchProperty: 'saldoVal',
                     rawValueCallback: (val) => {
                         //console.log('Callback personalizado:', val);
                         // lógica extra aquí si deseas
                     }
                 }),
-                tipoMovimiento: @entangle('tipo_movimiento')
+                tipoMovimiento: @entangle('tipo_movimiento'),
+                saldoVal: @entangle('saldo_cancelar')
             }" x-init="init($refs.cleaveInput)"
                 x-show="tipoMovimiento == 'DEPOSITO'" style="display: none;">
                 <label class="form-label" for="saldo_cancelar">{{ __('Saldo a cancelar') }}</label>
@@ -192,11 +194,11 @@
                     <span class="input-group-text"><i class="bx bx-transfer"></i></span>
 
                     <!-- oculto y sincronizado con Livewire -->
-                    <input type="hidden" wire:model.defer="saldo_cancelar" x-ref="inputHiddenSaldoCancelar" />
+                    <input type="hidden" x-ref="inputHiddenSaldoCancelar" data-model="saldo_cancelar" />
 
                     <input id="saldo_cancelar" x-ref="cleaveInput"
-                        class="form-control js-input-saldo-cancelar numeral-mask cleave-init fw-bold" type="text"
-                        wire:model="saldo_cancelar" disabled />
+                        class="form-control js-input-saldo-cancelar numeral-mask fw-bold" type="text"
+                        disabled />
                 </div>
                 @error('saldo_cancelar')
                     <div class="text-danger mt-1">{{ $message }}</div>
@@ -217,7 +219,7 @@
                             // lógica extra aquí si deseas
                             const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
                             if (component) {
-                                component.set('impuesto', val); // <- Esto envía el valor sin comas
+                                component.set('impuesto', val, false); // <- Esto envía el valor sin comas de forma diferida
                             }
                         }
                     })" x-init="init($refs.cleaveInput)">
@@ -240,23 +242,25 @@
                     postUpdate: false,
                     decimalScale: 2,
                     allowNegative: true,
+                    watchProperty: 'totalVal',
                     rawValueCallback: (val) => {
                         //console.log('Callback personalizado:', val);
                         // lógica extra aquí si deseas
                     }
                 }),
-                tipoMovimiento: @entangle('tipo_movimiento')
+                tipoMovimiento: @entangle('tipo_movimiento'),
+                totalVal: @entangle('total_general')
             }" x-init="init($refs.cleaveInput)"
                 x-show="tipoMovimiento !== 'DEPOSITO'" style="display: none;">
                 <label class="form-label" for="total_general">{{ __('Total General') }}</label>
                 <div class="input-group input-group-merge has-validation">
                     <span class="input-group-text"><i class="bx bx-transfer"></i></span>
 
-                    <input type="hidden" wire:model.defer="total_general" x-ref="inputHiddenTotal" />
+                    <input type="hidden" x-ref="inputHiddenTotal" data-model="total_general" />
 
                     <input id="total_general" x-ref="cleaveInput"
-                        class="form-control js-input-total-general numeral-mask cleave-init fw-bold" type="text"
-                        wire:model ="total_general" disabled />
+                        class="form-control js-input-total-general numeral-mask fw-bold" type="text"
+                        disabled />
                 </div>
                 @error('total_general')
                     <div class="text-danger mt-1">{{ $message }}</div>
@@ -265,24 +269,28 @@
 
             <div class="col-md-3 fv-plugins-icon-container">
                 <label class="form-label" for="diferencia">{{ __('Diferencia') }}</label>
-                <div x-data="cleaveLivewire({
-                    initialValue: '{{ $diferencia ?? '' }}',
-                    wireModelName: 'diferencia',
-                    postUpdate: false,
-                    decimalScale: 2,
-                    allowNegative: true,
-                    rawValueCallback: (val) => {
-                        //console.log('Callback personalizado:', val);
-                        // lógica extra aquí si deseas
-                    }
-                })" x-init="init($refs.cleaveInput)">
+                <div x-data="{
+                    ...cleaveLivewire({
+                        initialValue: '{{ $diferencia ?? '' }}',
+                        wireModelName: 'diferencia',
+                        postUpdate: false,
+                        decimalScale: 2,
+                        allowNegative: true,
+                        watchProperty: 'diferenciaVal',
+                        rawValueCallback: (val) => {
+                            //console.log('Callback personalizado:', val);
+                            // lógica extra aquí si deseas
+                        }
+                    }),
+                    diferenciaVal: @entangle('diferencia')
+                }" x-init="init($refs.cleaveInput)">
                     <div class="input-group input-group-merge has-validation">
                         <!-- oculto y sincronizado con Livewire -->
-                        <input type="hidden" wire:model="diferencia" x-ref="inputHiddenDiferencia" />
+                        <input type="hidden" x-ref="inputHiddenDiferencia" data-model="diferencia" />
 
                         <input type="text" id="diferencia" x-ref="cleaveInput"
-                            class="form-control js-input-diferencia cleave-init fw-bold text-danger"
-                            wire:model="diferencia" disabled />
+                            class="form-control js-input-diferencia fw-bold"
+                            disabled />
                     </div>
                 </div>
                 @error('diferencia')
@@ -295,7 +303,7 @@
                 <div class="input-group input-group-merge has-validation">
                     <span class="input-group-text"><i class="bx bx-barcode"></i></span>
                     <!-- Input único: visible, sincronizado con Livewire -->
-                    <input type="text" id="monto_letras" wire:model="monto_letras" class="form-control"
+                    <input type="text" id="monto_letras" class="form-control"
                         placeholder="{{ __('Monto en Letras') }}" readonly />
                 </div>
                 @error('monto_letras')
@@ -350,7 +358,7 @@
             <h4 class="mb-0"><span class="badge bg-primary">{{ __('Centros de costo') }}</span></h4>
             @livewire('movimientos.movimientos-centro-costo', [
                 'movimiento_id' => $this->recordId ?? null,
-            ])
+            ], key('centro-costo-' . ($this->recordId ?? 'new')))
 
             <br>
             <h4 class="mb-0"><span class="badge bg-primary">{{ __('Solicitud de comprobante') }}</span></h4>
@@ -462,7 +470,16 @@
                     const letras = numeroALetras(total);
 
                     inputLetras.value = letras;
-                    inputLetras.dispatchEvent(new Event('input')); // 🔁 Para notificar a Livewire si usa wire:model
+
+                    if (window.Livewire) {
+                        const componentEl = inputLetras.closest('[wire\\:id]');
+                        if (componentEl) {
+                            const component = Livewire.find(componentEl.getAttribute('wire:id'));
+                            if (component) {
+                                component.set('monto_letras', letras, false);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -560,20 +577,27 @@
                     if (componentId && window.Livewire) {
                         const component = Livewire.find(componentId);
                         if (component) {
-                            component.set('rows.0.amount', value);
+                            component.set('rows.0.amount', value, false);
                         }
                     }
                 }
 
                 function calculateDifferences(total, distributed) {
-                    const diff = total - distributed;
+                    // Usar enteros para evitar errores de precisión decimal
+                    const totalCents = Math.round(total * 100);
+                    const distCents = Math.round(distributed * 100);
+                    let diff = (totalCents - distCents) / 100;
+
+                    if (Math.abs(diff) < 0.001) diff = 0;
+
                     setFormattedValue(inputDiferencia, diff, inputHiddenDiferencia);
 
-                    inputDiferencia?.classList.toggle("text-danger", diff > 0);
+                    // Poner en rojo si hay cualquier diferencia mayor a 0.5 centavos
+                    inputDiferencia?.classList.toggle("text-danger", Math.abs(diff) >= 0.005);
                 }
 
                 function calculateTotalGeneral(input, amount, impuesto) {
-                    const total = amount + impuesto;
+                    const total = (Math.round(amount * 100) + Math.round(impuesto * 100)) / 100;
                     setFormattedValue(input, total, inputHiddenTotal);
 
                     const rows = parseInt(document.getElementById('content-centro-costo')?.dataset?.rowsCount || '0',
@@ -590,20 +614,20 @@
 
                     inputs.forEach(input => {
                         if (input) {
-                            // Elimina todo menos números, punto y signo negativo
                             const cleaned = input.value.replace(/[^0-9.-]/g, '').trim();
                             const value = parseFloat(cleaned);
 
                             if (!isNaN(value)) {
-                                total += value;
+                                total += Math.round(value * 100);
                             }
                         }
                     });
 
-                    return total;
+                    return total / 100;
                 }
 
                 function limpiarNumero(valor) {
+                    if (typeof valor === 'number') return valor;
                     if (!valor || typeof valor !== 'string') return 0;
 
                     const limpio = parseFloat(valor.replace(/,/g, '').trim());
@@ -621,32 +645,46 @@
                 }
 
                 function setFormattedValue(inputVisible, value, inputHidden) {
-                    if (!inputVisible) return 0;
+                    if (!inputVisible) {
+                        console.log('[setFormattedValue] inputVisible es null', { value, inputHidden });
+                        return 0;
+                    }
 
-                    console.log("Input visible: " + inputVisible);
-                    console.log("Input oculto: " + inputHidden);
-
+                    console.log('[setFormattedValue] Input visible:', inputVisible);
+                    console.log('[setFormattedValue] Input oculto:', inputHidden);
+                    console.log('[setFormattedValue] Value recibido:', value);
 
                     let numericValue = parseFloat(value);
                     if (isNaN(numericValue) || !isFinite(numericValue)) numericValue = 0;
 
-                    console.log("Value: " + numericValue);
+                    console.log('[setFormattedValue] Value numérico:', numericValue);
 
                     if (inputVisible.cleaveInstance) {
                         inputVisible.cleaveInstance.setRawValue(numericValue.toFixed(2));
+                        console.log('[setFormattedValue] Usando cleaveInstance para setRawValue');
                     } else {
                         inputVisible.value = Number(numericValue).toLocaleString('en-US', {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2
                         });
+                        console.log('[setFormattedValue] Asignando value formateado manual');
                     }
 
                     if (inputHidden) {
-                        inputHidden.value = numericValue.toFixed(2);
-                        inputHidden.dispatchEvent(new Event('input'));
-                    }
+                        const wireModel = inputHidden.getAttribute('data-model');
+                        const numericValueStr = numericValue.toFixed(2);
+                        inputHidden.value = numericValueStr;
 
-                    console.log
+                        if (wireModel && window.Livewire) {
+                            const componentEl = inputHidden.closest('[wire\\:id]');
+                            if (componentEl) {
+                                const component = Livewire.find(componentEl.getAttribute('wire:id'));
+                                if (component) {
+                                    component.set(wireModel, numericValueStr, false);
+                                }
+                            }
+                        }
+                    }
 
                     return numericValue;
                 }

@@ -533,18 +533,14 @@ class RevisionManager extends BaseComponent
 
   protected function aplicarPago(Movimiento $movimiento)
   {
-    foreach ($movimiento->transactions as $transaction) {
-      if ($transaction->tipo_recibo == 1) {
-        $transaction->is_retencion = $movimiento->tiene_retencion ? 1 : 0;
-      }
-
       if ($movimiento->tipo_movimiento === 'DEPOSITO') {
-        $transaction->fecha_deposito_pago = $movimiento->fecha;
-        $transaction->numero_deposito_pago = $movimiento->numero;
+          DB::statement("
+              UPDATE transactions t
+              INNER JOIN movimientos_facturas mf ON t.id = mf.transaction_id
+              SET t.fecha_deposito_pago = ?, t.numero_deposito_pago = ?
+              WHERE mf.movimiento_id = ?
+          ", [$movimiento->fecha, $movimiento->numero, $movimiento->id]);
       }
-
-      $transaction->save();
-    }
   }
 
   public function edit($recordId = null)
@@ -591,6 +587,7 @@ class RevisionManager extends BaseComponent
     $this->resetValidation();
 
     $this->action = 'edit';
+    $this->dispatch('refreshCleave');
     $this->dispatch('reinitConvertNumbertoWord');
   }
 
@@ -705,7 +702,7 @@ class RevisionManager extends BaseComponent
 
       if ($cuenta) {
         if ($this->tipo_movimiento == 'CHEQUE')
-          $this->numero = $cuenta->ultimo_cheque + 1;
+          $this->numero = (string)($cuenta->ultimo_cheque + 1);
         else
           $this->numero = null;
       }
@@ -739,6 +736,8 @@ class RevisionManager extends BaseComponent
       'selectedIds' => $this->selectedIds,
       'defaultStatus' => $this->defaultStatus,
     ]);
+
+    $this->dispatch('refreshCleave');
   }
 
   public function updatedSearch()
@@ -1716,6 +1715,7 @@ class RevisionManager extends BaseComponent
       //$this->diferencia = $diferencia;
       $this->saldo_cancelar = number_format($saldoCancelar, 2, '.', '');
       $this->diferencia = number_format($diferencia, 2, '.', '');
+      $this->dispatch('refreshCleave');
       $this->updateMovimiento();
     }
   }

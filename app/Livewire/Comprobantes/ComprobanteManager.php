@@ -402,6 +402,7 @@ class ComprobanteManager extends Component
       $this->fecha_emision = date('Y-m-d\TH:i', strtotime((string)($findElement('FechaEmision') ?? now())));
 
       // Validar que la fecha de emisión no tenga más de 8 días del mes siguiente
+      /*
       $fechaEmisionRaw = (string)($findElement('FechaEmision') ?? null);
       if ($fechaEmisionRaw) {
         try {
@@ -455,6 +456,8 @@ class ComprobanteManager extends Component
             return;
           }
       }
+      */
+
       $this->codigo_actividad = (string)($findElement('CodigoActividadEmisor') ?? '');
       $this->situacion_comprobante = (string)($findElement('SituacionComprobante') ?? '1');
 

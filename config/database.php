@@ -56,8 +56,11 @@ return [
       'engine' => 'InnoDB', // Especifica InnoDB aquí
       'options' => extension_loaded('pdo_mysql') ? array_filter([
         PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+        // Habilitar emulación para evitar error: "SQLSTATE[HY000]: General error: 1615 Prepared statement needs to be re-prepared"
+        PDO::ATTR_EMULATE_PREPARES => true,
       ]) : [],
     ],
+
 
     'mariadb' => [
       'driver' => 'mariadb',

@@ -11,7 +11,9 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class MovimientosFacturas extends TransactionManager
 {
@@ -483,7 +485,19 @@ class MovimientosFacturas extends TransactionManager
       })
       ->distinct('transactions.id');
 
-    $query->whereIn('proforma_status', [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA]);
+    $allowedRoles = User::ROLES_ALL_DEPARTMENTS;
+    if (in_array(Session::get('current_role_name'), $allowedRoles)) {
+      $query->whereIn('proforma_status', [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA]);
+    } else {
+      // Obtener departamentos y bancos de la sesión
+      $departments = Session::get('current_department', []);
+
+      // Filtrar por departamento y banco
+      if (!empty($departments)) {
+        $query->whereIn('transactions.department_id', $departments);
+      }
+      $query->whereIn('proforma_status', [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA]);
+    }
 
     return $query;
   }
@@ -517,17 +531,18 @@ class MovimientosFacturas extends TransactionManager
   public function delete($recordId)
   {
     try {
-      // Verifica que el registro exista
-      $transaction = Transaction::findOrFail($recordId);
+      Log::info('Inicio deleteFacturaMovimiento', ['recordId' => $recordId, 'movimientoId' => $this->movimientoId]);
 
-      // Asegura que el campo se escriba correctamente: null en minúscula
-      $transaction->fecha_deposito_pago = null;
-      $transaction->numero_deposito_pago = null;
-      $transaction->save();
+      // Uso de DB::statement para evitar completamente el problema de prepared statements de Eloquent/PDO en este entorno
+      DB::statement("UPDATE transactions SET fecha_deposito_pago = NULL, numero_deposito_pago = NULL WHERE id = ?", [$recordId]);
 
-      MovimientoFactura::where('transaction_id', $recordId)
+      $updateResult = 1; // Asumimos éxito si no falla
+      Log::info('deleteFacturaMovimiento - Transaction updated', ['result' => $updateResult]);
+
+      $deleted = MovimientoFactura::where('transaction_id', $recordId)
         ->where('movimiento_id', $this->movimientoId)
         ->delete();
+      Log::info('deleteFacturaMovimiento - Pivot table deleted', ['deleted' => $deleted]);
 
       $this->selectedIds = array_filter(
         $this->selectedIds,
@@ -553,6 +568,7 @@ class MovimientosFacturas extends TransactionManager
         'message' => __('The record has been deleted')
       ]);
     } catch (\Illuminate\Database\QueryException $e) {
+      Log::error('Error QueryException deleteFacturaMovimiento', ['error' => $e->getMessage()]);
       if ($e->getCode() == '23000') {
         $this->dispatch('show-notification', [
           'type' => 'error',
@@ -565,6 +581,7 @@ class MovimientosFacturas extends TransactionManager
         ]);
       }
     } catch (\Exception $e) {
+      Log::error('Error Exception deleteFacturaMovimiento', ['error' => $e->getMessage()]);
       $this->dispatch('show-notification', [
         'type' => 'error',
         'message' => __('An error occurred while deleting the record') . ' ' . $e->getMessage()
