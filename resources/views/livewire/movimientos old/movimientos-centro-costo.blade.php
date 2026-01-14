@@ -14,7 +14,7 @@
                     rawValueCallback: (val) => {
                         const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
                         if (component && val.length <= 15) {
-                            component.set('rows.{{ $index }}.amount', val, false);
+                            component.set('rows.{{ $index }}.amount', val);
                         }
                     }
                 })" x-init="init($refs.cleaveInput)">
@@ -40,7 +40,7 @@
                     class="select2 form-select @error('rows.' . $index . '.centro_costo_id') is-invalid @enderror">
                     <option value="">{{ __('Seleccione...') }}</option>
                     @foreach ($this->listcentrosCosto as $cc)
-                        <option value="{{ $cc['id'] }}">{{ $cc['codigo'] . '-' . $cc['descrip'] }}</option>
+                        <option value="{{ $cc->id }}">{{ $cc->codigo . '-' . $cc->descrip }}</option>
                     @endforeach
                 </select>
 
@@ -59,8 +59,8 @@
                 <select x-ref="select" id="codigo_contable_id_{{ $index }}"
                     class="select2 form-select @error('rows.' . $index . '.codigo_contable_id') is-invalid @enderror">
                     <option value="">{{ __('Seleccione...') }}</option>
-                    @foreach ($this->listcatalogoCuentas as $cat)
-                        <option value="{{ $cat['id'] }}">{{ $cat['codigo'] . '-' . $cat['descrip'] }}</option>
+                    @foreach ($this->listcatalogoCuentas as $cc)
+                        <option value="{{ $cc->id }}">{{ $cc->codigo . '-' . $cc->descrip }}</option>
                     @endforeach
                 </select>
 

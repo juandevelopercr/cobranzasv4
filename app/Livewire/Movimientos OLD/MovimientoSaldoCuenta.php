@@ -113,7 +113,6 @@ class MovimientoSaldoCuenta extends Component
                 return $saldo_sistema - $pendiente_registro - $timbres - $honorarios - $traslados_karla - $certifondo_bnfa - $colchon;
             });
 
-
         $otrasCuentasColones = floatval(str_replace(',', '', $this->otrasCuentasColones));
         $otrasCuentasDolares = floatval(str_replace(',', '', $this->otrasCuentasDolares));
 

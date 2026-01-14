@@ -26,11 +26,11 @@ class Sumary extends Component
   public $bloqueado_colones;
   public $bloqueado_dolares;
 
-  public $bloqueado_deposito_colones;
-  public $bloqueado_deposito_dolares;
-
   public $saldo_final_colones;
   public $saldo_final_dolares;
+
+  public $bloqueado_deposito_colones;
+  public $bloqueado_deposito_dolares;
 
   public $firstDate;
   public $lastDate;

@@ -85,7 +85,7 @@ class MovimientoObserver
       'recalcular_saldo' => $movimiento->recalcular_saldo,
     ]);
     */
-    $movimiento->clonando = 0;
+    $movimiento->clonando = 0; // Removido para evitar conflictos de hidratación en Livewire
 
     return true;
   }
