@@ -192,8 +192,34 @@ class ProcessComprobanteEmails extends Command
 
             $fechaLimite = $fechaEmision->copy()->startOfMonth()->addMonth();
             $businessDays = 0;
+
+            // Definir feriados de Costa Rica
+            $getHolidays = function ($year) {
+                $easterDays = easter_days($year);
+                $easterDate = \Carbon\Carbon::createFromDate($year, 3, 21)->addDays($easterDays);
+                $juevesSanto = $easterDate->copy()->subDays(3)->format('m-d');
+                $viernesSanto = $easterDate->copy()->subDays(2)->format('m-d');
+
+                return [
+                    '01-01', // Año Nuevo
+                    '04-11', // Día de Juan Santamaría
+                    '05-01', // Día del Trabajador
+                    '07-25', // Anexión del Partido de Nicoya
+                    '08-02', // Virgen de los Ángeles
+                    '08-15', // Día de la Madre
+                    '09-15', // Día de la Independencia
+                    '12-01', // Día de la Abolición del Ejército
+                    '12-25', // Navidad
+                    $juevesSanto,
+                    $viernesSanto,
+                ];
+            };
+
             while ($businessDays < 8) {
-              if ($fechaLimite->isWeekday()) {
+              $holidays = $getHolidays($fechaLimite->year);
+              $isHoliday = in_array($fechaLimite->format('m-d'), $holidays);
+
+              if ($fechaLimite->isWeekday() && !$isHoliday) {
                 $businessDays++;
               }
               if ($businessDays < 8) {
