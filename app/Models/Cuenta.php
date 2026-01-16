@@ -34,6 +34,7 @@ class Cuenta extends Model
     'calcular_traslado_gastos',
     'calcular_traslado_honorarios',
     'banco_id',
+'banco_ids',
     'perosna_sociedad',
     'traslados_karla',
     'certifondo_bnfa',
@@ -41,6 +42,10 @@ class Cuenta extends Model
     'tipo_cambio',
     'intruccionesPagoNacional',
     'intruccionesPagoInternacional'
+  ];
+
+  protected $casts = [
+      'banco_ids' => 'array',
   ];
 
   public function currency()

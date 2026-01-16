@@ -565,21 +565,20 @@
         </div>
 
         <div class="col-md-4 select2-primary fv-plugins-icon-container"
-            x-data="select2Livewire({
-              wireModelName: 'banco_id',
+            x-data="select2LivewireMultipleWithToggle({
+              wireModelName: 'banco_ids',
               postUpdate: true
             })"
             x-init="init($refs.select)"
             wire:ignore>
-          <label class="form-label" for="banco_id">{{ __('Bank') }}</label>
-          <select x-ref="select" id="banco_id"
-                  class="select2 form-select @error('banco_id') is-invalid @enderror">
-            <option value="">{{ __('Seleccione...') }}</option>
+          <label class="form-label" for="banco_ids">{{ __('Bancos Configurados') }}</label>
+          <select x-ref="select" id="banco_ids"
+                  class="select2 form-select @error('banco_ids') is-invalid @enderror" multiple>
             @foreach ($this->banks as $bank)
               <option value="{{ $bank->id }}"> {{ $bank->name }} </option>
             @endforeach
           </select>
-          @error('banco_id')
+          @error('banco_ids')
           <div class="text-danger mt-1">{{ $message }}</div>
           @enderror
         </div>
@@ -615,7 +614,7 @@
     // Función para inicializar Select2
     const initializeSelect2 = () => {
       const selects = [
-        'moneda_id', 'selected_banks', 'selected_locations', 'selected_departments', 'banco_id'
+        'moneda_id', 'selected_banks', 'selected_locations', 'selected_departments', 'banco_ids'
       ];
 
       selects.forEach((id) => {

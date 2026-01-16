@@ -189,6 +189,7 @@ class MovimientoSaldoCuenta extends Component
                 'calcular_traslado_gastos',
                 'calcular_traslado_honorarios',
                 'banco_id',
+'banco_ids',
                 'traslados_karla',
                 'certifondo_bnfa',
                 'colchon'
@@ -344,7 +345,10 @@ class MovimientoSaldoCuenta extends Component
             ->whereNull("t.$field_fecha")
             ->where('t.proforma_status', Transaction::FACTURADA)
             ->whereIn('t.id', $subQuery2)
-            ->when(!empty($cuenta['banco_id']), fn($q) => $q->where('t.bank_id', $cuenta['banco_id']))
+            ->when(
+                !empty($cuenta['banco_ids']) || !empty($cuenta['banco_id']),
+                fn($q) => $q->whereIn('t.bank_id', !empty($cuenta['banco_ids']) ? $cuenta['banco_ids'] : [$cuenta['banco_id']])
+            )
             ->when(!empty($departamentos), fn($q) => $q->whereIn('t.department_id', $departamentos));
 
         $dato = $query->first();

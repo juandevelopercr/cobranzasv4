@@ -72,6 +72,7 @@ class CuentaManager extends BaseComponent
   public $intruccionesPagoInternacional;
 
   public ?int $banco_id = null; // Si la cuenta tiene un banco principal directo
+  public array $banco_ids = []; // Configuración multi-banco para cuentas 3-101
   public ?string $perosna_sociedad = null;
 
   public float $traslados_karla = 0.0;
@@ -161,7 +162,8 @@ class CuentaManager extends BaseComponent
       'calcular_pendiente_registro' => 'boolean',
       'calcular_traslado_gastos' => 'boolean',
       'calcular_traslado_honorarios' => 'boolean',
-      'banco_id' => 'nullable|integer|exists:banks,id',
+      'banco_ids' => 'nullable|array',
+      'banco_ids.*' => 'exists:banks,id',
       'perosna_sociedad' => 'nullable|string|max:200',
       'traslados_karla' => 'nullable|numeric',
       'certifondo_bnfa' => 'nullable|numeric',
@@ -224,7 +226,8 @@ class CuentaManager extends BaseComponent
       'calcular_pendiente_registro' => 'calcular pendiente de registro',
       'calcular_traslado_gastos' => 'calcular traslado de gastos',
       'calcular_traslado_honorarios' => 'calcular traslado de honorarios',
-      'banco_id' => 'banco',
+      'banco_id' => 'banco principal',
+      'banco_ids' => 'bancos configurados',
       'perosna_sociedad' => 'persona o sociedad',
       'traslados_karla' => 'traslados Karla',
       'certifondo_bnfa' => 'certifondo BNFA',
@@ -239,7 +242,11 @@ class CuentaManager extends BaseComponent
     $validatedData = $this->validate();
 
     try {
-      // Crear el usuario con la contraseña encriptada
+      // Asegurar consistencia: banco_id es el primero de banco_ids si existe
+      if (!empty($this->banco_ids)) {
+          $validatedData['banco_id'] = $this->banco_ids[0];
+          $validatedData['banco_ids'] = $this->banco_ids;
+      }
       $record = Cuenta::create($validatedData);
 
       if ($record) {
@@ -298,6 +305,7 @@ class CuentaManager extends BaseComponent
     $this->calcular_traslado_gastos = $record->calcular_traslado_gastos;
     $this->calcular_traslado_honorarios = $record->calcular_traslado_honorarios;
     $this->banco_id = $record->banco_id;
+$this->banco_ids = $record->banco_ids ?? ($record->banco_id ? [$record->banco_id] : []);
     $this->perosna_sociedad = $record->perosna_sociedad;
     $this->traslados_karla = $record->traslados_karla;
     $this->certifondo_bnfa = $record->certifondo_bnfa;
@@ -325,6 +333,12 @@ class CuentaManager extends BaseComponent
     try {
       // Encuentra el registro existente
       $record = Cuenta::findOrFail($recordId);
+
+      // Asegurar consistencia
+      if (!empty($this->banco_ids)) {
+          $validatedData['banco_id'] = $this->banco_ids[0];
+          $validatedData['banco_ids'] = $this->banco_ids;
+      }
 
       // Actualiza el usuario
       $record->update($validatedData);
@@ -448,6 +462,7 @@ class CuentaManager extends BaseComponent
       'calcular_traslado_gastos',
       'calcular_traslado_honorarios',
       'banco_id',
+'banco_ids',
       'perosna_sociedad',
       'traslados_karla',
       'certifondo_bnfa',
