@@ -25,7 +25,7 @@ class MovimientosFacturas extends TransactionManager
     'filter_proforma_no' => NULL,
     'filter_consecutivo' => NULL,
     'filter_customer_name' => NULL,
-    'filter_department_name' => NULL,
+
     'filter_user_name' => NULL,
     'filter_fecha_solicitud_factura' => NULL,
     'filter_issuer_name' => NULL,
@@ -165,25 +165,7 @@ class MovimientosFacturas extends TransactionManager
         'width' => NULL,
         'visible' => true,
       ],
-      [
-        'field' => 'department_name',
-        'orderName' => 'departments.name',
-        'label' => __('Department'),
-        'filter' => 'filter_department_name',
-        'filter_type' => 'select',
-        'filter_sources' => 'departments',
-        'filter_source_field' => 'name',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => '',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
+
       [
         'field' => 'user_name',
         'orderName' => 'users.name',
@@ -483,21 +465,8 @@ class MovimientosFacturas extends TransactionManager
               ->from('movimientos_facturas')
               ->where('movimiento_id', $this->movimientoId);
       })
-      ->distinct('transactions.id');
-
-    $allowedRoles = User::ROLES_ALL_DEPARTMENTS;
-    if (in_array(Session::get('current_role_name'), $allowedRoles)) {
-      $query->whereIn('proforma_status', [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA]);
-    } else {
-      // Obtener departamentos y bancos de la sesión
-      $departments = Session::get('current_department', []);
-
-      // Filtrar por departamento y banco
-      if (!empty($departments)) {
-        $query->whereIn('transactions.department_id', $departments);
-      }
-      $query->whereIn('proforma_status', [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA]);
-    }
+      ->distinct('transactions.id')
+      ->whereIn('proforma_status', [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA]);
 
     return $query;
   }
