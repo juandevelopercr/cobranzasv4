@@ -701,7 +701,7 @@ class MovimientoManager extends BaseComponent
     $this->filters['filterCuentas'] = $this->filterCuentas;
     $this->filters['filterFecha'] = $this->filterFecha;
 
-    if ($propertyName == 'tiene_retencion') {
+    if (in_array($propertyName, ['tiene_retencion', 'moneda_id', 'monto'])) {
       $saldoCancelar = Helpers::getSaldoCancelar($this->recordId, (int)$this->tiene_retencion);
       $diferencia = (float)$this->monto - (float)$saldoCancelar;
       if (abs($diferencia) < 0.001) $diferencia = 0.0;
@@ -1346,20 +1346,19 @@ class MovimientoManager extends BaseComponent
   }
 
   #[On('updateSaldoCancelar')]
-  public function updateSaldoCancelar()
+public function updateSaldoCancelar()
   {
     if ($this->recordId) {
       $saldoCancelar = Helpers::getSaldoCancelar($this->recordId, (int)$this->tiene_retencion);
-      $diferencia = $this->monto - $saldoCancelar;
-      //$this->saldo_cancelar = Helpers::formatDecimal($saldoCancelar);
-      //$this->diferencia = Helpers::formatDecimal($diferencia);
+      $diferencia = (float)$this->monto - (float)$saldoCancelar;
+      if (abs($diferencia) < 0.001) $diferencia = 0.0;
+
       $this->saldo_cancelar = number_format($saldoCancelar, 2, '.', '');
       $this->diferencia = number_format($diferencia, 2, '.', '');
       $this->dispatch('refreshCleave');
       $this->updateMovimiento();
     }
   }
-
   public function sendComprobanteByEmail()
   {
     $movimiento = Movimiento::findOrFail($this->recordId);

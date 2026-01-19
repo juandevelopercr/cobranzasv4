@@ -1811,25 +1811,43 @@ class Helpers
   {
     $saldoCancelar = 0;
 
-    $movimiento = Movimiento::with(['transactions'])->find($movimientoId);
+    $movimiento = Movimiento::with(['transactions.currency', 'currency'])->find($movimientoId);
 
     if (!$movimiento) {
       return 0;
     }
 
+    $monedaMovimientoCode = $movimiento->currency->code ?? 'CRC';
+
     foreach ($movimiento->transactions as $invoice) {
-      if ($invoice->proforma_type === 'HONORARIO' && $retencion == 1) {
-        $base = $invoice->totalHonorarios - $invoice->totalDiscount;
-        $retencion2 = ($base * 2) / 100;
-        $subtotal = $base - $retencion2;
-        $saldoCancelar += $subtotal + $invoice->totalTax + $invoice->totalOtrosCargos;
-        $invoice->is_retencion = 1;
-        $invoice->save();
-      } else {
-        $saldoCancelar += $invoice->totalComprobante;
-        $invoice->is_retencion = 0;
-        $invoice->save();
-      }
+        $totalInvoice = 0;
+        if ($invoice->proforma_type === 'HONORARIO' && $retencion == 1) {
+            $base = $invoice->totalHonorarios - $invoice->totalDiscount;
+            $retencionVal = ($base * 2) / 100;
+            $subtotal = $base - $retencionVal;
+            $totalInvoice = $subtotal + $invoice->totalTax + $invoice->totalOtrosCargos;
+            $invoice->is_retencion = 1;
+            $invoice->save();
+        } else {
+            $totalInvoice = $invoice->totalComprobante;
+            $invoice->is_retencion = 0;
+            $invoice->save();
+        }
+
+        // Conversión de moneda si es necesario
+        $monedaFacturaCode = $invoice->currency->code ?? 'CRC';
+        if ($monedaMovimientoCode !== $monedaFacturaCode) {
+            $changeType = (float)$invoice->getChangeType();
+            if ($monedaMovimientoCode === 'USD') {
+                // Factura en CRC, Movimiento en USD
+                $totalInvoice /= ($changeType > 0 ? $changeType : 1);
+            } else {
+                // Factura en USD, Movimiento en CRC (asumiendo que changeType es de USD a CRC)
+                $totalInvoice *= $changeType;
+            }
+        }
+
+        $saldoCancelar += $totalInvoice;
     }
 
     return $saldoCancelar;

@@ -206,9 +206,14 @@ class RevisionManager extends BaseComponent
 
   public function updatedTieneRetencion($value)
   {
-    $this->tiene_retencion = (int) $value;
+    $this->tiene_retencion = (bool) $value;
 
-    $this->saldo_cancelar = Helpers::getSaldoCancelar($this->recordId, $this->tiene_retencion);
+    $saldoCancelar = Helpers::getSaldoCancelar($this->recordId, (int)$this->tiene_retencion);
+    $diferencia = (float)$this->monto - (float)$saldoCancelar;
+    if (abs($diferencia) < 0.001) $diferencia = 0.0;
+
+    $this->saldo_cancelar = number_format($saldoCancelar, 2, '.', '');
+    $this->diferencia = number_format($diferencia, 2, '.', '');
   }
 
   public function updatedBloqueoFondos($value)
@@ -718,11 +723,10 @@ class RevisionManager extends BaseComponent
     $this->filters['filterCuentas'] = $this->filterCuentas;
     $this->filters['filterFecha'] = $this->filterFecha;
 
-    if ($propertyName == 'tiene_retencion') {
+    if (in_array($propertyName, ['tiene_retencion', 'moneda_id', 'monto'])) {
       $saldoCancelar = Helpers::getSaldoCancelar($this->recordId, (int)$this->tiene_retencion);
-      $diferencia = $this->monto - $saldoCancelar;
-      //$this->saldo_cancelar = Helpers::formatDecimal($saldoCancelar);
-      //$this->diferencia = Helpers::formatDecimal($diferencia);
+      $diferencia = (float)$this->monto - (float)$saldoCancelar;
+      if (abs($diferencia) < 0.001) $diferencia = 0.0;
       $this->saldo_cancelar = number_format($saldoCancelar, 2, '.', '');
       $this->diferencia = number_format($diferencia, 2, '.', '');
     }
@@ -1710,9 +1714,9 @@ class RevisionManager extends BaseComponent
   {
     if ($this->recordId) {
       $saldoCancelar = Helpers::getSaldoCancelar($this->recordId, (int)$this->tiene_retencion);
-      $diferencia = $this->monto - $saldoCancelar;
-      //$this->saldo_cancelar = $saldoCancelar;
-      //$this->diferencia = $diferencia;
+      $diferencia = (float)$this->monto - (float)$saldoCancelar;
+      if (abs($diferencia) < 0.001) $diferencia = 0.0;
+
       $this->saldo_cancelar = number_format($saldoCancelar, 2, '.', '');
       $this->diferencia = number_format($diferencia, 2, '.', '');
       $this->dispatch('refreshCleave');
