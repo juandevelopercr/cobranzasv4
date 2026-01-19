@@ -321,6 +321,9 @@ class MovimientoManager extends BaseComponent
 
       if (!$closeForm) {
           $this->edit($recordId);
+      }else {
+          // Resetear paginación a página 1 cuando se cierra el formulario
+          $this->resetPage();
       }
 
       $this->dispatch('show-notification', [
@@ -1311,6 +1314,9 @@ class MovimientoManager extends BaseComponent
       DB::commit();
 
       $this->dispatch('show-notification', ['type' => 'success', 'message' => __('The movement has been successfully cloned')]);
+
+// Resetear paginación a página 1 después de clonar
+      $this->resetPage();
 
       $this->edit($cloned->id);
     } catch (\Exception $e) {

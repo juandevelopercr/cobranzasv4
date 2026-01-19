@@ -1667,6 +1667,9 @@ class RevisionManager extends BaseComponent
 
       $this->dispatch('show-notification', ['type' => 'success', 'message' => __('The movement has been successfully cloned')]);
 
+      // Resetear paginación a página 1 después de clonar
+      $this->resetPage();
+
       $this->edit($cloned->id);
     } catch (\Exception $e) {
       DB::rollBack();

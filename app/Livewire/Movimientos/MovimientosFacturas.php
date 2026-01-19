@@ -43,11 +43,18 @@ class MovimientosFacturas extends TransactionManager
     'filter_total_crc' => NULL,
   ];
 
+  // Custom pagination page name to avoid conflict with parent component
+  protected $pageName = 'facturas-page';
+  // Disable query string updates for this component (prevents page param inheritance)
+  protected $updatesQueryString = [];
+
   public function mount()
   {
     $this->document_type = ['PR', 'FE', 'TE'];
     parent::mount();
-    // Aquí puedes agregar lógica específica para proformas
+
+    // Ensure pagination starts at page 1
+    $this->resetPage();
   }
 
   public function refresDatatable()
