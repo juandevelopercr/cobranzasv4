@@ -572,6 +572,8 @@
                     </p>
                   @endif
 
+                  <hr style="background-color: #0076c0; height: 1px; border: none;" class="tm_mb15">
+
                   @if (!empty($transaction->notes))
                   <p class="tm_f12 tm_m0">
                     <b class="tm_primary_color">Observaciones:</b> {{ $transaction->notes }}
