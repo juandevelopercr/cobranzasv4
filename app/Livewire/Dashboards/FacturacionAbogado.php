@@ -124,8 +124,7 @@ class FacturacionAbogado extends Component
       ->join('users', 'casos.abogado_cargo_id', '=', 'users.id')
       ->whereNotNull('transaction_date')
       ->whereYear('transaction_date', '=', $this->year)
-      ->whereMonth('transaction_date', '=', $this->month)
-      ->where('users.active', 1);
+      ->whereMonth('transaction_date', '=', $this->month);      
 
     if (!empty($this->department)) {
       $query->where('transactions.department_id', $this->department);

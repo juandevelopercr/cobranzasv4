@@ -95,8 +95,7 @@ class CargaTrabajo extends Component
       ->join('users', 'casos.abogado_id', '=', 'users.id')
       ->whereNotNull('pfecha_asignacion_caso')
       ->whereYear('pfecha_asignacion_caso', '=', $this->year)
-      ->whereMonth('pfecha_asignacion_caso', '=', $this->month)
-      ->where('users.active', 1);
+      ->whereMonth('pfecha_asignacion_caso', '=', $this->month);      
 
     $data = $query
       ->groupBy('users.name')

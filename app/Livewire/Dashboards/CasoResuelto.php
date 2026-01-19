@@ -98,8 +98,7 @@ class CasoResuelto extends Component
       ->where(function ($q) {
         $q->whereHas('transactions')
           ->orWhereHas('transactionLines');
-      })
-      ->where('users.active', 1);
+      });      
 
     $data = $query
       ->groupBy('users.name')
@@ -162,8 +161,7 @@ class CasoResuelto extends Component
           ->where(function ($q) {
               $q->whereHas('transactions')
                 ->orWhereHas('transactionLines');
-          })
-          ->where('users.active', 1);
+          });          
 
       $data_month_actual = $query_month_actual
           ->groupBy('users.name')
@@ -186,8 +184,7 @@ class CasoResuelto extends Component
           ->where(function ($q) {
               $q->whereHas('transactions')
                 ->orWhereHas('transactionLines');
-          })
-          ->where('users.active', 1);
+          });          
 
       $data_month_previous = $query_month_previous
           ->groupBy('users.name')
