@@ -325,9 +325,8 @@ class MovimientosFacturasNoPagadas extends TransactionManager
         ->where('movimiento_id', $this->movimientoId);
 
     $query = Transaction::search($this->search, $this->filters)
-        ->select('transactions.*', 'c.name as contact_name')
         ->join('transactions_commissions', 'transactions_commissions.transaction_id', '=', 'transactions.id')
-        ->leftJoin('contacts as c', 'c.id', '=', 'transactions.contact_id')
+        // ->leftJoin('contacts as c', 'c.id', '=', 'transactions.contact_id') // Redundante: ya incluido en Transaction::search
         ->whereIn('document_type', $this->document_type)
         ->whereIn('proforma_status', [Transaction::FACTURADA])
         ->where(function ($q) {
@@ -350,10 +349,10 @@ class MovimientosFacturasNoPagadas extends TransactionManager
 
 
 
-    // Orden final: usar alias 'c.name' en lugar de 'contacts.name'
+    // Orden final
     return $query->orderByDesc('transactions.transaction_date')
                  ->orderByDesc('transactions.consecutivo')
-                 ->orderBy('contact_name');
+                 ->orderBy('contacts.name');
   }
 
   public function render()
