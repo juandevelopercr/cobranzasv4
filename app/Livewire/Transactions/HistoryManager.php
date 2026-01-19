@@ -1310,6 +1310,7 @@ class HistoryManager extends TransactionManager
 
   public function updated($propertyName)
   {
+    $this->syncExportFilters();
     // Si el campo condition_sale cambia
     if ($propertyName == 'condition_sale') {
       if ($this->condition_sale !== '02') {
@@ -1872,5 +1873,41 @@ class HistoryManager extends TransactionManager
       $this->dispatch('show-notification', ['type' => 'error', 'message' => __('An error has occurred. While cloning the proforma') . ' ' . $e->getMessage()]);
       Log::error('Error al clonar producto.', ['error' => $e->getMessage()]);
     }
+  }
+
+
+  public function updatedPage($page)
+  {
+    $this->syncExportFilters();
+  }
+
+  public function setSortBy($sortByField)
+  {
+    parent::setSortBy($sortByField);
+    $this->syncExportFilters();
+  }
+
+  public function syncExportFilters()
+  {
+    $this->dispatch('updateExportFilters', [
+      'search' => $this->search,
+      'filters' => $this->filters,
+      'selectedIds' => $this->selectedIds,
+      'sortBy' => $this->sortBy,
+      'sortDir' => $this->sortDir,
+      'perPage' => $this->perPage,
+      'page' => $this->getPage(),
+      'exportType' => 'HISTORY',
+      'managerClass' => self::class,
+    ]);
+  }
+
+  public function getQueryForExport(array $params = []): \Illuminate\Database\Eloquent\Builder
+  {
+    if (isset($params['search'])) $this->search = $params['search'];
+    if (isset($params['filters']) && is_array($params['filters'])) $this->filters = $params['filters'];
+    // HistoryManager uses hardcoded document types in getFilteredQuery, so we don't set it here.
+
+    return $this->getFilteredQuery();
   }
 }

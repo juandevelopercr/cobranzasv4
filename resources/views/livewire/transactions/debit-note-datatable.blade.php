@@ -28,7 +28,10 @@
                   <div x-data="{ action: @entangle('action') }">
                     <div x-show="action === 'list'" x-cloak>
                       @can("export-notasdebitoelectronicas")
-                        <livewire:transactions.transaction-datatable-export />
+                        <livewire:transactions.transaction-datatable-export
+                          :manager-class="'App\Livewire\Transactions\NotaDebitoElectronicaManager'"
+                          :export-type="'ELECTRONIC_DEBIT_NOTE'"
+                        />
                       @endcan
                     </div>
                   </div>

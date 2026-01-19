@@ -4,6 +4,9 @@ namespace App\Http\Controllers\reports;
 
 use App\Http\Controllers\Controller;
 use App\Livewire\Transactions\Export\TransactionExportFromView;
+use App\Exports\CreditNoteExport;
+use App\Exports\DebitNoteExport;
+use App\Exports\ProformaExport;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -53,14 +56,35 @@ class ReportTransactionController extends Controller
         }
       }
 
-      $filename = 'transactions-' . now()->format('Ymd_His') . '.xlsx';
+      $exportType = $params['exportType'] ?? null;
+      $filenamePrefix = 'transactions-';
+
+      if ($exportType === 'CREDIT_NOTE') {
+        $export = new CreditNoteExport($query);
+        $filenamePrefix = 'credit-notes-';
+      } elseif ($exportType === 'DEBIT_NOTE') {
+        $export = new DebitNoteExport($query);
+        $filenamePrefix = 'debit-notes-';
+      } elseif ($exportType === 'PROFORMA') {
+        $export = new ProformaExport($query);
+        $filenamePrefix = 'proformas-';
+      } elseif ($exportType === 'COTIZACION') {
+        // Asegurar que solo exporte cotizaciones
+        $query->where('document_type', \App\Models\Transaction::COTIZACION);
+        $export = new \App\Exports\CotizacionExport($query);
+        $filenamePrefix = 'cotizaciones-';
+      } else {
+        $export = new TransactionExportFromView($query);
+      }
+
+      $filename = $filenamePrefix . now()->format('Ymd_His') . '.xlsx';
       $relativePath = "exports/$filename";
       $storagePath = "public/$relativePath";
 
       ini_set('memory_limit', '-1');
       ini_set('max_execution_time', '360');
 
-      Excel::store(new TransactionExportFromView($query), $storagePath);
+      Excel::store($export, $storagePath);
 
       return response()->json(['filename' => $filename]);
     } catch (Throwable $e) {
@@ -82,10 +106,29 @@ class ReportTransactionController extends Controller
       ini_set('max_execution_time', '360');
 
       // Build query using the same filters as the Livewire component
-      $manager = new \App\Livewire\Transactions\CuentaPorCobrarManager();
+      $managerClass = $params['managerClass'] ?? \App\Livewire\Transactions\CuentaPorCobrarManager::class;
+
+      if (!class_exists($managerClass)) {
+          $managerClass = \App\Livewire\Transactions\CuentaPorCobrarManager::class;
+      }
+
+      /** @var \App\Livewire\Transactions\TransactionManager $manager */
+      $manager = new $managerClass();
+
       // hydrate manager with params where applicable
       $manager->search = $params['search'] ?? '';
       $manager->filters = $params['filters'] ?? [];
+
+      // Aseguramos que document_type se establezca si es Cotización
+      if (isset($params['exportType']) && $params['exportType'] === 'COTIZACION') {
+          $manager->document_type = \App\Models\Transaction::COTIZACION;
+      } elseif (isset($params['document_type'])) {
+          $manager->document_type = $params['document_type'];
+      }
+
+      // Si el manager tiene método mount, idealmente deberíamos llamarlo o simular la carga de datos comunes si afecta al export (ej. bancos permitidos)
+      // Pero loadCommonData() usa Session y Auth, lo cual funciona aquí si es la misma sesión.
+      // Sin embargo, getQueryForExport (que llama a getFilteredQuery) usa auth()->user() directamente, así que debería funcionar.
 
       $sortBy = $params['sortBy'] ?? 'transactions.transaction_date';
       $sortDir = $params['sortDir'] ?? 'DESC';
@@ -93,36 +136,71 @@ class ReportTransactionController extends Controller
       $page = $params['page'] ?? 1;
       $selectedIds = $params['selectedIds'] ?? [];
 
-      $baseQuery = $manager->getQueryForExport($params)->orderBy($sortBy, $sortDir);
+      $baseQuery = $manager->getQueryForExport($params);
 
-      // If the user selected specific ids, use them. Otherwise compute the visible page IDs
+      // If the user selected specific ids, use them. Otherwise fetch specific IDs for current page.
       if (!empty($selectedIds)) {
-        $baseQuery->whereIn('transactions.id', $selectedIds);
-        $externalQuery = $baseQuery;
+        $externalQuery = $baseQuery->whereIn('transactions.id', $selectedIds)->orderBy($sortBy, $sortDir);
       } else {
-        $offset = max(((int)$page - 1) * (int)$perPage, 0);
+        $currentPage = (int)($params['page'] ?? 1);
+        $perPage = (int)($params['perPage'] ?? 10);
+        $offset = max(($currentPage - 1) * $perPage, 0);
 
-        // Clone base query to fetch only the IDs for the current page
+        // Get IDs for the current page
         $idsQuery = clone $baseQuery;
-        $visibleIds = $idsQuery->skip($offset)->take((int)$perPage)->pluck('transactions.id')->toArray();
+        $exportIds = $idsQuery->select('transactions.id')
+            ->orderBy($sortBy, $sortDir)
+            ->skip($offset)
+            ->take($perPage)
+            ->pluck('transactions.id')
+            ->toArray();
 
-        if (!empty($visibleIds)) {
-          // Use the manager's query so the same selects/joins are preserved
-          $externalQuery = $manager->getQueryForExport($params)
-            ->whereIn('transactions.id', $visibleIds)
-            ->orderBy($sortBy, $sortDir);
-          // Also set selectedIds in params so the report mapping uses the same set when needed
-          $params['selectedIds'] = $visibleIds;
+        if (empty($exportIds)) {
+            $externalQuery = \App\Models\Transaction::whereRaw('1 = 0');
         } else {
-          // No visible IDs — build an empty query
-          $externalQuery = \App\Models\Transaction::whereRaw('1 = 0');
+            // Re-fetch full records for these IDs
+            $externalQuery = $manager->getQueryForExport($params)
+                ->whereIn('transactions.id', $exportIds)
+                ->orderBy($sortBy, $sortDir);
         }
       }
 
-      $title = 'Cuentas por Cobrar';
-      $report = new \App\Exports\CuentasPorCobrarReport($params, $title, $externalQuery);
+      if (isset($params['exportType']) && $params['exportType'] === 'COTIZACION') {
+          $report = new \App\Exports\CotizacionExport($externalQuery);
+          $filename = 'cotizaciones-' . now()->format('Ymd_His') . '.xlsx';
+      } elseif (isset($params['exportType']) && $params['exportType'] === 'PROFORMA') {
+          $report = new \App\Exports\ProformaExport($externalQuery);
+          $filename = 'proformas-' . now()->format('Ymd_His') . '.xlsx';
+      } elseif (isset($params['exportType']) && $params['exportType'] === 'BUSCADOR') {
+          $report = new \App\Exports\BuscadorExport($externalQuery);
+          $filename = 'buscador-proformas-' . now()->format('Ymd_His') . '.xlsx';
+      } elseif (isset($params['exportType']) && $params['exportType'] === 'CREDIT_NOTE') {
+          $report = new \App\Exports\CreditNoteExport($externalQuery);
+          $filename = 'credit-notes-' . now()->format('Ymd_His') . '.xlsx';
+      } elseif (isset($params['exportType']) && $params['exportType'] === 'CALCULO_REGISTRO') {
+          $report = new \App\Exports\CalculoRegistroExport($externalQuery);
+          $filename = 'calculo-registro-' . now()->format('Ymd_His') . '.xlsx';
+      } elseif (isset($params['exportType']) && $params['exportType'] === 'HISTORY') {
+          $report = new \App\Exports\HistoryExport($externalQuery);
+          $filename = 'history-' . now()->format('Ymd_His') . '.xlsx';
+      } elseif (isset($params['exportType']) && $params['exportType'] === 'INVOICE') {
+          $report = new \App\Exports\InvoiceExport($externalQuery);
+          $filename = 'electronic-invoices-' . now()->format('Ymd_His') . '.xlsx';
+      } elseif (isset($params['exportType']) && $params['exportType'] === 'SEGUIMIENTO') {
+          $report = new \App\Exports\SeguimientoExport($externalQuery);
+          $filename = 'seguimiento-facturas-' . now()->format('Ymd_His') . '.xlsx';
+      } elseif (isset($params['exportType']) && $params['exportType'] === 'ELECTRONIC_CREDIT_NOTE') {
+          $report = new \App\Exports\ElectronicCreditNoteExport($externalQuery);
+          $filename = 'electronic-credit-notes-' . now()->format('Ymd_His') . '.xlsx';
+      } elseif (isset($params['exportType']) && $params['exportType'] === 'ELECTRONIC_DEBIT_NOTE') {
+          $report = new \App\Exports\ElectronicDebitNoteExport($externalQuery);
+          $filename = 'electronic-debit-notes-' . now()->format('Ymd_His') . '.xlsx';
+      } else {
+          $title = 'Cuentas por Cobrar';
+          $report = new \App\Exports\CuentasPorCobrarReport($params, $title, $externalQuery);
+          $filename = 'cuentas-por-cobrar-' . now()->format('Ymd_His') . '.xlsx';
+      }
 
-      $filename = 'cuentas-por-cobrar-' . now()->format('Ymd_His') . '.xlsx';
       $relativePath = "exports/$filename";
       $storagePath = "public/$relativePath";
 

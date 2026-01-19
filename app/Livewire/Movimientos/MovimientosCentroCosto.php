@@ -5,6 +5,7 @@ namespace App\Livewire\Movimientos;
 use App\Models\CatalogoCuenta;
 use App\Models\CentroCosto;
 use App\Models\MovimientoCentroCosto;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -131,51 +132,72 @@ class MovimientosCentroCosto extends Component
   public function saveCentrosCosto($data)
   {
     $this->movimiento_id = $data['id'];
-    $this->save(); // este método ya valida y guarda
-    $this->loadRows();
+    $success = $this->save(); // este método ya valida y guarda
+
+    if ($success) {
+      $this->loadRows();
+
+      Log::info('saveCentrosCosto: Disparando centrosGuardadosOk');
+
+      // Disparar evento que el padre escuchará
+      $this->dispatch('centrosGuardadosOk');
+    } else {
+      Log::info('saveCentrosCosto: Disparando centrosGuardadosFail');
+      $this->dispatch('centrosGuardadosFail');
+    }
   }
 
   public function save()
   {
+    // Limpiar valores de amount antes de validar
+    foreach ($this->rows as $i => $row) {
+      if (isset($row['amount'])) {
+        // Limpiar separadores de miles y convertir a float
+        $cleanAmount = floatval(str_replace(',', '', $row['amount']));
+        $this->rows[$i]['amount'] = number_format($cleanAmount, 2, '.', '');
+      }
+    }
+
     $filasValidas = collect($this->rows)->filter(
       fn($row) =>
       isset($row['centro_costo_id'], $row['codigo_contable_id'], $row['amount']) &&
         is_numeric($row['centro_costo_id']) &&
         is_numeric($row['codigo_contable_id'])  &&
-        $row['amount'] > 0
+        floatval($row['amount']) > 0  // ← Cambiar de $row['amount'] > 0 a floatval()
     );
 
     if ($filasValidas->isEmpty()) {
       $this->addError('rows_valido', 'Debe agregar al menos un centro de costo completo.');
-      $this->dispatch('centrosGuardadosFail');
-      return;
+      return false;  // ← Retornar false en lugar de return;
     }
 
     try {
       $this->validate();
 
       foreach ($this->rows as $row) {
-        //$row['amount'] = floatval(str_replace(',', '', $row['amount']));
+        // Asegurar que el amount esté limpio
+        $cleanAmount = floatval(str_replace(',', '', $row['amount']));
+
         if (isset($row['id'])) {
           MovimientoCentroCosto::where('id', $row['id'])->update([
             'centro_costo_id' => $row['centro_costo_id'],
             'codigo_contable_id' => $row['codigo_contable_id'],
-            'amount' => $row['amount'],
+            'amount' => $cleanAmount,  // ← Usar $cleanAmount en lugar de $row['amount']
           ]);
         } else {
           MovimientoCentroCosto::create([
             'movimiento_id' => $this->movimiento_id,
             'centro_costo_id' => $row['centro_costo_id'],
             'codigo_contable_id' => $row['codigo_contable_id'],
-            'amount' => $row['amount'],
+            'amount' => $cleanAmount,  // ← Usar $cleanAmount
           ]);
         }
       }
 
-      $this->dispatch('centrosGuardadosOk');
+      return true;  // ← Retornar true en caso de éxito
     } catch (\Throwable $e) {
       $this->addError('rows_valido', 'Error al guardar: ' . $e->getMessage());
-      $this->dispatch('centrosGuardadosFail');
+      return false;  // ← Retornar false en caso de error
     }
   }
 

@@ -418,11 +418,14 @@ class MovimientoManager extends BaseComponent
         // Emite evento para que el componente hijo actualice centros de costo
         $this->dispatch('save-centros-costo', ['id' => $record->id]);
       });
+      // ← AGREGAR ESTA LÍNEA: Llamar directamente a onCentrosGuardadosOk
+      $this->onCentrosGuardadosOk();
     } catch (\Exception $e) {
       $this->dispatch('show-notification', [
         'type' => 'error',
         'message' => __('An error occurred while creating the registro') . ' - ' . $e->getMessage()
       ]);
+      return;
     }
 
     // Importante para que lo escuche el blade y actualize el sumary
@@ -494,14 +497,16 @@ class MovimientoManager extends BaseComponent
 
         // Emite evento para que el componente hijo actualice centros de costo
         $this->dispatch('save-centros-costo', ['id' => $record->id]);
-
-        $this->dispatch('scroll-to-top');
       });
+
+      // ← AGREGAR ESTA LÍNEA: Llamar directamente a onCentrosGuardadosOk
+      $this->onCentrosGuardadosOk();
     } catch (\Exception $e) {
       $this->dispatch('show-notification', [
         'type' => 'error',
         'message' => __('An error occurred while updating the registro') . ': ' . $e->getMessage()
       ]);
+      return;
     }
     // Importante para que lo escuche el blade y actualize el sumary
     $this->dispatch('actualizarSumary');

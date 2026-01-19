@@ -26,7 +26,10 @@
                   <div x-data="{ action: @entangle('action') }">
                     <div x-show="action === 'list'" x-cloak>
                       @can("export-notascreditodigitales")
-                        <livewire:transactions.transaction-datatable-export />
+                        <livewire:transactions.transaction-datatable-export
+                          :manager-class="'App\Livewire\Transactions\NotaCreditoDigitalManager'"
+                          :export-type="'CREDIT_NOTE'"
+                        />
                       @endcan
                     </div>
                   </div>

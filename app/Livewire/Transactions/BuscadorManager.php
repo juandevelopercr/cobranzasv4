@@ -1135,14 +1135,7 @@ class BuscadorManager extends TransactionManager
     }
     */
 
-    $this->dispatch('updateExportFilters', [
-      'search' => $this->search,
-      'filters' => $this->filters,
-      'selectedIds' => $this->selectedIds,
-      'sortBy' => $this->sortBy,
-      'sortDir' => $this->sortDir,
-      'perPage' => $this->perPage
-    ]);
+    $this->syncExportFilters();
 
     // Elimina el error de validación del campo actualizado
     $this->resetErrorBag($propertyName);
@@ -1461,5 +1454,39 @@ class BuscadorManager extends TransactionManager
 
       $this->dispatch('show-notification', ['type' => 'error', 'message' => __('Ha ocurrido un error al crear a nota de crédito') . ' ' . $e->getMessage()]);
     }
+  }
+  public function updatedPage($page)
+  {
+    $this->syncExportFilters();
+  }
+
+  public function setSortBy($sortByField)
+  {
+    parent::setSortBy($sortByField);
+    $this->syncExportFilters();
+  }
+
+  public function syncExportFilters()
+  {
+    $this->dispatch('updateExportFilters', [
+      'search' => $this->search,
+      'filters' => $this->filters,
+      'selectedIds' => $this->selectedIds,
+      'sortBy' => $this->sortBy,
+      'sortDir' => $this->sortDir,
+      'perPage' => $this->perPage,
+      'page' => $this->getPage(),
+      'exportType' => 'BUSCADOR',
+      'managerClass' => self::class,
+    ]);
+  }
+
+  public function getQueryForExport(array $params = []): \Illuminate\Database\Eloquent\Builder
+  {
+    if (isset($params['search'])) $this->search = $params['search'];
+    if (isset($params['filters']) && is_array($params['filters'])) $this->filters = $params['filters'];
+    if (isset($params['document_type'])) $this->document_type = $params['document_type'];
+
+    return $this->getFilteredQuery();
   }
 }

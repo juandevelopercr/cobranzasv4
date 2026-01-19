@@ -458,11 +458,7 @@ class NotaCreditoElectronicaManager extends TransactionManager
         $this->contact_economic_activity_id = null;
     }
 
-    $this->dispatch('updateExportFilters', [
-      'search' => $this->search,
-      'filters' => $this->filters,
-      'selectedIds' => $this->selectedIds,
-    ]);
+    $this->syncExportFilters();
 
     // Elimina el error de validación del campo actualizado
     $this->resetErrorBag($propertyName);
@@ -545,5 +541,41 @@ class NotaCreditoElectronicaManager extends TransactionManager
       $this->gln = '';
       $this->prebill = '';
     }
+  }
+
+  public function updatedPage($page)
+  {
+    $this->syncExportFilters();
+  }
+
+  public function setSortBy($sortByField)
+  {
+    parent::setSortBy($sortByField);
+    $this->syncExportFilters();
+  }
+
+  public function syncExportFilters()
+  {
+    $this->dispatch('updateExportFilters', [
+      'search' => $this->search,
+      'filters' => $this->filters,
+      'selectedIds' => $this->selectedIds,
+      'sortBy' => $this->sortBy,
+      'sortDir' => $this->sortDir,
+      'perPage' => $this->perPage,
+      'page' => $this->getPage(),
+      'exportType' => 'ELECTRONIC_CREDIT_NOTE',
+      'managerClass' => self::class,
+    ]);
+  }
+
+  public function getQueryForExport(array $params = []): \Illuminate\Database\Eloquent\Builder
+  {
+    if (isset($params['search'])) $this->search = $params['search'];
+    if (isset($params['filters']) && is_array($params['filters'])) $this->filters = $params['filters'];
+
+    $this->document_type = 'NCE';
+
+    return $this->getFilteredQuery();
   }
 }

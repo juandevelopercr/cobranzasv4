@@ -114,7 +114,10 @@
                   <!-- Dropdown with icon -->
                   <div x-show="action === 'list'" x-cloak>
                     @can("export-proformas")
-                      <livewire:transactions.transaction-datatable-export />
+                      <livewire:transactions.transaction-datatable-export
+                        :manager-class="'App\Livewire\Transactions\ProformaManager'"
+                        :export-type="'PROFORMA'"
+                      />
                     @endcan
                   </div>
 

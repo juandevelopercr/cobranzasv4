@@ -1152,11 +1152,7 @@ class CalculoRegistroManager extends TransactionManager
         $this->contact_economic_activity_id = null;
     }
 
-    $this->dispatch('updateExportFilters', [
-      'search' => $this->search,
-      'filters' => $this->filters,
-      'selectedIds' => $this->selectedIds,
-    ]);
+    $this->syncExportFilters();
 
     // Elimina el error de validación del campo actualizado
     $this->resetErrorBag($propertyName);
@@ -1401,5 +1397,41 @@ class CalculoRegistroManager extends TransactionManager
       'type' => 'success',
       'message' => __('Se ha generado el reporte satisfactoriamente')
     ]);
+  }
+
+
+  public function updatedPage($page)
+  {
+    $this->syncExportFilters();
+  }
+
+  public function setSortBy($sortByField)
+  {
+    parent::setSortBy($sortByField);
+    $this->syncExportFilters();
+  }
+
+  public function syncExportFilters()
+  {
+    $this->dispatch('updateExportFilters', [
+      'search' => $this->search,
+      'filters' => $this->filters,
+      'selectedIds' => $this->selectedIds,
+      'sortBy' => $this->sortBy,
+      'sortDir' => $this->sortDir,
+      'perPage' => $this->perPage,
+      'page' => $this->getPage(),
+      'exportType' => 'CALCULO_REGISTRO',
+      'managerClass' => self::class,
+    ]);
+  }
+
+  public function getQueryForExport(array $params = []): \Illuminate\Database\Eloquent\Builder
+  {
+    if (isset($params['search'])) $this->search = $params['search'];
+    if (isset($params['filters']) && is_array($params['filters'])) $this->filters = $params['filters'];
+    if (isset($params['document_type'])) $this->document_type = $params['document_type'];
+
+    return $this->getFilteredQuery();
   }
 }

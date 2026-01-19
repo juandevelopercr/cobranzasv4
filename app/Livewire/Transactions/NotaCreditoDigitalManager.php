@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Session;
 class NotaCreditoDigitalManager extends TransactionManager
 {
   public $customer_text; // para mostrar el texto inicial
+  public $tiposFacturacion = [];
 
   public $filters = [
     'filter_proforma_no' => NULL,
@@ -49,6 +50,11 @@ class NotaCreditoDigitalManager extends TransactionManager
     $this->listaUsuarios = User::where('active', 1)->orderBy('name', 'ASC')->get();
     $this->statusOptions = NULL;
     $this->statusOptions = Transaction::getStatusOptions(false);
+    $this->tiposFacturacion = [
+      ['id' => 1, 'name' => 'Individual'],
+      ['id' => 2, 'name' => 'Masiva'],
+      ['id' => 3, 'name' => 'Sin Caso'],
+    ];
     // Aquí puedes agregar lógica específica para proformas
   }
 
@@ -546,5 +552,45 @@ class NotaCreditoDigitalManager extends TransactionManager
     return view('livewire.transactions.digital-credit-note-datatable', [
       'records' => $records,
     ]);
+  }
+  public function updated($propertyName)
+  {
+    $this->syncExportFilters();
+    $this->resetErrorBag($propertyName);
+  }
+
+  public function updatedPage($page)
+  {
+    $this->syncExportFilters();
+  }
+
+  public function setSortBy($sortByField)
+  {
+    parent::setSortBy($sortByField);
+    $this->syncExportFilters();
+  }
+
+  public function syncExportFilters()
+  {
+    $this->dispatch('updateExportFilters', [
+      'search' => $this->search,
+      'filters' => $this->filters,
+      'selectedIds' => $this->selectedIds,
+      'sortBy' => $this->sortBy,
+      'sortDir' => $this->sortDir,
+      'perPage' => $this->perPage,
+      'page' => $this->getPage(),
+      'exportType' => 'CREDIT_NOTE',
+      'managerClass' => self::class,
+    ]);
+  }
+
+  public function getQueryForExport(array $params = []): \Illuminate\Database\Eloquent\Builder
+  {
+    if (isset($params['search'])) $this->search = $params['search'];
+    if (isset($params['filters']) && is_array($params['filters'])) $this->filters = $params['filters'];
+    if (isset($params['document_type'])) $this->document_type = $params['document_type'];
+
+    return $this->getFilteredQuery();
   }
 }

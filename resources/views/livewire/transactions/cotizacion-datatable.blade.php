@@ -40,7 +40,10 @@
                   <div x-data="{ action: @entangle('action') }">
                     <div x-show="action === 'list'" x-cloak>
                       @can("export-cotizaciones")
-                        <livewire:transactions.transaction-datatable-export />
+                        <livewire:transactions.transaction-datatable-export
+                          :manager-class="'App\Livewire\Transactions\CotizacionManager'"
+                          :export-type="'COTIZACION'"
+                        />
                       @endcan
                     </div>
                   </div>
