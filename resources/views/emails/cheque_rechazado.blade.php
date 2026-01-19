@@ -75,7 +75,7 @@
                         <td>{{ $mov->cuenta->nombre_cuenta ?? '' }}</td>
                         <td>{{ $mov->beneficiario }}</td>
                         <td>{{ $mov->motivo_rechazo ?? 'N/D' }}</td>
-                        <td>{{ number_format($mov->monto, 2, '.', ',') }}</td>
+                        <td>{{ number_format($mov->monto + ($mov->impuesto > 0 ? $mov->impuesto : 0), 2, '.', ',') }}</td>
                         <td>{{ $mov->currency->code ?? '' }}</td>
                     </tr>
                 @endforeach
