@@ -161,6 +161,76 @@ Livewire.on('show-creditnote-dialog', event => {
   });
 });
 
+// ✅ Función para Select2 + AJAX + Livewire
+window.select2LivewireAjax = ({
+  wireModelName,
+  url,
+  postUpdate = true,
+  dropdownParent = null,
+  placeholder = 'Buscar...',
+  onSelect = null // Nuevo callback
+}) => ({
+  init(el) {
+    if (!el) return;
+
+    const livewireComponent = window.Livewire.find(el.closest('[wire\\:id]')?.getAttribute('wire:id'));
+    if (!livewireComponent) return;
+
+    const initializeSelect2 = () => {
+      if ($(el).hasClass('select2-hidden-accessible')) {
+        $(el).off('change').select2('destroy');
+      }
+
+      const config = {
+        width: 'style',
+        placeholder: placeholder,
+        allowClear: true,
+        ajax: {
+          url: url,
+          dataType: 'json',
+          delay: 250,
+          data: function (params) {
+            return {
+              q: params.term
+            };
+          },
+          processResults: function (data) {
+            return {
+              results: data
+            };
+          },
+          cache: true
+        },
+        minimumInputLength: 2
+      };
+
+      if (dropdownParent) {
+        config.dropdownParent = $(dropdownParent);
+      }
+
+      $(el).select2(config);
+
+      $(el).on('change', () => {
+        const newValue = $(el).val();
+        livewireComponent.set(wireModelName, newValue, postUpdate);
+
+        if (onSelect && newValue) {
+          Livewire.dispatch(onSelect, { contactId: newValue });
+        }
+      });
+    };
+
+    initializeSelect2();
+
+    Livewire.on('select2:refresh', data => {
+      const id = data?.id || data?.[0]?.id;
+      if (el.id === id) {
+        setTimeout(() => initializeSelect2(), 50);
+      }
+    });
+  }
+});
+
 // ✅ Función mejorada para Select2 + Livewire con dependencias y opcionalidades
 window.select2Livewire = ({
   wireModelName,
@@ -559,7 +629,7 @@ function numeroALetras(num) {
   ];
   const DECENAS_MAYORES = [
     'VEINTE',
-    'VEINTIUNO',
+    'VEINTIUN',
     'VEINTIDOS',
     'VEINTITRES',
     'VEINTICUATRO',
@@ -653,15 +723,31 @@ function numeroALetras(num) {
     return num < 10 ? '0' + num : num;
   }
 
-  // Ajustar el uso de "UNO" y "UN"
   function ajustarUnidades(texto) {
-    // Reemplazar "UN" y "UNO" de acuerdo al contexto
-    return texto
-      .replace(/UNO\sMIL/g, 'UN MIL')
-      .replace(/UNO\s/g, 'UN ')
-      .replace(/(\sUN\s)(?!MIL)/g, ' UNO ')
-      .replace(/(\sUN\s)(?!MIL)/g, ' UNO ')
-      .replace(/VEINTIUN/g, 'VEINTIUNO'); // Caso específico para "veintiuno"
+    if (!texto) return '';
+
+    // Primero aplicar correcciones de UNO -> UN antes de MIL/MILLON
+    let res = texto
+      .replace(/\bUNO\s+MIL\b/g, 'UN MIL')
+      .replace(/\bUNO\s+MILLON\b/g, 'UN MILLON')
+      .replace(/\bUNO\s+MILLONES\b/g, 'UN MILLONES')
+      .replace(/\bCIENTO\s+UNO\s+MIL\b/g, 'CIENTO UN MIL')
+      .replace(/\bCIENTO\s+UNO\s+MILLON\b/g, 'CIENTO UN MILLON')
+      .replace(/\bCIENTO\s+UNO\s+MILLONES\b/g, 'CIENTO UN MILLONES');
+
+    // Ahora manejar el caso de VEINTIUN / VEINTIUNO
+    // Se usa VEINTIUNO solo si es el final de la cadena o si le sigue " CON "
+    if (res === 'VEINTIUN') return 'VEINTIUNO';
+
+    if (res.endsWith(' VEINTIUN')) {
+      res = res.replace(/ VEINTIUN$/, ' VEINTIUNO');
+    }
+
+    if (res.includes('VEINTIUN CON ')) {
+      res = res.replace(/VEINTIUN CON /g, 'VEINTIUNO CON ');
+    }
+
+    return res;
   }
 
   const parteEntera = Math.floor(num);
@@ -742,7 +828,6 @@ window.datePickerLivewire = ({ wireEventName = 'dateSelected' }) => ({
     });
   }
 });
-
 /*
 Livewire.on('updateDatePicker', data => {
   const { id, date } = data;
@@ -752,44 +837,3 @@ Livewire.on('updateDatePicker', data => {
   }
 });
 */
-
-// TransactionLineManager caso_id select2 handler
-Livewire.on('reinitFormControls', () => {
-  console.log('🔄 reinitFormControls received in custom.js - Reinitializing caso_id select2');
-  setTimeout(() => {
-    const $caso = $('#caso_id');
-    if ($caso.length === 0) {
-      console.log('⚠️ #caso_id not found');
-      return;
-    }
-
-    if ($caso.hasClass('select2-hidden-accessible')) {
-      console.log('🔄 Destroying existing select2');
-      $caso.select2('destroy');
-    }
-
-    console.log('🔌 Initializing Select2 for caso_id');
-    $caso
-      .select2({
-        placeholder: 'Buscar caso...',
-        minimumInputLength: 2,
-        ajax: {
-          url: '/api/casos/search',
-          dataType: 'json',
-          delay: 250,
-          data: params => ({ q: params.term, bank_id: $('#bank_id').val() }),
-          processResults: data => ({ results: data })
-        }
-      })
-      .off('change')
-      .on('change', function () {
-        const val = $(this).val();
-        const wireId = $(this).closest('[wire\\:id]').attr('wire:id');
-        if (wireId && window.Livewire) {
-          window.Livewire.find(wireId)?.set('caso_id', val);
-        }
-      });
-
-    console.log('✅ caso_id select2 reinitialized');
-  }, 500);
-});
