@@ -171,6 +171,7 @@ class MovimientosFacturasNoPagadas extends TransactionManager
         'width' => NULL,
         'visible' => true,
       ],
+/*
       [
         'field' => 'caso_info',
         'orderName' => '',
@@ -190,6 +191,7 @@ class MovimientosFacturasNoPagadas extends TransactionManager
         'width' => NULL,
         'visible' => true,
       ],
+*/
       [
         'field' => 'totalComprobante',
         'orderName' => '',
