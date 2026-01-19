@@ -563,7 +563,8 @@
                   </table>
                 </div>
               </div>
-              <div class="tm_invoice_footer tm_border_top tm_m0_md">
+              <hr style="border: none; border-top: 2px solid #007aff; margin: 0;" class="tm_mb15">
+              <div class="tm_invoice_footer tm_m0_md">
                 <div class="tm_left_footer">
                   <br>
                   @if(($cuenta && in_array($transaction->showInstruccionesPago, ['NACIONAL', 'AMBAS'])) && $cuenta->intruccionesPagoNacional)
@@ -571,8 +572,6 @@
                       {!! $cuenta->intruccionesPagoNacional !!}
                     </p>
                   @endif
-
-                  <hr style="border: none; border-top: 1px solid #0076c0;" class="tm_mb15">
 
                   @if (!empty($transaction->notes))
                   <p class="tm_f12 tm_m0">
