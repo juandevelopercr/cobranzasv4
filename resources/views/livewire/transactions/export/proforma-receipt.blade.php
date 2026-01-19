@@ -29,7 +29,7 @@
             <div class="tm_invoice_right tm_text_right tm_mobile_hide">
               <div class="tm_f24 tm_text_uppercase tm_white_color mt-5">
                 {{ $title }}<br>
-                <span class="tm_f12 tm_invoice_number">
+                <span class="tm_f16 tm_invoice_number">
                   <b>No: {{ $consecutivo }}</b>
                 </span>
               </div>
@@ -568,7 +568,7 @@
                   </p>
                 @endif
 
-                <hr style="background-color: #0076c0; height: 1px; border: none;" class="tm_mb15">
+                <hr style="border: none; border-top: 1px solid #94a3b8;" class="tm_mb15">
 
                 @if (!empty($transaction->notes))
                 <p class="tm_m0 tm_f12">
