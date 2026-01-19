@@ -55,7 +55,7 @@
 
           <div class="tm_mb10" style="float:right">
             @if($showReferencia)
-              <span class="tm_f12 tm_danger_color">
+              <span class="tm_f16 tm_danger_color">
                 <b>{{ $referencia['title'] }} #: {{ $referencia['consecutivo'] }}</b>
               </span>
             @endif
