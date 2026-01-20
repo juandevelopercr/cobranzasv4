@@ -105,7 +105,7 @@ class RevisionManager extends BaseComponent
   public $defaultStatus = [];
   public $fondos = 0.00;
 
-  public $centrocosto = 30;  // Vacio
+  public $centrocosto = 29;  // Vacio
   public $codigo_contable = 78; //--- Gastos de clientes por pagar -
 
   public $centrosCostosValidos;

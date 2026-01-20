@@ -40,7 +40,7 @@ class MovimientosCentroCosto extends Component
 
     // Si no hay filas, crear una vacía
     if (empty($this->rows)) {
-      $this->rows = [['centro_costo_id' => 30, 'codigo_contable_id' => 78, 'amount' => '0.00']];
+      $this->rows = [['centro_costo_id' => 29, 'codigo_contable_id' => 78, 'amount' => '0.00']];
     }
   }
 
