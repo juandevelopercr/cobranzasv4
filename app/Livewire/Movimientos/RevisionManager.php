@@ -336,6 +336,11 @@ class RevisionManager extends BaseComponent
   #[On('respuesta-validacion-centros')]
   public function setValidacionCentros($valido)
   {
+    Log::info('RevisionManager: setValidacionCentros', [
+      'valido' => $valido,
+      'monto' => $this->monto,
+      'recordId' => $this->recordId
+    ]);
     if (!$valido) {
       $this->addError('centros', 'Revise los centros de costo antes de guardar.');
       $this->dispatch('show-notification', ['type' => 'error', 'message' => 'Revise los centros de costo antes de guardar']);
@@ -352,6 +357,7 @@ class RevisionManager extends BaseComponent
   #[On('centrosGuardadosOk')]
   public function onCentrosGuardadosOk()
   {
+      Log::info('RevisionManager: onCentrosGuardadosOk iniciada', ['closeForm' => $this->closeForm, 'recordId' => $this->recordId]);
       $closeForm = $this->closeForm;
       $recordId = $this->recordId;
 
@@ -361,9 +367,13 @@ class RevisionManager extends BaseComponent
       $this->closeForm = false;
 
       if (!$closeForm) {
+          Log::info('RevisionManager: Recargando modo edición', ['id' => $recordId]);
           $this->edit($recordId);
+      } else {
+          $this->resetPage();
       }
 
+      Log::info('RevisionManager: Despachando notificación de éxito');
       $this->dispatch('show-notification', [
           'type' => 'success',
           'message' => __('El registro ha sido guardado correctamente.')
@@ -447,10 +457,16 @@ class RevisionManager extends BaseComponent
         // Actualizamos el ID para que esté disponible
         $this->recordId = $record->id;
 
+        Log::info('RevisionManager: crearMovimiento - Registro creado, id: ' . $record->id);
+
+        // Notificar al hijo el cambio de ID
+        $this->dispatch('manager-record-changed', id: $record->id)->to('movimientos.movimientos-centro-costo');
+
         // Emite evento para que el componente hijo actualice centros de costo
-        $this->dispatch('save-centros-costo', ['id' => $record->id]);
+        $this->dispatch('save-centros-costo', ['id' => $record->id])->to('movimientos.movimientos-centro-costo');
       });
     } catch (\Exception $e) {
+      Log::error('RevisionManager: crearMovimiento Error: ' . $e->getMessage());
       $this->dispatch('show-notification', [
         'type' => 'error',
         'message' => __('An error occurred while creating the registro') . ' - ' . $e->getMessage()
@@ -517,11 +533,13 @@ class RevisionManager extends BaseComponent
         }
 
         // Emite evento para que el componente hijo actualice centros de costo
-        $this->dispatch('save-centros-costo', ['id' => $record->id]);
+        Log::info('RevisionManager: updateMovimiento - Registro actualizado, id: ' . $record->id);
+        $this->dispatch('save-centros-costo', ['id' => $record->id])->to('movimientos.movimientos-centro-costo');
 
         $this->dispatch('scroll-to-top');
       });
     } catch (\Exception $e) {
+      Log::error('RevisionManager: updateMovimiento Error: ' . $e->getMessage());
       $this->dispatch('show-notification', [
         'type' => 'error',
         'message' => __('An error occurred while updating the registro') . ': ' . $e->getMessage()
