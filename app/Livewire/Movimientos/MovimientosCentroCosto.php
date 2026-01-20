@@ -6,6 +6,7 @@ use App\Models\CatalogoCuenta;
 use App\Models\CentroCosto;
 use App\Models\MovimientoCentroCosto;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -40,7 +41,7 @@ class MovimientosCentroCosto extends Component
 
     // Si no hay filas, crear una vacía
     if (empty($this->rows)) {
-      $this->rows = [['centro_costo_id' => 29, 'codigo_contable_id' => 78, 'amount' => '0.00']];
+      $this->rows = [(string)Str::uuid() => ['centro_costo_id' => 29, 'codigo_contable_id' => 78, 'amount' => '0.00']];
     }
   }
 
@@ -69,12 +70,14 @@ class MovimientosCentroCosto extends Component
   {
     $this->rows = MovimientoCentroCosto::where('movimiento_id', $this->movimiento_id)
       ->get()
-      ->map(function ($item) {
+      ->mapWithKeys(function ($item) {
         return [
-          'id' => $item->id,
-          'centro_costo_id' => $item->centro_costo_id,
-          'codigo_contable_id' => $item->codigo_contable_id,
-          'amount' => number_format((float)$item->amount, 2, '.', ''),
+          (string)Str::uuid() => [
+            'id' => $item->id,
+            'centro_costo_id' => $item->centro_costo_id,
+            'codigo_contable_id' => $item->codigo_contable_id,
+            'amount' => number_format((float)$item->amount, 2, '.', ''),
+          ]
         ];
       })
       ->toArray();
@@ -114,7 +117,7 @@ class MovimientosCentroCosto extends Component
 
   public function addRow()
   {
-    $this->rows[] = ['centro_costo_id' => '', 'codigo_contable_id' => '', 'amount' => ''];
+    $this->rows[(string)Str::uuid()] = ['centro_costo_id' => '', 'codigo_contable_id' => '', 'amount' => ''];
   }
 
   public function removeRow($index)
@@ -124,7 +127,7 @@ class MovimientosCentroCosto extends Component
     }
 
     unset($this->rows[$index]);
-    $this->rows = array_values($this->rows);
+    //$this->rows = array_values($this->rows);
     $this->dispatch("refreshCalculaMontos");
   }
 

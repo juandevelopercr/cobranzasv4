@@ -1,6 +1,6 @@
 <div id="content-centro-costo" data-rows-count="{{ count($rows) }}">
     @foreach ($rows as $index => $row)
-        <div class="row mb-2">
+        <div class="row mb-2" wire:key="row-{{ $index }}">
             <input type="hidden" wire:model="rows.{{ $index }}.id">
             <div class="col-md-3 fv-plugins-icon-container">
                 <label class="form-label" for="amount_{{ $index }}">{{ __('Amount') }}</label>
@@ -69,7 +69,7 @@
                 @enderror
             </div>
             <div class="col-auto pt-7">
-                <button type="button" wire:click="removeRow({{ $index }})" class="btn btn-danger btn-sm"
+                <button type="button" wire:click="removeRow('{{ $index }}')" class="btn btn-danger btn-sm"
                     title="Eliminar">
                     <i class="fas fa-trash"></i>
                 </button>

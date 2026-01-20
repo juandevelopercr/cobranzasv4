@@ -1359,16 +1359,22 @@ class MovimientoManager extends BaseComponent
   #[On('updateSaldoCancelar')]
   public function updateSaldoCancelar()
   {
-    if ($this->recordId) {
-      $saldoCancelar = Helpers::getSaldoCancelar($this->recordId, (int)$this->tiene_retencion);
-      $diferencia = $this->monto - $saldoCancelar;
-      //$this->saldo_cancelar = Helpers::formatDecimal($saldoCancelar);
-      //$this->diferencia = Helpers::formatDecimal($diferencia);
-      $this->saldo_cancelar = number_format($saldoCancelar, 2, '.', '');
-      $this->diferencia = number_format($diferencia, 2, '.', '');
-      $this->dispatch('refreshCleave');
-      $this->updateMovimiento();
-    }
+      Log::info('updateSaldoCancelar: Inicio', ['recordId' => $this->recordId]);
+      if ($this->recordId) {
+          $saldoCancelar = Helpers::getSaldoCancelar($this->recordId, (int)$this->tiene_retencion);
+          $diferencia = (float)$this->monto - (float)$saldoCancelar;
+          if (abs($diferencia) < 0.001) $diferencia = 0.0;
+
+          Log::info('updateSaldoCancelar: Calculos', [
+              'monto' => $this->monto,
+              'saldoCancelar' => $saldoCancelar,
+              'diferencia' => $diferencia
+          ]);
+
+          $this->saldo_cancelar = number_format($saldoCancelar, 2, '.', '');
+          $this->diferencia = number_format($diferencia, 2, '.', '');
+          $this->dispatch('refreshCleave');
+      }
   }
 
   public function sendComprobanteByEmail()
