@@ -41,8 +41,21 @@ class MovimientosCentroCosto extends Component
 
     // Si no hay filas, crear una vacía
     if (empty($this->rows)) {
-      $this->rows = [(string)Str::uuid() => ['centro_costo_id' => 29, 'codigo_contable_id' => 78, 'amount' => '0.00']];
+      $this->resetRows();
     }
+  }
+
+  #[On('manager-record-changed')]
+  public function onRecordChanged($id = null)
+  {
+    $this->movimiento_id = $id;
+    // No cargamos filas aquí para evitar sobreescribir lo que el usuario tecleó
+    // antes de que el método save() tenga oportunidad de ejecutarse.
+  }
+
+  public function resetRows()
+  {
+    $this->rows = [(string)Str::uuid() => ['centro_costo_id' => 29, 'codigo_contable_id' => 78, 'amount' => '0.00']];
   }
 
   /*
@@ -134,18 +147,16 @@ class MovimientosCentroCosto extends Component
   #[On('save-centros-costo')]
   public function saveCentrosCosto($data)
   {
+    Log::info('MovimientosCentroCosto: Recibido evento save-centros-costo', ['id' => $data['id']]);
     $this->movimiento_id = $data['id'];
-    $success = $this->save(); // este método ya valida y guarda
+    $success = $this->save();
 
     if ($success) {
+      Log::info('MovimientosCentroCosto: Guardado exitoso, disparando centrosGuardadosOk');
       $this->loadRows();
-
-      Log::info('saveCentrosCosto: Disparando centrosGuardadosOk');
-
-      // Disparar evento que el padre escuchará
       $this->dispatch('centrosGuardadosOk');
     } else {
-      Log::info('saveCentrosCosto: Disparando centrosGuardadosFail');
+      Log::error('MovimientosCentroCosto: Error al guardar centros de costo');
       $this->dispatch('centrosGuardadosFail');
     }
   }

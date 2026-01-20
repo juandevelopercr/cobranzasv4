@@ -292,7 +292,6 @@ class MovimientoManager extends BaseComponent
     Log::info('setValidacionCentros', [
       'valido' => $valido,
       'monto' => $this->monto,
-      'centros_costo' => $this->centros_costo ?? null,
       'recordId' => $this->recordId
     ]);
     if (!$valido) {
@@ -311,6 +310,7 @@ class MovimientoManager extends BaseComponent
   #[On('centrosGuardadosOk')]
   public function onCentrosGuardadosOk()
   {
+      Log::info('onCentrosGuardadosOk: Iniciando finalización', ['closeForm' => $this->closeForm]);
       $closeForm = $this->closeForm;
       $recordId = $this->recordId;
 
@@ -320,12 +320,13 @@ class MovimientoManager extends BaseComponent
       $this->closeForm = false;
 
       if (!$closeForm) {
+          Log::info('onCentrosGuardadosOk: Recargando en modo edición', ['id' => $recordId]);
           $this->edit($recordId);
       }else {
-          // Resetear paginación a página 1 cuando se cierra el formulario
           $this->resetPage();
       }
 
+      Log::info('onCentrosGuardadosOk: Despachando notificación de éxito');
       $this->dispatch('show-notification', [
           'type' => 'success',
           'message' => __('El registro ha sido guardado correctamente.')
@@ -418,12 +419,16 @@ class MovimientoManager extends BaseComponent
         // Actualizamos el ID para que esté disponible
         $this->recordId = $record->id;
 
+        Log::info('crearMovimiento: Registro creado, id: ' . $record->id);
+
+        // Notificar al hijo el cambio de ID
+        $this->dispatch('manager-record-changed', id: $record->id)->to('movimientos.movimientos-centro-costo');
+
         // Emite evento para que el componente hijo actualice centros de costo
-        $this->dispatch('save-centros-costo', ['id' => $record->id]);
+        $this->dispatch('save-centros-costo', ['id' => $record->id])->to('movimientos.movimientos-centro-costo');
       });
-      // ← AGREGAR ESTA LÍNEA: Llamar directamente a onCentrosGuardadosOk
-      $this->onCentrosGuardadosOk();
     } catch (\Exception $e) {
+      Log::error('crearMovimiento Error: ' . $e->getMessage());
       $this->dispatch('show-notification', [
         'type' => 'error',
         'message' => __('An error occurred while creating the registro') . ' - ' . $e->getMessage()
@@ -498,12 +503,11 @@ class MovimientoManager extends BaseComponent
           $this->aplicarPago($record);
         }
 
-        // Emite evento para que el componente hijo actualice centros de costo
-        $this->dispatch('save-centros-costo', ['id' => $record->id]);
-      });
+        Log::info('updateMovimiento: Registro actualizado, id: ' . $record->id);
 
-      // ← AGREGAR ESTA LÍNEA: Llamar directamente a onCentrosGuardadosOk
-      $this->onCentrosGuardadosOk();
+        // Emite evento para que el componente hijo actualice centros de costo
+        $this->dispatch('save-centros-costo', ['id' => $record->id])->to('movimientos.movimientos-centro-costo');
+      });
     } catch (\Exception $e) {
       $this->dispatch('show-notification', [
         'type' => 'error',

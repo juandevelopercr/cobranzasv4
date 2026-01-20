@@ -358,7 +358,7 @@
             <h4 class="mb-0"><span class="badge bg-primary">{{ __('Centros de costo') }}</span></h4>
             @livewire('movimientos.movimientos-centro-costo', [
                 'movimiento_id' => $this->recordId ?? null,
-            ], key('centro-costo-' . ($this->recordId ?? 'new')))
+            ], key('movimientos-centro-costo-child'))
 
             <br>
             <h4 class="mb-0"><span class="badge bg-primary">{{ __('Solicitud de comprobante') }}</span></h4>
@@ -599,7 +599,7 @@
                             const rowKey = input.id.replace('amount_', '');
 
                             //console.log(`[setFirstRowValueCentrocosto] Sincronizando rows.${rowKey}.amount = ${formattedValue}`);
-                            component.set(`rows.${rowKey}.amount`, formattedValue, false);
+                            component.set(`rows.${rowKey}.amount`, formattedValue, true);
                         }
                     }
                 }
