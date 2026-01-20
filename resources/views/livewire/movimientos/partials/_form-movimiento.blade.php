@@ -564,37 +564,43 @@
                 }
                 */
                 function setFirstRowValueCentrocosto(value) {
-                    const input = document.getElementById('amount_0');
+                    const centroCostoContainer = document.getElementById('content-centro-costo');
+                    if (!centroCostoContainer) return;
+
+                    // Buscar el primer input que tenga la clase específica o empiece con amount_
+                    const input = centroCostoContainer.querySelector('.inputMontoCentroCosto') ||
+                                  centroCostoContainer.querySelector('input[id^="amount_"]');
+
                     if (!input) return;
 
-                    // Aplicar formato visible
-                    setFormattedValue(input, value);
+                    // Asegurar que tengamos un valor numérico formateado a 2 decimales
+                    const numericValue = parseFloat(value);
+                    const formattedValue = isNaN(numericValue) ? '0.00' : numericValue.toFixed(2);
 
-                    // Obtener el componente MovimientosCentroCosto (o el nombre de tu componente hijo)
-                    // Buscar el contenedor del componente centro de costo
-                    const centroCostoContainer = document.getElementById('content-centro-costo');
-                    if (!centroCostoContainer) {
-                        console.warn('[setFirstRowValueCentrocosto] No se encontró el contenedor content-centro-costo');
-                        return;
+                    // 1. Actualizar el valor visualmente (Cleave.js maneja la máscara)
+                    if (input.cleaveInstance) {
+                        input.cleaveInstance.setRawValue(formattedValue);
+                    } else {
+                        input.value = formattedValue;
                     }
 
+                    // 2. Disparar eventos para que Alpine/Livewire detecten el cambio manual
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+
+                    // 3. Sincronizar directamente con el componente Livewire (hijo)
                     const componentEl = centroCostoContainer.closest('[wire\\:id]');
                     const componentId = componentEl?.getAttribute('wire:id');
 
                     if (componentId && window.Livewire) {
                         const component = Livewire.find(componentId);
                         if (component) {
-                            // Convertir el valor a número con 2 decimales
-                            const numericValue = parseFloat(value);
-                            const formattedValue = isNaN(numericValue) ? '0.00' : numericValue.toFixed(2);
+                            // Extraer la llave (UUID) del ID del input (ej: amount_550e8400...)
+                            const rowKey = input.id.replace('amount_', '');
 
-                            console.log('[setFirstRowValueCentrocosto] Actualizando rows.0.amount:', formattedValue);
-                            component.set('rows.0.amount', formattedValue, false);
-                        } else {
-                            console.warn('[setFirstRowValueCentrocosto] No se encontró el componente Livewire');
+                            //console.log(`[setFirstRowValueCentrocosto] Sincronizando rows.${rowKey}.amount = ${formattedValue}`);
+                            component.set(`rows.${rowKey}.amount`, formattedValue, false);
                         }
-                    } else {
-                        console.warn('[setFirstRowValueCentrocosto] No se encontró componentId o Livewire');
                     }
                 }
 
