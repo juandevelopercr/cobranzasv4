@@ -192,6 +192,8 @@ class ImportColumns
         'Nombre del Demandado'=>['campo'=>'pnombre_demandado', 'tipo'=>'string'],
         'Número de Cédula del demandado'=>['campo'=>'pnumero_cedula', 'tipo'=>'string'],
         'MONEDA'=>['campo'=>'currency_id', 'tipo'=>'string'],
+        'Número Operación 1'=> ['campo'=>'pnumero_operacion1', 'tipo'=>'string'],
+        'Número operación 2'=> ['campo'=>'pnumero_operacion1', 'tipo'=>'string'],
         'DETALLE DE GARANTÍA O DOCUMENTO'=>['campo'=>'pdetalle_garantia', 'tipo'=>'string'],
         'Despacho Judicial Juzgado'=>['campo'=>'pdespacho_judicial_juzgado', 'tipo'=>'string'],
         'Número Expediente Judicial'=>['campo'=>'pnumero_expediente_judicial', 'tipo'=>'string'],
