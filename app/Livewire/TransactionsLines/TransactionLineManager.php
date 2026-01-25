@@ -215,12 +215,25 @@ class TransactionLineManager extends BaseComponent {
     $this->transaction_id = $transaction_id;
 
     // Intentar obtener de sesión primero
-    if (session()->has('transaction_context')) {
+    if ($this->transaction_id) {
+        $this->loadTransactionDetails();
+    } elseif (session()->has('transaction_context')) {
       $this->handleUpdateContext(session()->get('transaction_context'));
     }
 
     $this->refresDatatable();
     Log::info('TransactionLineManager mounted', ['transaction_id' => $this->transaction_id, 'recordId' => $this->recordId]);
+  }
+
+  protected function loadTransactionDetails() {
+      if (!$this->transaction_id) return;
+
+      $transaction = Transaction::find($this->transaction_id);
+      if ($transaction) {
+          $this->bank_id = $transaction->bank_id;
+          $this->type_notarial_act = $transaction->proforma_type;
+          $this->tipo_facturacion = $transaction->tipo_facturacion;
+      }
   }
 
   public function render() {
@@ -494,6 +507,12 @@ class TransactionLineManager extends BaseComponent {
   public function store() {
     $this->cleanEmptyForeignKeys();
     $transaction = Transaction::find($this->transaction_id);
+
+    if (!$transaction) {
+        $this->dispatch('show-notification', ['type' => 'error', 'message' => __('Transaction incorrectly loaded or not found.')]);
+        return false;
+    }
+
     $product = Product::where('id', $this->product_id)->first();
     if ($product) {
       $this->codigo = $product->code;
@@ -718,6 +737,12 @@ class TransactionLineManager extends BaseComponent {
     $this->cleanEmptyForeignKeys();
 
     $transaction = Transaction::find($this->transaction_id);
+
+    if (!$transaction) {
+        $this->dispatch('show-notification', ['type' => 'error', 'message' => __('Transaction incorrectly loaded or not found.')]);
+        return false;
+    }
+
     $product = Product::where('id', $this->product_id)->first();
     if ($product) {
       $this->codigo = $product->code;
