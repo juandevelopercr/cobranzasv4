@@ -88,6 +88,7 @@ use App\Http\Controllers\classifiers\CasoListadoJuzgadoController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use App\Http\Controllers\classifiers\MovimientoNotificationController;
 use App\Http\Controllers\reports\ReportFacturacionDetalladaController;
+use App\Http\Controllers\reports\ReportComprobantesController;
 
 // locale
 Route::get('/lang/{locale}', [LanguageController::class, 'swap']);
@@ -317,6 +318,10 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
     // Reporte Generales
     Route::get('/generales', [ReportGeneralesController::class, 'index'])
       ->name('generales.index');
+
+// Reporte de Comprobantes
+    Route::get('/comprobantes', [ReportComprobantesController::class, 'index'])
+      ->name('comprobantes.index');
 
     // Reporte de Registro
     Route::get('/registro', [ReportRegistroController::class, 'index'])

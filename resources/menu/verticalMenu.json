@@ -438,7 +438,8 @@
         "view-facturacion-abogados-reports",
         "view-casos-scotiabank-reports",
         "view-casos-scotiabank-bch-reports",
-        "view-casos-bac-cuentas-gestionadas-reports"
+        "view-casos-bac-cuentas-gestionadas-reports",
+        "view-comprobantes-reports"
       ],
       "submenu": [
         {
@@ -463,6 +464,14 @@
           "slug": "reports.facturacion-detallada.index",
           "permissions": [
             "view-facturacion-general-reports"
+          ]
+        },
+        {
+          "url": "reports/comprobantes",
+          "name": "Comprobantes",
+          "slug": "reports.comprobantes.index",
+          "permissions": [
+            "view-comprobantes-reports"
           ]
         },
         {
