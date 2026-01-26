@@ -467,14 +467,6 @@
           ]
         },
         {
-          "url": "reports/comprobantes",
-          "name": "Comprobantes",
-          "slug": "reports.comprobantes.index",
-          "permissions": [
-            "view-comprobantes-reports"
-          ]
-        },
-        {
           "url": "reports/customers",
           "name": "Clientes",
           "slug": "reports.customers.index",
