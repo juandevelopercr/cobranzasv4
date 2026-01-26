@@ -508,7 +508,7 @@
         },
         {
           "url": "reports/gastos",
-          "name": "Gastos",
+          "name": "Comprobantes de Gastos",
           "slug": "reports.gastos.index",
           "permissions": [
             "view-gastos-reports"
