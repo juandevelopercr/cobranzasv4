@@ -154,6 +154,12 @@
   (function () {
         Livewire.on('exportReady', (dataArray) => {
           const data = Array.isArray(dataArray) ? dataArray[0] : dataArray;
+          const componentId = data.componentId;
+
+          // Solo procesar si el evento es para este componente (o si no tiene ID por retrocompatibilidad)
+          if (componentId && componentId !== $wire.id) {
+            return;
+          }
           const prepareUrl = data.prepareUrl;
           const downloadBase = data.downloadBase;
 

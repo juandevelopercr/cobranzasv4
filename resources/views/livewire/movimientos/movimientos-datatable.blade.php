@@ -392,6 +392,11 @@
 
         Livewire.on('exportReady', (dataArray) => {
           const data = Array.isArray(dataArray) ? dataArray[0] : dataArray;
+          const componentId = data.componentId;
+
+          if (componentId && componentId !== $wire.id) {
+            return;
+          }
 
           // Si es el formato nuevo (objeto)
           if (typeof data === 'object' && data.prepareUrl) {

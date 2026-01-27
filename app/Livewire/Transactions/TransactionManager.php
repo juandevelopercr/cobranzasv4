@@ -257,7 +257,7 @@ abstract class TransactionManager extends BaseComponent
       ->where('contacts_economic_activities.contact_id', $this->contact_id)
       ->orderBy('economic_activities.name', 'asc')
       ->get();
-    
+
     // Si hay solo una actividad económica, asignarla automáticamente
     if (count($activities) == 1) {
       $this->contact_economic_activity_id = $activities[0]->id;
@@ -765,7 +765,7 @@ abstract class TransactionManager extends BaseComponent
 
     Log::info('Reporte', ['prepareUrl' => $url, 'downloadBase' => $downloadBase]);
 
-    $this->dispatch('exportReady', ['prepareUrl' => $url, 'downloadBase' => $downloadBase]);
+    $this->dispatch('exportReady', ['prepareUrl' => $url, 'downloadBase' => $downloadBase, 'componentId' => $this->getId()]);
   }
 
   public function downloadReciboSencillo($invoiceId)
@@ -789,7 +789,7 @@ abstract class TransactionManager extends BaseComponent
 
     $url = route('exportacion.' . $prefix . '.preparar', ['key' => $key]);
     $downloadBase = '/descargar-exportacion-' . $prefix;
-    $this->dispatch('exportReady', ['prepareUrl' => $url, 'downloadBase' => $downloadBase]);
+    $this->dispatch('exportReady', ['prepareUrl' => $url, 'downloadBase' => $downloadBase, 'componentId' => $this->getId()]);
   }
 
   public function downloadXML($invoiceId)
@@ -1036,7 +1036,7 @@ abstract class TransactionManager extends BaseComponent
 
     Log::info('Reporte', ['prepareUrl' => $url, 'downloadBase' => $downloadBase]);
 
-    $this->dispatch('exportReady', ['prepareUrl' => $url, 'downloadBase' => $downloadBase]);
+    $this->dispatch('exportReady', ['prepareUrl' => $url, 'downloadBase' => $downloadBase, 'componentId' => $this->getId()]);
   }
 
   public function downloadHaciendaResponsaXML($invoiceId)
