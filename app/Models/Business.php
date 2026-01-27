@@ -50,6 +50,7 @@ class Business extends Model
     'registro_medicamento',
     'forma_farmaceutica',
     'notification_email',
+'expense_notification_email',
     'host_imap',
     'user_imap',
     'pass_imap',

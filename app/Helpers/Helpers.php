@@ -2570,12 +2570,12 @@ class Helpers
 
     $business = Business::find(1);
 
-    if (!$business || empty($business->notification_email)) {
+    if (!$business || empty($business->expense_notification_email)) {
       return $sent;
     }
 
     // Procesar lista de emails (separados por , o ;)
-    $emails = preg_split('/[;,]/', $business->notification_email);
+    $emails = preg_split('/[;,]/', $business->expense_notification_email);
     $emails = array_map('trim', $emails);
     $emails = array_filter($emails);
 

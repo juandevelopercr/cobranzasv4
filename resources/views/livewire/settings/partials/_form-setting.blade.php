@@ -243,6 +243,29 @@
         </div>
         @endif
       </div>
+
+      <div class="col-md-12 fv-plugins-icon-container">
+        <label class="form-label" for="expense_notification_email">{{ __('Email notification Expense CC') }}</label>
+        <textarea class="form-control @if(count($invalidExpenseEmails)) is-invalid @endif"
+          wire:model.live.debounce.600ms="expense_notification_email" name="expense_notification_email" id="expense_notification_email" rows="1"
+          placeholder="{{ __('Email notification Expense CC') }}">
+        </textarea>
+        @error('expense_notification_email')
+        <div class="text-danger mt-1">{{ $message }}</div>
+        @enderror
+        <!-- Mostrar correos inválidos -->
+        @if(count($invalidExpenseEmails))
+        <div class="mt-1 text-danger form-text">
+          <strong>{{ __('Invalid Emails') }}:</strong>
+          <ul>
+            @foreach ($invalidExpenseEmails as $email)
+            <li>{{ $email }}</li>
+            @endforeach
+          </ul>
+        </div>
+        @endif
+      </div>
+
     </div>
 
     <br>

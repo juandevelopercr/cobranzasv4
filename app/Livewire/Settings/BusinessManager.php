@@ -53,6 +53,7 @@ class BusinessManager extends Component
   public $centro_costo_calculo_registro_id;
   public $emisor_gasto_id;
   public $notification_email;
+public $expense_notification_email;
 
   public $host_imap;
   public $user_imap;
@@ -73,6 +74,9 @@ class BusinessManager extends Component
   public $validatedEmails; // Almacena correos válidos
   public $invalidEmails; // Almacena correos inválidos
 
+  public $validatedExpenseEmails; // Almacena correos válidos
+  public $invalidExpenseEmails; // Almacena correos inválidos
+
   public function mount()
   {
     // Cargar el registro con id = 1 al iniciar el componente
@@ -83,6 +87,9 @@ class BusinessManager extends Component
 
     $this->validatedEmails = [];
     $this->invalidEmails = [];
+
+$this->validatedExpenseEmails = [];
+    $this->invalidExpenseEmails = [];
   }
 
   public function loadRecord()
@@ -133,6 +140,7 @@ class BusinessManager extends Component
       $this->registro_medicamento = $record->registro_medicamento;
       $this->forma_farmaceutica   = $record->forma_farmaceutica;
       $this->notification_email = $record->notification_email;
+      $this->expense_notification_email = $record->expense_notification_email;
       $this->host_imap = $record->host_imap;
       $this->user_imap = $record->user_imap;
       $this->pass_imap = $record->pass_imap;
@@ -202,6 +210,7 @@ class BusinessManager extends Component
       'registro_medicamento' => 'nullable|string|max:100',
       'forma_farmaceutica'  => 'nullable|string|max:3',
       'notification_email' => 'nullable|string',
+'expense_notification_email' => 'nullable|string',
       'host_imap' => 'nullable|string',
       'user_imap' => 'nullable|string',
       'pass_imap' => 'nullable|string',
@@ -299,6 +308,9 @@ class BusinessManager extends Component
     if ($property == 'notification_email') {
       $this->updatedEmails();
     }
+if ($property == 'expense_notification_email') {
+      $this->updatedExpenseNotificationEmails();
+    }
   }
 
   public function updatedEmails()
@@ -325,6 +337,33 @@ class BusinessManager extends Component
       $this->addError('notification_email', 'Hay correos inválidos: ' . implode(', ', $this->invalidEmails));
     } else {
       $this->resetErrorBag('notification_email'); // Limpiar errores si todos son válidos
+    }
+  }
+
+  public function updatedExpenseNotificationEmails()
+  {
+    // Divide la cadena en correos separados por , o ;
+    $emailList = preg_split('/[,;]+/', $this->expense_notification_email);
+
+    // Resetear las listas de correos válidos e inválidos
+    $this->validatedExpenseEmails = [];
+    $this->invalidExpenseEmails = [];
+
+    // Validar cada correo
+    foreach ($emailList as $email) {
+      $email = trim($email); // Elimina espacios en blanco
+      if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $this->validatedExpenseEmails[] = $email; // Correo válido
+      } elseif (!empty($email)) {
+        $this->invalidExpenseEmails[] = $email; // Correo inválido
+      }
+    }
+
+    // Si hay correos inválidos, añadir error al campo email_cc
+    if (!empty($this->invalidExpenseEmails)) {
+      $this->addError('expense_notification_email', 'Hay correos inválidos: ' . implode(', ', $this->invalidExpenseEmails));
+    } else {
+      $this->resetErrorBag('expense_notification_email'); // Limpiar errores si todos son válidos
     }
   }
 
