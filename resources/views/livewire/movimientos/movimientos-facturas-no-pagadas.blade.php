@@ -152,27 +152,29 @@
 @script()
 <script>
   (function () {
-        Livewire.on('exportReady', (url) => {
-          Livewire.dispatch('showLoading', [{ message: 'Generando reporte. Por favor espere ...' }]);
+        Livewire.on('exportReady', (dataArray) => {
+          const data = Array.isArray(dataArray) ? dataArray[0] : dataArray;
+          const prepareUrl = data.prepareUrl;
+          const downloadBase = data.downloadBase;
+
+          Livewire.dispatch('showLoading', [{ message: 'Generando reporte. Por favor espere...' }]);
 
           setTimeout(() => {
-            // Crea un iframe oculto para disparar la descarga
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = url;
-            document.body.appendChild(iframe);
-
-            // Escucha cuándo el iframe comienza la descarga
-            iframe.onload = () => {
-              // Oculta el mensaje cuando el archivo comienza a descargarse (más confiable)
-              Livewire.dispatch('hideLoading');
-              // Limpia el iframe para no dejar basura en DOM
-              setTimeout(() => document.body.removeChild(iframe), 1000);
-            };
-          }, 300);
-
-          // Opcional: failsafe si `onload` no dispara por algún error
-          //setTimeout(() => Livewire.dispatch('hideLoading'), 30000);
+            fetch(prepareUrl)
+              .then(res => {
+                if (!res.ok) throw new Error('Respuesta inválida');
+                return res.json();
+              })
+              .then(response => {
+                const downloadUrl = `${downloadBase}/${response.filename}`;
+                window.location.assign(downloadUrl);
+                setTimeout(() => Livewire.dispatch('hideLoading'), 1000);
+              })
+              .catch(err => {
+                console.error(err);
+                Livewire.dispatch('hideLoading');
+              });
+          }, 100);
         });
     })();
 </script>

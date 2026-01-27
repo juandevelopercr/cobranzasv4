@@ -106,7 +106,7 @@ class MovimientosFacturasNoPagadas extends TransactionManager
         'columnType' => 'action',
         'columnAlign' => '',
         'columnClass' => '',
-        'function' => 'getMovimientoFacturasNoPagadasHtmlColumnAction',
+        'function' => 'getHistoryHtmlColumnAction',
         'parameters' => [],
         'sumary' => '',
         'openHtmlTab' => '',
