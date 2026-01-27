@@ -553,5 +553,7 @@
   "View-casos-coocique2-incobrables": "Ver reporte de casos coocique 2 incobrables",
   "View-casos-coocique2-pago": "Ver reporte de casos coocique 2 arreglo de pago",
   "View-casos-coocique2-prescrito": "Ver reporte de casos coocique 2 prescrito",
-  "View-comprobantes": "Ver reporte de comprobantes"
+  "View-comprobantes": "Ver reporte de comprobantes",
+  "view-notas-credito": "Ver reporte de notas de crédito",
+  "view-notas-debito": "Ver reporte de notas de debito"
 }

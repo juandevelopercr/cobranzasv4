@@ -439,7 +439,10 @@
         "view-casos-scotiabank-reports",
         "view-casos-scotiabank-bch-reports",
         "view-casos-bac-cuentas-gestionadas-reports",
-        "view-comprobantes-reports"
+        "view-comprobantes-reports",
+        "view-notas-credito-reports",
+        "view-notas-debito-reports",
+        "view-proforma-reports"
       ],
       "submenu": [
         {

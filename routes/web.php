@@ -450,6 +450,18 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
 
     Route::get('/casos-coocique2-prescrito', [ReportJefeController::class, 'casoCoocique2Prescrito'])
         ->name('casos-coocique2-prescrito.index');
+
+    // Reporte de Nota Credito
+    Route::get('/nota-credito', [ReportNotaCreditoController::class, 'index'])
+      ->name('nota-credito.index');
+
+    // Reporte de Nota Debito
+    Route::get('/nota-debito', [ReportNotaDebitoController::class, 'index'])
+      ->name('nota-debito.index');
+
+    // Reporte de Proforma
+    Route::get('/proforma', [ReportProformaController::class, 'index'])
+      ->name('proforma.index');
   });
 });
 //Route::get('/usuarios', [UserCrud::class, 'index'])->name('usuarios.index');
