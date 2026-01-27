@@ -438,30 +438,58 @@
                 });
             };
 
-            Livewire.on('exportReady', (url) => {
-                // Mostrar spinner con un pequeño delay para permitir render
-                Livewire.dispatch('showLoading', [{
-                    message: 'Generando reporte. Por favor espere...'
-                }]);
+            Livewire.on('exportReady', (dataArray) => {
+                const data = Array.isArray(dataArray) ? dataArray[0] : dataArray;
 
-                setTimeout(() => {
-                    fetch(url)
-                        .then(res => {
-                            if (!res.ok) throw new Error('Respuesta inválida');
-                            return res.json();
-                        })
-                        .then(data => {
-                            // Iniciar descarga
-                            window.location.assign(
-                                `/descargar-exportacion-movimientos/${data.filename}`);
-                            Livewire.dispatch('hideLoading');
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            Livewire.dispatch('hideLoading');
-                            //alert('Error al generar el archivo');
-                        });
-                }, 100); // ✅ Este pequeño delay permite que el DOM pinte el spinner
+                // Si es el formato nuevo (objeto)
+                if (typeof data === 'object' && data.prepareUrl) {
+                    const prepareUrl = data.prepareUrl;
+                    const downloadBase = data.downloadBase;
+
+                    Livewire.dispatch('showLoading', [{
+                        message: 'Generando reporte. Por favor espere...'
+                    }]);
+
+                    setTimeout(() => {
+                        fetch(prepareUrl)
+                            .then(res => {
+                                if (!res.ok) throw new Error('Respuesta inválida');
+                                return res.json();
+                            })
+                            .then(response => {
+                                const downloadUrl = `${downloadBase}/${response.filename}`;
+                                window.location.assign(downloadUrl);
+                                setTimeout(() => Livewire.dispatch('hideLoading'), 1000);
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                Livewire.dispatch('hideLoading');
+                            });
+                    }, 100);
+                }
+                // Si es el formato viejo (string URL)
+                else if (typeof data === 'string') {
+                    Livewire.dispatch('showLoading', [{
+                        message: 'Generando reporte. Por favor espere...'
+                    }]);
+                    setTimeout(() => {
+                        fetch(data)
+                            .then(res => {
+                                if (!res.ok) throw new Error('Respuesta inválida');
+                                return res.json();
+                            })
+                            .then(response => {
+                                window.location.assign(
+                                    `/descargar-exportacion-movimientos/${response.filename}`
+                                );
+                                Livewire.dispatch('hideLoading');
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                Livewire.dispatch('hideLoading');
+                            });
+                    }, 100);
+                }
             });
 
             // Re-ejecuta las inicializaciones después de actualizaciones de Livewire
