@@ -779,8 +779,8 @@ class CasoDavivienda extends CasoManager
     $this->cleanEmptyForeignKeys();
     $this->validate();
     $this->user_create = auth()->user()->name;
-    $validatedData = $this->validate();
     $this->formatDateForStorageDB();
+    $validatedData = $this->validate();
 
     // Generar consecutivo
     $consecutive = DocumentSequenceService::generateConsecutiveCaso(
@@ -859,8 +859,8 @@ class CasoDavivienda extends CasoManager
     $this->cleanEmptyForeignKeys();
     $this->validate();
     $this->user_update = auth()->user()->name;
-    $validatedData = $this->validate();
     $this->formatDateForStorageDB();
+    $validatedData = $this->validate();
 
     DB::beginTransaction();
     try {

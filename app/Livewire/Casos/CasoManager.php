@@ -1004,9 +1004,17 @@ class CasoManager extends BaseComponent
   {
     if (empty($value)) return null;
 
+    $formats = ['d-m-Y', 'Y-m-d', 'd/m/Y', 'Y/m/d'];
+    foreach ($formats as $format) {
+      try {
+        return \Carbon\Carbon::createFromFormat($format, $value)->format('Y-m-d');
+      } catch (\Throwable $e) {
+        continue;
+      }
+    }
+
     try {
-      // El formato de entrada es d-m-Y (12-08-2025 → 12 agosto 2025)
-      return \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d');
+      return \Carbon\Carbon::parse($value)->format('Y-m-d');
     } catch (\Throwable $e) {
       return null;
     }
