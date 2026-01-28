@@ -64,7 +64,7 @@
                       </th>
                       <th class="sorting_disabled dt-checkboxes-cell dt-checkboxes-select-all" rowspan="1" colspan="1"
                         style="width: 18px;" data-col="1" aria-label="">
-                        <input type="checkbox" class="form-check-input" id="select-all" wire:click="toggleSelectAll">
+                        <input type="checkbox" class="form-check-input" id="select-all" wire:click="toggleSelectAll" x-bind:checked="$wire.selectAll">
                       </th>
 
                       @include('livewire.includes.headers', ['columns' => $this->columns])
@@ -187,3 +187,22 @@
   }
 </script>
 @endpush
+
+@script()
+<script>
+  (function () {
+    // Escuchar cuando se actualicen los IDs seleccionados
+    Livewire.on('updateSelectedIds', (data) => {
+      const selectedIds = Array.isArray(data) ? data : (data[0] || []);
+      const selectAllCheckbox = document.getElementById('select-all');
+
+      if (selectAllCheckbox) {
+        // Si no hay IDs seleccionados, desmarcar el checkbox de "seleccionar todo"
+        if (selectedIds.length === 0) {
+          selectAllCheckbox.checked = false;
+        }
+      }
+    });
+  })();
+</script>
+@endscript

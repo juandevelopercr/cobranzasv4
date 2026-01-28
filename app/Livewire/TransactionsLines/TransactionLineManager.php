@@ -261,6 +261,30 @@ class TransactionLineManager extends BaseComponent {
     ]);
   }
 
+  public function toggleSelectAll(): void
+  {
+    $this->selectAll = !$this->selectAll;
+
+    if ($this->selectAll) {
+      $query = TransactionLine::search($this->search, $this->filters)
+        ->where('transaction_id', '=', $this->transaction_id);
+
+      // Importante: Usar el mismo ordenamiento que en render para que coincida con lo que ve el usuario
+      $query->orderBy($this->sortBy, $this->sortDir);
+
+      // Solo seleccionamos los IDs de la página actual
+      $this->selectedIds = $query->paginate($this->perPage)
+        ->getCollection()
+        ->pluck('id')
+        ->map(fn($id) => (string)$id)
+        ->toArray();
+    } else {
+      $this->selectedIds = [];
+    }
+
+    $this->dispatch('updateSelectedIds', $this->selectedIds);
+  }
+
   public function create() {
     Log::info('═══════════════════════════════════════════════════════');
     Log::info('🆕 TransactionLineManager::create() called');
@@ -908,48 +932,133 @@ class TransactionLineManager extends BaseComponent {
     ]);
   }
 
-  public function beforedelete() {
-    $this->confirmarAccion(
-      null,
-      'delete',
-      '¿Está seguro que desea eliminar este registro?',
-      'Después de confirmar, el registro será eliminado',
-      __('Sí, proceed')
-    );
+  public function beforedelete()
+  {
+    Log::info('═══════════════════════════════════════════════════════');
+    Log::info('🗑️ TransactionLineManager::beforedelete() called');
+    Log::info('Selected IDs count: ' . count($this->selectedIds));
+    Log::info('Selected IDs: ', $this->selectedIds);
+    Log::info('═══════════════════════════════════════════════════════');
+
+    if (count($this->selectedIds) > 1) {
+      // Eliminación masiva
+      Log::info('🔄 Batch delete mode activated');
+      $recordIds = $this->getRecordListAction();
+
+      Log::info('Record IDs from getRecordListAction: ', ['recordIds' => $recordIds]);
+
+      if (empty($recordIds)) {
+        Log::warning('⚠️ No record IDs returned, aborting delete');
+        return;
+      }
+
+      Log::info('📤 Dispatching show-confirmation-dialog for batch delete');
+      $this->dispatch('show-confirmation-dialog', [
+        'recordIds' => $recordIds,
+        'componentName' => static::getName(),
+        'methodName' => 'delete',
+        'title' => __('¿Eliminar seleccionados?'),
+        'message' => __('¿Está seguro que desea eliminar los :count registros seleccionados?', ['count' => count($recordIds)]),
+        'confirmText' => __('Sí, eliminar'),
+        'cancelText' => __('Cancelar')
+      ]);
+    } else {
+      // Eliminación individual
+      Log::info('🔄 Single delete mode activated');
+      $this->confirmarAccion(
+        null,
+        'delete',
+        __('¿Está seguro que desea eliminar este registro?'),
+        __('Después de confirmar, el registro será eliminado'),
+        __('Sí, proceed')
+      );
+    }
   }
 
   #[On('delete')]
-  public function delete($recordId) {
+  public function delete($recordIds = null, $recordId = null)
+  {
+    Log::info('═══════════════════════════════════════════════════════');
+    Log::info('💥 TransactionLineManager::delete() called');
+    Log::info('Received recordIds: ', ['recordIds' => $recordIds]);
+    Log::info('Received recordId: ', ['recordId' => $recordId]);
+    Log::info('═══════════════════════════════════════════════════════');
+
+    $recordIds = $recordIds ?? $recordId;
+
+    Log::info('Final recordIds after merge: ', ['recordIds' => $recordIds]);
+
     try {
-      $record = TransactionLine::findOrFail($recordId);
-      $transaction_id = $record->transaction_id;
+      // Convertir a array si no lo es para manejar múltiples eliminaciones
+      $ids = is_array($recordIds) ? $recordIds : [$recordIds];
 
-      if ($record->delete()) {
+      Log::info('IDs array to process: ', ['ids' => $ids, 'count' => count($ids)]);
 
-        $this->selectedIds = array_filter(
-          $this->selectedIds,
-          fn($selectedId) => $selectedId != $recordId
-        );
+      if (empty($ids)) {
+        Log::warning('⚠️ IDs array is empty, aborting delete');
+        return;
+      }
 
+      $transaction_id = null;
+      $deletedCount = 0;
+
+      foreach ($ids as $id) {
+        Log::info("Processing ID: {$id}");
+
+        $record = TransactionLine::find($id);
+
+        if ($record) {
+          Log::info("✅ Record found for ID: {$id}");
+          $transaction_id = $record->transaction_id;
+
+          if ($record->delete()) {
+            $deletedCount++;
+            Log::info("✅ Record {$id} deleted successfully. Total deleted: {$deletedCount}");
+
+            $this->selectedIds = array_filter(
+              $this->selectedIds,
+              fn($selectedId) => $selectedId != $id
+            );
+          } else {
+            Log::error("❌ Failed to delete record {$id}");
+          }
+        } else {
+          Log::warning("⚠️ Record not found for ID: {$id}");
+        }
+      }
+
+      Log::info("Delete operation completed. Deleted count: {$deletedCount}");
+
+      if ($deletedCount > 0) {
         // Opcional: limpiar "seleccionar todo" si ya no aplica
         if (empty($this->selectedIds)) {
           $this->selectAll = false;
         }
 
-        // Emitir actualización
+        // Emitir actualización de seleccionados
         $this->dispatch('updateSelectedIds', $this->selectedIds);
 
-        $this->dispatch('productUpdated', $transaction_id);  // Emitir evento para otros componentes
+        if ($transaction_id) {
+          Log::info("📤 Dispatching productUpdated event for transaction: {$transaction_id}");
+          $this->dispatch('productUpdated', $transaction_id);  // Emitir evento para otros componentes
+        }
 
-        // Puedes emitir un evento para redibujar el datatable o actualizar la lista
-        $this->dispatch('show-notification', ['type' => 'success', 'message' => __('The record has been deleted')]);
+        $message = $deletedCount > 1 ? __('Los registros han sido eliminados') : __('El registro ha sido eliminado');
+        $this->dispatch('show-notification', ['type' => 'success', 'message' => $message]);
+
         // Re-inicializar controles y select2 tras eliminar
         $this->resetControls();
         $this->dispatch('reinitFormControls');
+
+        Log::info('✅ Delete operation completed successfully');
+      } else {
+        Log::warning('⚠️ No records were deleted');
       }
     } catch (\Exception $e) {
       // Registrar el error y mostrar un mensaje de error al usuario
-      $this->dispatch('show-notification', ['type' => 'error', 'message' => __('An error occurred while deleting the registro') . ' ' . $e->getMessage()]);
+      Log::error('❌ Exception during delete: ' . $e->getMessage());
+      Log::error('Stack trace: ' . $e->getTraceAsString());
+      $this->dispatch('show-notification', ['type' => 'error', 'message' => __('Ocurrió un error al eliminar el registro: ') . $e->getMessage()]);
     }
   }
 

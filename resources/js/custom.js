@@ -59,6 +59,7 @@ Livewire.on('show-notification', data => {
 Livewire.on('show-confirmation-dialog', event => {
   const {
     recordId,
+    recordIds,
     componentName,
     methodName,
     title = '¿Está seguro?',
@@ -82,7 +83,12 @@ Livewire.on('show-confirmation-dialog', event => {
     backdrop: true
   }).then(result => {
     if (result.isConfirmed) {
-      Livewire.dispatchTo(componentName, methodName, { recordId: recordId });
+      // Si hay recordIds (batch), pasarlos; si no, pasar recordId (single)
+      if (recordIds && Array.isArray(recordIds)) {
+        Livewire.dispatchTo(componentName, methodName, { recordIds: recordIds });
+      } else {
+        Livewire.dispatchTo(componentName, methodName, { recordId: recordId });
+      }
     } else if (result.dismiss === Swal.DismissReason.cancel) {
       Swal.fire({
         title: 'Cancelado',
