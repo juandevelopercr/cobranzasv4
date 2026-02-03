@@ -19,3 +19,17 @@ jobs:
           server: 209.145.53.12
           username: ${{ secrets.FTPUSERNAMEPRINCIPAL }}
           password: ${{ secrets.FTPPASSWORD }}
+
+  ftp_respaldo:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout del repositorio cobranzas V4.4 (RESPALDO)
+        uses: actions/checkout@v4
+
+      - name: Upload cobranzas v4.4 (RESPALDO)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: 209.126.80.160
+          username: ${{ secrets.FTPUSERNAMERESPALDO }}
+          password: ${{ secrets.FTPPASSWORD }}
