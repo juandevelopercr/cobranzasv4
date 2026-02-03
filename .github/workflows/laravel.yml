@@ -30,6 +30,6 @@ jobs:
       - name: Upload cobranzas v4.4 (RESPALDO)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: 209.126.80.160
+          server: 173.249.56.98
           username: ${{ secrets.FTPUSERNAMERESPALDO }}
           password: ${{ secrets.FTPPASSWORD }}
