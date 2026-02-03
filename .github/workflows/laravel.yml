@@ -32,4 +32,4 @@ jobs:
         with:
           server: 173.249.56.98
           username: ${{ secrets.FTPUSERNAMERESPALDO }}
-          password: ${{ secrets.FTPPASSWORD }}
+          password: ${{ secrets.FTPPASSWORDRESPALDO }}
