@@ -41,11 +41,12 @@ class User extends Authenticatable
   public const ROLES_ALL_BANKS = [
     'SuperAdmin',
     'Administrador',
+    'Administracion'
   ];
 
   public const ROLES_ALL_CASOS = [
     'SuperAdmin',
-    'Administrador',
+    'Administrador'
   ];
 
   public const ROLES_REQUIRED_BANK = [
