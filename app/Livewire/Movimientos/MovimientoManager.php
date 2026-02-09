@@ -104,6 +104,8 @@ class MovimientoManager extends BaseComponent
 
   public $expandedRows = [];
 
+  public $datePickerKey = 0;
+
   protected function getModelClass(): string
   {
     return Movimiento::class;
@@ -190,6 +192,7 @@ class MovimientoManager extends BaseComponent
 
     $today = Carbon::now()->toDateString();
     $this->fecha = Carbon::parse($today)->format('d-m-Y');
+    $this->datePickerKey++;
 
     $this->dispatch('scroll-to-top');
     $this->dispatch('reinitConvertNumbertoWord');
@@ -583,6 +586,7 @@ class MovimientoManager extends BaseComponent
     $this->resetValidation();
 
     $this->action = 'edit';
+    $this->datePickerKey++;
     $this->dispatch('reinitConvertNumbertoWord');
   }
 
