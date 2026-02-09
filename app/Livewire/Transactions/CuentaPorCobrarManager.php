@@ -1268,6 +1268,10 @@ class CuentaPorCobrarManager extends TransactionManager
       'selectedIds' => $this->selectedIds,
     ]);
 
+    // Reiniciar selectedIds al cambiar filtros
+    $this->selectedIds = [];
+    $this->dispatch('updateSelectedIds', $this->selectedIds);
+
     // Elimina el error de validación del campo actualizado
     $this->resetErrorBag($propertyName);
   }

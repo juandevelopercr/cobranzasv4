@@ -1,19 +1,11 @@
 <table width="100%" cellpading="10">
 	<tr>
 		<td width="33%" valign="middle">
-        <img src="{{ $logo }}" alt="Logo">
+        <img src="{{ $logo }}" alt="Logo" style="max-height: 80px; width: auto;">
         </td>
         <td width="33%" align="center" valign="top">
           <br />
-          <span style="font-size: 13px;"><strong><?= !empty($transaction->customer_comercial_name) ? $transaction->customer_comercial_name : $transaction->customer_name ?></strong></span><br />
-          @php
-          /*
-          <span style="font-size: 11px;">Identificación: <?= $transaction->contact->identificacion ?></span><br />
-          <span style="font-size: 11px;">Dirección: <?= wordwrap( $transaction->contact->address, 50 ) ?></span><br />
-          <span style="font-size: 11px;">Teléfono: <?= $transaction->contact->phone ?></span><br />
-          <span style="font-size: 11px;">Correo: <?= $transaction->customer_email ?></span><br />
-          */
-          @endphp
+          <span style="font-size: 13px;"><strong>{{ $transaction->contact->name ?? $transaction->customer_name }}</strong></span><br />
         </td>
         <td align="right" style="padding-right:5;" width="33%">
           <br />

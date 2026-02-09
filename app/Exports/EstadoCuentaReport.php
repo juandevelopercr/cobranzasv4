@@ -86,25 +86,44 @@ class EstadoCuentaReport implements FromView, ShouldAutoSize, WithColumnFormatti
                 if (!empty($this->filters['filter_date'])) {
                     $range = explode(' to ', $this->filters['filter_date']);
                     if (count($range) === 2) {
-                        $start = Carbon::createFromFormat('d-m-Y', trim($range[0]))->startOfDay();
-                        $end   = Carbon::createFromFormat('d-m-Y', trim($range[1]))->endOfDay();
-                        $q->whereBetween('transaction_date', [$start, $end]);
+                        try {
+                            $start = Carbon::parse(trim($range[0]))->startOfDay();
+                            $end   = Carbon::parse(trim($range[1]))->endOfDay();
+                            $q->whereBetween('transaction_date', [$start, $end]);
+                        } catch (\Exception $e) {
+                            // Log error or ignore
+                        }
                     } else {
-                        $singleDate = Carbon::createFromFormat('d-m-Y', trim($this->filters['filter_date']));
-                        $q->whereDate('transaction_date', $singleDate->format('Y-m-d'));
+                        try {
+                            $singleDate = Carbon::parse(trim($this->filters['filter_date']));
+                            $q->whereDate('transaction_date', $singleDate->format('Y-m-d'));
+                        } catch (\Exception $e) {
+                            // Log error or ignore
+                        }
                     }
                 }
 
                 if (!empty($this->filters['filter_department'])) {
                     $q->where('department_id', $this->filters['filter_department']);
                 }
-            })
-            ->orderBy('name');
+
+                if (!empty($this->filters['filter_currency'])) {
+                    $q->where('currency_id', $this->filters['filter_currency']);
+                }
+            });
+
+        if (!empty($this->filters['filter_contact'])) {
+            $clientesQuery->where('id', $this->filters['filter_contact']);
+        }
+
+        $clientesQuery->orderBy('name');
 
         $clientes = [];
-        $clientesQuery->chunk(100, function ($chunk) use (&$clientes) {
+        $filters = $this->filters;
+
+        $clientesQuery->chunk(100, function ($chunk) use (&$clientes, $filters) {
             foreach ($chunk as $cliente) {
-                $cliente->load(['transactionsEstadoCuenta' => function ($q) {
+                $cliente->load(['transactionsEstadoCuenta' => function ($q) use ($filters) {
                     $q->with('payments') // cargar relación payments
                       ->with('location') // cargar relación locations
                       ->with('codigoContable')
@@ -112,8 +131,32 @@ class EstadoCuentaReport implements FromView, ShouldAutoSize, WithColumnFormatti
                       ->with('currency')
                       ->orderBy('transaction_date', 'DESC')
                       ->orderBy('consecutivo', 'DESC');
+
+                    if (!empty($filters['filter_date'])) {
+                        $range = explode(' to ', $filters['filter_date']);
+                        if (count($range) === 2) {
+                            try {
+                                $start = Carbon::parse(trim($range[0]))->startOfDay();
+                                $end   = Carbon::parse(trim($range[1]))->endOfDay();
+                                $q->whereBetween('transaction_date', [$start, $end]);
+                            } catch (\Exception $e) {}
+                        } else {
+                            try {
+                                $singleDate = Carbon::parse(trim($filters['filter_date']));
+                                $q->whereDate('transaction_date', $singleDate->format('Y-m-d'));
+                            } catch (\Exception $e) {}
+                        }
+                    }
+
+                    if (!empty($filters['filter_department'])) {
+                        $q->where('department_id', $filters['filter_department']);
+                    }
+
+                    if (!empty($filters['filter_currency'])) {
+                        $q->where('currency_id', $filters['filter_currency']);
+                    }
                 }]);
-                $clientes[] = $cliente;
+                $clientes[] = $cliente; // Agregar el cliente procesado al array
             }
         });
 
