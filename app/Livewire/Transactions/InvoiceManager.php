@@ -24,7 +24,7 @@ class InvoiceManager extends TransactionManager
 {
   public $customer_text; // para mostrar el texto inicial
 
-  public $sortBy = 'transactions.id';
+  public $sortBy = 'transactions.transaction_date';
 
   public $document_type = ['FE', 'TE'];
 
@@ -656,9 +656,14 @@ class InvoiceManager extends TransactionManager
     $query = $this->getFilteredQuery();
 
     // Ordenamiento y paginación final
-    $records = $query
-      ->orderBy($this->sortBy, $this->sortDir)
-      ->paginate($this->perPage);
+    if ($this->sortBy == 'transactions.transaction_date') {
+      $query->orderBy(DB::raw('DATE(transactions.transaction_date)'), $this->sortDir)
+        ->orderBy('consecutivo', 'asc');
+    } else {
+      $query->orderBy($this->sortBy, $this->sortDir);
+    }
+
+    $records = $query->paginate($this->perPage);
 
     return view('livewire.transactions.invoice-datatable', [
       'records' => $records,
