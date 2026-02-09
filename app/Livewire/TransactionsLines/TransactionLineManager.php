@@ -214,11 +214,13 @@ class TransactionLineManager extends BaseComponent {
     $this->facturaCompra = $facturaCompra;
     $this->transaction_id = $transaction_id;
 
-    // Intentar obtener de sesión primero
+    // CRITICAL: transaction_id must be provided as parameter
+    // We no longer rely on session to avoid cross-contamination between users/tabs
     if ($this->transaction_id) {
         $this->loadTransactionDetails();
-    } elseif (session()->has('transaction_context')) {
-      $this->handleUpdateContext(session()->get('transaction_context'));
+    } else {
+        Log::error('TransactionLineManager mounted without transaction_id');
+        $this->dispatch('show-notification', ['type' => 'error', 'message' => __('Transaction ID is required')]);
     }
 
     $this->refresDatatable();

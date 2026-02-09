@@ -724,23 +724,13 @@ class NotaDebitoElectronicaManager extends TransactionManager
     //$this->show_transaction_date = Carbon::parse($record->transaction_date)->format('Y-m-d');
     $this->original_currency_id = $record->currency_id;
 
-    // Se emite este evento para los componentes hijos
+    // Emitir evento a los componentes hijos (NO usar sesión para evitar contaminación cruzada)
     $this->dispatch('updateTransactionContext', [
       'transaction_id'    => $record->id,
       'bank_id'           => $record->bank_id,
       'type_notarial_act' => $record->proforma_type,
       'tipo_facturacion'  => $record->tipo_facturacion
     ]);
-
-    // Almacenar en sesión Y emitir evento global
-    $contextData = [
-      'transaction_id'    => $record->id,
-      'bank_id'           => $record->bank_id,
-      'type_notarial_act' => $record->proforma_type,
-    ];
-
-    session()->forget('transaction_context');
-    session()->put('transaction_context', $contextData);
 
     $this->payments = $record->payments->map(fn($p) => [
       'id'              => $p->id,
