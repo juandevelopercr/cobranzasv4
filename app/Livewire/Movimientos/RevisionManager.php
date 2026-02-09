@@ -238,7 +238,7 @@ class RevisionManager extends BaseComponent
     $this->action = 'create';
     $this->status = Movimiento::STATUS_REVISION;
     $this->lugar = 'San José';
-    $this->fecha = Carbon::now()->toDateString();
+    $this->fecha = Carbon::now()->format('d-m-Y');
     $this->datePickerKey++;
 
     $this->dispatch('scroll-to-top');

@@ -114,12 +114,11 @@
                 @enderror
             </div>
 
-            <div class="col-md-3 fv-plugins-icon-container">
+            <div class="col-md-3 fv-plugins-icon-container" wire:key="date-picker-{{ $datePickerKey }}">
                 <label class="form-label" for="fecha">{{ __('Date') }}</label>
                 <div class="input-group input-group-merge has-validation">
                     <span class="input-group-text"><i class="bx bx-calendar"></i></span>
                     <input type="text" id="fecha" @if (!$recordId) readonly @endif
-                        wire:key="date-picker-{{ $datePickerKey }}"
                         wire:model="fecha" x-data="datePickerLivewire({ wireEventName: 'dateSelected' })" x-init="init($el)" wire:ignore
                         class="form-control date-picke @error('fecha') is-invalid @enderror" placeholder="dd-mm-aaaa">
                 </div>
