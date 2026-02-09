@@ -619,6 +619,15 @@ Livewire.on('refreshCleave', () => {
   setTimeout(() => window.initAllCleave(), 300); // pequeña espera para que el DOM esté listo
 });
 
+Livewire.on('date-picker:refresh', data => {
+  const { id, date } = Array.isArray(data) ? data[0] : data;
+  const el = document.getElementById(id);
+  if (el && el.flatpickrInstance) {
+    //console.log('Refreshing date picker', id, date);
+    el.flatpickrInstance.setDate(date);
+  }
+});
+
 function numeroALetras(num) {
   const UNIDADES = ['CERO', 'UNO', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE'];
   const DECENAS = [

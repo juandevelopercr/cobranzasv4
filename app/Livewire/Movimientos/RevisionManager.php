@@ -112,6 +112,8 @@ class RevisionManager extends BaseComponent
 
   public array $expandedRows = [];
 
+  public $datePickerKey = 0;
+
   protected function getModelClass(): string
   {
     return Movimiento::class;
@@ -235,8 +237,9 @@ class RevisionManager extends BaseComponent
 
     $this->action = 'create';
     $this->status = Movimiento::STATUS_REVISION;
-    $this->lugar = 'ESCAZU';
-    $this->fecha = Carbon::now()->toDateString(); // "2025-05-19"
+    $this->lugar = 'San José';
+    $this->fecha = Carbon::now()->toDateString();
+    $this->datePickerKey++;
 
     $this->dispatch('scroll-to-top');
     $this->dispatch('reinitConvertNumbertoWord');
@@ -605,6 +608,7 @@ class RevisionManager extends BaseComponent
     $this->resetValidation();
 
     $this->action = 'edit';
+    $this->datePickerKey++;
     $this->dispatch('refreshCleave');
     $this->dispatch('reinitConvertNumbertoWord');
   }
