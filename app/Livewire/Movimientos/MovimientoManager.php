@@ -325,9 +325,8 @@ class MovimientoManager extends BaseComponent
       if (!$closeForm) {
           Log::info('onCentrosGuardadosOk: Recargando en modo edición', ['id' => $recordId]);
           $this->edit($recordId);
-      }else {
-          $this->resetPage();
       }
+      // No llamamos resetPage() para mantener la página actual del listado
 
       Log::info('onCentrosGuardadosOk: Despachando notificación de éxito');
       $this->dispatch('show-notification', [
