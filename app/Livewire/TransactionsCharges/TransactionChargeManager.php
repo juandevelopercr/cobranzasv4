@@ -102,17 +102,23 @@ class TransactionChargeManager extends BaseComponent
     $this->bank_id = $data['bank_id'];
     $this->type_notarial_act = $data['type_notarial_act'];
     $this->tipo_facturacion = $data['tipo_facturacion'];
+    $this->dispatch('reinitFormControls');
     //Log::debug('handleUpdateContext transaction_id', [$this->transaction_id]);
   }
 
 
   public function mount($transaction_id, $canview, $cancreate, $canedit, $candelete, $canexport)
   {
-    // Intentar obtener de sesión primero
-    if (session()->has('transaction_context')) {
-      $this->handleUpdateContext(session()->get('transaction_context'));
-    }
     $this->transaction_id = $transaction_id;
+
+    if ($this->transaction_id) {
+      $transaction = Transaction::find($this->transaction_id);
+      if ($transaction) {
+        $this->bank_id = $transaction->bank_id;
+        $this->type_notarial_act = $transaction->proforma_type;
+        $this->tipo_facturacion = $transaction->tipo_facturacion;
+      }
+    }
 
     $this->chargeTypes = AdditionalChargeType::orderBy('code', 'ASC')->get();
     $this->identificationTypes = IdentificationType::orderBy('code', 'ASC')->get();

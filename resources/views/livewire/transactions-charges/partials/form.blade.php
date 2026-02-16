@@ -219,11 +219,9 @@
           @error('amount')
             <div class="text-danger mt-1">{{ $message }}</div>
           @enderror
-        </div>
       </div>
 
       @if ($this->tipo_facturacion == 2)
-      <br>
       <div class="col-md-3 select2-primary fv-plugins-icon-container">
         <label class="form-label" for="caso_id">{{ __('Caso') }}</label>
         <div wire:ignore>

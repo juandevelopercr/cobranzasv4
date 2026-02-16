@@ -808,7 +808,7 @@ class ProformaManager extends TransactionManager {
       'area_id'               => 'nullable|integer|exists:areas,id',
       'bank_id'               => 'nullable|integer|exists:banks,id',
       'codigo_contable_id'    => 'nullable|integer|exists:codigo_contables,id',
-      'caso_id'               => 'nullable|integer|exists:casos,id',
+      'caso_id'               => 'nullable|required_if:tipo_facturacion,1|integer|exists:casos,id',
       'created_by'            => 'required|integer|exists:users,id',
       'tipo_facturacion'      => 'required|integer',
 
@@ -940,6 +940,7 @@ class ProformaManager extends TransactionManager {
       'integer' => 'El campo :attribute debe ser un número entero.',
       'proforma_no.required' => 'El campo proforma es obligatorio cuando el tipo de documento es PR.',
       'consecutivo.required' => 'El campo consecutivo es obligatorio para documentos que no sean proforma.',
+      'caso_id.required_if' => 'El campo caso es obligatorio cuando el tipo de facturación es Individual.',
     ];
   }
 
@@ -958,6 +959,7 @@ class ProformaManager extends TransactionManager {
       'created_by'            => 'creado por',
       'location_economic_activity_id' => 'actividad económica',
       'contact_economic_activity_id'  => 'actividad económica',
+      'caso_id'               => 'caso',
     ];
 
     return $attributes;
