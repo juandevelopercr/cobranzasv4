@@ -1329,7 +1329,12 @@ class CotizacionManager extends TransactionManager
       $cloned->numero_deposito_pago = NULL;
       $cloned->numero_traslado_honorario = NULL;
       $cloned->numero_traslado_gasto = NULL;
-      $cloned->proforma_change_type = Session::get('exchange_rate');
+      //$cloned->proforma_change_type = Session::get('exchange_rate');
+      $exchangeRate = Session::get('exchange_rate');
+      $cloned->proforma_change_type = (!empty($exchangeRate) && is_numeric($exchangeRate) && $exchangeRate > 0)
+        ? $exchangeRate
+        : $original->proforma_change_type;
+
       $cloned->factura_change_type = NULL;
       $cloned->num_request_hacienda_set = 0;
       $cloned->num_request_hacienda_get = 0;
