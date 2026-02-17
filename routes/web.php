@@ -465,28 +465,53 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
   });
 });
 //Route::get('/usuarios', [UserCrud::class, 'index'])->name('usuarios.index');
-Route::get('/test-mail', function () {
-  Mail::to('caceresvega@gmail.com')->send(new TestMail());
-  return 'Correo enviado con MFA';
-});
+// ✅ SEGURIDAD: Ruta de prueba eliminada - usar solo en desarrollo local
+// Route::get('/test-mail', function () {
+//   if (!app()->environment('local') || !auth()->check()) {
+//     abort(403, 'No autorizado');
+//   }
+//   Mail::to(auth()->user()->email)->send(new TestMail());
+//   return 'Correo enviado correctamente';
+// })->middleware('auth');
 
+// ✅ SEGURIDAD: Protección contra Path Traversal
 Route::get('/temporary-file', function (Request $request) {
   $path = $request->get('path');
-  return response()->file(storage_path('app/livewire-tmp/' . $path));
+
+  // Validar que no contenga path traversal (../) ni caracteres peligrosos
+  if (preg_match('/\.\./', $path) || preg_match('/[^a-zA-Z0-9_\-.]/', $path)) {
+    abort(403, 'Path inválido');
+  }
+
+  $fullPath = storage_path('app/livewire-tmp/' . $path);
+
+  // Verificar que el archivo existe y está dentro del directorio permitido
+  if (!file_exists($fullPath) || !str_starts_with(realpath($fullPath), storage_path('app/livewire-tmp/'))) {
+    abort(404, 'Archivo no encontrado');
+  }
+
+  return response()->file($fullPath);
 })->name('temporary.file');
 
+// ✅ SEGURIDAD: Protección con autenticación y validación de ambiente
 Route::get('/clear-cache', function () {
-  // Verifica si el entorno es 'local' para limitar su uso en producción
-  //if (app()->environment('local')) {
+  // Validar ambiente - solo permitir en local
+  if (!app()->environment('local')) {
+    abort(403, 'Esta acción no está permitida en producción.');
+  }
+
+  // Validar autenticación y rol de super-admin
+  if (!auth()->check() || !auth()->user()->hasRole('super-admin')) {
+    abort(403, 'No autorizado. Se requiere rol de super-admin.');
+  }
+
   Artisan::call('cache:clear');
   Artisan::call('config:clear');
   Artisan::call('route:clear');
   Artisan::call('view:clear');
-  return "Caché de la aplicación, configuración, rutas y vistas ha sido limpiada.";
-  //}
 
-  //abort(403, 'Esta acción no está permitida en producción.');
-});
+  return "Caché de la aplicación, configuración, rutas y vistas ha sido limpiada correctamente.";
+})->middleware('auth');
 
 Route::prefix('api')->group(function () {
   Route::post('factura-call-back', [ApiHaciendaController::class, 'facturaCallback'])->withoutMiddleware(['web', 'csrf']);
@@ -528,7 +553,13 @@ Route::get('/api/casos/search', function (\Illuminate\Http\Request $request) {
 });
 */
 
+// ✅ SEGURIDAD: Búsqueda de casos con autenticación y rate limiting
 Route::get('/api/casos/search', function (\Illuminate\Http\Request $request) {
+  // Validar autenticación
+  if (!auth()->check()) {
+    return response()->json(['error' => 'No autenticado'], 401);
+  }
+
   $term = $request->get('q');
   $bank_id = $request->get('bank_id');
 
@@ -551,7 +582,7 @@ Route::get('/api/casos/search', function (\Illuminate\Http\Request $request) {
         ->orWhere('pnombre_apellidos_deudor', 'like', "%{$term}%");
     })
     ->where('bank_id', $bank_id)
-    ->limit(200)
+    ->limit(50)  // Reducido de 200 a 50 por seguridad
     ->get();
 
   if ($models->isEmpty()) {
@@ -566,11 +597,23 @@ Route::get('/api/casos/search', function (\Illuminate\Http\Request $request) {
       'text' => $temp_name,
     ];
   });
-});
+})->middleware(['auth', 'throttle:60,1']);  // Máximo 60 peticiones por minuto
 
 // routes/web.php o routes/api.php
+// ✅ SEGURIDAD: Búsqueda de clientes con autenticación, validación y rate limiting
 Route::get('/api/customers/search', function (\Illuminate\Http\Request $request) {
-  $term = $request->get('q');
+  // Validar autenticación
+  if (!auth()->check()) {
+    return response()->json(['error' => 'No autenticado'], 401);
+  }
+
+  // Validar entrada
+  $validated = $request->validate([
+    'q' => 'required|string|min:2|max:100'
+  ]);
+
+  $term = $validated['q'];
+
   return Contact::query()
     ->where('name', 'like', "%{$term}%")
     ->orWhere('identification', 'like', "%{$term}%")
@@ -580,39 +623,53 @@ Route::get('/api/customers/search', function (\Illuminate\Http\Request $request)
       'id' => $contact->id,
       'text' => "{$contact->name}"
     ]);
-});
+})->middleware(['auth', 'throttle:120,1']);  // Máximo 120 peticiones por minuto
 
+// ✅ SEGURIDAD: Búsqueda de emisores con autenticación, validación y rate limiting
 Route::get('/api/emisor/search', function (\Illuminate\Http\Request $request) {
-    $term = $request->get('q');
-    return Comprobante::query()
-        ->where('emisor_nombre', 'like', "%{$term}%")
-        ->select('emisor_nombre') // solo esta columna
-        ->distinct()
-        ->limit(20)
-        ->pluck('emisor_nombre') // obtenemos solo los valores únicos
-        ->map(fn($nombre) => [
-            'id' => $nombre,
-            'text' => $nombre
-        ]);
-});
+  // Validar autenticación
+  if (!auth()->check()) {
+    return response()->json(['error' => 'No autenticado'], 401);
+  }
+
+  // Validar entrada
+  $validated = $request->validate([
+    'q' => 'required|string|min:2|max:100'
+  ]);
+
+  $term = $validated['q'];
+
+  return Comprobante::query()
+    ->where('emisor_nombre', 'like', "%{$term}%")
+    ->select('emisor_nombre') // solo esta columna
+    ->distinct()
+    ->limit(20)
+    ->pluck('emisor_nombre') // obtenemos solo los valores únicos
+    ->map(fn($nombre) => [
+      'id' => $nombre,
+      'text' => $nombre
+    ]);
+})->middleware(['auth', 'throttle:120,1']);  // Máximo 120 peticiones por minuto
 
 // routes/web.php
+// 🚨 SEGURIDAD CRÍTICA: Ruta eliminada - exponía credenciales SMTP públicamente
+// Esta ruta fue la CAUSA PROBABLE del incidente de spam
+// NUNCA exponer configuración SMTP sin autenticación
+/*
 Route::get('/debug-mail', function () {
-  return [
-    'host' => config('mail.mailers.smtp.host'),
-    'port' => config('mail.mailers.smtp.port'),
-    'username' => config('mail.mailers.smtp.username'),
-    'from_address' => config('mail.from.address'),
-    'encryption' => config('mail.mailers.smtp.encryption'),
-  ];
+  // ELIMINADO POR SEGURIDAD - Exponía usuario SMTP públicamente
+  abort(404);
 });
+*/
 
+// 🚨 SEGURIDAD CRÍTICA: Ruta eliminada - exponía datos de sesión y usuario
+// NUNCA exponer session()->all() públicamente
+/*
 Route::get('/check-session', function () {
-  return response()->json([
-    'session_data' => session()->all(),
-    'user' => auth()->user()
-  ]);
+  // ELIMINADO POR SEGURIDAD - Exponía tokens CSRF y datos sensibles
+  abort(404);
 });
+*/
 
 /*
 // Rutas de autenticación
@@ -722,11 +779,22 @@ Route::get('/exportar-movimientos/{key}', function ($key) {
 */
 
 
+// ✅ SEGURIDAD: Protección con autenticación y validación de ambiente
 Route::get('/check-assignments/{userId}', function ($userId) {
+  // Solo permitir en ambiente local
+  if (!app()->environment('local')) {
+    abort(403, 'Esta acción no está permitida en producción.');
+  }
+
+  // Validar autenticación y rol
+  if (!auth()->check() || !auth()->user()->hasRole('super-admin')) {
+    abort(403, 'No autorizado. Se requiere rol de super-admin.');
+  }
+
   $user = \App\Models\User::find($userId);
 
   if (!$user) {
-    return "Usuario no encontrado";
+    return response()->json(['error' => 'Usuario no encontrado'], 404);
   }
 
   return response()->json([
@@ -734,4 +802,4 @@ Route::get('/check-assignments/{userId}', function ($userId) {
     'roles' => $user->roles()->get(),
     'assignments' => $user->roleAssignments()->get()
   ]);
-});
+})->middleware('auth');

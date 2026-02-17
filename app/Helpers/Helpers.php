@@ -1120,7 +1120,13 @@ class Helpers
       'fromEmail' => $fromEmail
     ];
 
-    Log::info('sendComprobanteElectronicoEmail:', $data);
+    // ✅ SEGURIDAD: Logging reducido - no registrar datos sensibles completos
+    Log::info('Enviando comprobante electrónico', [
+      'transaction_id' => $transaction->id ?? 'N/A',
+      'document_type' => $transaction->document_type ?? 'N/A',
+      'recipient_masked' => isset($recipientEmail) ? Str::mask($recipientEmail, '*', 3, -10) : 'N/A',
+      // NO registrar $data completo para proteger información sensible
+    ]);
 
     $bankName = $transaction->bank->name;
 
@@ -1147,7 +1153,8 @@ class Helpers
 
     $subject = $typeComprobante . 'No.' . $transaction->consecutivo . '-' . $bankName . '-' . $titulo;
 
-    Log::info('subject de email:', [$subject]);
+    // ✅ SEGURIDAD: Logging comentado - el subject puede contener información sensible
+    // Log::info('subject de email:', [$subject]);
 
     $attachments = [];
 
@@ -1222,7 +1229,8 @@ class Helpers
         $test = [
           'mailcc' => $ccList,
         ];
-        Log::info('Antes de enviar el email:', $test);
+        // ✅ SEGURIDAD: Logging comentado - puede contener información sensible
+        // Log::info('Antes de enviar el email:', $test);
       }
 
       if ($mail->send(new InvoiceMail($data, $attachments))) {

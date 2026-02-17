@@ -25,3 +25,17 @@ yarn-error.log
 
 !/public/assets
 !/public/assets/*
+
+# 🔒 SEGURIDAD: Archivos de protección local - NO subir al repositorio
+.htaccess
+GUIA_SEGURIDAD_DOCUMENTOS.md
+
+# 🔒 SEGURIDAD: Documentos de auditoría - NO subir al repositorio
+AUDITORIA_SEGURIDAD_SISTEMA_COBRANZAS.md
+INFORME_INTERNO_SEGURIDAD_Y_MEJORAS.md
+VULNERABILIDADES_CRITICAS_ENCONTRADAS.md
+CORRECCIONES_SEGURIDAD_IMPLEMENTADAS.md
+RESUMEN_EJECUTIVO_AUDITORIA.md
+*_AUDITORIA*.md
+*_SEGURIDAD*.md
+*_VULNERABILIDADES*.md
