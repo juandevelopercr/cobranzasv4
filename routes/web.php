@@ -475,6 +475,7 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
 // })->middleware('auth');
 
 // ✅ SEGURIDAD: Protección contra Path Traversal
+/*
 Route::get('/temporary-file', function (Request $request) {
   $path = $request->get('path');
 
@@ -492,6 +493,7 @@ Route::get('/temporary-file', function (Request $request) {
 
   return response()->file($fullPath);
 })->name('temporary.file');
+*/
 
 // ✅ SEGURIDAD: Protección con autenticación y validación de ambiente
 Route::get('/clear-cache', function () {
@@ -780,6 +782,7 @@ Route::get('/exportar-movimientos/{key}', function ($key) {
 
 
 // ✅ SEGURIDAD: Protección con autenticación y validación de ambiente
+/*
 Route::get('/check-assignments/{userId}', function ($userId) {
   // Solo permitir en ambiente local
   if (!app()->environment('local')) {
@@ -803,3 +806,4 @@ Route::get('/check-assignments/{userId}', function ($userId) {
     'assignments' => $user->roleAssignments()->get()
   ]);
 })->middleware('auth');
+*/
