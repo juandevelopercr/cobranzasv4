@@ -12,6 +12,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -31,12 +32,84 @@ class FortifyServiceProvider extends ServiceProvider
   /**
    * Bootstrap any application services.
    */
+  /*
   public function boot(): void
   {
     Fortify::createUsersUsing(CreateNewUser::class);
     Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
     Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
     Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
+
+    RateLimiter::for('login', function (Request $request) {
+      $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())) . '|' . $request->ip());
+
+      return Limit::perMinute(5)->by($throttleKey);
+    });
+
+    RateLimiter::for('two-factor', function (Request $request) {
+      return Limit::perMinute(5)->by($request->session()->get('login.id'));
+    });
+  }
+  */
+
+  public function boot(): void
+  {
+    Fortify::createUsersUsing(CreateNewUser::class);
+    Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
+    Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
+    Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
+
+    Fortify::authenticateUsing(function ($request) {
+      $user = User::where('email', $request->email)->first();
+
+      // Validación de usuario inactivo
+      if ($user && !$user->active) {
+        throw ValidationException::withMessages([
+          Fortify::username() => [__('Su cuenta está inactiva. Por favor contacte al administrador.')],
+        ]);
+      }
+
+      if ($user && Hash::check($request->password, $user->password)) {
+        // Limpiar intentos fallidos al iniciar sesión correctamente
+        Cache::forget('login_attempts_' . $user->id);
+
+        // Validar selección de asignación
+        if (!$request->assignment_id) {
+          throw ValidationException::withMessages([
+            'assignment_id' => __('Debe seleccionar una asignación para continuar'),
+          ]);
+        }
+
+        // Almacenar asignación temporalmente en la sesión
+        session(['login_assignment_id' => $request->assignment_id]);
+
+        return $user;
+      }
+
+      // Lógica de bloqueo por intentos fallidos
+      if ($user) {
+        $key = 'login_attempts_' . $user->id;
+        $attempts = Cache::get($key, 0) + 1;
+        Cache::put($key, $attempts, now()->addMinutes(60));
+
+        if ($attempts >= 3) {
+          $user->active = false; // Desactivar usuario
+          $user->save();
+          Cache::forget($key); // Limpiar contador
+
+          throw ValidationException::withMessages([
+            Fortify::username() => [__('Su cuenta ha sido bloqueada por múltiples intentos fallidos.')],
+          ]);
+        }
+
+        $restantes = 3 - $attempts;
+        throw ValidationException::withMessages([
+          Fortify::username() => [__('Contraseña incorrecta. Le quedan :count intentos antes de bloquear la cuenta.', ['count' => $restantes])],
+        ]);
+      }
+
+      return null;
+    });
 
     RateLimiter::for('login', function (Request $request) {
       $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())) . '|' . $request->ip());
