@@ -73,16 +73,6 @@ class FortifyServiceProvider extends ServiceProvider
         // Limpiar intentos fallidos al iniciar sesión correctamente
         Cache::forget('login_attempts_' . $user->id);
 
-        // Validar selección de asignación
-        if (!$request->assignment_id) {
-          throw ValidationException::withMessages([
-            'assignment_id' => __('Debe seleccionar una asignación para continuar'),
-          ]);
-        }
-
-        // Almacenar asignación temporalmente en la sesión
-        session(['login_assignment_id' => $request->assignment_id]);
-
         return $user;
       }
 
