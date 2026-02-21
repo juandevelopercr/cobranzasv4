@@ -92,7 +92,7 @@ use App\Models\User;
                     'canedit'   => auth()->user()->can('edit-lineas-proformas'),
                     'candelete' => auth()->user()->can('delete-lineas-proformas'),
                     'canexport' => auth()->user()->can('export-lineas-proformas')
-                  ], key('line-manager'))
+                  ], key('line-manager-'.$this->recordId))
                 @else
                   <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
                     <span class="alert-icon rounded-circle">
@@ -154,11 +154,11 @@ use App\Models\User;
                     'candelete' => auth()->user()->can('delete-documento-proformas'),
                     'canexport' => auth()->user()->can('export-documento-proformas'),
 
-                  ])
+                  ], key('transaction-documents-'.$this->recordId))
                   @else
                   <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
                     <span class="alert-icon rounded-circle">
-                      <i class="bx bx-file bx-lg d-sm-none"></i>
+                      <i class="bx bx-xs bx-lock-alt"></i>
                     </span>
                     {{ __('Information will be displayed here after you have created the proforma') }}
                   </div>

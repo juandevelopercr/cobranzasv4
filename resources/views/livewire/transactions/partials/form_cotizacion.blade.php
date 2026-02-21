@@ -74,29 +74,28 @@
               </div>
               <div class="tab-pane fade @if ($this->activeTab == 'product') show active @endif"
                 id="navs-justified-services" role="tabpanel">
-                <div class="{{ $this->recordId ? '' : 'd-none' }}">
+                @if($this->recordId)
                   @livewire('transactions-lines.transaction-line-manager', [
+                    'transaction_id' => $this->recordId,
                     'canview'   => auth()->user()->can('view-lineas-cotizaciones'),
                     'cancreate' => auth()->user()->can('create-lineas-cotizaciones'),
                     'canedit'   => auth()->user()->can('edit-lineas-cotizaciones'),
                     'candelete' => auth()->user()->can('delete-lineas-cotizaciones'),
                     'canexport' => auth()->user()->can('export-lineas-cotizaciones')
-                  ])
-                </div>
-
-                <div class="{{ $this->recordId ? 'd-none' : '' }}">
+                  ], key('line-manager-'.$this->recordId))
+                @else
                   <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
                     <span class="alert-icon rounded-circle">
                       <i class="bx bx-xs bx-wallet"></i>
                     </span>
                     {{ __('La información será mostrada después de haber creado la cotización') }}
                   </div>
-                </div>
+                @endif
               </div>
               <div class="tab-pane fade @if ($this->activeTab == 'charges') show active @endif"
                 id="navs-justified-charge" role="tabpanel">
 
-                <div class="{{ $this->recordId ? '' : 'd-none' }}">
+                @if($this->recordId)
                   @livewire('transactions-charges.transaction-charge-manager', [
                     'transaction_id' => $this->recordId,
                     'canview'   => auth()->user()->can('view-cargos-cotizaciones'),
@@ -104,17 +103,15 @@
                     'canedit'   => auth()->user()->can('edit-cargos-cotizaciones'),
                     'candelete' => auth()->user()->can('delete-cargos-cotizaciones'),
                     'canexport' => auth()->user()->can('export-cargos-cotizaciones'),
-                  ])
-                </div>
-
-                <div class="{{ $this->recordId ? 'd-none' : '' }}">
+                  ], key('charge-manager-'.$this->recordId))
+                @else
                   <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
                     <span class="alert-icon rounded-circle">
                       <i class="bx bx-xs bx-wallet"></i>
                     </span>
                     {{ __('La información será mostrada después de haber creado la cotización') }}
                   </div>
-                </div>
+                @endif
               </div>
               <div class="tab-pane fade @if ($this->activeTab == 'documentos') show active @endif" id="navs-justified-document" role="tabpanel">
 

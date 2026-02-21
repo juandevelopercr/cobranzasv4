@@ -87,13 +87,17 @@
                 id="navs-justified-services" role="tabpanel">
                 @if($this->recordId)
                 @livewire('transactions-lines.transaction-line-manager', [
-                'transaction_id' => $this->recordId,
-                'transaction' => $this->transaction,
-                'department_id' => $this->department_id,
-                'bank_id' => $bank_id,
-                'type_notarial_act' => $this->proforma_type
-                ],
-                key('transaction-line-'.$this->recordId))
+                    'transaction_id'    => $this->recordId,
+                    'canview'           => auth()->user()->can('view-lineas-proformas'),
+                    'cancreate'         => auth()->user()->can('create-lineas-proformas'),
+                    'canedit'           => auth()->user()->can('edit-lineas-proformas'),
+                    'candelete'         => auth()->user()->can('delete-lineas-proformas'),
+                    'canexport'         => auth()->user()->can('export-lineas-proformas'),
+                    'transaction'       => $this->transaction,
+                    'department_id'     => $this->department_id,
+                    'bank_id'           => $bank_id,
+                    'type_notarial_act' => $this->proforma_type
+                ], key('transaction-line-'.$this->recordId))
                 @else
                 <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
                   <span class="alert-icon rounded-circle">
@@ -106,46 +110,61 @@
               <div class="tab-pane fade @if ($this->activeTab == 'charges') show active @endif"
                 id="navs-justified-charge" role="tabpanel">
                 @if($this->recordId)
-                @livewire('transactions-charges.transaction-charge-manager', [
-                'transaction_id' => $this->recordId,
-                ],
-                key('transaction-charge-'.$this->recordId))
+                  @livewire('transactions-charges.transaction-charge-manager', [
+                    'transaction_id' => $this->recordId,
+                    'canview'   => auth()->user()->can('view-cargos-proformas'),
+                    'cancreate' => auth()->user()->can('create-cargos-proformas'),
+                    'canedit'   => auth()->user()->can('edit-cargos-proformas'),
+                    'candelete' => auth()->user()->can('delete-cargos-proformas'),
+                    'canexport' => auth()->user()->can('export-cargos-proformas'),
+                  ], key('charge-manager-'.$this->recordId))
                 @else
-                <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
-                  <span class="alert-icon rounded-circle">
-                    <i class="bx bx-xs bx-wallet"></i>
-                  </span>
-                  {{ __('Information will be displayed here after you have created the proforma') }}
-                </div>
+                  <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
+                    <span class="alert-icon rounded-circle">
+                      <i class="bx bx-xs bx-lock-alt"></i>
+                    </span>
+                    {{ __('Information will be displayed here after you have created the invoice') }}
+                  </div>
                 @endif
               </div>
               <div class="tab-pane fade" id="navs-justified-cost-center" role="tabpanel">
                 @if($this->recordId)
-                @livewire('transactions-commissions.transaction-commission-manager', [
-                'transaction_id' => $this->recordId,
-                ],
-                key('transaction-commission-'.$this->recordId))
+                  @livewire('transactions-commissions.transaction-commission-manager', [
+                    'transaction_id' => $this->recordId,
+                    'canview'   => auth()->user()->can('view-comision-proformas'),
+                    'cancreate' => auth()->user()->can('create-comision-proformas'),
+                    'canedit'   => auth()->user()->can('edit-comision-proformas'),
+                    'candelete' => auth()->user()->can('delete-comision-proformas'),
+                    'canexport' => auth()->user()->can('export-comision-proformas'),
+                  ], key('commission-manager-'.$this->recordId))
                 @else
-                <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
-                  <span class="alert-icon rounded-circle">
-                    <i class="bx bx-xs bx-wallet"></i>
-                  </span>
-                  {{ __('Information will be displayed here after you have created the proforma') }}
-                </div>
+                  <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
+                    <span class="alert-icon rounded-circle">
+                      <i class="bx bx-xs bx-lock-alt"></i>
+                    </span>
+                    {{ __('Information will be displayed here after you have created the invoice') }}
+                  </div>
                 @endif
               </div>
               <div class="tab-pane fade" id="navs-justified-document" role="tabpanel">
                 @if($this->recordId)
-                @livewire('transactions.documents-manager', [
-                'transaction_id' => $this->recordId
-                ], key('transaction-documents-'.$this->recordId))
+                  @livewire('transactions.documents-manager', [
+                    'transaction_id' => $this->recordId,
+                    'onlyview' => false,
+                    'canview'   => auth()->user()->can('view-documento-proformas'),
+                    'cancreate' => auth()->user()->can('create-documento-proformas'),
+                    'canedit'   => auth()->user()->can('edit-documento-proformas'),
+                    'candelete' => auth()->user()->can('delete-documento-proformas'),
+                    'canexport' => auth()->user()->can('export-documento-proformas'),
+
+                  ], key('transaction-documents-'.$this->recordId))
                 @else
-                <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
-                  <span class="alert-icon rounded-circle">
-                    <i class="bx bx-xs bx-wallet"></i>
-                  </span>
-                  {{ __('Information will be displayed here after you have created the proforma') }}
-                </div>
+                  <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
+                    <span class="alert-icon rounded-circle">
+                      <i class="bx bx-xs bx-lock-alt"></i>
+                    </span>
+                    {{ __('Information will be displayed here after you have created the invoice') }}
+                  </div>
                 @endif
               </div>
             </div>

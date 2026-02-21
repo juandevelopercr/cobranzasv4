@@ -821,6 +821,14 @@ class BuscadorManager extends TransactionManager
     $this->showInstruccionesPago   = $record->showInstruccionesPago;
     $this->invoice_type            = $record->invoice_type;
 
+    $this->dispatch('updateTransactionContext', [
+      'transaction_id'    => $record->id,
+      'department_id'     => $record->department_id,
+      'bank_id'           => $record->bank_id,
+      'type_notarial_act' => $record->proforma_type,
+      'tipo_facturacion'  => $record->tipo_facturacion,
+    ]);
+
     // Totales
     $this->totalHonorarios = $record->totalHonorarios;
     $this->totalTimbres = $record->totalTimbres;
