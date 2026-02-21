@@ -1262,18 +1262,37 @@ class CuentaPorCobrarManager extends TransactionManager
     }
     */
 
+    // Elimina el error de validación del campo actualizado
+    $this->resetErrorBag($propertyName);
+  }
+
+  public function updatedSearch()
+  {
+    $this->resetPage();
+    $this->resetSelection();
+  }
+
+  public function updatedFilters()
+  {
+    $this->resetPage();
+    $this->resetSelection();
+  }
+
+  public function updatedFilterCuentaCobrarType()
+  {
+    $this->resetPage();
+    $this->resetSelection();
+  }
+
+  private function resetSelection()
+  {
+    $this->selectedIds = [];
+    $this->dispatch('updateSelectedIds', $this->selectedIds);
     $this->dispatch('updateExportFilters', [
       'search' => $this->search,
       'filters' => $this->filters,
       'selectedIds' => $this->selectedIds,
     ]);
-
-    // Reiniciar selectedIds al cambiar filtros
-    $this->selectedIds = [];
-    $this->dispatch('updateSelectedIds', $this->selectedIds);
-
-    // Elimina el error de validación del campo actualizado
-    $this->resetErrorBag($propertyName);
   }
 
   public function updatedCurrencyId($value)

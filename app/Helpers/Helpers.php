@@ -372,6 +372,7 @@ class Helpers
     // Generar PDF
     try {
       Browsershot::html($html)
+        ->setCustomTempPath(storage_path('app/public/browsershot'))
         ->setNodeBinary(env('BROWSERSHOT_NODE_BINARY'))
         ->setNpmBinary(env('BROWSERSHOT_NPM_BINARY'))
         ->setChromePath(env('BROWSERSHOT_CHROMIUM_BINARY'))
@@ -479,6 +480,7 @@ class Helpers
     // 🖨️ Generar PDF
     try {
       Browsershot::html($html)
+        ->setCustomTempPath(storage_path('app/public/browsershot'))
         ->setNodeBinary(env('BROWSERSHOT_NODE_BINARY'))
         ->setNpmBinary(env('BROWSERSHOT_NPM_BINARY'))
         ->setChromePath(env('BROWSERSHOT_CHROMIUM_BINARY'))
@@ -662,6 +664,7 @@ class Helpers
       }
 
       Browsershot::html($html)
+        ->setCustomTempPath(storage_path('app/public/browsershot'))
         ->setNodeBinary(env('BROWSERSHOT_NODE_BINARY'))
         ->setNpmBinary(env('BROWSERSHOT_NPM_BINARY'))
         ->setChromePath(env('BROWSERSHOT_CHROMIUM_BINARY'))
@@ -1958,6 +1961,7 @@ class Helpers
     // Generar PDF
     try {
       Browsershot::html($html)
+        ->setCustomTempPath(storage_path('app/public/browsershot'))
         ->setNodeBinary(env('BROWSERSHOT_NODE_BINARY'))
         ->setNpmBinary(env('BROWSERSHOT_NPM_BINARY'))
         ->setChromePath(env('BROWSERSHOT_CHROMIUM_BINARY'))
@@ -2116,6 +2120,7 @@ class Helpers
     // Generar PDF
     try {
       Browsershot::html($html)
+        ->setCustomTempPath(storage_path('app/public/browsershot'))
         ->setNodeBinary(env('BROWSERSHOT_NODE_BINARY'))
         ->setNpmBinary(env('BROWSERSHOT_NPM_BINARY'))
         ->setChromePath(env('BROWSERSHOT_CHROMIUM_BINARY'))
@@ -2315,6 +2320,7 @@ class Helpers
 
     try {
       Browsershot::html($html)
+        ->setCustomTempPath(storage_path('app/public/browsershot'))
         ->setNodeBinary(env('BROWSERSHOT_NODE_BINARY'))
         ->setNpmBinary(env('BROWSERSHOT_NPM_BINARY'))
         ->setChromePath(env('BROWSERSHOT_CHROMIUM_BINARY'))
