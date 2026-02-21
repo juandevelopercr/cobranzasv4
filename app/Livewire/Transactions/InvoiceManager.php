@@ -656,14 +656,9 @@ class InvoiceManager extends TransactionManager
     $query = $this->getFilteredQuery();
 
     // Ordenamiento y paginación final
-    if ($this->sortBy == 'transactions.transaction_date') {
-      $query->orderBy(DB::raw('DATE(transactions.transaction_date)'), $this->sortDir)
-        ->orderBy('consecutivo', 'asc');
-    } else {
-      $query->orderBy($this->sortBy, $this->sortDir);
-    }
-
-    $records = $query->paginate($this->perPage);
+    $records = $query
+      ->orderBy($this->sortBy, $this->sortDir)
+      ->paginate($this->perPage);
 
     return view('livewire.transactions.invoice-datatable', [
       'records' => $records,
