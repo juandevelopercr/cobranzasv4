@@ -111,7 +111,7 @@ use App\Models\User;
                     'canedit'   => auth()->user()->can('edit-cargos-proformas'),
                     'candelete' => auth()->user()->can('delete-cargos-proformas'),
                     'canexport' => auth()->user()->can('export-cargos-proformas'),
-                  ], key('charge-manager'))
+                  ], key('charge-manager-'.$this->recordId))
                 @else
                   <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
                     <span class="alert-icon rounded-circle">
@@ -131,7 +131,7 @@ use App\Models\User;
                       'canedit'   => auth()->user()->can('edit-comision-proformas'),
                       'candelete' => auth()->user()->can('delete-comision-proformas'),
                       'canexport' => auth()->user()->can('export-comision-proformas'),
-                    ], key('commission-manager'))
+                    ], key('commission-manager-'.$this->recordId))
                   @else
                     <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
                       <span class="alert-icon rounded-circle">

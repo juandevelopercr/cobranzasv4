@@ -192,7 +192,7 @@ class TransactionLine extends Model
     ];
 
     $query->select($columns)
-      ->join('products', 'transactions_lines.product_id', '=', 'products.id')
+      ->leftJoin('products', 'transactions_lines.product_id', '=', 'products.id')
       ->leftJoin('casos', 'transactions_lines.caso_id', '=', 'casos.id')
       ->where(function ($q) use ($value) {
         $q->where('codigocabys', 'like', "%{$value}%")

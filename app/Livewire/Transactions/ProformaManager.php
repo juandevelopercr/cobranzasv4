@@ -1411,6 +1411,14 @@ class ProformaManager extends TransactionManager {
         $record = Transaction::findOrFail($recordId);
 
         $msgs = Helpers::validateProformaToRequestInvoice($record);
+
+        Log::info('Initiating billing request', [
+            'record_id' => $recordId,
+            'proforma_no' => $record->proforma_no,
+            'lines_count' => $record->lines()->count(), // Conteo directo de BD
+            'user_id' => auth()->id()
+        ]);
+
         if (!empty($msgs)) {
           $this->dispatch('show-notification', [
             'type' => 'warning',
@@ -1438,15 +1446,21 @@ class ProformaManager extends TransactionManager {
           }
 
           if ($record->save()) {
+            Log::info('Billing request successfully completed', [
+                'record_id' => $recordId,
+                'proforma_no' => $record->proforma_no,
+                'final_lines_count' => $record->lines()->count()
+            ]);
             $this->dispatch('show-notification', [
               'type' => 'success',
               'message' => __('Billing request was successfully completed'),
             ]);
-          } else
+          } else {
             $this->dispatch('show-notification', [
               'type' => 'error',
               'message' => __('An error occurred and the request could not be made'),
             ]);
+          }
         }
       });
     } catch (QueryException $e) {
@@ -1656,10 +1670,8 @@ class ProformaManager extends TransactionManager {
   }
 
   public function resetControls() {
-    // Fix: Limpiar el contexto de la sesión para evitar que se carguen líneas de transacciones pasadas
-    session()->forget('transaction_context');
-
     // Fix: Emitir evento para limpiar inmediatamente el componente hijo (TransactionLineManager)
+    // No usamos más la sesión para evitar contaminación cruzada entre pestañas
     $this->dispatch('updateTransactionContext', [
         'transaction_id'    => null,
         'department_id'     => null,
