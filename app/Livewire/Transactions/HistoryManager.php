@@ -1190,6 +1190,20 @@ class HistoryManager extends TransactionManager
       return $pago;
     })->toArray();
 
+    // Convertir fechas de formato d-m-Y (UI) a Y-m-d (MySQL) antes de validar
+    $dateFields = [
+      'fecha_pago',
+      'fecha_deposito_pago',
+      'fecha_traslado_honorario',
+      'fecha_traslado_gasto',
+      'fecha_solicitud_factura',
+    ];
+    foreach ($dateFields as $field) {
+      if (!empty($this->$field)) {
+        $this->$field = Carbon::createFromFormat('d-m-Y', $this->$field)->format('Y-m-d');
+      }
+    }
+
     // Validar
     $validatedData = $this->validate();
 
