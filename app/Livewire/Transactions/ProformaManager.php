@@ -1311,14 +1311,20 @@ class ProformaManager extends TransactionManager {
     // Limpia las claves foráneas antes de validar
     $this->cleanEmptyForeignKeys();
 
-    // Eliminar comas del número en el servidor
-    //dd($this->proforma_change_type);
-    //$this->proforma_change_type = str_replace(',', '', $this->proforma_change_type);
-    //$this->transaction_date = Carbon::parse($this->show_transaction_date)->format('Y-m-d');
+    // Fix: Fetch record earlier to preserve original time if the date hasn't changed
+    $record = Transaction::findOrFail($recordId);
+    $originalDate = Carbon::parse($record->transaction_date)->format('Y-m-d');
+    $newDate = Carbon::parse($this->show_transaction_date)->format('Y-m-d');
 
-    $this->transaction_date = Carbon::parse($this->show_transaction_date)
-      ->setTime(now()->hour, now()->minute, now()->second)
-      ->format('Y-m-d H:i:s');
+    if ($originalDate === $newDate) {
+      $this->transaction_date = Carbon::parse($this->show_transaction_date)
+        ->setTime(Carbon::parse($record->transaction_date)->hour, Carbon::parse($record->transaction_date)->minute, Carbon::parse($record->transaction_date)->second)
+        ->format('Y-m-d H:i:s');
+    } else {
+      $this->transaction_date = Carbon::parse($this->show_transaction_date)
+        ->setTime(now()->hour, now()->minute, now()->second)
+        ->format('Y-m-d H:i:s');
+    }
 
     $this->pay_term_number = trim($this->pay_term_number);
 
@@ -1339,8 +1345,6 @@ class ProformaManager extends TransactionManager {
       DB::beginTransaction();
 
       // Encuentra el registro existente
-      $record = Transaction::findOrFail($recordId);
-
       // Actualizar
       $record->update($validatedData);
 

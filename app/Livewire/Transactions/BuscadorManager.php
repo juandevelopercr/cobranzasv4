@@ -812,12 +812,14 @@ class BuscadorManager extends TransactionManager
     $this->migo                   = $record->migo;
     $this->detalle_adicional      = $record->detalle_adicional;
     $this->gln                    = $record->gln;
-    $this->transaction_date       = $record->transaction_date;
-    $this->fecha_pago             = $record->fecha_pago;
-    $this->fecha_deposito_pago    = $record->fecha_deposito_pago;
-    $this->fecha_traslado_honorario = $record->fecha_traslado_honorario;
-    $this->fecha_traslado_gasto   = $record->fecha_traslado_gasto;
-    $this->fecha_solicitud_factura = $record->fecha_solicitud_factura;
+    $this->show_transaction_date = Carbon::parse($record->transaction_date)->format('d-m-Y');
+    $this->transaction_date = Carbon::parse($record->transaction_date)->format('d-m-Y');
+    $this->fecha_pago = $record->fecha_pago ? Carbon::parse($record->fecha_pago)->format('d-m-Y') : null;
+    $this->fecha_deposito_pago = $record->fecha_deposito_pago ? Carbon::parse($record->fecha_deposito_pago)->format('d-m-Y') : null;
+    $this->fecha_traslado_honorario = $record->fecha_traslado_honorario ? Carbon::parse($record->fecha_traslado_honorario)->format('d-m-Y') : null;
+    $this->fecha_traslado_gasto = $record->fecha_traslado_gasto ? Carbon::parse($record->fecha_traslado_gasto)->format('d-m-Y') : null;
+    $this->fecha_solicitud_factura = $record->fecha_solicitud_factura ? Carbon::parse($record->fecha_solicitud_factura)->format('d-m-Y') : null;
+
     $this->showInstruccionesPago   = $record->showInstruccionesPago;
     $this->invoice_type            = $record->invoice_type;
 
@@ -857,8 +859,6 @@ class BuscadorManager extends TransactionManager
     $this->totalIVADevuelto = $record->totalIVADevuelto;
     $this->totalOtrosCargos = $record->totalOtrosCargos;
     $this->totalComprobante = $record->totalComprobante;
-
-    $this->show_transaction_date = Carbon::parse($record->transaction_date)->format('Y-m-d');
     $this->original_currency_id = $record->currency_id;
 
     $this->clientEmail = $record->contact->email;
@@ -946,9 +946,20 @@ class BuscadorManager extends TransactionManager
     //$this->proforma_change_type = str_replace(',', '', $this->proforma_change_type);
     //$this->transaction_date = Carbon::parse($this->show_transaction_date)->format('Y-m-d');
 
-    $this->transaction_date = Carbon::parse($this->show_transaction_date)
-      ->setTime(now()->hour, now()->minute, now()->second)
-      ->format('Y-m-d H:i:s');
+    // Fix: Fetch record earlier to preserve original time if the date hasn't changed
+    $record = Transaction::findOrFail($recordId);
+    $originalDate = Carbon::parse($record->transaction_date)->format('Y-m-d');
+    $newDate = Carbon::parse($this->show_transaction_date)->format('Y-m-d');
+
+    if ($originalDate === $newDate) {
+      $this->transaction_date = Carbon::parse($this->show_transaction_date)
+        ->setTime(Carbon::parse($record->transaction_date)->hour, Carbon::parse($record->transaction_date)->minute, Carbon::parse($record->transaction_date)->second)
+        ->format('Y-m-d H:i:s');
+    } else {
+      $this->transaction_date = Carbon::parse($this->show_transaction_date)
+        ->setTime(now()->hour, now()->minute, now()->second)
+        ->format('Y-m-d H:i:s');
+    }
 
     $this->pay_term_number = trim($this->pay_term_number);
 
@@ -966,8 +977,6 @@ class BuscadorManager extends TransactionManager
 
     try {
       // Encuentra el registro existente
-      $record = Transaction::findOrFail($recordId);
-
       // Actualizar
       $record->update($validatedData);
 
