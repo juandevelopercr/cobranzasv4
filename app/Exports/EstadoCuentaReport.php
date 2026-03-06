@@ -61,15 +61,14 @@ class EstadoCuentaReport implements FromView, ShouldAutoSize, WithColumnFormatti
                             ->getStartColor()->setARGB('FFD9F2D9');
                     }
 
-                    if ($this->filters['filter_currency'] == 1){
-                      // Formato con símbolo CRC
-                      $sheet->getStyle("O{$row}")
-                          ->getNumberFormat()
-                          ->setFormatCode('"USD" #,##0.00');
-                    }
-                    else{
-                        // Formato con símbolo CRC
-                        $sheet->getStyle("O{$row}")
+                    if ($this->filters['filter_currency'] == 1) {
+                        // Formato con símbolo USD para columnas I a O
+                        $sheet->getStyle("I{$row}:O{$row}")
+                            ->getNumberFormat()
+                            ->setFormatCode('"USD" #,##0.00');
+                    } else {
+                        // Formato con símbolo CRC para columnas I a O
+                        $sheet->getStyle("I{$row}:O{$row}")
                             ->getNumberFormat()
                             ->setFormatCode('"CRC" #,##0.00');
                     }
@@ -107,9 +106,11 @@ class EstadoCuentaReport implements FromView, ShouldAutoSize, WithColumnFormatti
                     $q->where('department_id', $this->filters['filter_department']);
                 }
 
+                /*
                 if (!empty($this->filters['filter_currency'])) {
                     $q->where('currency_id', $this->filters['filter_currency']);
                 }
+                */
             });
 
         if (!empty($this->filters['filter_contact'])) {
@@ -152,9 +153,11 @@ class EstadoCuentaReport implements FromView, ShouldAutoSize, WithColumnFormatti
                         $q->where('department_id', $filters['filter_department']);
                     }
 
+                    /*
                     if (!empty($filters['filter_currency'])) {
                         $q->where('currency_id', $filters['filter_currency']);
                     }
+                    */
                 }]);
                 $clientes[] = $cliente; // Agregar el cliente procesado al array
             }
