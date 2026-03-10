@@ -98,12 +98,12 @@
             @endphp
             <td>{{ $factura->currency->code }}</td>
             <td>{{ $factura->proforma_change_type }}</td>
-            <td>{{ $factura->totalVenta * $factor }}</td>
-            <td>{{ $factura->totalDiscount * $factor }}</td>
-            <td>{{ ($factura->totalVenta - $factura->totalDiscount) * $factor }}</td>
-            <td>{{ $factura->totalTax * $factor }}</td>
-            <td>{{ $factura->totalOtrosCargos * $factor }}</td>
-            <td>{{ $factura->totalComprobante * $factor }}</td>
+            <td>{{ $factura->totalVenta }}</td>
+            <td>{{ $factura->totalDiscount }}</td>
+            <td>{{ ($factura->totalVenta - $factura->totalDiscount) }}</td>
+            <td>{{ $factura->totalTax }}</td>
+            <td>{{ $factura->totalOtrosCargos }}</td>
+            <td>{{ $factura->totalComprobante }}</td>
             <td>{{ $factura->totalComprobante * $factor }}</td>
             <td>{{ $factura->proforma_no }}</td>
             <td>{{ $factura->caso ? $factura->caso->deudor : '' }}</td>

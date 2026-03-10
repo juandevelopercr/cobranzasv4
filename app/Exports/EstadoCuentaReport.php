@@ -61,14 +61,25 @@ class EstadoCuentaReport implements FromView, ShouldAutoSize, WithColumnFormatti
                             ->getStartColor()->setARGB('FFD9F2D9');
                     }
 
+                    // For the original columns I to N, we use the original currency from column G
+                    $originalCurrency = $sheet->getCell("G{$row}")->getValue();
+                    if ($originalCurrency === 'USD') {
+                        $sheet->getStyle("I{$row}:N{$row}")
+                            ->getNumberFormat()
+                            ->setFormatCode('"USD" #,##0.00');
+                    } elseif ($originalCurrency === 'CRC') {
+                        $sheet->getStyle("I{$row}:N{$row}")
+                            ->getNumberFormat()
+                            ->setFormatCode('"CRC" #,##0.00');
+                    }
+
+                    // For the equivalent column O (and totals in column O), we use the selected currency code
                     if ($this->filters['filter_currency'] == 1) {
-                        // Formato con símbolo USD para columnas I a O
-                        $sheet->getStyle("I{$row}:O{$row}")
+                        $sheet->getStyle("O{$row}")
                             ->getNumberFormat()
                             ->setFormatCode('"USD" #,##0.00');
                     } else {
-                        // Formato con símbolo CRC para columnas I a O
-                        $sheet->getStyle("I{$row}:O{$row}")
+                        $sheet->getStyle("O{$row}")
                             ->getNumberFormat()
                             ->setFormatCode('"CRC" #,##0.00');
                     }
