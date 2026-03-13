@@ -40,6 +40,8 @@ use Illuminate\Support\Facades\Storage;
 class TransactionLineManager extends BaseComponent {
   use WithFileUploads;
   use WithPagination;
+  protected $paginationName = 'linesPage';
+
 
   #[Url(as: 'ptSearch', history: true)]
   public $search = '';
@@ -202,6 +204,8 @@ class TransactionLineManager extends BaseComponent {
     // Aquí puedes recargar los datos si es necesario
 
     $this->search = '';
+    $this->resetPage();
+    $this->reset('filters');
     //$this->refresDatatable(); // Opcional: si quieres resetear las columnas también
   }
 

@@ -27,6 +27,8 @@ class TransactionCommissionManager extends BaseComponent
 {
   use WithFileUploads;
   use WithPagination;
+  protected $paginationName = 'commissionsPage';
+
 
   #[Url(as: 'ctSearch', history: true)]
   public $search = '';
@@ -81,6 +83,9 @@ class TransactionCommissionManager extends BaseComponent
   public function handleUpdateContext($data)
   {
     $this->transaction_id = $data['transaction_id'];
+    $this->search = '';
+    $this->resetPage();
+    $this->reset('filters');
     // Aquí puedes recargar los datos si es necesario
   }
 

@@ -1784,6 +1784,8 @@ class ProformaManager extends TransactionManager {
       'producto',
       'numero_operacion',
       'proceso',
+      'recordId', // Agregado
+      'action' // Agregado
     );
 
     $this->bank_id = null;

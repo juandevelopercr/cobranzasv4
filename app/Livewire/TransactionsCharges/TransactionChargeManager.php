@@ -31,6 +31,8 @@ class TransactionChargeManager extends BaseComponent
 {
   use WithFileUploads;
   use WithPagination;
+  protected $paginationName = 'chargesPage';
+
 
   #[Url(as: 'chtSearch', history: true)]
   public $search = '';
@@ -102,6 +104,9 @@ class TransactionChargeManager extends BaseComponent
     $this->bank_id = $data['bank_id'];
     $this->type_notarial_act = $data['type_notarial_act'];
     $this->tipo_facturacion = $data['tipo_facturacion'];
+    $this->search = '';
+    $this->resetPage();
+    $this->reset('filters');
     $this->dispatch('reinitFormControls');
     //Log::debug('handleUpdateContext transaction_id', [$this->transaction_id]);
   }
