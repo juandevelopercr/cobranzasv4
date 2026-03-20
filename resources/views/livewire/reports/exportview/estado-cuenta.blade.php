@@ -71,9 +71,9 @@
                     if ($factura->pay_term_number > 0) {
                         $fechaVencimiento = \Carbon\Carbon::parse($factura->transaction_date)
                             ->addDays($factura->pay_term_number)
-                            ->format('d/m/Y');
+                            ->format('d-m-Y');
                     } else {
-                        $fechaVencimiento = \Carbon\Carbon::parse($factura->transaction_date)->format('d/m/Y');
+                        $fechaVencimiento = \Carbon\Carbon::parse($factura->transaction_date)->format('d-m-Y');
                     }
                 @endphp
                 {{ $fechaVencimiento }}
