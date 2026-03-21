@@ -260,6 +260,9 @@ class CasoCoocique2ActivoReport extends BaseReport
     $filters = $this->filters ?? [];
 
     // Filtros de fechas (se asegura formato y rango)
+    /*
+    Quite el  filtro de fecha porque el cliente lo solicito
+
     $dateFields = [
         'filter_date' => 'pfecha_asignacion_caso',
     ];
@@ -281,6 +284,7 @@ class CasoCoocique2ActivoReport extends BaseReport
             }
         }
     }
+    */
 
     /*
     if (!empty($filters['filter_numero'])) {
