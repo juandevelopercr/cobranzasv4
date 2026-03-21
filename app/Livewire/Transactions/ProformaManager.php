@@ -721,10 +721,16 @@ class ProformaManager extends TransactionManager {
     $allowedRoles = User::ROLES_ALL_BANKS;
     // Condiciones según el rol del usuario
     if (Auth::user()->hasAnyRole($allowedRoles)) {
-      $query->orderBy('transactions.transaction_date', 'DESC')
+      if ($this->sortBy && !in_array($this->sortBy, ['id', 'transactions.id', 'transactions.transaction_date'])) {
+        $query->orderBy($this->sortBy, $this->sortDir);
+      } else {
+        $query->orderByRaw('COALESCE(transactions.fecha_solicitud_factura, transactions.transaction_date) DESC');
+      }
+      $query->orderBy('id', 'DESC');
+    } else {
+      $query->orderBy($this->sortBy, $this->sortDir)
         ->orderBy('id', 'DESC');
-    } else
-      $query->orderBy('transactions.id', 'DESC');
+    }
 
     // Ordenamiento y paginación final
     $records = $query->paginate($this->perPage);
@@ -1345,8 +1351,15 @@ class ProformaManager extends TransactionManager {
       DB::beginTransaction();
 
       // Encuentra el registro existente
+      $oldStatus = $record->proforma_status;
       // Actualizar
       $record->update($validatedData);
+
+      if ($oldStatus !== Transaction::SOLICITADA && $record->proforma_status === Transaction::SOLICITADA) {
+        $record->fecha_solicitud_factura = \Carbon\Carbon::now();
+        $record->transaction_date = \Carbon\Carbon::now();
+        $record->save();
+      }
 
       $this->dispatch('updateTransactionContext', [
         'transaction_id'    => $record->id,
@@ -1431,6 +1444,7 @@ class ProformaManager extends TransactionManager {
         } else {
           $record->proforma_status = Transaction::SOLICITADA;
           $record->fecha_solicitud_factura = \Carbon\Carbon::now();
+          $record->transaction_date = \Carbon\Carbon::now();
 
           // Iterar sobre las líneas para buscar exoneraciones y agregarlas a las notas
           $exonerationNotes = [];
