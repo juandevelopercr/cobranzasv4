@@ -294,15 +294,18 @@
         @enderror
       </div>
       <div class="col-md-4 fv-plugins-icon-container">
-        <label class="form-label" for="pass_imap">{{ __('Password imap') }}</label>
-        <div class="input-group input-group-merge has-validation">
-            <span class="input-group-text"><i class="bx bx-lock-alt"></i></span>
-            <input type="text" wire:model="pass_imap"
-                class="form-control @error('pass_imap') is-invalid @enderror" placeholder="{{ __('Password imap') }}">
+        <div class="form-password-toggle">
+          <label class="form-label" for="pass_imap">{{ __('Password imap') }}</label>
+          <div class="input-group input-group-merge has-validation">
+              <span class="input-group-text"><i class="bx bx-lock-alt"></i></span>
+              <input type="password" wire:model="pass_imap" id="pass_imap"
+                  class="form-control @error('pass_imap') is-invalid @enderror" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="pass_imap-toggle">
+              <span class="input-group-text cursor-pointer" id="pass_imap-toggle"><i class="bx bx-hide"></i></span>
+          </div>
+          @error('pass_imap')
+          <div class="text-danger mt-1">{{ $message }}</div>
+          @enderror
         </div>
-        @error('pass_imap')
-        <div class="text-danger mt-1">{{ $message }}</div>
-        @enderror
       </div>
 
       <div class="col-md-4 fv-plugins-icon-container">
