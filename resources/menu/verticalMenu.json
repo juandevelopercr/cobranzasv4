@@ -258,7 +258,8 @@
         "view-coocique2-casos",
         "view-davivienda-casos",
         "view-lafise-casos",
-        "view-cafsa-casos"
+        "view-cafsa-casos",
+        "view-cartera-casos"
       ],
       "submenu": [
         {
@@ -339,6 +340,14 @@
           "slug": "casos-cafsa",
           "permissions": [
             "view-cafsa-casos"
+          ]
+        },
+        {
+          "url": "casos/cartera-comprada",
+          "name": "Cartera Comprada",
+          "slug": "casos-cartera",
+          "permissions": [
+            "view-cartera-casos"
           ]
         }
       ]

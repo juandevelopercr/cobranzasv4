@@ -58,4 +58,8 @@ class CasoController extends Controller
   {
     return view('content.casos.cafsa', []);
   }
+  public function cartera()
+  {
+    return view('content.casos.cartera', []);
+  }
 }

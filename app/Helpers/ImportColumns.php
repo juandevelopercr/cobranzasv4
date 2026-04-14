@@ -358,6 +358,35 @@ class ImportColumns
         'Servicio del Notificador' => ['campo' => 'caso_servicio_notificador_id', 'tipo' => 'string'],
     ];
 
+    public const COLUMNAS_CARTERA = [
+        'Número'=> ['campo'=>'pnumero', 'tipo'=>'string'],
+        'Origen Cartera'=> ['campo'=>'origen_cartera', 'tipo'=>'string'],
+        'Producto' => ['campo' => 'product_id', 'tipo' => 'string'],
+        'Proceso' => ['campo' => 'proceso_id', 'tipo' => 'string'],
+        'Operación' => ['campo' => 'pnumero_operacion1', 'tipo' => 'string'],
+        'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
+        'Cédula' => ['campo' => 'pnumero_cedula', 'tipo' => 'string'],
+        'Saldo adeudado' => ['campo' => 'psaldo_dolarizado', 'tipo' => 'string'],
+        'Moneda' => ['campo' => 'currency_id', 'tipo' => 'string'],
+        'Expediente' => ['campo' => 'pnumero_expediente_judicial', 'tipo' => 'string'],
+        'Estado Procesal' => ['campo' => 'estado_del_proceso', 'tipo' => 'string'],
+        'F. Asignación' => ['campo' => 'pfecha_asignacion_caso', 'tipo' => 'date'],
+        'F. Demanda' => ['campo' => 'pfecha_presentacion_demanda', 'tipo' => 'date'],
+        'F. Curso demanda' => ['campo' => 'pfecha_curso_demanda', 'tipo' => 'date'],
+        'F. Notificación' => ['campo' => 'nfecha_notificacion_todas_partes', 'tipo' => 'date'],
+        'F. Arreglo P' => ['campo' => 'afecha_suspencion_arreglo', 'tipo' => 'date'],
+        'Monto Retenc ¢' => ['campo' => 'pmonto_retencion_colones', 'tipo' => 'string'],
+        'Monto Retenc $' => ['campo' => 'pmonto_retencion_dolares', 'tipo' => 'string'],
+        'F. Terminado' => ['campo' => 'afecha_terminacion', 'tipo' => 'date'],
+        'Comentarios' => ['campo' => 'ncomentarios', 'tipo' => 'string'],
+        'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],
+        'Nombre del notificador' => ['campo' => 'notificador_id', 'tipo' => 'string'],
+        'Monto AP' => ['campo' => 'monto_ap', 'tipo' => 'string'],
+        'Cuota AP' => ['campo' => 'cuota_ap', 'tipo' => 'string'],
+        '% Descuento aplicado' => ['campo' => 'descuento_aplicado', 'tipo' => 'string'],
+        'Expectativa de recuperación' => ['campo' => 'expectativa', 'tipo' => 'string'],
+    ];
+
     //Bank::BANCODECOSTARICA => self::COLUMNAS_BANCODECOSTARICA,
     //Bank::SCOTIABANKBCH => self::COLUMNAS_SCOTIABANKBCH,
 
@@ -375,6 +404,7 @@ class ImportColumns
           //Bank::BANCODECOSTARICA => self::COLUMNAS_BANCODECOSTARICA,
           Bank::SCOTIABANKBCH => self::COLUMNAS_SCOTIABANKCR,
           Bank::COOCIQUE => self::COLUMNAS_TERCEROS,
+          Bank::CARTERA => self::COLUMNAS_CARTERA,
         ];
 
         // Si es un string, convertir a mayúsculas para coincidencias

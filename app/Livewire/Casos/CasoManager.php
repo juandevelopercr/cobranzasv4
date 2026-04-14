@@ -401,6 +401,20 @@ class CasoManager extends BaseComponent
   public $importedCount = 0;
   public $expectedColumns = [];
 
+  //CAMPOS NUEVOS PARA CARTERA COMPRADA
+  public $origen_cartera = null;
+
+  public $monto_ap = NULL;
+
+  public $cuota_ap = NULL;
+
+  public $descuento_aplicado = NULL;
+
+  public $expectativa = NULL;
+
+  public $estado_del_proceso = NULL;
+
+
   // ====== Config de validación por grupos (para crear reglas sin omitir nada) ======
   /*
   private $textFields = [
@@ -846,7 +860,13 @@ class CasoManager extends BaseComponent
       'closeForm',
       'message',
       'tipoMessage',
-      'archivo'
+      'archivo',
+      'origen_cartera',
+      'monto_ap',
+      'cuota_ap',
+      'descuento_aplicado',
+      'expectativa',
+      'estado_del_proceso',
     );
     $this->selectedIds = [];
     $this->dispatch('updateSelectedIds', $this->selectedIds);

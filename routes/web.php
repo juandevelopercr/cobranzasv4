@@ -195,6 +195,7 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
   Route::get('casos/davivienda', [CasoController::class, 'davivienda'])->name('casos-davivienda');
   Route::get('casos/lafise', [CasoController::class, 'lafise'])->name('casos-lafise');
   Route::get('casos/cafsa', [CasoController::class, 'cafsa'])->name('casos-cafsa');
+  Route::get('casos/cartera-comprada', [CasoController::class, 'cartera'])->name('casos-cartera');
 
   // CRUD MODULO BANCOS
   Route::get('banks/movements', [MovimientoController::class, 'index'])->name('banks-movements.index');

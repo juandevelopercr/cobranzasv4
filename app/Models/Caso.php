@@ -117,7 +117,9 @@ class Caso extends Model implements HasMedia
     'pmonto_arreglo_pago',
     'pmonto_cuota',
     'honorarios_legales_dolares',
-
+    'monto_ap',
+    'cuota_ap',
+    'descuento_aplicado',
 
     // === FECHAS SAFE ===
     'pfecha_pago_multas_y_seguros',
@@ -345,6 +347,9 @@ class Caso extends Model implements HasMedia
     'bgastos_proceso',
     'pdespacho_judicial_juzgado',
     'pdatos_codeudor2',
+    'origen_cartera',
+    'expectativa',
+    'estado_del_proceso'
   ];
 
   public function bank()
@@ -541,6 +546,7 @@ class Caso extends Model implements HasMedia
       'banks.name as bank_name',
       'contacts.name as contacto',
       'currencies.code as moneda',
+      'casos.origen_cartera',
       'casos.created_at',
       'casos.updated_at',
     ];
@@ -558,6 +564,10 @@ class Caso extends Model implements HasMedia
     // 🔹 Filtros adicionales
     if (!empty($filters['filter_pnumero'])) {
       $query->where('casos.pnumero', $filters['filter_pnumero']);
+    }
+
+    if (!empty($filters['filter_origen_cartera'])) {
+      $query->where('casos.origen_cartera', $filters['filter_origen_cartera']);
     }
 
     if (!empty($filters['filter_contact'])) {

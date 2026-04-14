@@ -23,6 +23,7 @@ class Bank extends Model
   const SCOTIABANKBCH    = 13;
   const COOCIQUE         = 14;
   const COOCIQUE2        = 16;
+  const CARTERA          = 17;
 
   protected $fillable = [
     'name',

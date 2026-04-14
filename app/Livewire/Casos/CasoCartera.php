@@ -36,7 +36,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Services\DocumentSequenceService;
 use Illuminate\Support\Facades\Validator;
 
-class CasoBac extends CasoManager
+class CasoCartera extends CasoManager
 {
   public $titleNotification = 'Notificación - Public Edicto';
 
@@ -54,27 +54,14 @@ class CasoBac extends CasoManager
 
   public function mount()
   {
-    $this->bank_id = Bank::SANJOSE;
+    $this->bank_id = Bank::CARTERA;
     $CONCURSALES   = 78;
     $LETRADECAMBIO = 31;
     $PAGARE        = 32;
-    /*
-    if (auth()->user()->hasAnyRole(['ASIGNACIONES'])) {
-      $this->productos = CasoProducto::join('casos_productos_bancos', 'casos_productos_bancos.product_id', '=', 'casos_productos.id')
-        ->where('casos_productos_bancos.bank_id', '=', $this->bank_id)
-        ->whereIn('casos_productos.id', [$CONCURSALES])
-        ->orderBy('nombre', 'ASC')
-        ->get();
-    } else {
-      $this->productos = CasoProducto::join('casos_productos_bancos', 'casos_productos_bancos.product_id', '=', 'casos_productos.id')
-        ->where('casos_productos_bancos.bank_id', '=', $this->bank_id)
-        ->whereNotIn('casos_productos.id', [$LETRADECAMBIO, $PAGARE])
-        ->orderBy('nombre', 'ASC')
-        ->get();
-    }
-    */
+
     $this->productos = CasoProducto::join('casos_productos_bancos', 'casos_productos_bancos.product_id', '=', 'casos_productos.id')
         ->where('casos_productos_bancos.bank_id', '=', $this->bank_id)
+        ->whereIn('casos_productos.id', [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100])
         ->orderBy('nombre', 'ASC')
         ->get();
 
@@ -107,7 +94,7 @@ class CasoBac extends CasoManager
 
     $this->juzgados = CasoJuzgado::where('activo', 1)->orderBy('nombre', 'ASC')->get();
 
-    $this->expectedColumns = ImportColumns::getColumnasPorBanco(Bank::SANJOSE);
+    $this->expectedColumns = ImportColumns::getColumnasPorBanco(Bank::CARTERA);
 
     $this->notificadores = CasoNotificador::where('activo', 1)->orderBy('nombre', 'ASC')->get();
 
@@ -142,7 +129,7 @@ class CasoBac extends CasoManager
 
     $records = $query->paginate($this->perPage);
 
-    return view('livewire.casos.bac-datatable', [
+    return view('livewire.casos.cartera-datatable', [
       'records' => $records,
     ]);
   }
@@ -238,7 +225,9 @@ class CasoBac extends CasoManager
       'pmonto_arreglo_pago' => ['nullable', 'numeric'],
       'pmonto_cuota' => ['nullable', 'numeric'],
       'honorarios_legales_dolares' => ['nullable', 'numeric'],
-
+      'monto_ap' => ['nullable', 'numeric'],
+      'cuota_ap' => ['nullable', 'numeric'],
+      'descuento_aplicado' => ['nullable', 'numeric'],
 
       // === FECHAS SAFE ===
       'pfecha_pago_multas_y_seguros' => ['nullable', 'date'],
@@ -393,7 +382,7 @@ class CasoBac extends CasoManager
       'pnombre_contacto_o_arrendatario' => ['nullable', 'string', 'max:100'],
       'pnombre_coarrendatario' => ['nullable', 'string', 'max:100'],
       'pcedula_coarrendatario' => ['nullable', 'string', 'max:100'],
-      'pcorreo_coarrendatario' => ['nullable', 'string', 'max:100'],
+      //'pcorreo_coarrendatario' => ['nullable', 'string', 'max:100'],
       'ptelefono_coarrendatario' => ['nullable', 'string', 'max:100'],
       'afirma_legal' => ['nullable', 'string', 'max:100'],
       'areasignaciones' => ['nullable', 'string', 'max:100'],
@@ -451,7 +440,7 @@ class CasoBac extends CasoManager
       'pnumero_operacion1' => ['nullable', 'string', 'max:190'],
       'pmonto_estimacion_demanda' => ['nullable', 'string', 'max:190'],
       'pmonto_estimacion_demanda_colones' => ['nullable', 'string', 'max:190'],
-      'pmonto_estimacion_demanda_dolares' => ['nullable', 'string', 'max:190'],
+      //'pmonto_estimacion_demanda_dolares' => ['nullable', 'string', 'max:190'],
       'asaldo_capital_operacion' => ['nullable', 'string', 'max:190'],
       'asaldo_capital_operacion_usd' => ['nullable', 'string', 'max:190'],
       'aestimacion_demanda_en_presentacion' => ['nullable', 'string', 'max:190'],
@@ -469,6 +458,9 @@ class CasoBac extends CasoManager
       'bgastos_proceso' => ['nullable', 'string', 'max:190'],
       'pdespacho_judicial_juzgado' => ['nullable', 'string', 'max:190'],
       'pdatos_codeudor2' => ['nullable', 'string', 'max:190'],
+      'origen_cartera' => ['nullable', 'string', 'max:190'],
+      'expectativa' => ['nullable', 'string', 'max:190'],
+      'estado_del_proceso' => ['nullable', 'string', 'max:190'],
 
       'fechasRemate' => 'nullable|array|min:0',
       'fechasRemate.*.fecha' => 'nullable|date',
@@ -902,7 +894,7 @@ class CasoBac extends CasoManager
   public function refresDatatable()
   {
     $config = DataTableConfig::where('user_id', Auth::id())
-      ->where('datatable_name', 'casos-bac-datatable')
+      ->where('datatable_name', 'casos-cartera-datatable')
       ->first();
 
     if ($config) {
@@ -959,22 +951,15 @@ class CasoBac extends CasoManager
 
   public $filters = [
     'filter_pnumero' => NULL,
+    'filter_origen_cartera' => NULL,
     'filter_pnumero_operacion1' => NULL,
     'filter_pfecha_asignacion_caso' => NULL,
     'filter_bank_name' => NULL,
     'filter_producto' => NULL,
     'filter_proceso' => NULL,
-    'filter_abogado' => NULL,
-    'filter_asistente' => NULL,
-    'filter_pnumero_contrato' => NULL,
-    'filter_pdespacho_judicial_juzgado' => NULL,
-    'filter_pnombre_demandado' => NULL,
     'filter_pnumero_cedula' => NULL,
-    'filter_pnumero_expediente_judicial' => NULL,
     'filter_pfecha_presentacion_demanda' => NULL,
-    'filter_nfecha_traslado_juzgado' => NULL,
     'filter_nfecha_notificacion_todas_partes' => NULL,
-    'filter_aestado_proceso_general_id' => NULL,
     'filter_fecha_importacion' => NULL
   ];
 
@@ -986,6 +971,25 @@ class CasoBac extends CasoManager
         'orderName' => 'pnumero',
         'label' => __('Número'),
         'filter' => 'filter_pnumero',
+        'filter_type' => 'input',
+        'filter_sources' => '',
+        'filter_source_field' => '',
+        'columnType' => 'string',
+        'columnAlign' => '',
+        'columnClass' => '',
+        'function' => '',
+        'parameters' => [],
+        'sumary' => '',
+        'openHtmlTab' => '',
+        'closeHtmlTab' => '',
+        'width' => NULL,
+        'visible' => true,
+      ],
+      [
+        'field' => 'origen_cartera',
+        'orderName' => 'origen_cartera',
+        'label' => __('Origen Cartera'),
+        'filter' => 'filter_origen_cartera',
         'filter_type' => 'input',
         'filter_sources' => '',
         'filter_source_field' => '',
@@ -1095,101 +1099,7 @@ class CasoBac extends CasoManager
         'width' => NULL,
         'visible' => true,
       ],
-      [
-        'field' => 'abogado',
-        'orderName' => 'u.name',
-        'label' => __('Abogado'),
-        'filter' => 'filter_abogado',
-        'filter_type' => 'select',
-        'filter_sources' => 'abogados',
-        'filter_source_field' => 'name',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => 'wrap-col-100',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'asistente',
-        'orderName' => 'ua.name',
-        'label' => __('Asistente'),
-        'filter' => 'filter_asistente',
-        'filter_type' => 'select',
-        'filter_sources' => 'asistentes',
-        'filter_source_field' => 'name',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => 'wrap-col-100',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'pnumero_contrato',
-        'orderName' => 'pnumero_contrato',
-        'label' => __('Número de Contrato'),
-        'filter' => 'filter_pnumero_contrato',
-        'filter_type' => 'input',
-        'filter_sources' => '',
-        'filter_source_field' => '',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => 'wrap-col-100',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'pdespacho_judicial_juzgado',
-        'orderName' => 'pdespacho_judicial_juzgado',
-        'label' => __('Despacho Judicial Juzgado'),
-        'filter' => 'filter_pdespacho_judicial_juzgado',
-        'filter_type' => 'input',
-        'filter_sources' => '',
-        'filter_source_field' => '',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => 'wrap-col-150',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'pnombre_demandado',
-        'orderName' => 'pnombre_demandado',
-        'label' => __('Nombre del demandado'),
-        'filter' => 'filter_pnombre_demandado',
-        'filter_type' => 'input',
-        'filter_sources' => '',
-        'filter_source_field' => '',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => 'wrap-col-150',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
+
       [
         'field' => 'pnumero_cedula',
         'orderName' => 'pnumero_cedula',
@@ -1201,25 +1111,6 @@ class CasoBac extends CasoManager
         'columnType' => 'string',
         'columnAlign' => 'center',
         'columnClass' => 'wrap-col-100',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'pnumero_expediente_judicial',
-        'orderName' => 'casos.pnumero_expediente_judicial',
-        'label' => __('Número de Expediente Judicial'),
-        'filter' => 'filter_pnumero_expediente_judicial',
-        'filter_type' => 'input',
-        'filter_sources' => '',
-        'filter_source_field' => '',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => 'wrap-col-150',
         'function' => '',
         'parameters' => [],
         'sumary' => '',
@@ -1248,25 +1139,6 @@ class CasoBac extends CasoManager
         'visible' => true,
       ],
       [
-        'field' => 'nfecha_traslado_juzgado',
-        'orderName' => 'nfecha_traslado_juzgado',
-        'label' => __('Fecha Traslado Juzgado'),
-        'filter' => 'filter_nfecha_traslado_juzgado',
-        'filter_type' => 'date',
-        'filter_sources' => '',
-        'filter_source_field' => '',
-        'columnType' => 'date',
-        'columnAlign' => '',
-        'columnClass' => 'wrap-col-100',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
         'field' => 'nfecha_notificacion_todas_partes',
         'orderName' => 'nfecha_notificacion_todas_partes',
         'label' => __('Fecha Notificación Todas las Partes'),
@@ -1277,25 +1149,6 @@ class CasoBac extends CasoManager
         'columnType' => 'date',
         'columnAlign' => '',
         'columnClass' => 'wrap-col-100',
-        'function' => '',
-        'parameters' => [],
-        'sumary' => '',
-        'openHtmlTab' => '',
-        'closeHtmlTab' => '',
-        'width' => NULL,
-        'visible' => true,
-      ],
-      [
-        'field' => 'aestado_proceso_general',
-        'orderName' => 'aestado.name',
-        'label' => __('Estado Proceso General'),
-        'filter' => 'filter_aestado_proceso_general_id',
-        'filter_type' => 'select',
-        'filter_sources' => 'estados',
-        'filter_source_field' => 'name',
-        'columnType' => 'string',
-        'columnAlign' => '',
-        'columnClass' => 'wrap-col-150',
         'function' => '',
         'parameters' => [],
         'sumary' => '',
@@ -1478,12 +1331,12 @@ class CasoBac extends CasoManager
           if ($pnumero) {
               $caso = \App\Models\Caso::where([
                   'pnumero' => $pnumero,
-                  'bank_id' => Bank::SANJOSE
+                  'bank_id' => Bank::CARTERA
               ])->first();
           }
           if (!$caso) {
               $caso = new \App\Models\Caso();
-              $caso->bank_id = Bank::SANJOSE;
+              $caso->bank_id = Bank::CARTERA;
               $caso->fecha_creacion = now();
           }
 
@@ -1598,7 +1451,7 @@ class CasoBac extends CasoManager
     $headerRow = $sheet[0];
 
     // Obtener columnas según banco
-    $columns = ImportColumns::getColumnasPorBanco(Bank::SANJOSE);
+    $columns = ImportColumns::getColumnasPorBanco(Bank::CARTERA);
 
     // Claves esperadas
     $expectedHeaders = array_keys($columns);
@@ -1656,7 +1509,7 @@ class CasoBac extends CasoManager
                 'pnumero' => $pnumero,
             ])->first();
 
-            if ($caso && $caso->bank_id != Bank::SANJOSE){
+            if ($caso && $caso->bank_id != Bank::CARTERA){
               $errores[] = "Fila {$r}: columna 'Número' existe en un caso del banco: ". $caso->bank->name;
               continue;
             }
@@ -1669,7 +1522,7 @@ class CasoBac extends CasoManager
         } else {
             // ✅ Si NO existe → crear
             $caso = new \App\Models\Caso();
-            $caso->bank_id = Bank::SANJOSE;
+            $caso->bank_id = Bank::CARTERA;
             $caso->fecha_creacion = now();
             $esNuevo = true;
         }
@@ -1704,12 +1557,10 @@ class CasoBac extends CasoManager
         $this->setProceso($caso, $errores, $r);
         $this->setMoneda($caso);
         $this->setEstadoProcesal($caso, $errores, $r);
-        $this->setServicioCapturador($caso, $errores, $r);
-        $this->setServicioNotificador($caso, $errores, $r);
-        $this->setCapturador($caso, $errores, $r);
+        //$this->setServicioCapturador($caso, $errores, $r);
+        //$this->setServicioNotificador($caso, $errores, $r);
+        //$this->setCapturador($caso, $errores, $r);
         $this->setNotificador($caso, $errores, $r);
-
-        $this->setDespachoJudicial($caso, $errores, $r);
 
         if (empty($caso->product_id)) {
             $errores[] = "Fila " . ($r + 1) . ": Debe definir el producto.";
@@ -1793,7 +1644,7 @@ class CasoBac extends CasoManager
   public function descargarPlantilla()
   {
       $fileName = "plantilla_casos_BAC.xlsx";
-      return Excel::download(new CasosTemplateExport(Bank::SANJOSE), $fileName);
+      return Excel::download(new CasosTemplateExport(Bank::CARTERA), $fileName);
   }
 
 }
