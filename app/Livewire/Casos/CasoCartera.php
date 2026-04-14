@@ -1643,7 +1643,7 @@ class CasoCartera extends CasoManager
 
   public function descargarPlantilla()
   {
-      $fileName = "plantilla_casos_BAC.xlsx";
+      $fileName = "plantilla_casos_cartera_comprada.xlsx";
       return Excel::download(new CasosTemplateExport(Bank::CARTERA), $fileName);
   }
 
