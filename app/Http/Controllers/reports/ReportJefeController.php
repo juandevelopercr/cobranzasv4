@@ -168,4 +168,9 @@ class ReportJefeController extends Controller
   {
     return view('content.reports.casos-coocique2-prescrito');
   }
+
+  public function casoCarteraComprada()
+  {
+    return view('content.reports.casos-cartera-comprada');
+  }
 }

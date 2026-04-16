@@ -452,6 +452,9 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
     Route::get('/casos-coocique2-prescrito', [ReportJefeController::class, 'casoCoocique2Prescrito'])
         ->name('casos-coocique2-prescrito.index');
 
+    Route::get('/casos-cartera-comprada', [ReportJefeController::class, 'casoCarteraComprada'])
+        ->name('casos-cartera-comprada.index');
+
     // Reporte de Nota Credito
     Route::get('/nota-credito', [ReportNotaCreditoController::class, 'index'])
       ->name('nota-credito.index');

@@ -1556,7 +1556,7 @@ class CasoCartera extends CasoManager
         $this->setProducto($caso, $errores, $r);
         $this->setProceso($caso, $errores, $r);
         $this->setMoneda($caso);
-        $this->setEstadoProcesal($caso, $errores, $r);
+        //$this->setEstadoProcesal($caso, $errores, $r);
         //$this->setServicioCapturador($caso, $errores, $r);
         //$this->setServicioNotificador($caso, $errores, $r);
         //$this->setCapturador($caso, $errores, $r);

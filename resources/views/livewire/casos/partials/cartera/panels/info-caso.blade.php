@@ -145,11 +145,11 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="atipo_expediente">{{ __('Expediente') }}</label>
+    <label class="form-label" for="pnumero_expediente_judicial">{{ __('Expediente') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="atipo_expediente" id="atipo_expediente" class="form-control @error('atipo_expediente') is-invalid @enderror">
+      <input type="text" wire:model="pnumero_expediente_judicial" id="pnumero_expediente_judicial" class="form-control @error('pnumero_expediente_judicial') is-invalid @enderror">
     </div>
-    @error('atipo_expediente')
+    @error('pnumero_expediente_judicial')
     <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>

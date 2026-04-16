@@ -451,7 +451,8 @@
         "view-comprobantes-reports",
         "view-notas-credito-reports",
         "view-notas-debito-reports",
-        "view-proforma-reports"
+        "view-proforma-reports",
+        "view-casos-cartera-comprada-reports"
       ],
       "submenu": [
         {
@@ -898,6 +899,14 @@
                 "view-casos-coocique2-prescrito-reports"
               ]
             }
+          ]
+        },
+        {
+          "url": "reports/casos-cartera-comprada",
+          "name": "Casos Cartera Comprada",
+          "slug": "reports.casos-cartera-comprada.index",
+          "permissions": [
+            "view-casos-cartera-comprada-reports"
           ]
         }
       ]
