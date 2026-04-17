@@ -98,6 +98,7 @@
                         </div>
                     </div>
                 </div>
+<!--
                 <div class="row g-6">
                     <div class="col-md-12 mt-4">
                         <div class="p-3 border rounded bg-light">
@@ -119,6 +120,7 @@
                         </div>
                     </div>
                 </div>
+-->
             </form>
         </div>
     </div>
