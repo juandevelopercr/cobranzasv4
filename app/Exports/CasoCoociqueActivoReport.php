@@ -238,7 +238,7 @@ class CasoCoociqueActivoReport extends BaseReport
     ->join('currencies', 'casos.currency_id', '=', 'currencies.id')
     ->join('banks', 'casos.bank_id', '=', 'banks.id')
     ->where('casos.bank_id', Bank::COOCIQUE)
-    ->whereIn('casos.pexpectativa_recuperacion_id', $expectativas)
+    //->whereIn('casos.pexpectativa_recuperacion_id', $expectativas)
     ->with('fechasRemate');
 
     // Filtro especial para rol Asignaciones

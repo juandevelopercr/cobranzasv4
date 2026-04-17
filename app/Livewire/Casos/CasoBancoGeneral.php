@@ -1648,7 +1648,7 @@ class CasoBancoGeneral extends CasoManager
         // Ver si existe el caso
         $caso = null;
         if ($pnumero) {
-            $caso = \App\Models\Caso::where([
+            $caso = \App\Models\Caso::withTrashed()->where([
                 'pnumero' => $pnumero,
             ])->first();
 
@@ -1661,6 +1661,10 @@ class CasoBancoGeneral extends CasoManager
         $esNuevo = false;
         // ✅ Si existe → actualizar
         if ($caso) {
+            // Reactivar si estaba eliminado
+            if ($caso->trashed()) {
+                $caso->deleted_at = null;
+            }
             // Aquí actualizas los campos normalmente
         } else {
             // ✅ Si NO existe → crear
