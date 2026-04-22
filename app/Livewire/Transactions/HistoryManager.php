@@ -1535,6 +1535,15 @@ class HistoryManager extends TransactionManager
 
   public function saveDepositoModal()
   {
+    $fechaVacia = empty($this->fechaDepositoModal);
+    $numeroVacio = empty($this->numeroDepositoPagoModal);
+
+    // Validar que ambos campos estén llenos, o ambos vacíos
+    if ($fechaVacia !== $numeroVacio) {
+      $this->dispatch('show-notification', ['type' => 'error', 'message' => 'Debe ingresar tanto la fecha como el número de depósito, o dejar ambos en blanco para eliminarlos.']);
+      return;
+    }
+
     $record = Transaction::findOrFail($this->selectedFechaDepositoId);
 
     $movimientosFacturas = MovimientoFactura::where('transaction_id', $record->id)->count();
@@ -1543,17 +1552,26 @@ class HistoryManager extends TransactionManager
       return;
     }
 
-    $record->fecha_deposito_pago = !empty($this->fechaDepositoModal)
+    $record->fecha_deposito_pago = !$fechaVacia
       ? \Carbon\Carbon::parse($this->fechaDepositoModal)->format('Y-m-d')
       : null;
-    $record->numero_deposito_pago = $this->numeroDepositoPagoModal;
+    $record->numero_deposito_pago = $numeroVacio ? null : $this->numeroDepositoPagoModal;
 
     if (!is_null($record->fecha_deposito_pago) && !empty($record->fecha_deposito_pago) && !is_null($record->numero_deposito_pago) && !empty($record->numero_deposito_pago)) {
       $record->payment_status = 'paid';
       $record->completePayment($this->selectedFechaDepositoId);
     } else {
-      if ($record->getSaldoPendiente($this->selectedFechaDepositoId) > 0)
+      // Remover el pago automático si se eliminan los datos de depósito
+      TransactionPayment::where('transaction_id', $this->selectedFechaDepositoId)
+        ->where('tipo_medio_pago', 99)
+        ->where('medio_pago_otros', 'Págo automático por pago del registro')
+        ->delete();
+
+      if ($record->getSaldoPendiente($this->selectedFechaDepositoId) > 0) {
         $record->payment_status = 'due';
+      } else {
+        $record->payment_status = 'paid';
+      }
     }
 
     $record->save();
@@ -1564,7 +1582,7 @@ class HistoryManager extends TransactionManager
     $this->numeroDepositoPagoModal = null;
 
     $this->resetPage();
-    $this->dispatch('show-notification', ['type' => 'success', 'message' => 'Fecha actualizada correctamente.']);
+    $this->dispatch('show-notification', ['type' => 'success', 'message' => 'Datos actualizados correctamente.']);
   }
 
   public function getStatusOptions()

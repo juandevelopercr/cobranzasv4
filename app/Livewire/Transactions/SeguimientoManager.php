@@ -1420,6 +1420,15 @@ class SeguimientoManager extends TransactionManager
 
   public function saveDepositoModal()
   {
+    $fechaVacia = empty($this->fechaDepositoModal);
+    $numeroVacio = empty($this->numeroDepositoPagoModal);
+
+    // Validar que ambos campos estén llenos, o ambos vacíos
+    if ($fechaVacia !== $numeroVacio) {
+      $this->dispatch('show-notification', ['type' => 'error', 'message' => 'Debe ingresar tanto la fecha como el número de depósito, o dejar ambos en blanco para eliminarlos.']);
+      return;
+    }
+
     $record = Transaction::findOrFail($this->selectedFechaDepositoId);
 
     $movimientosFacturas = MovimientoFactura::where('transaction_id', $record->id)->count();
@@ -1428,17 +1437,26 @@ class SeguimientoManager extends TransactionManager
       return;
     }
 
-    $record->fecha_deposito_pago = !empty($this->fechaDepositoModal)
+    $record->fecha_deposito_pago = !$fechaVacia
       ? \Carbon\Carbon::parse($this->fechaDepositoModal)->format('Y-m-d')
       : null;
-    $record->numero_deposito_pago = $this->numeroDepositoPagoModal;
+    $record->numero_deposito_pago = $numeroVacio ? null : $this->numeroDepositoPagoModal;
 
     if (!is_null($record->fecha_deposito_pago) && !empty($record->fecha_deposito_pago) && !is_null($record->numero_deposito_pago) && !empty($record->numero_deposito_pago)) {
       $record->payment_status = 'paid';
       $record->completePayment($this->selectedFechaDepositoId);
     } else {
-      if ($record->getSaldoPendiente($this->selectedFechaDepositoId) > 0)
+      // Remover el pago automático si se eliminan los datos de depósito
+      TransactionPayment::where('transaction_id', $this->selectedFechaDepositoId)
+        ->where('tipo_medio_pago', 99)
+        ->where('medio_pago_otros', 'Págo automático por pago del registro')
+        ->delete();
+
+      if ($record->getSaldoPendiente($this->selectedFechaDepositoId) > 0) {
         $record->payment_status = 'due';
+      } else {
+        $record->payment_status = 'paid';
+      }
     }
 
     $record->save();
@@ -1449,17 +1467,25 @@ class SeguimientoManager extends TransactionManager
     $this->numeroDepositoPagoModal = null;
 
     $this->resetPage();
-    $this->dispatch('show-notification', ['type' => 'success', 'message' => 'Fecha actualizada correctamente.']);
+    $this->dispatch('show-notification', ['type' => 'success', 'message' => 'Datos actualizados correctamente.']);
   }
 
   public function saveHonorarioModal()
   {
+    $fechaVacia = empty($this->fechaTrasladoHonorarioModal);
+    $numeroVacio = empty($this->numeroTrasladoHonorarioModal);
+
+    if ($fechaVacia !== $numeroVacio) {
+      $this->dispatch('show-notification', ['type' => 'error', 'message' => 'Debe ingresar tanto la fecha como el número de traslado de honorario, o dejar ambos en blanco para eliminarlos.']);
+      return;
+    }
+
     $record = Transaction::findOrFail($this->selectedFechaDepositoId);
 
-    $record->fecha_traslado_honorario = !empty($this->fechaTrasladoHonorarioModal)
+    $record->fecha_traslado_honorario = !$fechaVacia
       ? \Carbon\Carbon::parse($this->fechaTrasladoHonorarioModal)->format('Y-m-d')
       : null;
-    $record->numero_traslado_honorario = $this->numeroTrasladoHonorarioModal;
+    $record->numero_traslado_honorario = $numeroVacio ? null : $this->numeroTrasladoHonorarioModal;
 
     $record->save();
 
@@ -1468,17 +1494,25 @@ class SeguimientoManager extends TransactionManager
     $this->numeroTrasladoHonorarioModal = null;
 
     $this->resetPage();
-    $this->dispatch('show-notification', ['type' => 'success', 'message' => 'Fecha actualizada correctamente.']);
+    $this->dispatch('show-notification', ['type' => 'success', 'message' => 'Datos actualizados correctamente.']);
   }
 
   public function saveGastoModal()
   {
+    $fechaVacia = empty($this->fechaTrasladoGastoModal);
+    $numeroVacio = empty($this->numeroTrasladoGastoModal);
+
+    if ($fechaVacia !== $numeroVacio) {
+      $this->dispatch('show-notification', ['type' => 'error', 'message' => 'Debe ingresar tanto la fecha como el número de traslado de gasto, o dejar ambos en blanco para eliminarlos.']);
+      return;
+    }
+
     $record = Transaction::findOrFail($this->selectedFechaDepositoId);
 
-    $record->fecha_traslado_gasto = !empty($this->fechaTrasladoGastoModal)
+    $record->fecha_traslado_gasto = !$fechaVacia
       ? \Carbon\Carbon::parse($this->fechaTrasladoGastoModal)->format('Y-m-d')
       : null;
-    $record->numero_traslado_gasto = $this->numeroTrasladoGastoModal;
+    $record->numero_traslado_gasto = $numeroVacio ? null : $this->numeroTrasladoGastoModal;
 
     $record->save();
 
@@ -1488,7 +1522,7 @@ class SeguimientoManager extends TransactionManager
     $this->numeroTrasladoGastoModal = null;
 
     $this->resetPage();
-    $this->dispatch('show-notification', ['type' => 'success', 'message' => 'Fecha actualizada correctamente.']);
+    $this->dispatch('show-notification', ['type' => 'success', 'message' => 'Datos actualizados correctamente.']);
   }
 
   public function getStatusOptions()
