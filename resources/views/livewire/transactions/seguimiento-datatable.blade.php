@@ -28,12 +28,12 @@
                   <!-- Dropdown with icon -->
                   <div x-data="{ action: @entangle('action') }">
                     <div x-show="action === 'list'" x-cloak>
-                      @can("export-seguimientofacturas")
+                      @canany(["view-seguimientofacturas", "view-documenthistory"])
                         <livewire:transactions.transaction-datatable-export
                           :manager-class="'App\Livewire\Transactions\SeguimientoManager'"
                           :export-type="'SEGUIMIENTO'"
                         />
-                      @endcan
+                      @endcanany
                     </div>
                   </div>
 
@@ -59,7 +59,7 @@
             </div>
           </div>
 
-          @can("view-seguimientofacturas")
+          @can("view-documenthistory")
             <div class="card-datatable table-responsive">
               <table class="table table-sm mb-0 border-top table-hover dataTable no-footer" id="transaction-table" style="width: 100%;">
                 <thead>

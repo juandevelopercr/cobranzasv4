@@ -121,7 +121,8 @@
           "name": "Seguimiento de facturas",
           "slug": "billing-seguimiento",
           "permissions": [
-            "view-seguimientofacturas"
+            "view-seguimientofacturas",
+            "view-documenthistory"
           ]
         },
         {
