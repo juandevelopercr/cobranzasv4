@@ -67,7 +67,7 @@
             </div>
           </div>
 
-          @can("view-proformas")
+          @can("view-documenthistory")
             <div class="card-datatable table-responsive">
               <table class="table table-sm mb-0 border-top table-hover dataTable no-footer" id="transaction-table" style="width: 100%;">
                 <thead>
