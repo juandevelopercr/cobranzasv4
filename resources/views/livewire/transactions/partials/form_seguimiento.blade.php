@@ -9,7 +9,7 @@ use App\Models\User;
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">
           @if ($this->proforma_no)
-          {{ __('Update Proforma') }}: No. {{ $this->proforma_no }}
+          {{ __('Update Proforma') }}: No. {{ $this->proforma_no }} {{ $this->consecutivo ? "($this->consecutivo)" : '' }}
           @else
           {{ __('Create Proforma') }}
           @endif
