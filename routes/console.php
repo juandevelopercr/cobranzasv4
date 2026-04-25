@@ -14,17 +14,9 @@ Artisan::command('inspire', function () {
 
 Schedule::command('logs:clean')->yearly();
 
-// En routes/console.php, modifica temporalmente:
 Schedule::command('comprobantes:process-emails')
   ->everyFiveMinutes()
-  ->withoutOverlapping()
-  ->runInBackground()
-  ->before(function () {
-    Log::info('Iniciando comando comprobantes:process-emails');
-  })
-  ->after(function () {
-    Log::info('Finalizando comando comprobantes:process-emails');
-  });
+  ->withoutOverlapping();
 
 // Puedes agregar logging para depuración
 Schedule::call(function () {
