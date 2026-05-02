@@ -113,7 +113,7 @@ class OtrosCargosType
    */
   public function setTipoDocumentoOC($tipoDocumentoOC)
   {
-    $this->tipoDocumentoOC = $tipoDocumentoOC;
+    $this->tipoDocumentoOC = str_pad($tipoDocumentoOC, 2, '0', STR_PAD_LEFT);
     return $this;
   }
 

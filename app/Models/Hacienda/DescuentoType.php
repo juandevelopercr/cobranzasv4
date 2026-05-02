@@ -109,7 +109,7 @@ class DescuentoType
    */
   public function setCodigoDescuento($codigoDescuento)
   {
-    $this->codigoDescuento = $codigoDescuento;
+    $this->codigoDescuento = str_pad($codigoDescuento, 2, '0', STR_PAD_LEFT);
     return $this;
   }
 

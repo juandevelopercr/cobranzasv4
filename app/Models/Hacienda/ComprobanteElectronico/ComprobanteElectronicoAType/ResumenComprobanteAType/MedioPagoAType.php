@@ -62,7 +62,7 @@ class MedioPagoAType
    */
   public function setTipoMedioPago($tipoMedioPago)
   {
-    $this->tipoMedioPago = $tipoMedioPago;
+    $this->tipoMedioPago = str_pad($tipoMedioPago, 2, '0', STR_PAD_LEFT);
     return $this;
   }
 

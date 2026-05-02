@@ -127,7 +127,7 @@ class ImpuestoType
    */
   public function setCodigo($codigo)
   {
-    $this->codigo = $codigo;
+    $this->codigo = str_pad($codigo, 2, '0', STR_PAD_LEFT);
     return $this;
   }
 
@@ -185,7 +185,7 @@ class ImpuestoType
    */
   public function setCodigoTarifaIVA($codigoTarifaIVA)
   {
-    $this->codigoTarifaIVA = $codigoTarifaIVA;
+    $this->codigoTarifaIVA = str_pad($codigoTarifaIVA, 2, '0', STR_PAD_LEFT);
     return $this;
   }
 

@@ -99,7 +99,7 @@ class InformacionReferenciaAType
    */
   public function setTipoDocIR($tipoDocIR)
   {
-    $this->tipoDocIR = $tipoDocIR;
+    $this->tipoDocIR = str_pad($tipoDocIR, 2, '0', STR_PAD_LEFT);
     return $this;
   }
 
@@ -203,7 +203,7 @@ class InformacionReferenciaAType
    */
   public function setCodigo($codigo)
   {
-    $this->codigo = $codigo;
+    $this->codigo = str_pad($codigo, 2, '0', STR_PAD_LEFT);
     return $this;
   }
 

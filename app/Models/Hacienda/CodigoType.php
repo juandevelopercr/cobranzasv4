@@ -90,7 +90,7 @@ class CodigoType
    */
   public function setTipo($tipo)
   {
-    $this->tipo = $tipo;
+    $this->tipo = str_pad($tipo, 2, '0', STR_PAD_LEFT);
     return $this;
   }
 

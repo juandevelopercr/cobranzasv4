@@ -350,7 +350,7 @@ class ComprobanteElectronicoAType
    */
   public function setCondicionVenta($condicionVenta)
   {
-    $this->condicionVenta = $condicionVenta;
+    $this->condicionVenta = str_pad($condicionVenta, 2, '0', STR_PAD_LEFT);
     return $this;
   }
 

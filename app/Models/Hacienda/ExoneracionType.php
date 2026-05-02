@@ -150,7 +150,7 @@ class ExoneracionType
    */
   public function setTipoDocumentoEX1($tipoDocumentoEX1)
   {
-    $this->tipoDocumentoEX1 = $tipoDocumentoEX1;
+    $this->tipoDocumentoEX1 = str_pad($tipoDocumentoEX1, 2, '0', STR_PAD_LEFT);
     return $this;
   }
 
@@ -280,7 +280,7 @@ class ExoneracionType
    */
   public function setNombreInstitucion($nombreInstitucion)
   {
-    $this->nombreInstitucion = $nombreInstitucion;
+    $this->nombreInstitucion = str_pad($nombreInstitucion, 2, '0', STR_PAD_LEFT);
     return $this;
   }
 
