@@ -1346,6 +1346,20 @@ class ProformaManager extends TransactionManager {
     // Validar
     $validatedData = $this->validate();
 
+    // CACERES: Eliminar los totales del validatedData para evitar sobrescribir con datos obsoletos del componente
+    $totalsToExclude = [
+      'totalHonorarios', 'totalTimbres', 'totalDiscount', 'totalTax', 'totalAditionalCharge',
+      'totalServGravados', 'totalServExentos', 'totalServExonerado', 'totalServNoSujeto',
+      'totalMercGravadas', 'totalMercExentas', 'totalMercExonerada', 'totalMercNoSujeta',
+      'totalGravado', 'totalExento', 'totalVenta', 'totalVentaNeta', 'totalExonerado',
+      'totalNoSujeto', 'totalImpAsumEmisorFabrica', 'totalComprobante'
+    ];
+    foreach ($totalsToExclude as $field) {
+      if (isset($validatedData[$field])) {
+        unset($validatedData[$field]);
+      }
+    }
+
     try {
       // Iniciar la transacción para garantizar la atomicidad
       DB::beginTransaction();
@@ -1354,6 +1368,9 @@ class ProformaManager extends TransactionManager {
       $oldStatus = $record->proforma_status;
       // Actualizar
       $record->update($validatedData);
+
+      // CACERES: Forzar recálculo de totales después de actualizar
+      $this->recalculeteTotals($recordId);
 
       if ($oldStatus !== Transaction::SOLICITADA && $record->proforma_status === Transaction::SOLICITADA) {
         $record->fecha_solicitud_factura = \Carbon\Carbon::now();
@@ -1424,6 +1441,9 @@ class ProformaManager extends TransactionManager {
   #[On('solicitarFacturacion')]
   public function solicitarFacturacion($recordId) {
     try {
+      // CACERES: Forzar recálculo antes de solicitar facturación
+      $this->recalculeteTotals($recordId);
+
       DB::transaction(function () use ($recordId) {
         $record = Transaction::findOrFail($recordId);
 
@@ -1497,6 +1517,9 @@ class ProformaManager extends TransactionManager {
 
   #[On('facturar')]
   public function facturar($recordId) {
+    // CACERES: Forzar recálculo antes de facturar
+    $this->recalculeteTotals($recordId);
+
     $record = Transaction::findOrFail($recordId);
 
     // Validación por tipo

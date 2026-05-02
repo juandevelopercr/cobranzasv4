@@ -968,10 +968,8 @@ class TransactionLine extends Model
     $taxes = !is_null($this->taxes) ? $this->taxes : collect([]);
     if ($this->product->type == 'service') {
       if ($this->calculaMontoImpuestoExonerado() > 0) {
-        //(1-porcentaje de exoneración) por el monto de la venta
-        //▪Porcentaje de exoneración: (Tarifa Exonerada /Tarifa IVA)
-        //$gravado = (1 - $this->exoneration_percent / 100) * $this->getSubtotal();
-        $gravado = $this->getMontoTotal() - $this->calculaMontoImpuestoExonerado();
+        $ratio = $this->tax > 0 ? ($this->servExonerados + $this->mercExoneradas) / $this->tax : 0;
+        $gravado = (1 - $ratio) * $this->getMontoTotal();
       } else if (!empty($taxes)) {
         $gravado = $this->getMontoTotal();
       }
@@ -987,10 +985,8 @@ class TransactionLine extends Model
     $taxes = !is_null($this->taxes) ? $this->taxes : collect([]);
     if ($this->product->type != 'service') {
       if ($this->calculaMontoImpuestoExonerado() > 0) {
-        //(1-porcentaje de exoneración) por el monto de la venta
-        //▪Porcentaje de exoneración: (Tarifa Exonerada /Tarifa IVA)
-        //$gravado = (1 - $this->exoneration_percent / 100) * $this->getSubtotal();
-        $gravado = $this->getMontoTotal() - $this->calculaMontoImpuestoExonerado();
+        $ratio = $this->tax > 0 ? ($this->servExonerados + $this->mercExoneradas) / $this->tax : 0;
+        $gravado = (1 - $ratio) * $this->getMontoTotal();
       } else if (!empty($taxes)) {
         $gravado = $this->getMontoTotal();
       }

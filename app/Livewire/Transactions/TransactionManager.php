@@ -385,28 +385,33 @@ abstract class TransactionManager extends BaseComponent
 
   public function recalculeteTotals($transaction_id)
   {
+    Log::info('TransactionManager::recalculeteTotals - Start (cobranzasv4)', ['transaction_id' => $transaction_id]);
+
     $transaction = Transaction::with('lines')->find($transaction_id);
 
     if ($transaction) {
+      $lineCount = $transaction->lines()->count();
+      Log::info('TransactionManager::recalculeteTotals - Lines found', ['count' => $lineCount]);
+
       //Poner aqui el calculo de los totales
       // Realizar una única consulta para calcular todos los totales
       $totals = $transaction->lines()
         ->select([
-          DB::raw('SUM(discount) as totalDiscount'),
+          DB::raw('SUM(COALESCE(discount, 0)) as totalDiscount'),
           //DB::raw('SUM(tax) as totalTax'),
-          DB::raw('SUM(monto_cargo_adicional) as totalAditionalCharge'),
-          DB::raw('SUM(honorarios) as totalHonorarios'),
-          DB::raw('SUM(timbres) as totalTimbres'),
+          DB::raw('SUM(COALESCE(monto_cargo_adicional, 0)) as totalAditionalCharge'),
+          DB::raw('SUM(COALESCE(honorarios, 0)) as totalHonorarios'),
+          DB::raw('SUM(COALESCE(timbres, 0)) as totalTimbres'),
 
-          DB::raw('SUM(servGravados) as totalServGravados'),
-          DB::raw('SUM(servExentos) as totalServExentos'),
-          DB::raw('SUM(servExonerados) as totalServExonerados'),
-          DB::raw('SUM(servNoSujeto) as totalServNoSujeto'),
+          DB::raw('SUM(COALESCE(servGravados, 0)) as totalServGravados'),
+          DB::raw('SUM(COALESCE(servExentos, 0)) as totalServExentos'),
+          DB::raw('SUM(COALESCE(servExonerados, 0)) as totalServExonerados'),
+          DB::raw('SUM(COALESCE(servNoSujeto, 0)) as totalServNoSujeto'),
 
-          DB::raw('SUM(mercGravadas) as totalmercGravadas'),
-          DB::raw('SUM(mercExentas) as totalmercExentas'),
-          DB::raw('SUM(mercExoneradas) as totalMercExoneradas'),
-          DB::raw('SUM(mercNoSujeta) as totalMercNoSujeta'),
+          DB::raw('SUM(COALESCE(mercGravadas, 0)) as totalmercGravadas'),
+          DB::raw('SUM(COALESCE(mercExentas, 0)) as totalmercExentas'),
+          DB::raw('SUM(COALESCE(mercExoneradas, 0)) as totalMercExoneradas'),
+          DB::raw('SUM(COALESCE(mercNoSujeta, 0)) as totalMercNoSujeta'),
 
           DB::raw('SUM(
               CASE
@@ -422,6 +427,8 @@ abstract class TransactionManager extends BaseComponent
           //DB::raw('SUM(honorarios + timbres - discount) as totalVenta'),
         ])
         ->first();
+
+      Log::info('TransactionManager::recalculeteTotals - SQL Results (cobranzasv4)', ['totals' => $totals ? $totals->toArray() : null]);
 
 
       $totalCharge = $transaction->otherCharges()
@@ -464,6 +471,12 @@ abstract class TransactionManager extends BaseComponent
       $transaction->totalOtrosCargos = $totalCharge ? ($totalCharge->total ?? 0) : 0;
       $transaction->totalComprobante = $transaction->totalVentaNeta + $transaction->totalImpuesto + $transaction->totalOtrosCargos;
       $transaction->save();
+
+      Log::info('TransactionManager::recalculeteTotals - Final Totals Saved (cobranzasv4)', [
+        'totalComprobante' => $transaction->totalComprobante,
+        'totalVentaNeta' => $transaction->totalVentaNeta,
+        'totalImpuesto' => $transaction->totalImpuesto
+      ]);
 
       // Asignar los resultados a los atributos de la transacción
       $this->totalAditionalCharge = $transaction->totalAditionalCharge;
