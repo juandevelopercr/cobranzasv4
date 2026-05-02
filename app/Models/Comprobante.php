@@ -619,12 +619,13 @@ class Comprobante extends Model
       }
         */
     } elseif ($responseData['ind-estado'] == 'rechazado') {
+      Log::info('Procesando rechazo de Hacienda para comprobante ID: ' . $comprobante->id);
       $sent = Helpers::sendNotificationMensajeElectronicoRejected($comprobante->id);
       // Opcional: Log de la respuesta para auditoría
       if ($sent)
-        Log::info('Se ha enviar una notificación de comprobante rechazado:', $responseData);
+        Log::info('Se ha enviado una notificación de comprobante rechazado:', $responseData);
       else
-        Log::info('No se ha podido enviar una notificación de comprobante rechazado:', $responseData);
+        Log::warning('No se ha podido enviar una notificación de comprobante rechazado para ID: ' . $comprobante->id, $responseData);
     }
   }
 }

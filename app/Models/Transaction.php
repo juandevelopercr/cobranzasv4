@@ -2701,12 +2701,13 @@ public function getTotalHonorarioIva($currencyCode, $format = false)
         }
       }
     } elseif ($responseData['ind-estado'] == 'rechazado') {
+      Log::info('Procesando rechazo de Hacienda para transacción ID: ' . $transaction->id);
       $sent = Helpers::sendNotificationComprobanteElectronicoRejected($transaction->id, $documentType);
       // Opcional: Log de la respuesta para auditoría
       if ($sent)
-        Log::info('Se ha enviar una notificación de comprobante rechazado:', $responseData);
+        Log::info('Se ha enviado una notificación de comprobante rechazado:', $responseData);
       else
-        Log::info('No se ha podido enviar una notificación de comprobante rechazado:', $responseData);
+        Log::warning('No se ha podido enviar una notificación de comprobante rechazado para ID: ' . $transaction->id, $responseData);
     }
   }
 

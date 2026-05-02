@@ -1282,7 +1282,8 @@ class Helpers
     // Obtener CC de la transacción si existe
     $transactionCC = [];
     if (!empty($transaction->email_cc)) {
-      $transactionCC = array_map('trim', explode(',', $transaction->email_cc));
+      $transactionCC = preg_split('/[;,]/', $transaction->email_cc);
+      $transactionCC = array_map('trim', $transactionCC);
       $transactionCC = array_filter($transactionCC);
     }
 
@@ -1297,32 +1298,44 @@ class Helpers
     $attachments = [];
 
     // 1. Adjuntar PDF de factura
-    $filePathPdf = Helpers::generateComprobanteElectronicoPdf($transaction->id, 'file');
-    $attachments[] = [
-      'path' => $filePathPdf,
-      'name' => $transaction->key . '.pdf',
-      'mime' => 'application/pdf',
-    ];
+    try {
+      $filePathPdf = Helpers::generateComprobanteElectronicoPdf($transaction->id, 'file');
+      $attachments[] = [
+        'path' => $filePathPdf,
+        'name' => $transaction->key . '.pdf',
+        'mime' => 'application/pdf',
+      ];
+    } catch (\Exception $e) {
+      Log::warning('sendNotificationComprobanteElectronicoRejected: No se pudo generar el PDF para la transacción ' . $transactionId . '. ' . $e->getMessage());
+    }
 
     // 2. Adjuntar XML de factura
-    $filePathXml = Helpers::generateComprobanteElectronicoXML($transaction, false, 'file');
-    $attachments[] = [
-      'path' => $filePathXml,
-      'name' => $transaction->key . '.xml',
-      'mime' => 'application/xml',
-    ];
-
-    // 3. Adjuntar XML de respuesta de Hacienda
-    $xmlDirectory = storage_path("app/public/");
-    $xmlResponsePath = $xmlDirectory . $transaction->response_xml;
-
-    if (file_exists($xmlResponsePath)) {
-      $filenameResponse = $transaction->key . '_respuesta.xml';
+    try {
+      $filePathXml = Helpers::generateComprobanteElectronicoXML($transaction, false, 'file');
       $attachments[] = [
-        'path' => $xmlResponsePath,
-        'name' => $filenameResponse,
+        'path' => $filePathXml,
+        'name' => $transaction->key . '.xml',
         'mime' => 'application/xml',
       ];
+    } catch (\Exception $e) {
+      Log::warning('sendNotificationComprobanteElectronicoRejected: No se pudo generar el XML para la transacción ' . $transactionId . '. ' . $e->getMessage());
+    }
+
+    // 3. Adjuntar XML de respuesta de Hacienda
+    try {
+      $xmlDirectory = storage_path("app/public/");
+      $xmlResponsePath = $xmlDirectory . $transaction->response_xml;
+
+      if (!empty($transaction->response_xml) && file_exists($xmlResponsePath)) {
+        $filenameResponse = $transaction->key . '_respuesta.xml';
+        $attachments[] = [
+          'path' => $xmlResponsePath,
+          'name' => $filenameResponse,
+          'mime' => 'application/xml',
+        ];
+      }
+    } catch (\Exception $e) {
+      Log::warning('sendNotificationComprobanteElectronicoRejected: No se pudo adjuntar el XML de respuesta para la transacción ' . $transactionId . '. ' . $e->getMessage());
     }
 
     // 4. Adjuntar documentos adicionales
@@ -1354,9 +1367,8 @@ class Helpers
         $mail->cc($allCC);
       }
 
-      if ($mail->send(new InvoiceRechazadaMail($data, $attachments))) {
-        $sent = true;
-      }
+      $mail->send(new InvoiceRechazadaMail($data, $attachments));
+      $sent = true;
     } catch (\Exception $e) {
       Log::error('Error sending email: ' . $e->getMessage());
       // Opcional: notificar a administradores
@@ -2615,35 +2627,47 @@ class Helpers
 
     $attachments = [];
 
-    // 1. Adjuntar PDF de factura
-    /*
-    $filePathPdf = Helpers::generateComprobanteElectronicoPdf($transaction->id, 'file');
-    $attachments[] = [
-      'path' => $filePathPdf,
-      'name' => $transaction->key . '.pdf',
-      'mime' => 'application/pdf',
-    ];
-    */
+    // 1. Adjuntar PDF de factura (si aplica)
+    try {
+        /*
+        $filePathPdf = Helpers::generateComprobanteElectronicoPdf($transaction->id, 'file');
+        $attachments[] = [
+          'path' => $filePathPdf,
+          'name' => $transaction->key . '.pdf',
+          'mime' => 'application/pdf',
+        ];
+        */
+    } catch (\Exception $e) {
+      Log::warning('sendNotificationMensajeElectronicoRejected: No se pudo generar el PDF para el comprobante ' . $transactionId . '. ' . $e->getMessage());
+    }
 
     // 2. Adjuntar XML de factura
-    $filePathXml = Helpers::generateMensajeElectronicoXML($transaction, false, 'file');
-    $attachments[] = [
-      'path' => $filePathXml,
-      'name' => $transaction->key . '.xml',
-      'mime' => 'application/xml',
-    ];
-
-    // 3. Adjuntar XML de respuesta de Hacienda
-    $xmlDirectory = storage_path("app/public/");
-    $xmlResponsePath = $xmlDirectory . $transaction->xml_respuesta_confirmacion_path;
-
-    if (file_exists($xmlResponsePath)) {
-      $filenameResponse = $transaction->key . '-' . $transaction->consecutivo . '_respuesta.xml';
+    try {
+      $filePathXml = Helpers::generateMensajeElectronicoXML($transaction, false, 'file');
       $attachments[] = [
-        'path' => $xmlResponsePath,
-        'name' => $filenameResponse,
+        'path' => $filePathXml,
+        'name' => $transaction->key . '.xml',
         'mime' => 'application/xml',
       ];
+    } catch (\Exception $e) {
+      Log::warning('sendNotificationMensajeElectronicoRejected: No se pudo generar el XML para el comprobante ' . $transactionId . '. ' . $e->getMessage());
+    }
+
+    // 3. Adjuntar XML de respuesta de Hacienda
+    try {
+      $xmlDirectory = storage_path("app/public/");
+      $xmlResponsePath = $xmlDirectory . $transaction->xml_respuesta_confirmacion_path;
+
+      if (!empty($transaction->xml_respuesta_confirmacion_path) && file_exists($xmlResponsePath)) {
+        $filenameResponse = $transaction->key . '-' . $transaction->consecutivo . '_respuesta.xml';
+        $attachments[] = [
+          'path' => $xmlResponsePath,
+          'name' => $filenameResponse,
+          'mime' => 'application/xml',
+        ];
+      }
+    } catch (\Exception $e) {
+      Log::warning('sendNotificationMensajeElectronicoRejected: No se pudo adjuntar el XML de respuesta para el comprobante ' . $transactionId . '. ' . $e->getMessage());
     }
 
     $data = [
@@ -2662,9 +2686,8 @@ class Helpers
         $mail->cc($allCC);
       }
 
-      if ($mail->send(new InvoiceRechazadaMail($data, $attachments))) {
-        $sent = true;
-      }
+      $mail->send(new InvoiceRechazadaMail($data, $attachments));
+      $sent = true;
     } catch (\Exception $e) {
       Log::error('Error sending email: ' . $e->getMessage());
       // Opcional: notificar a administradores
