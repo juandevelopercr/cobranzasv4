@@ -2,8 +2,6 @@
 
 namespace App\Mail;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-
 use App\Models\Business;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
