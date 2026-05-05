@@ -387,7 +387,7 @@ abstract class TransactionManager extends BaseComponent
   {
     Log::info('TransactionManager::recalculeteTotals - Start (cobranzasv4)', ['transaction_id' => $transaction_id]);
 
-    $transaction = Transaction::with('lines')->find($transaction_id);
+    $transaction = Transaction::find($transaction_id);
 
     if ($transaction) {
       $lineCount = $transaction->lines()->count();

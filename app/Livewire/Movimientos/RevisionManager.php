@@ -197,8 +197,8 @@ class RevisionManager extends BaseComponent
     $this->filters['filterFecha'] = $this->filterFecha;
 
     $records = Movimiento::search($this->search, $this->filters, $this->defaultStatus)
-      ->orderBy('fecha', 'desc')
-      ->orderByRaw('CASE WHEN numero REGEXP "^[0-9]+$" THEN CAST(numero AS UNSIGNED) ELSE 99999999999 END DESC')
+      ->with(["centrosCostos.centroCosto", "centrosCostos.codigoContable"])->orderBy("fecha", "desc")
+      ->orderBy("numero", "desc")
       ->paginate($this->perPage);
 
     return view('livewire.movimientos.revisiones-datatable', [
@@ -1786,8 +1786,8 @@ class RevisionManager extends BaseComponent
       $this->resetPage();
       if ($this->selectAll) {
           $this->selectedIds = Movimiento::search($this->search, $this->filters, $this->defaultStatus)
-              ->orderBy('fecha', 'desc')
-              ->orderByRaw('CASE WHEN numero REGEXP "^[0-9]+$" THEN CAST(numero AS UNSIGNED) ELSE 99999999999 END DESC')
+              ->with(["centrosCostos.centroCosto", "centrosCostos.codigoContable"])->orderBy("fecha", "desc")
+              ->orderBy("numero", "desc")
               ->paginate($value) // Use the new perPage value
               ->pluck('id')
               ->toArray();
@@ -1804,8 +1804,8 @@ class RevisionManager extends BaseComponent
   {
       if ($value) {
           $this->selectedIds = Movimiento::search($this->search, $this->filters, $this->defaultStatus)
-              ->orderBy('fecha', 'desc')
-              ->orderByRaw('CASE WHEN numero REGEXP "^[0-9]+$" THEN CAST(numero AS UNSIGNED) ELSE 99999999999 END DESC')
+              ->with(["centrosCostos.centroCosto", "centrosCostos.codigoContable"])->orderBy("fecha", "desc")
+              ->orderBy("numero", "desc")
               ->paginate($this->perPage)
               ->pluck('id')
               ->toArray();

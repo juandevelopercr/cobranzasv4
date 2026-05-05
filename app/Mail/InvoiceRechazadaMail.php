@@ -2,12 +2,14 @@
 
 namespace App\Mail;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
+
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class InvoiceRechazadaMail extends Mailable
+class InvoiceRechazadaMail extends Mailable implements ShouldQueue
 {
   use Queueable, SerializesModels;
 

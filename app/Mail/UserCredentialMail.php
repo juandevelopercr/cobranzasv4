@@ -2,6 +2,8 @@
 
 namespace App\Mail;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
+
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -9,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Mime\Email;
 
-class UserCredentialMail extends Mailable
+class UserCredentialMail extends Mailable implements ShouldQueue
 {
   use Queueable, SerializesModels;
 

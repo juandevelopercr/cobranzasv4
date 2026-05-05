@@ -26,7 +26,7 @@ class MovimientosCentroCosto extends Component
   }
 
   #[Computed()]
-  public function listcatalogoCuentas()
+  public function listcodigoContable()
   {
     return CatalogoCuenta::orderBy('codigo', 'ASC')->get()->toArray();
   }

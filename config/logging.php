@@ -126,6 +126,11 @@ return [
       'replace_placeholders' => true,
     ],
 
+    'deprecations' => [
+      'driver' => 'monolog',
+      'handler' => NullHandler::class,
+    ],
+
     'null' => [
       'driver' => 'monolog',
       'handler' => NullHandler::class,

@@ -59,7 +59,7 @@
                 <select x-ref="select" id="codigo_contable_id_{{ $index }}"
                     class="select2 form-select @error('rows.' . $index . '.codigo_contable_id') is-invalid @enderror">
                     <option value="">{{ __('Seleccione...') }}</option>
-                    @foreach ($this->listcatalogoCuentas as $cat)
+                    @foreach ($this->listcodigoContable as $cat)
                         <option value="{{ $cat['id'] }}">{{ $cat['codigo'] . '-' . $cat['descrip'] }}</option>
                     @endforeach
                 </select>

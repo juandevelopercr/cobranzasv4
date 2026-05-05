@@ -2,13 +2,15 @@
 
 namespace App\Mail;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
+
 use App\Models\Business;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class ProformaMail extends Mailable
+class ProformaMail extends Mailable implements ShouldQueue
 {
   use Queueable, SerializesModels;
 

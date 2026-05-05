@@ -539,22 +539,15 @@ class Movimiento extends Model implements HasMedia
     $codigoContable = [];
     $centroCosto = [];
 
-    $datos = DB::table('movimientos_centro_costos')
-      ->select([
-        DB::raw('COALESCE(centro_costos.codigo, "") AS codigo_ccosto'),
-        DB::raw('COALESCE(centro_costos.descrip, "") AS descrip_ccosto'),
-        DB::raw('COALESCE(catalogo_cuentas.codigo, "") AS codigo_cuenta'),
-        DB::raw('COALESCE(catalogo_cuentas.descrip, "") AS descrip_cuenta'),
-      ])
-      ->leftJoin('centro_costos', 'movimientos_centro_costos.centro_costo_id', '=', 'centro_costos.id')
-      ->leftJoin('catalogo_cuentas', 'movimientos_centro_costos.codigo_contable_id', '=', 'catalogo_cuentas.id')
-      ->where('movimientos_centro_costos.movimiento_id', $this->id)
-      ->get();
+    foreach ($this->centrosCostos as $cc) {
+      $codigoCC = $cc->centroCosto->codigo ?? "";
+      $descripCC = $cc->centroCosto->descrip ?? "";
+      $codigoCuenta = $cc->codigoContable->codigo ?? "";
+      $descripCuenta = $cc->codigoContable->descrip ?? "";
 
-    foreach ($datos as $data) {
-      if (!empty($data->codigo_ccosto) || !empty($data->codigo_cuenta)) {
-        $centroCosto[] = trim("{$data->codigo_ccosto} {$data->descrip_ccosto}");
-        $codigoContable[] = trim("{$data->codigo_cuenta} {$data->descrip_cuenta}");
+      if (!empty($codigoCC) || !empty($codigoCuenta)) {
+        $centroCosto[] = trim("{$codigoCC} {$descripCC}");
+        $codigoContable[] = trim("{$codigoCuenta} {$descripCuenta}");
       }
     }
 

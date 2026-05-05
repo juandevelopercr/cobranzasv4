@@ -481,7 +481,7 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
 // ✅ SEGURIDAD: Protección contra Path Traversal
 /*
 Route::get('/temporary-file', function (Request $request) {
-  $path = $request->get('path');
+  $path = $request->input('path');
 
   // Validar que no contenga path traversal (../) ni caracteres peligrosos
   if (preg_match('/\.\./', $path) || preg_match('/[^a-zA-Z0-9_\-.]/', $path)) {
@@ -542,8 +542,8 @@ Route::middleware(['guest'])->group(function () {
 // routes/web.php o routes/api.php
 /*
 Route::get('/api/casos/search', function (\Illuminate\Http\Request $request) {
-  $term = $request->get('q');
-  $bank_id = $request->get('bank_id');
+  $term = $request->input('q');
+  $bank_id = $request->input('bank_id');
   if ($bank_id) {
     return \App\Models\Caso::query()
       ->where('pnumero', 'like', "%{$term}%")
@@ -566,8 +566,8 @@ Route::get('/api/casos/search', function (\Illuminate\Http\Request $request) {
     return response()->json(['error' => 'No autenticado'], 401);
   }
 
-  $term = $request->get('q');
-  $bank_id = $request->get('bank_id');
+  $term = $request->input('q');
+  $bank_id = $request->input('bank_id');
 
   if (!$bank_id) {
     return [];
