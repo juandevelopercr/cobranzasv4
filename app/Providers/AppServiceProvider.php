@@ -67,6 +67,11 @@ class AppServiceProvider extends ServiceProvider
       URL::forceScheme('https');
     }
 
+    // CACERES: Precargar clases críticas para evitar errores de autoloader durante señales en Octane
+    if (class_exists(\GuzzleHttp\Psr7\Stream::class)) {
+        // La clase ya está cargada o disponible
+    }
+
     // Implicitly grant "Super Admin" role all permissions
     // This works in the app by using gate-related functions like auth()->user->can() and @can()
     Gate::before(function ($user, $ability) {

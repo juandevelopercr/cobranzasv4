@@ -712,7 +712,7 @@ class ProformaManager extends TransactionManager {
       $query->where('transactions.created_by', auth()->user()->id);
     }
 
-    return $query;
+    return $query->with(['currency', 'contact', 'location', 'createdBy']);
   }
 
   public function render() {
@@ -2039,10 +2039,16 @@ class ProformaManager extends TransactionManager {
     $isAllBanks = $user->hasAnyRole($allowedRoles) || in_array($currentRole, $allowedRoles);
 
     if ($isAllBanks) {
-      $rolesList = "'" . implode("','", $allowedRoles) . "'";
-      $stats = Transaction::where('document_type', $this->document_type)
+      $specialUserIds = DB::table('role_user')
+        ->join('roles', 'roles.id', '=', 'role_user.role_id')
+        ->whereIn('roles.name', $allowedRoles)
+        ->pluck('role_user.user_id')
+        ->unique()
+        ->toArray();
+
+      $stats = Transaction::whereIn('document_type', is_array($this->document_type) ? $this->document_type : [$this->document_type])
         ->select([
-          DB::raw("SUM(CASE WHEN proforma_status = 'PROCESO' AND EXISTS (SELECT 1 FROM role_user ru JOIN roles r ON r.id = ru.role_id WHERE ru.user_id = transactions.created_by AND r.name IN ($rolesList)) THEN 1 ELSE 0 END) AS total_facturas_proceso"),
+          DB::raw("SUM(CASE WHEN proforma_status = 'PROCESO' AND created_by IN (" . (empty($specialUserIds) ? '0' : implode(',', $specialUserIds)) . ") THEN 1 ELSE 0 END) AS total_facturas_proceso"),
           DB::raw("SUM(CASE WHEN proforma_status = 'SOLICITADA' THEN 1 ELSE 0 END) AS facturas_por_aprobar"),
           DB::raw("SUM(CASE WHEN proforma_status = 'FACTURADA' AND currency_id = " . Currency::DOLARES . " AND proforma_type = 'HONORARIO' THEN totalComprobante ELSE 0 END) AS totalUsdHonorario"),
           DB::raw("SUM(CASE WHEN proforma_status = 'FACTURADA' AND currency_id = " . Currency::COLONES . " AND proforma_type = 'HONORARIO' THEN totalComprobante ELSE 0 END) AS totalCrcHonorario"),
