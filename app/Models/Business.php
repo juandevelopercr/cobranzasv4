@@ -57,6 +57,12 @@ class Business extends Model
     'puerto_imap',
     'imap_encryptation',
     'active',
+    'exchange_rate',
+    'exchange_rate_updated_at'
+  ];
+
+  protected $casts = [
+    'exchange_rate_updated_at' => 'datetime',
   ];
 
   public function currency()

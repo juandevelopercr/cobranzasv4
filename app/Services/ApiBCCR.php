@@ -43,8 +43,8 @@ class ApiBCCR
                         : false,
                     */
                     'verify' => false,
-                    'timeout' => 20,
-                    'connect_timeout' => 10,
+                    'timeout' => 2,
+                    'connect_timeout' => 1,
                 ])
                 ->get($url, [
                     'fechaInicio' => $fecha,

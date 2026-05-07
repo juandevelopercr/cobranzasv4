@@ -42,21 +42,12 @@ class StoreSessionVariablesService
       Session::put('user.business', $bussines);
       Session::put('user.location', $location);
 
-      // Llama al método para obtener el tipo de cambio
-      $response = $this->apiBCCR->obtenerTipoCambio(
-        318, // Indicador del tipo de cambio
-        now()->format('Y/m/d'), // Fecha
-      );
-
-      $exchange_rate = '';
-
-      if ($response) {
-        // Procesar el XML devuelto
-        $exchange_rate = $response;
-      }
+      // Obtenemos el tipo de cambio directamente de la base de datos (Instantáneo)
+      $exchange_rate = $bussines->exchange_rate;
 
       // Guarda el tipo de cambio en la sesión
       Session::put('exchange_rate', $exchange_rate);
+
       Log::info('Tipo de cambio y variables de usuario guardadas en la sesión.', [
         'exchange_rate' => $exchange_rate,
         'user' => $user->name,

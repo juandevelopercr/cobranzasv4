@@ -18,6 +18,8 @@ Schedule::command('comprobantes:process-emails')
   ->everyFiveMinutes()
   ->withoutOverlapping();
 
+Schedule::command('exchange-rate:update')->hourly();
+
 // Puedes agregar logging para depuración
 Schedule::call(function () {
   \Illuminate\Support\Facades\Log::info('Scheduler ejecutado');
