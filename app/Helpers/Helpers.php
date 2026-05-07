@@ -358,7 +358,7 @@ class Helpers
       foreach (File::files($pdfDirectory) as $file) {
         try {
           $modified = Carbon::createFromTimestamp($file->getMTime());
-          if ($modified->diffInMinutes(now()) >= 10) {
+          if ($modified->diffInMinutes(now()) >= 1440) {
             File::delete($file->getPathname());
           }
         } catch (\Throwable $e) {
@@ -466,7 +466,7 @@ class Helpers
       foreach (File::files($pdfDirectory) as $file) {
         try {
           $modified = Carbon::createFromTimestamp($file->getMTime());
-          if ($modified->diffInMinutes(now()) >= 3) {
+          if ($modified->diffInMinutes(now()) >= 1440) {
             File::delete($file->getPathname());
           }
         } catch (\Throwable $e) {
@@ -652,7 +652,7 @@ class Helpers
         foreach (File::files($pdfDirectory) as $file) {
           try {
             $modified = Carbon::createFromTimestamp($file->getMTime());
-            if ($modified->diffInMinutes(now()) >= 10) {
+            if ($modified->diffInMinutes(now()) >= 1440) {
               File::delete($file->getPathname());
             }
           } catch (\Throwable $e) {
@@ -1123,12 +1123,9 @@ class Helpers
       'fromEmail' => $fromEmail
     ];
 
-    // ✅ SEGURIDAD: Logging reducido - no registrar datos sensibles completos
-    Log::info('Enviando comprobante electrónico', [
-      'transaction_id' => $transaction->id ?? 'N/A',
+    Log::info('sendComprobanteElectronicoEmail: Iniciando proceso para Factura ID ' . $transaction->id, [
       'document_type' => $transaction->document_type ?? 'N/A',
-      'recipient_masked' => isset($recipientEmail) ? Str::mask($recipientEmail, '*', 3, -10) : 'N/A',
-      // NO registrar $data completo para proteger información sensible
+      'recipient' => $recipientEmail,
     ]);
 
     $bankName = $transaction->bank->name;
@@ -1959,7 +1956,7 @@ class Helpers
       foreach (File::files($pdfDirectory) as $file) {
         try {
           $modified = Carbon::createFromTimestamp($file->getMTime());
-          if ($modified->diffInMinutes(now()) >= 10) {
+          if ($modified->diffInMinutes(now()) >= 1440) {
             File::delete($file->getPathname());
           }
         } catch (\Throwable $e) {
@@ -2118,7 +2115,7 @@ class Helpers
       foreach (File::files($pdfDirectory) as $file) {
         try {
           $modified = Carbon::createFromTimestamp($file->getMTime());
-          if ($modified->diffInMinutes(now()) >= 10) {
+          if ($modified->diffInMinutes(now()) >= 1440) {
             File::delete($file->getPathname());
           }
         } catch (\Throwable $e) {
@@ -2321,7 +2318,7 @@ class Helpers
       foreach (File::files($pdfDirectory) as $file) {
         try {
           $modified = Carbon::createFromTimestamp($file->getMTime());
-          if ($modified->diffInMinutes(now()) >= 10) {
+          if ($modified->diffInMinutes(now()) >= 1440) {
             File::delete($file->getPathname());
           }
         } catch (\Throwable $e) {

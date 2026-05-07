@@ -9,7 +9,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Mime\Email;
 
-class UserCredentialMail extends Mailable implements ShouldQueue
+class UserCredentialMail extends Mailable
 {
   use Queueable, SerializesModels;
 

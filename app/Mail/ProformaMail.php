@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class ProformaMail extends Mailable implements ShouldQueue
+class ProformaMail extends Mailable
 {
   use Queueable, SerializesModels;
 

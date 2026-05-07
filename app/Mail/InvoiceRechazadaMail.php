@@ -7,7 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class InvoiceRechazadaMail extends Mailable implements ShouldQueue
+class InvoiceRechazadaMail extends Mailable
 {
   use Queueable, SerializesModels;
 

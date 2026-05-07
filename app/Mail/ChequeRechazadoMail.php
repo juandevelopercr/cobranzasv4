@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ChequeRechazadoMail extends Mailable implements ShouldQueue
+class ChequeRechazadoMail extends Mailable
 {
   use Queueable, SerializesModels;
 

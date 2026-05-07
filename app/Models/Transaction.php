@@ -2689,7 +2689,9 @@ public function getTotalHonorarioIva($currencyCode, $format = false)
           ]);
         }
       }
+      Log::info('[Hacienda Callback] Factura aceptada. Clave: ' . $transaction->key . '. Iniciando envío automático de correo.');
       $sent = Helpers::sendComprobanteElectronicoEmail($transaction->id);
+      Log::info('[Hacienda Callback] Resultado del envío automático: ' . ($sent ? 'EXITOSO' : 'FALLIDO'));
 
       if ($sent) {
         $transaction->fecha_envio_email = now();
