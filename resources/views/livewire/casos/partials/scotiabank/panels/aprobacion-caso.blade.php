@@ -88,16 +88,6 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="ahonorarios_totales">{{ __('Honorarios Totales Colones') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="ahonorarios_totales" id="ahonorarios_totales" class="form-control @error('ahonorarios_totales') is-invalid @enderror">
-    </div>
-    @error('ahonorarios_totales')
-    <div class="text-danger mt-1">{{ $message }}</div>
-    @enderror
-  </div>
-
-  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="anumero_placa1">{{ __('Número Placa') }}</label>
     <div class="input-group input-group-merge has-validation">
       <input type="text" wire:model="anumero_placa1" id="anumero_placa1" class="form-control @error('anumero_placa1') is-invalid @enderror">
@@ -209,6 +199,16 @@
     @enderror
   </div>
 
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
+    <label class="form-label" for="ahonorarios_totales">{{ __('Honorarios Totales Colones') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <input type="text" wire:model="ahonorarios_totales" id="ahonorarios_totales" class="form-control @error('ahonorarios_totales') is-invalid @enderror">
+    </div>
+    @error('ahonorarios_totales')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
   <div class="col-md-12 fv-plugins-icon-container">
     <label class="form-label" for="ajustificacion_casos_protocolizados_embargo">{{ __('Justificación Casos Protocolizados Embargo') }}</label>
     <textarea class="form-control" wire:model="ajustificacion_casos_protocolizados_embargo" name="ajustificacion_casos_protocolizados_embargo" id="ajustificacion_casos_protocolizados_embargo" rows="5"></textarea>
@@ -303,6 +303,36 @@
     </div>
     @error('motivo_terminacion')
     <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
+    <label class="form-label" for="dhonorarios">{{ __('Honorarios Legales Colones') }}</label>
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $dhonorarios ?? '' }}',
+        wireModelName: 'dhonorarios',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          //console.log('Callback personalizado:', val);
+          // lógica extra aquí si deseas
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('dhonorarios', val); // <- Esto envía el valor sin comas
+          }
+        }
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="dhonorarios" x-ref="cleaveInput" wire:ignore class="form-control js-input-honorarios_legales_colones"
+        >
+      </div>
+    </div>
+    @error('dhonorarios')
+      <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
 
