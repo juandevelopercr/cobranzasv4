@@ -6,6 +6,9 @@ use Carbon\Carbon;
 use App\Models\Bank;
 use App\Models\Caso;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+
 
 class CasoScotiabankReport extends BaseReport
 {
@@ -14,22 +17,18 @@ class CasoScotiabankReport extends BaseReport
     return [
       ['label' => 'ID', 'field' => 'id', 'type' => 'integer', 'align' => 'left', 'width' => 10],
       ['label' => 'Número de caso', 'field' => 'pnumero', 'type' => 'string', 'align' => 'left', 'width' => 15],
+      ['label' => 'Número de Identificación', 'field' => 'pnumero_cedula', 'type' => 'string', 'align' => 'left', 'width' => 15],
       ['label' => 'Número de Operación', 'field' => 'pnumero_operacion1', 'type' => 'string', 'align' => 'left', 'width' => 25],
+      ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 10],
       ['label' => 'Tipo de Producto', 'field' => 'producto', 'type' => 'string', 'align' => 'left', 'width' => 30],
       ['label' => 'Nombre del Cliente', 'field' => 'pnombre_demandado', 'type' => 'string', 'align' => 'left', 'width' => 60],
-      ['label' => 'Número de Identificación', 'field' => 'pnumero_cedula', 'type' => 'string', 'align' => 'left', 'width' => 15],
-      ['label' => 'Monto de la Demanda', 'field' => 'pmonto_estimacion_demanda', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
+      ['label' => 'Saldo Inicial', 'field' => 'asaldo_capital_operacion', 'type' => 'string', 'align' => 'right', 'width' => 20],
       ['label' => 'Buffete', 'field' => 'buffete', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-      ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 10],
       ['label' => 'Fecha de asignación del caso', 'field' => 'fecha_asignacion_caso', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Fecha de presentación demanda', 'field' => 'pfecha_presentacion_demanda', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Fecha de traslado', 'field' => 'nfecha_traslado_juzgado', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Fecha de captura', 'field' => 'sfecha_captura', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Fecha de notificación todas las partes', 'field' => 'nfecha_notificacion_todas_partes', 'type' => 'string', 'align' => 'center', 'width' => 15],
-      ['label' => 'F. Última liquidación', 'field' => 'nfecha_ultima_liquidacion', 'type' => 'string', 'align' => 'center', 'width' => 15],
-      ['label' => 'Fecha de inicio de retenciones', 'field' => 'fecha_inicio_retenciones', 'type' => 'string', 'align' => 'center', 'width' => 15],
-      ['label' => 'Fecha de Prescripción', 'field' => 'fecha_prescripcion', 'type' => 'string', 'align' => 'center', 'width' => 15],
-      ['label' => 'Fecha de Pruebas', 'field' => 'fecha_pruebas', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Fecha de Remate', 'field' => 'sfecha_remate', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Fecha de aprobación de remate', 'field' => 'afecha_aprobacion_remate', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Fecha de registro', 'field' => 'afecha_registro', 'type' => 'string', 'align' => 'center', 'width' => 15],
@@ -38,21 +37,27 @@ class CasoScotiabankReport extends BaseReport
       ['label' => 'Fecha de presentación de levantamientos', 'field' => 'afecha_levantamiento', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Fecha de presentación de terminación', 'field' => 'afecha_terminacion', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Fecha de suspensión por arreglo', 'field' => 'afecha_aprobacion_arreglo', 'type' => 'string', 'align' => 'center', 'width' => 15],
+      ['label' => 'Fecha de sentencia', 'field' => 'sfecha_sentencia', 'type' => 'string', 'align' => 'center', 'width' => 15],
+      ['label' => 'Fecha de inicio de retenciones', 'field' => 'fecha_inicio_retenciones', 'type' => 'string', 'align' => 'center', 'width' => 15],
+      ['label' => 'Fecha de Prescripción', 'field' => 'fecha_prescripcion', 'type' => 'string', 'align' => 'center', 'width' => 15],
+      ['label' => 'Fecha de Pruebas', 'field' => 'fecha_pruebas', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Justificación casos protocolizado por embargo', 'field' => 'ajustificacion_casos_protocolizados_embargo', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Estado proceso general', 'field' => 'proceso_general', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Motivo de Terminación', 'field' => 'motivo_terminacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Número expediente judicial', 'field' => 'pnumero_expediente_judicial', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Juzgado', 'field' => 'pdespacho_judicial_juzgado', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Fecha de informe', 'field' => 'pfecha_informe', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Comentarios', 'field' => 'pavance_cronologico', 'type' => 'string', 'align' => 'left', 'width' => 200],
-      ['label' => 'Tipo exp', 'field' => 'atipo_expediente', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Reasignaciones', 'field' => 'areasignaciones', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Honorarios Legales Dólares', 'field' => 'honorarios_legales_dolares', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
+      ['label' => 'Honorarios Legales Colones', 'field' => 'dhonorarios', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
+      ['label' => 'F. Última liquidación', 'field' => 'nfecha_ultima_liquidacion', 'type' => 'string', 'align' => 'center', 'width' => 15],
+      ['label' => 'Monto de la Demanda', 'field' => 'pmonto_estimacion_demanda', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
+      ['label' => 'Usuario que creó el caso', 'field' => 'user_create', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Usuario de última actualización', 'field' => 'user_update', 'type' => 'string', 'align' => 'center', 'width' => 25],
       ['label' => 'Fecha de activación', 'field' => 'fecha_activacion', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Código de activación', 'field' => 'codigo_activacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Motivo de Terminación', 'field' => 'motivo_terminacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Honorarios Legales Dólares', 'field' => 'honorarios_legales_dolares', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-      ['label' => 'Honorarios Legales Colones', 'field' => 'ahonorarios_totales', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-      ['label' => 'Usuario que creó el caso', 'field' => 'user_create', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Usuario de última actualización', 'field' => 'user_update', 'type' => 'string', 'align' => 'center', 'width' => 25]
+      ['label' => 'Tipo exp', 'field' => 'atipo_expediente', 'type' => 'string', 'align' => 'center', 'width' => 25],
+      ['label' => 'Reasignaciones', 'field' => 'areasignaciones', 'type' => 'string', 'align' => 'center', 'width' => 25],
     ];
   }
 
@@ -71,6 +76,7 @@ class CasoScotiabankReport extends BaseReport
         'ua2.name as asistente2',
         'casos.pnombre_demandado',
         'casos.pnumero_operacion1',
+        'casos.asaldo_capital_operacion',
         'casos.pdespacho_judicial_juzgado',
         DB::raw("
             CASE
@@ -98,6 +104,7 @@ class CasoScotiabankReport extends BaseReport
         DB::raw("DATE_FORMAT(casos.afecha_terminacion, '%d-%m-%Y') AS afecha_terminacion"),
         DB::raw("DATE_FORMAT(casos.afecha_aprobacion_arreglo, '%d-%m-%Y') AS afecha_aprobacion_arreglo"),
         DB::raw("DATE_FORMAT(casos.pfecha_informe, '%d-%m-%Y') AS pfecha_informe"),
+        DB::raw("DATE_FORMAT(casos.sfecha_sentencia, '%d-%m-%Y') AS sfecha_sentencia"),
         'ajustificacion_casos_protocolizados_embargo',
         'estado.name as proceso_general',
         'pnumero_expediente_judicial',
@@ -230,6 +237,31 @@ class CasoScotiabankReport extends BaseReport
     //dd($query->toSql(), $query->getBindings());
 
     return $query;
+  }
+
+  public function registerEvents(): array
+  {
+    $parentEvents = parent::registerEvents();
+    $afterSheet = $parentEvents[AfterSheet::class];
+
+    return [
+      AfterSheet::class => function (AfterSheet $event) use ($afterSheet) {
+        $afterSheet($event);
+        $sheet = $event->sheet->getDelegate();
+
+        // Color Beige: A3 hasta AJ3 (Columnas 1 a 36)
+        // Incluye hasta "F. Última liquidación"
+        $sheet->getStyle('A3:AJ3')->getFill()
+          ->setFillType(Fill::FILL_SOLID)
+          ->getStartColor()->setARGB('DED9C4');
+
+        // Color Azul: AK3 hasta AQ3 (Columnas 37 a 43)
+        // Inicia en "Monto de la Demanda" (Columna AK)
+        $sheet->getStyle('AK3:AQ3')->getFill()
+          ->setFillType(Fill::FILL_SOLID)
+          ->getStartColor()->setARGB('D9E1F2');
+      },
+    ];
   }
 
 }
