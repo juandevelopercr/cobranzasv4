@@ -175,14 +175,12 @@
 
 @script()
 <script>
-  (function () {
-
-        document.addEventListener("livewire:load", () => {
+  document.addEventListener("livewire:load", () => {
             window.componentId = @this.__instance.id;
             console.log('livewire:load');
         });
 
-        Livewire.on('exportReady', (dataArray) => {
+        $wire.on('exportReady', (dataArray) => {
 
           const data = Array.isArray(dataArray) ? dataArray[0] : dataArray;
           const prepareUrl = data.prepareUrl;
@@ -211,6 +209,5 @@
               });
           }, 100);
         });
-    })();
 </script>
 @endscript

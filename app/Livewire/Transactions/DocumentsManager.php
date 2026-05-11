@@ -65,12 +65,13 @@ class DocumentsManager extends Component
   public function handleUpdateContext($data)
   {
     $this->transaction_id = $data['transaction_id'];
-    // Aquí puedes recargar los datos si es necesario
+    if ($this->transaction_id) {
+      $this->loadDocuments();
+    }
   }
 
-  public function mount($transaction_id, $onlyview = false, $canview, $cancreate, $canedit, $candelete, $canexport)
+  public function mount($transaction_id = null, $onlyview = false, $canview = false, $cancreate = false, $canedit = false, $candelete = false, $canexport = false)
   {
-    //$this->transaction = Transaction::findOrFail($transaction_id);
     $this->transaction_id = $transaction_id;
     $this->onlyview = $onlyview;
     $this->canview = $canview;
@@ -78,7 +79,9 @@ class DocumentsManager extends Component
     $this->canedit = $canedit;
     $this->candelete = $candelete;
     $this->canexport = $canexport;
-    $this->loadDocuments();
+    if ($this->transaction_id) {
+      $this->loadDocuments();
+    }
   }
 
   public function render()
@@ -94,6 +97,10 @@ class DocumentsManager extends Component
 
   public function loadDocuments()
   {
+    if (!$this->transaction_id) {
+      $this->documents = [];
+      return;
+    }
     $transaction = Transaction::findOrFail($this->transaction_id);
     $this->documents = $transaction->getMedia('documents')->map(function ($doc) {
       return [

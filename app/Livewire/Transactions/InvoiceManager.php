@@ -830,6 +830,14 @@ class InvoiceManager extends TransactionManager
   #[On('createCreditNote')]
   public function createCreditNote($recordId, $motivo)
   {
+    $now = Carbon::now('America/Costa_Rica');
+    $cloned = null;
+    $xml    = null;
+    $token  = null;
+
+    // ── Fase 1: operaciones en BD (atómicas) ────────────────────────────────
+    // El consecutivo y todos los registros se guardan con status PENDIENTE.
+    // Si algo falla aquí el rollback es seguro porque Hacienda aún no fue contactada.
     DB::beginTransaction();
 
     try {
@@ -848,7 +856,6 @@ class InvoiceManager extends TransactionManager
       }
 
       $cloned = $original->replicate();
-      $now = Carbon::now('America/Costa_Rica');
 
       // Configuración básica
       $cloned->forceFill([
@@ -879,8 +886,8 @@ class InvoiceManager extends TransactionManager
         'num_request_hacienda_set' => 0,
         'num_request_hacienda_get' => 0,
         'comision_pagada' => 0,
-        'transaction_date' => Carbon::now('America/Costa_Rica')->format('Y-m-d H:i:s'),
-        'invoice_date' => Carbon::now('America/Costa_Rica')->format('Y-m-d H:i:s'),
+        'transaction_date' => $now->format('Y-m-d H:i:s'),
+        'invoice_date' => $now->format('Y-m-d H:i:s'),
         'fecha_pago' => NULL,
         'fecha_deposito_pago' => NULL,
         'fecha_traslado_honorario' => NULL,
@@ -951,7 +958,8 @@ class InvoiceManager extends TransactionManager
       // Generar XML
       $xml = Helpers::generateComprobanteElectronicoXML($cloned, true, 'content');
 
-      // Autenticación en Hacienda
+      // Obtener token de Hacienda (dentro de la txn: si falla, el rollback evita
+      // crear un documento huérfano que nunca podría enviarse)
       try {
         $authService = new AuthService();
         $token = $authService->getToken(
@@ -962,45 +970,51 @@ class InvoiceManager extends TransactionManager
         throw new \Exception("An error occurred when trying to obtain the token in the hacienda api" . ' ' . $e->getMessage());
       }
 
-      // Enviar a Hacienda
-      $api = new ApiHacienda();
-      $result = $api->send(
-        $xml,
-        $token,
-        $cloned,
-        $cloned->location,
-        Transaction::NCE
-      );
-
-      if ($result['error'] != 0) {
-        throw new \Exception($result['mensaje']);
-      }
-
-      // Actualizar estado si es exitoso
-      $cloned->update([
-        'status' => Transaction::RECIBIDA,
-        'invoice_date' => $now
-      ]);
-
+      // COMMIT antes de contactar Hacienda.
+      // El documento queda en BD con status PENDIENTE. Si el envío falla,
+      // el consecutivo y los datos están seguros y el documento puede reintentarse.
       DB::commit();
 
-      // Para que recalule los totales de la factura
-      //$cloned->recalculeteTotals();
-
-      // Livewire: Notificación y limpieza
-      $this->reset(['selectedIds', 'recordId']);
-      $this->dispatch('show-notification', ['type' => 'success', 'message' => __('Se ha creado la nota de crédito satisfactoriamente')]);
-
-      return response()->json([
-        'success' => true,
-        'id' => $cloned->id
-      ]);
     } catch (\Exception $e) {
       DB::rollBack();
-      Log::error('Error creating credit note', ['error' => $e, 'recordId' => $recordId]);
-
-      $this->dispatch('show-notification', ['type' => 'error', 'message' => __('Ha ocurrido un error al crear a nota de crédito') . ' ' . $e->getMessage()]);
+      Log::error('Error creating credit note (fase BD)', ['error' => $e, 'recordId' => $recordId]);
+      $this->dispatch('show-notification', ['type' => 'error', 'message' => __('Ha ocurrido un error al crear la nota de crédito') . ': ' . $e->getMessage()]);
+      return;
     }
+
+    // ── Fase 2: envío a Hacienda (fuera de la transacción) ──────────────────
+    // El documento ya existe en BD con status PENDIENTE. Si este bloque falla
+    // el usuario puede reintentarlo desde la pantalla de facturas pendientes.
+    $api = new ApiHacienda();
+    $result = $api->send(
+      $xml,
+      $token,
+      $cloned,
+      $cloned->location,
+      Transaction::NCE
+    );
+
+    if ($result['error'] != 0) {
+      Log::warning('Nota de crédito guardada en BD pero Hacienda rechazó el envío', [
+        'key'     => $cloned->key,
+        'mensaje' => $result['mensaje'],
+      ]);
+      $this->dispatch('show-notification', [
+        'type'    => 'warning',
+        'message' => __('La nota de crédito se guardó pero no se pudo enviar a Hacienda') . ': ' . $result['mensaje'],
+      ]);
+      return;
+    }
+
+    // Actualizar estado tras envío exitoso a Hacienda
+    $cloned->update([
+      'status'       => Transaction::RECIBIDA,
+      'invoice_date' => $now,
+    ]);
+
+    // Livewire: Notificación y limpieza
+    $this->reset(['selectedIds', 'recordId']);
+    $this->dispatch('show-notification', ['type' => 'success', 'message' => __('Se ha creado la nota de crédito satisfactoriamente')]);
   }
 
   private function isCreditNoteEligible($status): bool

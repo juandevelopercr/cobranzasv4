@@ -74,7 +74,7 @@
               </div>
               <div class="tab-pane fade @if ($this->activeTab == 'product') show active @endif"
                 id="navs-justified-services" role="tabpanel">
-                @if($this->recordId)
+                <div wire:key="cot-line-manager-container" :class="{ 'd-none': !$wire.recordId }">
                   @livewire('transactions-lines.transaction-line-manager', [
                     'transaction_id' => $this->recordId,
                     'canview'   => auth()->user()->can('view-lineas-cotizaciones'),
@@ -82,20 +82,19 @@
                     'canedit'   => auth()->user()->can('edit-lineas-cotizaciones'),
                     'candelete' => auth()->user()->can('delete-lineas-cotizaciones'),
                     'canexport' => auth()->user()->can('export-lineas-cotizaciones')
-                  ], key('line-manager-'.$this->recordId))
-                @else
-                  <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
-                    <span class="alert-icon rounded-circle">
-                      <i class="bx bx-xs bx-wallet"></i>
-                    </span>
-                    {{ __('La información será mostrada después de haber creado la cotización') }}
-                  </div>
-                @endif
+                  ], key('cot-line-manager'))
+                </div>
+                <div :class="{ 'd-none': !!$wire.recordId }" class="alert alert-solid-warning d-flex align-items-center" role="alert">
+                  <span class="alert-icon rounded-circle">
+                    <i class="bx bx-xs bx-wallet"></i>
+                  </span>
+                  {{ __('La información será mostrada después de haber creado la cotización') }}
+                </div>
               </div>
               <div class="tab-pane fade @if ($this->activeTab == 'charges') show active @endif"
                 id="navs-justified-charge" role="tabpanel">
 
-                @if($this->recordId)
+                <div wire:key="cot-charge-manager-container" :class="{ 'd-none': !$wire.recordId }">
                   @livewire('transactions-charges.transaction-charge-manager', [
                     'transaction_id' => $this->recordId,
                     'canview'   => auth()->user()->can('view-cargos-cotizaciones'),
@@ -103,19 +102,18 @@
                     'canedit'   => auth()->user()->can('edit-cargos-cotizaciones'),
                     'candelete' => auth()->user()->can('delete-cargos-cotizaciones'),
                     'canexport' => auth()->user()->can('export-cargos-cotizaciones'),
-                  ], key('charge-manager-'.$this->recordId))
-                @else
-                  <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
-                    <span class="alert-icon rounded-circle">
-                      <i class="bx bx-xs bx-wallet"></i>
-                    </span>
-                    {{ __('La información será mostrada después de haber creado la cotización') }}
-                  </div>
-                @endif
+                  ], key('cot-charge-manager'))
+                </div>
+                <div :class="{ 'd-none': !!$wire.recordId }" class="alert alert-solid-warning d-flex align-items-center" role="alert">
+                  <span class="alert-icon rounded-circle">
+                    <i class="bx bx-xs bx-wallet"></i>
+                  </span>
+                  {{ __('La información será mostrada después de haber creado la cotización') }}
+                </div>
               </div>
               <div class="tab-pane fade @if ($this->activeTab == 'documentos') show active @endif" id="navs-justified-document" role="tabpanel">
 
-                @if($this->recordId)
+                <div wire:key="cot-documents-manager-container" :class="{ 'd-none': !$wire.recordId }">
                   @livewire('transactions.documents-manager', [
                     'transaction_id' => $this->recordId,
                     'onlyview' => false,
@@ -125,15 +123,14 @@
                     'candelete' => auth()->user()->can('delete-documento-cotizaciones'),
                     'canexport' => auth()->user()->can('export-documento-cotizaciones'),
 
-                  ], key('transaction-documents-'.$this->recordId))
-                  @else
-                  <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
-                    <span class="alert-icon rounded-circle">
-                      <i class="bx bx-file bx-lg d-sm-none"></i>
-                    </span>
-                    {{ __('La información será mostrada después de haber creado la cotización') }}
-                  </div>
-                @endif
+                  ], key('cot-documents-manager'))
+                </div>
+                <div :class="{ 'd-none': !!$wire.recordId }" class="alert alert-solid-warning d-flex align-items-center" role="alert">
+                  <span class="alert-icon rounded-circle">
+                    <i class="bx bx-xs bx-wallet"></i>
+                  </span>
+                  {{ __('La información será mostrada después de haber creado la cotización') }}
+                </div>
               </div>
             </div>
           </div>
@@ -156,7 +153,7 @@
                     'enabledSelectedValue' => true,
                     'type' => 'customer'
                   ],
-                  key('contact-manager'.$this->recordId))
+                  key('cot-contact-manager'))
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" wire:click="closeCustomerModal">

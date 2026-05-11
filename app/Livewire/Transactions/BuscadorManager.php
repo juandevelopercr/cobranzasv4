@@ -975,6 +975,17 @@ class BuscadorManager extends TransactionManager
     // Validar
     $validatedData = $this->validate();
 
+    // Convertir fechas de formato display (d-m-Y) a formato MySQL (Y-m-d)
+    foreach (['fecha_pago', 'fecha_deposito_pago', 'fecha_traslado_honorario', 'fecha_traslado_gasto', 'fecha_solicitud_factura'] as $campoFecha) {
+      if (!empty($validatedData[$campoFecha])) {
+        try {
+          $validatedData[$campoFecha] = Carbon::createFromFormat('d-m-Y', $validatedData[$campoFecha])->format('Y-m-d');
+        } catch (\Exception $e) {
+          $validatedData[$campoFecha] = Carbon::parse($validatedData[$campoFecha])->format('Y-m-d');
+        }
+      }
+    }
+
     try {
       // Encuentra el registro existente
       // Actualizar

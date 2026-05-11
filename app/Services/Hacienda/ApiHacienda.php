@@ -365,48 +365,53 @@ class ApiHacienda
   private function handleAccepted($responseData, $transaction, $documento, $tipo_comprobante, $type)
   {
     $estado = 'aceptado';
-    if (in_array($tipo_comprobante, ['05', '06', '07'])) {
-      $transaction->status = Comprobante::ACEPTADA;
-      $key = $transaction->key . '-' . $transaction->consecutivo;
+
+    // Calcular key antes de entrar a la transacción (solo lectura)
+    $key = in_array($tipo_comprobante, ['05', '06', '07'])
+      ? $transaction->key . '-' . $transaction->consecutivo
+      : $transaction->key;
+
+    // ── Actualización atómica de estado + anulación de referencia ────────────
+    // Ambos saves deben ser exitosos o ninguno. Si la anulación de la factura
+    // original falla, el estado de la nota de crédito NO debe quedar como ACEPTADA.
+    DB::transaction(function () use ($transaction, $tipo_comprobante) {
+      if (in_array($tipo_comprobante, ['05', '06', '07'])) {
+        $transaction->status = Comprobante::ACEPTADA;
+      } else {
+        $transaction->status = Transaction::ACEPTADA;
+      }
       $transaction->save();
-    } else {
-      $transaction->status = Transaction::ACEPTADA;
-      $key = $transaction->key;
-      $transaction->save();
-    }
 
-    // Nota de crédito o nota de debito
-    if (in_array($transaction->document_type, ['NCE'])) {
-      $referencia = Transaction::where('key', trim($transaction->RefNumero))->first();
+      // Nota de crédito: anular la factura original de forma atómica
+      if (in_array($transaction->document_type, ['NCE'])) {
+        $referencia = Transaction::where('key', trim($transaction->RefNumero))->first();
 
-      if ($referencia) {
-        $referencia->status = Transaction::ANULADA;
-        $referencia->proforma_status = Transaction::ANULADA;
+        if ($referencia) {
+          $referencia->status       = Transaction::ANULADA;
+          $referencia->proforma_status = Transaction::ANULADA;
 
-        if ($referencia->save()) {
-          Log::error("Se guardó el estado en transacción ID: {$referencia->id}");
+          if (!$referencia->save()) {
+            throw new \Exception("Error al anular la factura original ID: {$referencia->id}");
+          }
+          Log::info("Factura original ID {$referencia->id} marcada como ANULADA.");
         } else {
-          Log::error("Error al guardar estado en transacción ID: {$referencia->id}", [
-            'datos' => $referencia->toArray(), // Registra todos los datos
-            'errores' => $referencia->getErrors() // Si usas validación
+          Log::warning("No se encontró transacción de referencia para anular", [
+            'key_buscada' => trim($transaction->RefNumero),
+            'nota_id'     => $transaction->id,
           ]);
         }
-      } else {
-        Log::warning("No se encontró transacción de referencia", [
-          'key_buscada' => trim($transaction->RefNumero),
-          'nota_id' => $transaction->id
-        ]);
       }
-    }
+    });
 
-    $type = 'success';
+    $type   = 'success';
     $titulo = "Información <hr class=\"kv-alert-separator\">";
     $mensaje = "$documento con clave: [{$key}] fue aceptada por Hacienda.";
 
     if (in_array($tipo_comprobante, ['05', '06', '07'])) {
       return $this->saveXmlResponseMensaje($responseData, $transaction, $estado, $mensaje, $type);
-    } else
+    } else {
       return $this->saveXmlResponse($responseData, $transaction, $estado, $mensaje, $type);
+    }
   }
 
   private function handleReceived($responseData, $transaction, $documento, $tipo_comprobante, $type)

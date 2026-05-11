@@ -240,8 +240,7 @@
 
 @script()
 <script>
-  (function () {
-        Livewire.on('exportReady', (dataArray) => {
+  $wire.on('exportReady', (dataArray) => {
 
           const data = Array.isArray(dataArray) ? dataArray[0] : dataArray;
           const prepareUrl = data.prepareUrl;
@@ -267,7 +266,6 @@
               });
           }, 100);
         });
-    })();
 </script>
 @endscript
 
@@ -319,7 +317,7 @@
     }
 
     // Inicializar cuando el modal se muestra
-    Livewire.on('showModalCaso', () => {
+    $wire.on('showModalCaso', () => {
         // Pequeño retraso para asegurar que el modal está visible
         setTimeout(() => {
             initCasoSelect2();
@@ -327,7 +325,7 @@
     });
 
     // Resetear al cerrar el modal
-    Livewire.on('hideModalCaso', () => {
+    $wire.on('hideModalCaso', () => {
         if ($('#caso_id').data('select2')) {
             $('#caso_id').select2('destroy');
         }

@@ -677,7 +677,7 @@ use App\Models\User;
     }
 
     // Re-ejecuta las inicializaciones después de actualizaciones de Livewire
-    Livewire.on('reinitSelect2Caso', () => {
+    $wire.on('reinitSelect2Caso', () => {
       console.log('Reinicializando controles después de Livewire update reinitFormControls');
       setTimeout(() => {
         initSelect2Caso();
@@ -729,7 +729,7 @@ use App\Models\User;
     // Register Livewire event listeners for dynamic updates
     console.log('📡 Registering Livewire event listeners...');
 
-    Livewire.on('updateSelect2Options', ({ id, options }) => {
+    $wire.on('updateSelect2Options', ({ id, options }) => {
         console.log('📡 updateSelect2Options event received', { id, optionsCount: options.length });
         const $select = $('#' + id);
         if ($select.length) {
@@ -757,7 +757,7 @@ use App\Models\User;
         }
     });
 
-    Livewire.on('setSelect2Value', ({ id, value, text }) => {
+    $wire.on('setSelect2Value', ({ id, value, text }) => {
         console.log('📡 setSelect2Value event received', { id, value, text });
         const $select = $('#' + id);
         if ($select.length) {
@@ -777,7 +777,7 @@ use App\Models\User;
         }
     });
 
-    Livewire.on('reinitSelect2Controls', () => {
+    $wire.on('reinitSelect2Controls', () => {
         console.log('📡 reinitSelect2Controls event received');
         initSelect2Controls(true); // Force sync on explicit reinit request
     });

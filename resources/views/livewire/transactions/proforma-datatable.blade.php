@@ -284,33 +284,29 @@
 
 @script()
 <script>
-  (function () {
-        Livewire.on('exportReady', (dataArray) => {
+  $wire.on('exportReady', (dataArray) => {
+        const data = Array.isArray(dataArray) ? dataArray[0] : dataArray;
+        const prepareUrl = data.prepareUrl;
+        const downloadBase = data.downloadBase;
 
-          const data = Array.isArray(dataArray) ? dataArray[0] : dataArray;
-          const prepareUrl = data.prepareUrl;
-          const downloadBase = data.downloadBase;
+        Livewire.dispatch('showLoading', [{ message: 'Generando reporte. Por favor espere...' }]);
 
-          Livewire.dispatch('showLoading', [{ message: 'Generando reporte. Por favor espere...' }]);
-
-          setTimeout(() => {
-            fetch(prepareUrl)
-              .then(res => {
-                if (!res.ok) throw new Error('Respuesta inválida');
-                return res.json();
-              })
-              .then(response => {
-                const downloadUrl = `${downloadBase}/${response.filename}`;
-                window.location.assign(downloadUrl);
-                setTimeout(() => Livewire.dispatch('hideLoading'), 1000);
-              })
-              .catch(err => {
-                console.error(err);
-                Livewire.dispatch('hideLoading');
-                //alert('Error al generar el archivo');
-              });
-          }, 100);
-        });
-    })();
+        setTimeout(() => {
+          fetch(prepareUrl)
+            .then(res => {
+              if (!res.ok) throw new Error('Respuesta inválida');
+              return res.json();
+            })
+            .then(response => {
+              const downloadUrl = `${downloadBase}/${response.filename}`;
+              window.location.assign(downloadUrl);
+              setTimeout(() => Livewire.dispatch('hideLoading'), 1000);
+            })
+            .catch(err => {
+              console.error(err);
+              Livewire.dispatch('hideLoading');
+            });
+        }, 100);
+      });
 </script>
 @endscript

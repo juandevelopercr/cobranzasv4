@@ -97,7 +97,7 @@
                     'department_id'     => $this->department_id,
                     'bank_id'           => $bank_id,
                     'type_notarial_act' => $this->proforma_type
-                ], key('transaction-line-'.$this->recordId))
+                ], key('inv-transaction-line'))
                 @else
                 <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
                   <span class="alert-icon rounded-circle">
@@ -117,7 +117,7 @@
                     'canedit'   => auth()->user()->can('edit-cargos-proformas'),
                     'candelete' => auth()->user()->can('delete-cargos-proformas'),
                     'canexport' => auth()->user()->can('export-cargos-proformas'),
-                  ], key('charge-manager-'.$this->recordId))
+                  ], key('inv-charge-manager'))
                 @else
                   <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
                     <span class="alert-icon rounded-circle">
@@ -136,7 +136,7 @@
                     'canedit'   => auth()->user()->can('edit-comision-proformas'),
                     'candelete' => auth()->user()->can('delete-comision-proformas'),
                     'canexport' => auth()->user()->can('export-comision-proformas'),
-                  ], key('commission-manager-'.$this->recordId))
+                  ], key('inv-commission-manager'))
                 @else
                   <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
                     <span class="alert-icon rounded-circle">
@@ -157,7 +157,7 @@
                     'candelete' => auth()->user()->can('delete-documento-proformas'),
                     'canexport' => auth()->user()->can('export-documento-proformas'),
 
-                  ], key('transaction-documents-'.$this->recordId))
+                  ], key('inv-transaction-documents'))
                 @else
                   <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
                     <span class="alert-icon rounded-circle">

@@ -2664,36 +2664,20 @@ public function getTotalHonorarioIva($currencyCode, $format = false)
 
     //Log::info('el resultado de handleResponse de la api:', $result);
 
+    // handleResponse ya actualizó el estado del comprobante (y la referencia si es NCE)
+    // de forma atómica. Aquí solo se gestionan los efectos secundarios (emails).
+
     if ($responseData['ind-estado'] == 'aceptado') {
-      // Nota de crédito o nota de debito
-      if (in_array($transaction->document_type, ['NCE'])) {
+      // Nota: la anulación de la factura original (para NCE) ya se realizó
+      // dentro de ApiHacienda::handleAccepted() en una transacción atómica.
+      // No repetir ese save aquí para evitar sobreescribir datos.
 
-        Log::error("Es una nota de crédito electrónica");
-        $referencia = Transaction::where('key', trim($transaction->RefNumero))->first();
-
-        if ($referencia) {
-          $referencia->status = Transaction::ANULADA;
-
-          if ($referencia->save()) {
-            Log::error("Se guardó el estado en transacción ID: {$referencia->id}");
-          } else {
-            Log::error("Error al guardar estado en transacción ID: {$referencia->id}", [
-              'datos' => $referencia->toArray(), // Registra todos los datos
-              'errores' => $referencia->getErrors() // Si usas validación
-            ]);
-          }
-        } else {
-          Log::warning("No se encontró transacción de referencia", [
-            'key_buscada' => trim($transaction->RefNumero),
-            'nota_id' => $transaction->id
-          ]);
-        }
-      }
-      Log::info('[Hacienda Callback] Factura aceptada. Clave: ' . $transaction->key . '. Iniciando envío automático de correo.');
+      Log::info('[Hacienda Callback] Comprobante aceptado. Clave: ' . $transaction->key . '. Iniciando envío automático de correo.');
       $sent = Helpers::sendComprobanteElectronicoEmail($transaction->id);
       Log::info('[Hacienda Callback] Resultado del envío automático: ' . ($sent ? 'EXITOSO' : 'FALLIDO'));
 
       if ($sent) {
+        // Solo actualizamos la fecha de envío de email; el resto del estado ya está confirmado.
         $transaction->fecha_envio_email = now();
         $transaction->save();
 
@@ -2705,7 +2689,6 @@ public function getTotalHonorarioIva($currencyCode, $format = false)
     } elseif ($responseData['ind-estado'] == 'rechazado') {
       Log::info('Procesando rechazo de Hacienda para transacción ID: ' . $transaction->id);
       $sent = Helpers::sendNotificationComprobanteElectronicoRejected($transaction->id, $documentType);
-      // Opcional: Log de la respuesta para auditoría
       if ($sent)
         Log::info('Se ha enviado una notificación de comprobante rechazado:', $responseData);
       else

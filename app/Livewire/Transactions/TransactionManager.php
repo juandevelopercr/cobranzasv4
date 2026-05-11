@@ -963,6 +963,7 @@ abstract class TransactionManager extends BaseComponent
 
   public function sendDocumentToHacienda($recordId)
   {
+    // Cargar documento
     try {
       $transaction = Transaction::findOrFail($recordId);
     } catch (Exception $e) {
@@ -970,56 +971,57 @@ abstract class TransactionManager extends BaseComponent
         'type' => 'error',
         'message' => "No se ha encontrado el documento",
       ]);
-      //throw new \Exception("No se ha encontrado el documento" . ' ' . $e->getMessage());
+      return; // detener ejecución: $transaction quedaría indefinida
     }
 
     // Obtener el xml firmado y en base64
     $encode = true;
     $xml = Helpers::generateComprobanteElectronicoXML($transaction, $encode, 'content');
 
-    //Loguearme en hacienda para obtener el token
+    // Obtener token de Hacienda
     $username = $transaction->location->api_user_hacienda;
     $password = $transaction->location->api_password;
     try {
       $authService = new AuthService();
       $token = $authService->getToken($username, $password);
     } catch (\Exception $e) {
-      //throw new \Exception("An error occurred when trying to obtain the token in the hacienda api" . ' ' . $e->getMessage());
       $this->dispatch('show-notification', [
         'type' => 'error',
         'message' => "Ha ocurrido un error al intentar identificarse en la api de hacienda",
       ]);
+      return; // detener ejecución: $token quedaría indefinida
     }
 
     $tipoDocumento = $this->getTipoDocumento($transaction->document_type);
 
+    // Enviar a Hacienda
     $api = new ApiHacienda();
     $result = $api->send($xml, $token, $transaction, $transaction->location, $tipoDocumento);
-    if ($result['error'] == 0) {
-      $transaction->status = Transaction::RECIBIDA;
-      $transaction->invoice_date = \Carbon\Carbon::now();
-    } else {
-      //throw new \Exception($result['mensaje']);
+
+    if ($result['error'] != 0) {
       $this->dispatch('show-notification', [
         'type' => 'error',
         'message' => $result['mensaje'],
       ]);
+      return;
     }
 
-    // Guardar la transacción
-    if (!$transaction->save()) {
-      //throw new \Exception(__('Un error ha ocurrido al enviar el comprobante a Hacienda'));
-      $this->dispatch('show-notification', [
-        'type' => 'error',
-        'message' => 'Un error ha ocurrido al guardar la transación',
+    // Hacienda recibió el documento: actualizar estado en BD
+    if (!$transaction->update(['status' => Transaction::RECIBIDA, 'invoice_date' => Carbon::now()])) {
+      Log::warning('Documento enviado a Hacienda pero no se pudo actualizar el estado en BD', [
+        'key' => $transaction->key,
       ]);
-    } else {
-      // Si todo fue exitoso, mostrar notificación de éxito
       $this->dispatch('show-notification', [
-        'type' => 'success',
-        'message' => $result['mensaje'],
+        'type'    => 'warning',
+        'message' => 'El documento fue enviado a Hacienda pero no se pudo actualizar el estado. Recargue la página.',
       ]);
+      return;
     }
+
+    $this->dispatch('show-notification', [
+      'type'    => 'success',
+      'message' => $result['mensaje'],
+    ]);
   }
 
   public function downloadInvoice($invoiceId)

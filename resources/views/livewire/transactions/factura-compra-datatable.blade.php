@@ -200,8 +200,7 @@
 
 @script()
 <script>
-  (function () {
-        Livewire.on('exportReady', (dataArray) => {
+  $wire.on('exportReady', (dataArray) => {
 
           const data = Array.isArray(dataArray) ? dataArray[0] : dataArray;
           const prepareUrl = data.prepareUrl;
@@ -227,6 +226,5 @@
               });
           }, 100);
         });
-    })();
 </script>
 @endscript

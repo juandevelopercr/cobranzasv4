@@ -638,7 +638,7 @@
     }
 
     // Re-ejecuta las inicializaciones después de actualizaciones de Livewire
-    Livewire.on('reinitSelect2Caso', () => {
+    $wire.on('reinitSelect2Caso', () => {
       console.log('Reinicializando controles después de Livewire update reinitFormControls');
       setTimeout(() => {
         initSelect2Caso();
@@ -681,13 +681,13 @@
     });
   })
 
-  Livewire.on('setSelect2Value', ({ id, value, text }) => {
+  $wire.on('setSelect2Value', ({ id, value, text }) => {
     const option = new Option(text, value, true, true);
     console.log("Entró al setSelect2Value con option: " + option);
     $('#' + id).append(option).trigger('change');
   });
 
-  Livewire.on('updateSelect2Options', ({ id, options }) => {
+  $wire.on('updateSelect2Options', ({ id, options }) => {
     const $select = $('#' + id);
     $select.empty(); // Limpiar opciones
 
@@ -757,7 +757,7 @@
     };
 
     // Re-ejecuta las inicializaciones después de actualizaciones de Livewire
-    Livewire.on('reinitSelect2Controls', () => {
+    $wire.on('reinitSelect2Controls', () => {
       console.log('Reinicializando select de casos');
       setTimeout(() => {
         initializeSelect2();

@@ -913,6 +913,17 @@ class FacturaCompraManager extends TransactionManager
     // Validar
     $validatedData = $this->validate();
 
+    // Convertir fechas de formato display (d-m-Y) a formato MySQL (Y-m-d)
+    foreach (['fecha_pago', 'fecha_deposito_pago', 'fecha_traslado_honorario', 'fecha_traslado_gasto', 'fecha_solicitud_factura'] as $campoFecha) {
+      if (!empty($validatedData[$campoFecha])) {
+        try {
+          $validatedData[$campoFecha] = Carbon::createFromFormat('d-m-Y', $validatedData[$campoFecha])->format('Y-m-d');
+        } catch (\Exception $e) {
+          $validatedData[$campoFecha] = Carbon::parse($validatedData[$campoFecha])->format('Y-m-d');
+        }
+      }
+    }
+
     try {
       // Actualizar
       $record->update($validatedData);
@@ -997,47 +1008,73 @@ class FacturaCompraManager extends TransactionManager
       return;
     }
 
-    // Lógica transaccional
-    DB::beginTransaction();  // Comienza la transacción principal
+    // ── Fase 1: operaciones en BD (atómicas) ────────────────────────────────
+    // Se guarda el consecutivo y la key con status PENDIENTE.
+    // El rollback es seguro porque Hacienda aún no ha sido contactada.
+    $xml   = null;
+    $token = null;
 
+    DB::beginTransaction();
     try {
-      $this->facturarHonorario($record);
+      ['xml' => $xml, 'token' => $token] = $this->facturarHonorario($record);
 
-      DB::commit();  // Commit de la transacción principal
+      // COMMIT antes de contactar Hacienda.
+      // El documento queda en BD con status PENDIENTE y puede reintentarse si el envío falla.
+      DB::commit();
     } catch (\Throwable $e) {
-      DB::rollBack();  // Si ocurre un error, hacer rollback de la transacción
-
-      // Enviar notificación de error
+      DB::rollBack();
       $this->dispatch('show-notification', [
         'type' => 'error',
         'message' => __('An unexpected error occurred:') . ' ' . $e->getMessage()
       ]);
-
-      // Registrar el error en el log
-      logger()->error('Error en facturar factura de compra:' . ' ' . $e->getMessage(), ['exception' => $e]);
+      logger()->error('Error en facturar factura de compra (fase BD):', ['exception' => $e]);
+      return;
     }
+
+    // ── Fase 2: envío a Hacienda (fuera de la transacción) ──────────────────
+    // Si falla, el documento permanece en BD con status PENDIENTE para reintento.
+    $api = new ApiHacienda();
+    $result = $api->send($xml, $token, $record, $record->location, Transaction::FEC);
+
+    if ($result['error'] != 0) {
+      Log::warning('Factura de compra guardada en BD pero Hacienda rechazó el envío', [
+        'key'     => $record->key,
+        'mensaje' => $result['mensaje'],
+      ]);
+      $this->dispatch('show-notification', [
+        'type'    => 'warning',
+        'message' => __('La factura se guardó pero no se pudo enviar a Hacienda') . ': ' . $result['mensaje'],
+      ]);
+      return;
+    }
+
+    // Actualizar estado tras envío exitoso
+    $record->update([
+      'status'       => Transaction::RECIBIDA,
+      'invoice_date' => Carbon::now(),
+    ]);
+
+    $this->dispatch('show-notification', [
+      'type'    => 'success',
+      'message' => $result['mensaje'],
+    ]);
   }
 
-  private function facturarHonorario($transaction)
+  private function facturarHonorario($transaction): array
   {
     /*
     - Asignar el document_type a FE !importante para generar la key y el consecutivo
     - Obtener la key y el consecutivo del Documento
-    - Obetener el xml del documento
+    - Obtener el xml del documento
     - Firmar el documento
     - Loguearme para obtener el token
-    - Enviar hacienda y recibir la respuesta
-    - Cambiar el estado de la factura según la respuesta de hacienda campo status
-    - Obtener el tipo de cambio y asignarlo a factura_change_type
+    - Retorna ['xml', 'token'] para que el llamador ejecute el envío fuera de la txn
     */
-
-    // En este caso, no necesitamos iniciar una nueva transacción aquí
-    // Simplemente hacer la lógica y dejar que la transacción principal controle todo
 
     // Asignar el tipo de documento
     $transaction->document_type = Transaction::FACTURACOMPRAELECTRONICA;
 
-    //Asignar la fecha de emision
+    // Asignar la fecha de emisión
     $transaction->transaction_date = Carbon::now('America/Costa_Rica')->format('Y-m-d H:i:s');
 
     // Tipo de cambio del día
@@ -1051,13 +1088,19 @@ class FacturaCompraManager extends TransactionManager
 
     // Asignar el consecutivo a la transacción
     $transaction->consecutivo = $transaction->getConsecutivo($secuencia);
-    $transaction->key = $transaction->generateKey();  // Generar la clave del documento
+    $transaction->key = $transaction->generateKey();
+
+    // Guardar en BD con status PENDIENTE (sin cambiar status todavía)
+    if (!$transaction->save()) {
+      throw new \Exception(__('An error occurred while saving the transaction'));
+    }
 
     // Obtener el xml firmado y en base64
     $encode = true;
     $xml = Helpers::generateComprobanteElectronicoXML($transaction, $encode, 'content');
 
-    //Loguearme en hacienda para obtener el token
+    // Obtener token de Hacienda (dentro de la txn: si falla, el rollback evita
+    // tener un documento con consecutivo asignado que nunca pueda enviarse)
     $username = $transaction->location->api_user_hacienda;
     $password = $transaction->location->api_password;
     try {
@@ -1067,25 +1110,7 @@ class FacturaCompraManager extends TransactionManager
       throw new \Exception("An error occurred when trying to obtain the token in the hacienda api" . ' ' . $e->getMessage());
     }
 
-    $api = new ApiHacienda();
-    $result = $api->send($xml, $token, $transaction, $transaction->location, Transaction::FEC);
-    if ($result['error'] == 0) {
-      $transaction->status = Transaction::RECIBIDA;
-      $transaction->invoice_date = \Carbon\Carbon::now();
-    } else {
-      throw new \Exception($result['mensaje']);
-    }
-
-    // Guardar la transacción
-    if (!$transaction->save()) {
-      throw new \Exception(__('An error occurred while saving the transaction'));
-    } else {
-      // Si todo fue exitoso, mostrar notificación de éxito
-      $this->dispatch('show-notification', [
-        'type' => 'success',
-        'message' => $result['mensaje'],
-      ]);
-    }
+    return ['xml' => $xml, 'token' => $token];
   }
 
   public function resetControls()

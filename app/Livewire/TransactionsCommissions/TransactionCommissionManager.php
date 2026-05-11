@@ -89,7 +89,7 @@ class TransactionCommissionManager extends BaseComponent
     // Aquí puedes recargar los datos si es necesario
   }
 
-  public function mount($transaction_id, $canview, $cancreate, $canedit, $candelete, $canexport)
+  public function mount($transaction_id = null, $canview = false, $cancreate = false, $canedit = false, $candelete = false, $canexport = false)
   {
     $this->transaction_id = $transaction_id;
     $this->centrosCostos = CentroCosto::orderBy('codigo', 'ASC')->get();

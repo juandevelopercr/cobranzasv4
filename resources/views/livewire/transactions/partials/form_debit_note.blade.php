@@ -63,7 +63,7 @@
               </div>
               <div class="tab-pane fade @if ($this->activeTab == 'product') show active @endif"
                 id="navs-justified-services" role="tabpanel">
-                @if($this->recordId)
+                <div wire:key="nde-line-manager-container" :class="{ 'd-none': !$wire.recordId }">
                   @livewire('transactions-lines.transaction-line-manager', [
                     'transaction_id' => $this->recordId,
                     'canview'   => auth()->user()->can('view-lineas-proformas'),
@@ -71,20 +71,19 @@
                     'canedit'   => auth()->user()->can('edit-lineas-proformas'),
                     'candelete' => auth()->user()->can('delete-lineas-proformas'),
                     'canexport' => auth()->user()->can('export-lineas-proformas'),
-                  ], key('line-manager-'.$this->recordId))
-                @else
-                  <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
-                    <span class="alert-icon rounded-circle">
-                      <i class="bx bx-xs bx-wallet"></i>
-                    </span>
-                    {{ __('Information will be displayed here after you have created the proforma') }}
-                  </div>
-                @endif
+                  ], key('nde-line-manager'))
+                </div>
+                <div :class="{ 'd-none': !!$wire.recordId }" class="alert alert-solid-warning d-flex align-items-center" role="alert">
+                  <span class="alert-icon rounded-circle">
+                    <i class="bx bx-xs bx-wallet"></i>
+                  </span>
+                  {{ __('Information will be displayed here after you have created the proforma') }}
+                </div>
               </div>
               <div class="tab-pane fade @if ($this->activeTab == 'charges') show active @endif"
                 id="navs-justified-charge" role="tabpanel">
 
-                @if($this->recordId)
+                <div wire:key="nde-charge-manager-container" :class="{ 'd-none': !$wire.recordId }">
                   @livewire('transactions-charges.transaction-charge-manager', [
                     'transaction_id' => $this->recordId,
                     'canview'   => auth()->user()->can('view-cargos-proformas'),
@@ -92,15 +91,14 @@
                     'canedit'   => auth()->user()->can('edit-cargos-proformas'),
                     'candelete' => auth()->user()->can('delete-cargos-proformas'),
                     'canexport' => auth()->user()->can('export-cargos-proformas'),
-                  ], key('charge-manager-'.$this->recordId))
-                @else
-                  <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
-                    <span class="alert-icon rounded-circle">
-                      <i class="bx bx-xs bx-wallet"></i>
-                    </span>
-                    {{ __('Information will be displayed here after you have created the proforma') }}
-                  </div>
-                @endif
+                  ], key('nde-charge-manager'))
+                </div>
+                <div :class="{ 'd-none': !!$wire.recordId }" class="alert alert-solid-warning d-flex align-items-center" role="alert">
+                  <span class="alert-icon rounded-circle">
+                    <i class="bx bx-xs bx-wallet"></i>
+                  </span>
+                  {{ __('Information will be displayed here after you have created the proforma') }}
+                </div>
               </div>
             </div>
           </div>
@@ -123,7 +121,7 @@
                     'enabledSelectedValue' => true,
                     'type' => 'customer'
                   ],
-                  key('contact-manager'.$this->recordId))
+                  key('nde-contact-manager'))
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" wire:click="closeCustomerModal">
