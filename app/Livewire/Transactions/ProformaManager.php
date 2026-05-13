@@ -1366,6 +1366,21 @@ class ProformaManager extends TransactionManager {
 
       // Encuentra el registro existente
       $oldStatus = $record->proforma_status;
+
+      // Protege estados terminales: nunca permitir que update() revierta un registro
+      // ya facturado, rechazado o anulado usando props desactualizadas del componente.
+      $terminalStatuses = [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA];
+      if (in_array($record->proforma_status, $terminalStatuses)) {
+        unset($validatedData['proforma_status'], $validatedData['document_type'],
+              $validatedData['consecutivo'], $validatedData['key'],
+              $validatedData['status'], $validatedData['invoice_date']);
+        Log::warning('ProformaManager::update() - Campos terminales protegidos de sobreescritura', [
+          'user_id'         => Auth::id(),
+          'record_id'       => $recordId,
+          'proforma_status' => $record->proforma_status,
+        ]);
+      }
+
       // Actualizar
       $record->update($validatedData);
 
