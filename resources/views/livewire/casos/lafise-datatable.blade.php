@@ -1,5 +1,5 @@
 <div>
-  @if($action == 'list')
+  <div wire:key="list-container-persistent" :class="{ 'd-none': $wire.action !== 'list' }">
     <!-- DataTable with Buttons -->
     <div class="card">
       <h5 class="card-header pb-0 text-md-start text-center">{{ __('Casos de Lafise') }}</h5>
@@ -107,13 +107,13 @@
       </div>
       <div style="width: 1%;"></div>
     </div>
-  @endif
+  </div>
 
-  @if($action == 'create' || $action == 'edit')
+  <div wire:key="form-container-persistent" :class="{ 'd-none': $wire.action !== 'create' && $wire.action !== 'edit' }">
     @include('livewire.casos.partials.lafise.form')
-  @endif
+  </div>
 
-  @if($action == 'importar')
+  <div wire:key="import-container-persistent" :class="{ 'd-none': $wire.action !== 'importar' }">
     @include('livewire.casos.partials.import-casos')
   @endif
 
