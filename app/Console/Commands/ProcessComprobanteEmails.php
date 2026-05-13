@@ -48,7 +48,6 @@ class ProcessComprobanteEmails extends Command
       'host' => $business->host_imap,
       'port' => $business->puerto_imap,
       'user' => $business->user_imap,
-      'pass' => $business->pass_imap,
       'encryption' => $business->imap_encryptation
     ]);
 

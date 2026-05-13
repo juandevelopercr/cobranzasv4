@@ -115,9 +115,11 @@ return [
     ],
 
     'scheduler' => [
-        'driver' => 'single',
+        'driver' => 'daily',
         'path' => storage_path('logs/scheduler.log'),
         'level' => 'info',
+        'days' => 30,
+        'permission' => 0644,
     ],
 
     'errorlog' => [
