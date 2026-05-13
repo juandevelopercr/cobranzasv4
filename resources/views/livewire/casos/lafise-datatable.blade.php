@@ -115,8 +115,7 @@
 
   <div wire:key="import-container-persistent" :class="{ 'd-none': $wire.action !== 'importar' }">
     @include('livewire.casos.partials.import-casos')
-  @endif
-
+  </div>
 </div>
 
 @push('scripts')
