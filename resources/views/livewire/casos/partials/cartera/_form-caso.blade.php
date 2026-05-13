@@ -157,7 +157,7 @@ $show = false;
 
     initSelect2();
 
-    Livewire.on('select2', () => {
+    $wire.on('select2', () => {
       setTimeout(() => {
         initSelect2();
       }, 200); // Retraso para permitir que el DOM se estabilice
