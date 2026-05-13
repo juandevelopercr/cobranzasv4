@@ -121,7 +121,8 @@
           if (component) {
             component.set('dgastos_microfilm', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.dgastos_microfilm'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -151,7 +152,8 @@
           if (component) {
             component.set('dhonorarios', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.dhonorarios'
       })"
       x-init="init($refs.cleaveInput)"
     >

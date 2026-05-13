@@ -364,7 +364,8 @@
           if (component) {
             component.set('pgastos_legales_caso', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.pgastos_legales_caso'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -394,7 +395,8 @@
           if (component) {
             component.set('pmonto_retencion_colones', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.pmonto_retencion_colones'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -424,7 +426,8 @@
           if (component) {
             component.set('pmonto_retencion_dolares', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.pmonto_retencion_dolares'
       })"
       x-init="init($refs.cleaveInput)"
     >

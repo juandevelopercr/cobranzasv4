@@ -268,7 +268,8 @@
           if (component) {
             component.set('pmonto_retencion_colones', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.pmonto_retencion_colones'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -298,7 +299,8 @@
           if (component) {
             component.set('pmonto_retencion_dolares', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.pmonto_retencion_dolares'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -383,7 +385,8 @@
           if (component) {
             component.set('monto_ap', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.monto_ap'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -413,7 +416,8 @@
           if (component) {
             component.set('cuota_ap', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.cuota_ap'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -461,7 +465,8 @@
           if (component) {
             component.set('descuento_aplicado', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.descuento_aplicado'
       })"
       x-init="init($refs.cleaveInput)"
     >

@@ -322,7 +322,8 @@
           if (component) {
             component.set('dhonorarios', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.dhonorarios'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -352,7 +353,8 @@
           if (component) {
             component.set('honorarios_legales_dolares', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.honorarios_legales_dolares'
       })"
       x-init="init($refs.cleaveInput)"
     >

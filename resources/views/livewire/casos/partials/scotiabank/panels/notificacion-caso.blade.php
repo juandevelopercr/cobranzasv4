@@ -165,7 +165,8 @@
           if (component) {
             component.set('nhonorarios_notificacion', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.nhonorarios_notificacion'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -195,7 +196,8 @@
           if (component) {
             component.set('nhonorarios_cobro_administrativo', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.nhonorarios_cobro_administrativo'
       })"
       x-init="init($refs.cleaveInput)"
     >

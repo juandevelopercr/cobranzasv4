@@ -46,7 +46,8 @@
           if (component) {
             component.set('tgastos_legales', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.tgastos_legales'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -76,7 +77,8 @@
           if (component) {
             component.set('thonorarios_totales', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.thonorarios_totales'
       })"
       x-init="init($refs.cleaveInput)"
     >

@@ -31,7 +31,8 @@
           if (component) {
             component.set('thonorarios_traspaso', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.thonorarios_traspaso'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -61,7 +62,8 @@
           if (component) {
             component.set('tgastos_traspaso', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.tgastos_traspaso'
       })"
       x-init="init($refs.cleaveInput)"
     >

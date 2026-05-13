@@ -111,7 +111,8 @@
           if (component) {
             component.set('bgastos_proceso', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.bgastos_proceso'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -141,7 +142,8 @@
           if (component) {
             component.set('bhonorarios_levantamiento', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.bhonorarios_levantamiento'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -171,7 +173,8 @@
           if (component) {
             component.set('bhonorarios_comision', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.bhonorarios_comision'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -201,7 +204,8 @@
           if (component) {
             component.set('bhonorarios_totales', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.bhonorarios_totales'
       })"
       x-init="init($refs.cleaveInput)"
     >

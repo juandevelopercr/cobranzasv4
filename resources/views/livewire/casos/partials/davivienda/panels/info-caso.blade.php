@@ -404,7 +404,8 @@
           if (component) {
             component.set('pmonto_prima', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.pmonto_prima'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -445,7 +446,8 @@
           if (component) {
             component.set('pmonto_arreglo_pago', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.pmonto_arreglo_pago'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -475,7 +477,8 @@
           if (component) {
             component.set('pmonto_cuota', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.pmonto_cuota'
       })"
       x-init="init($refs.cleaveInput)"
     >

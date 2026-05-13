@@ -80,7 +80,8 @@
           if (component) {
             component.set('rhonorario_escritura_inscripcion', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.rhonorario_escritura_inscripcion'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -111,7 +112,8 @@
           if (component) {
             component.set('rgastos_impuestos', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.rgastos_impuestos'
       })"
       x-init="init($refs.cleaveInput)"
     >

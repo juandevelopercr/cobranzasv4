@@ -15,7 +15,8 @@
           if (component) {
             component.set('fhonorarios_levantamiento', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.fhonorarios_levantamiento'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -45,7 +46,8 @@
           if (component) {
             component.set('fcomision_ccc', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.fcomision_ccc'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -75,7 +77,8 @@
           if (component) {
             component.set('fhonorarios_totales', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.fhonorarios_totales'
       })"
       x-init="init($refs.cleaveInput)"
     >

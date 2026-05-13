@@ -132,7 +132,8 @@
           if (component) {
             component.set('psaldo_dolarizado', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.psaldo_dolarizado'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -174,7 +175,8 @@
           if (component) {
             component.set('psaldo_de_seguros', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.psaldo_de_seguros'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -204,7 +206,8 @@
           if (component) {
             component.set('psaldo_de_multas', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.psaldo_de_multas'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -565,7 +568,8 @@
           if (component) {
             component.set('pmonto_estimacion_demanda', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.pmonto_estimacion_demanda'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -638,7 +642,8 @@
           if (component) {
             component.set('pgastos_legales_caso', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.pgastos_legales_caso'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -728,7 +733,8 @@
           if (component) {
             component.set('pretenciones', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.pretenciones'
       })"
       x-init="init($refs.cleaveInput)"
     >

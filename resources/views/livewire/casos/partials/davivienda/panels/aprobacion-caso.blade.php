@@ -186,7 +186,8 @@
           if (component) {
             component.set('pgastos_legales_caso', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.pgastos_legales_caso'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -272,7 +273,8 @@
           if (component) {
             component.set('pretenciones', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.pretenciones'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -318,7 +320,8 @@
           if (component) {
             component.set('pmonto_retencion_colones', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.pmonto_retencion_colones'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -348,7 +351,8 @@
           if (component) {
             component.set('pmonto_retencion_dolares', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.pmonto_retencion_dolares'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -416,7 +420,8 @@
           if (component) {
             component.set('acarga_gastos_legales', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.acarga_gastos_legales'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -446,7 +451,8 @@
           if (component) {
             component.set('agastos_mas_honorarios_acumulados', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.agastos_mas_honorarios_acumulados'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -476,7 +482,8 @@
           if (component) {
             component.set('ahonorarios_iniciales', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.ahonorarios_iniciales'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -506,7 +513,8 @@
           if (component) {
             component.set('adiferencia_demanda_presentada', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_demanda_presentada'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -536,7 +544,8 @@
           if (component) {
             component.set('adiferencia_sentencia_afavor', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_sentencia_afavor'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -566,7 +575,8 @@
           if (component) {
             component.set('adiferencia_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -596,7 +606,8 @@
           if (component) {
             component.set('adiferencia_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -626,7 +637,8 @@
           if (component) {
             component.set('adiferencia_segunda_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_segunda_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -656,7 +668,8 @@
           if (component) {
             component.set('adiferencia_tercera_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_tercera_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -686,7 +699,8 @@
           if (component) {
             component.set('adiferencia_cuarta_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_cuarta_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -716,7 +730,8 @@
           if (component) {
             component.set('adiferencia_quinta_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_quinta_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -746,7 +761,8 @@
           if (component) {
             component.set('adiferencia_sexta_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_sexta_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -776,7 +792,8 @@
           if (component) {
             component.set('adiferencia_septima_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_septima_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -806,7 +823,8 @@
           if (component) {
             component.set('adiferencia_octava_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_octava_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -836,7 +854,8 @@
           if (component) {
             component.set('adiferencia_novena_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_novena_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -866,7 +885,8 @@
           if (component) {
             component.set('adiferencia_decima_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_decima_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -896,7 +916,8 @@
           if (component) {
             component.set('adiferencia_decima_primera_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_decima_primera_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -926,7 +947,8 @@
           if (component) {
             component.set('adiferencia_decima_segunda_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_decima_segunda_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -956,7 +978,8 @@
           if (component) {
             component.set('adiferencia_decima_tercera_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_decima_tercera_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -986,7 +1009,8 @@
           if (component) {
             component.set('adiferencia_decima_cuarta_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_decima_cuarta_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -1016,7 +1040,8 @@
           if (component) {
             component.set('adiferencia_decima_quinta_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_decima_quinta_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -1046,7 +1071,8 @@
           if (component) {
             component.set('adiferencia_decima_sexta_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_decima_sexta_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -1076,7 +1102,8 @@
           if (component) {
             component.set('adiferencia_decima_septima_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_decima_septima_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -1106,7 +1133,8 @@
           if (component) {
             component.set('adiferencia_decima_octava_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_decima_octava_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -1136,7 +1164,8 @@
           if (component) {
             component.set('adiferencia_decima_novena_liquidacion_de_sentencia_enfirme', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_decima_novena_liquidacion_de_sentencia_enfirme'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -1166,7 +1195,8 @@
           if (component) {
             component.set('agastos_legales_iniciales', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.agastos_legales_iniciales'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -1196,7 +1226,8 @@
           if (component) {
             component.set('adiferencia_gastos_legales', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.adiferencia_gastos_legales'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -1226,7 +1257,8 @@
           if (component) {
             component.set('anumero_grupo', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.anumero_grupo'
       })"
       x-init="init($refs.cleaveInput)"
     >

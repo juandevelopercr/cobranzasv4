@@ -56,7 +56,8 @@
           if (component) {
             component.set('f1honorarios_capturador', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.f1honorarios_capturador'
       })"
       x-init="init($refs.cleaveInput)"
     >
@@ -86,7 +87,8 @@
           if (component) {
             component.set('f1honorarios_comision', val); // <- Esto envía el valor sin comas
           }
-        }
+        },
+      watchProperty: '$wire.f1honorarios_comision'
       })"
       x-init="init($refs.cleaveInput)"
     >
