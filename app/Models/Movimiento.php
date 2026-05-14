@@ -422,7 +422,6 @@ class Movimiento extends Model implements HasMedia
             ")
         ->whereIn('cuenta_id', $ids)
         ->where('status', $status)
-        ->where(fn($q) => $q->where('clonando', 0)->orWhereNull('clonando'))
         ->whereIn('tipo_movimiento', $tipos);
 
       // Condición para bloqueo de fondos
@@ -464,7 +463,6 @@ class Movimiento extends Model implements HasMedia
             ")
         ->whereIn('cuenta_id', $ids)
         ->where('status', $status)
-        ->where(fn($q) => $q->where('clonando', 0)->orWhereNull('clonando'))
         ->where('tipo_movimiento', 'CHEQUE');
 
       // Condición de bloqueo de fondos
@@ -506,7 +504,6 @@ class Movimiento extends Model implements HasMedia
             ")
         ->whereIn('cuenta_id', $ids)
         ->where('status', $status)
-        ->where(fn($q) => $q->where('clonando', 0)->orWhereNull('clonando'))
         ->where('tipo_movimiento', 'DEPOSITO');
 
       // Condición de bloqueo
