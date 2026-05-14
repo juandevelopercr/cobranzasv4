@@ -429,7 +429,7 @@ class Movimiento extends Model implements HasMedia
       if ($bloqueado) {
         $query->where('bloqueo_fondos', 1);
       } else {
-        $query->where('bloqueo_fondos', '!=', 1);
+        $query->where(fn($q) => $q->where('bloqueo_fondos', '!=', 1)->orWhereNull('bloqueo_fondos'));
       }
 
       // Condición de rango de fechas
@@ -471,7 +471,7 @@ class Movimiento extends Model implements HasMedia
       if ($bloqueado) {
         $query->where('bloqueo_fondos', 1);
       } else {
-        $query->where('bloqueo_fondos', '!=', 1);
+        $query->where(fn($q) => $q->where('bloqueo_fondos', '!=', 1)->orWhereNull('bloqueo_fondos'));
       }
 
       // Condición de fechas
@@ -513,7 +513,7 @@ class Movimiento extends Model implements HasMedia
       if ($bloqueado) {
         $query->where('bloqueo_fondos', 1);
       } else {
-        $query->where('bloqueo_fondos', '!=', 1);
+        $query->where(fn($q) => $q->where('bloqueo_fondos', '!=', 1)->orWhereNull('bloqueo_fondos'));
       }
 
       // Rango de fechas solo si no está bloqueado
