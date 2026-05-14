@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\Helpers;
 use App\Models\Transaction;
 use App\Services\Hacienda\ApiHacienda;
 use App\Services\Hacienda\Login\AuthService;
@@ -15,7 +16,7 @@ class PollHaciendaStatus extends Command
     */
 
     protected $signature = 'hacienda:poll-status {--limit=50 : Máximo de facturas a consultar por ejecución}';
-    protected $description = 'Consulta en Hacienda el estado de facturas electrónicas en estado RECIBIDA o PENDIENTE';
+    protected $description = 'Consulta en Hacienda el estado de facturas electrónicas en estado RECIBIDA o PENDIENTE, y reenvía emails pendientes de facturas ya aceptadas';
 
     // Tipos de documento electrónico que pueden estar pendientes en Hacienda
     private const ELECTRONIC_TYPES = ['FE', 'TE', 'NCE', 'NDE', 'FEC', 'FEE', 'REP'];
@@ -26,6 +27,14 @@ class PollHaciendaStatus extends Command
 
         Log::channel('scheduler')->info('hacienda:poll-status iniciado', ['limit' => $limit]);
 
+        $this->pollPendingTransactions($limit);
+        $this->sendPendingEmails();
+
+        Log::channel('scheduler')->info('hacienda:poll-status finalizado');
+    }
+
+    private function pollPendingTransactions(int $limit): void
+    {
         $pending = Transaction::whereIn('status', [Transaction::RECIBIDA, Transaction::PENDIENTE])
             ->whereIn('document_type', self::ELECTRONIC_TYPES)
             ->whereNotNull('key')
@@ -83,10 +92,15 @@ class PollHaciendaStatus extends Command
                         $errores++;
                     } else {
                         $procesadas++;
+                        $estadoResult = $result['estado'] ?? 'desconocido';
                         Log::channel('scheduler')->info('hacienda:poll-status: estado actualizado', [
                             'key' => $transaction->key,
-                            'estado' => $result['estado'] ?? 'desconocido',
+                            'estado' => $estadoResult,
                         ]);
+
+                        if ($estadoResult === 'aceptado' && is_null($transaction->fecha_envio_email)) {
+                            $this->sendEmail($transaction);
+                        }
                     }
                 } catch (\Exception $e) {
                     Log::channel('scheduler')->error('hacienda:poll-status: excepción al consultar', [
@@ -99,9 +113,51 @@ class PollHaciendaStatus extends Command
         }
 
         $this->info("Procesadas: {$procesadas} | Errores: {$errores}");
-        Log::channel('scheduler')->info('hacienda:poll-status finalizado', [
+        Log::channel('scheduler')->info('hacienda:poll-status: poll completado', [
             'procesadas' => $procesadas,
             'errores' => $errores,
         ]);
+    }
+
+    private function sendPendingEmails(): void
+    {
+        $aceptadas = Transaction::where('status', Transaction::ACEPTADA)
+            ->whereIn('document_type', self::ELECTRONIC_TYPES)
+            ->whereNull('fecha_envio_email')
+            ->whereNotNull('key')
+            ->where('key', '!=', '')
+            ->orderBy('updated_at', 'asc')
+            ->limit(20)
+            ->get();
+
+        if ($aceptadas->isEmpty()) {
+            return;
+        }
+
+        Log::channel('scheduler')->info('hacienda:poll-status: facturas aceptadas sin email', ['count' => $aceptadas->count()]);
+
+        foreach ($aceptadas as $transaction) {
+            $this->sendEmail($transaction);
+        }
+    }
+
+    private function sendEmail(Transaction $transaction): void
+    {
+        try {
+            Log::channel('scheduler')->info('hacienda:poll-status: enviando email', ['key' => $transaction->key]);
+            $sent = Helpers::sendComprobanteElectronicoEmail($transaction->id);
+            if ($sent) {
+                $transaction->fecha_envio_email = now();
+                $transaction->save();
+                Log::channel('scheduler')->info('hacienda:poll-status: email enviado', ['key' => $transaction->key]);
+            } else {
+                Log::channel('scheduler')->warning('hacienda:poll-status: fallo al enviar email', ['key' => $transaction->key]);
+            }
+        } catch (\Exception $e) {
+            Log::channel('scheduler')->error('hacienda:poll-status: excepción al enviar email', [
+                'key' => $transaction->key,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }
