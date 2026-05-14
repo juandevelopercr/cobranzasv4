@@ -274,9 +274,7 @@ window.select2Livewire = ({
 
       // Establece valor desde Livewire
       const current = livewireComponent.get(wireModelName);
-      if (current !== undefined && current !== null) {
-        $(el).val(current).trigger('change');
-      }
+      $(el).val(current ?? '').trigger('change');
 
       // Escucha cambios
       $(el).on('change', () => {
@@ -785,7 +783,7 @@ if (typeof window !== 'undefined') {
 //console.log(numeroALetras(201599.30));   // "DOSCIENTOS UN MIL QUINIENTOS NOVENTA Y NUEVE CON 30/100"
 
 // DatePicker con capacidad de copiar/pegar
-window.datePickerLivewire = ({ wireEventName = 'dateSelected' }) => ({
+window.datePickerLivewire = ({ wireEventName = 'dateSelected', watchProperty = null }) => ({
   init(el) {
     if (!el || el.flatpickrInstance) return;
 
@@ -827,6 +825,17 @@ window.datePickerLivewire = ({ wireEventName = 'dateSelected' }) => ({
         }
       }
     });
+
+    if (watchProperty && typeof this.$watch === 'function') {
+      this.$nextTick(() => {
+        this.$watch(watchProperty, value => {
+          if (el.flatpickrInstance) {
+            if (value) { el.flatpickrInstance.setDate(value, false); }
+            else { el.flatpickrInstance.clear(); }
+          }
+        });
+      });
+    }
 
     // Detectar limpieza manual
     el.addEventListener('input', () => {

@@ -99,7 +99,10 @@ use App\Models\User;
         <span class="input-group-text"><i class="bx bx-calendar"></i></span>
         <input type="text" id="show_transaction_date" @if (!$recordId) readonly @endif
           wire:model="show_transaction_date"
-          x-data="datePickerLivewire({ wireEventName: 'dateSelected' })"
+          x-data="{
+              ...datePickerLivewire({ wireEventName: 'dateSelected', watchProperty: 'dateVal' }),
+              dateVal: @entangle('show_transaction_date')
+          }"
           x-init="init($el)"
           wire:ignore
           class="form-control date-picke @error('show_transaction_date') is-invalid @enderror"

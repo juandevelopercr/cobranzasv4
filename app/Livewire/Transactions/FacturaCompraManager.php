@@ -431,6 +431,7 @@ class FacturaCompraManager extends TransactionManager
     $this->action = 'create';
     $this->dispatch('scroll-to-top');
     $this->dispatch('select2');
+    $this->dispatch('reinitSelect2Controls');
   }
 
   // Definir reglas, mensajes y atributos
@@ -872,6 +873,7 @@ class FacturaCompraManager extends TransactionManager
     }
 
     $this->setInfoCaso();
+    $this->dispatch('reinitSelect2Controls');
 
     //$this->dispatch('select2');
   }

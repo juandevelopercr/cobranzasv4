@@ -119,7 +119,12 @@
                 <div class="input-group input-group-merge has-validation">
                     <span class="input-group-text"><i class="bx bx-calendar"></i></span>
                     <input type="text" id="fecha" @if (!$recordId) readonly @endif
-                        wire:model="fecha" x-data="datePickerLivewire({ wireEventName: 'dateSelected' })" x-init="init($el)" wire:ignore
+                        wire:model="fecha"
+                        x-data="{
+                            ...datePickerLivewire({ wireEventName: 'dateSelected', watchProperty: 'fechaVal' }),
+                            fechaVal: @entangle('fecha')
+                        }"
+                        x-init="init($el)" wire:ignore
                         class="form-control date-picke @error('fecha') is-invalid @enderror" placeholder="dd-mm-aaaa">
                 </div>
                 @error('fecha')

@@ -243,6 +243,11 @@ class RevisionManager extends BaseComponent
 
     $this->dispatch('scroll-to-top');
     $this->dispatch('reinitConvertNumbertoWord');
+    $this->dispatch('select2:refresh', ['id' => 'cuenta_id']);
+    $this->dispatch('select2:refresh', ['id' => 'tipo_movimiento']);
+    $this->dispatch('select2:refresh', ['id' => 'status']);
+    $this->dispatch('select2:refresh', ['id' => 'moneda_id']);
+    $this->dispatch('recargar-centros-costo', movimiento_id: null)->to('movimientos.movimientos-centro-costo');
   }
 
   // Definir reglas, mensajes y atributos
@@ -611,6 +616,10 @@ class RevisionManager extends BaseComponent
     $this->datePickerKey++;
     $this->dispatch('refreshCleave');
     $this->dispatch('reinitConvertNumbertoWord');
+    $this->dispatch('select2:refresh', ['id' => 'cuenta_id']);
+    $this->dispatch('select2:refresh', ['id' => 'tipo_movimiento']);
+    $this->dispatch('select2:refresh', ['id' => 'status']);
+    $this->dispatch('recargar-centros-costo', movimiento_id: $this->recordId)->to('movimientos.movimientos-centro-costo');
   }
 
   public function update()

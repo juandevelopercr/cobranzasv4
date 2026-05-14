@@ -53,6 +53,18 @@ class MovimientosCentroCosto extends Component
     // antes de que el método save() tenga oportunidad de ejecutarse.
   }
 
+  #[On('recargar-centros-costo')]
+  public function recargarCentrosCosto($movimiento_id = null)
+  {
+    $this->movimiento_id = $movimiento_id;
+
+    if ($movimiento_id) {
+      $this->loadRows();
+    } else {
+      $this->resetRows();
+    }
+  }
+
   public function resetRows()
   {
     $this->rows = [(string)Str::uuid() => ['centro_costo_id' => 29, 'codigo_contable_id' => 78, 'amount' => '0.00']];
