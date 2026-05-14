@@ -28,7 +28,6 @@ class PollHaciendaStatus extends Command
         Log::channel('scheduler')->info('hacienda:poll-status iniciado', ['limit' => $limit]);
 
         $this->pollPendingTransactions($limit);
-        $this->sendPendingEmails();
 
         Log::channel('scheduler')->info('hacienda:poll-status finalizado');
     }
@@ -117,28 +116,6 @@ class PollHaciendaStatus extends Command
             'procesadas' => $procesadas,
             'errores' => $errores,
         ]);
-    }
-
-    private function sendPendingEmails(): void
-    {
-        $aceptadas = Transaction::where('status', Transaction::ACEPTADA)
-            ->whereIn('document_type', self::ELECTRONIC_TYPES)
-            ->whereNull('fecha_envio_email')
-            ->whereNotNull('key')
-            ->where('key', '!=', '')
-            ->orderBy('updated_at', 'asc')
-            ->limit(20)
-            ->get();
-
-        if ($aceptadas->isEmpty()) {
-            return;
-        }
-
-        Log::channel('scheduler')->info('hacienda:poll-status: facturas aceptadas sin email', ['count' => $aceptadas->count()]);
-
-        foreach ($aceptadas as $transaction) {
-            $this->sendEmail($transaction);
-        }
     }
 
     private function sendEmail(Transaction $transaction): void
