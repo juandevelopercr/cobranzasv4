@@ -728,6 +728,10 @@ class RevisionManager extends BaseComponent
 
   public function setNumeroCheque()
   {
+    if (!empty($this->recordId)) {
+      return;
+    }
+
     if (!empty($this->cuenta_id)) {
       $cuenta = Cuenta::find($this->cuenta_id);
 
