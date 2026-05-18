@@ -142,7 +142,13 @@ class ImportColumns
         'PROCESO'=>['campo'=>'proceso_id', 'tipo'=>'string'],
         'Nombre del Demandado'=>['campo'=>'pnombre_demandado', 'tipo'=>'string'],
         'Número de Cédula del demandado'=>['campo'=>'pnumero_cedula', 'tipo'=>'string'],
+
+        'Correo Demandado Deudor O Arrendatario'=>['campo'=>'pcorreo_demandado_deudor_o_arrendatario', 'tipo'=>'string'],
         'MONEDA'=>['campo'=>'currency_id', 'tipo'=>'string'],
+        'Detalle de garantía'=>['campo'=>'pdetalle_garantia', 'tipo'=>'string'],
+        'Teléfono Demandado Deudor O Arrendatario'=>['campo'=>'ptelefono_demandado_deudor_o_arrendatario', 'tipo'=>'string'],
+        'Saldo Dolarizado'=>['campo'=>'psaldo_dolarizado', 'tipo'=>'string'],
+
         'Monto Estimación Demanda'=>['campo'=>'pmonto_estimacion_demanda', 'tipo'=>'string'],
         'Firma Legal'=>['campo'=>'afirma_legal', 'tipo'=>'string'],
         'Fecha Asignación de Caso'=>['campo'=>'pfecha_asignacion_caso', 'tipo'=>'date'],

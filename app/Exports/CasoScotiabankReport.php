@@ -18,8 +18,14 @@ class CasoScotiabankReport extends BaseReport
       ['label' => 'ID', 'field' => 'id', 'type' => 'integer', 'align' => 'left', 'width' => 10],
       ['label' => 'Número de caso', 'field' => 'pnumero', 'type' => 'string', 'align' => 'left', 'width' => 15],
       ['label' => 'Identificación', 'field' => 'pnumero_cedula', 'type' => 'string', 'align' => 'left', 'width' => 15],
+      ['label' => 'Correo del demandado deudor o arrendatario', 'field' => 'pcorreo_demandado_deudor_o_arrendatario', 'type' => 'string', 'align' => 'left', 'width' => 15],
+
       ['label' => 'Operación Nueva', 'field' => 'pnumero_operacion1', 'type' => 'string', 'align' => 'left', 'width' => 25],
       ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 10],
+      ['label' => 'Detalle de la garantía', 'field' => 'pdetalle_garantia', 'type' => 'string', 'align' => 'center', 'width' => 10],
+      ['label' => 'Teléfono del demandado deudor o arrendatario', 'field' => 'ptelefono_demandado_deudor_o_arrendatario', 'type' => 'string', 'align' => 'center', 'width' => 10],
+      ['label' => 'Saldo Dolarizado', 'field' => 'psaldo_dolarizado', 'type' => 'string', 'align' => 'center', 'width' => 10],
+
       ['label' => 'Producto', 'field' => 'producto', 'type' => 'string', 'align' => 'left', 'width' => 30],
       ['label' => 'Nombre del Cliente', 'field' => 'pnombre_demandado', 'type' => 'string', 'align' => 'left', 'width' => 60],
       ['label' => 'Saldo Inicial', 'field' => 'asaldo_capital_operacion', 'type' => 'string', 'align' => 'right', 'width' => 20],
@@ -79,6 +85,10 @@ class CasoScotiabankReport extends BaseReport
         'casos.pnumero_operacion1',
         'casos.asaldo_capital_operacion',
         'casos.pdespacho_judicial_juzgado',
+        'casos.psaldo_dolarizado',
+        'casos.pcorreo_demandado_deudor_o_arrendatario',
+        'casos.pdetalle_garantia',
+        'casos.ptelefono_demandado_deudor_o_arrendatario',
         'casos.psaldo_dolarizado',
         DB::raw("
             CASE

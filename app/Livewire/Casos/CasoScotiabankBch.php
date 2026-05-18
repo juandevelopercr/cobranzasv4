@@ -1659,7 +1659,7 @@ class CasoScotiabankBch extends CasoManager
 
   public function descargarPlantilla()
   {
-      $fileName = "plantilla_casos_scotiabank.xlsx";
+      $fileName = "plantilla_casos_davibank.xlsx";
       return Excel::download(new CasosTemplateExport(Bank::SCOTIABANKBCH), $fileName);
   }
 }
