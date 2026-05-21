@@ -421,13 +421,15 @@ class Movimiento extends Model implements HasMedia
                 SUM(CASE WHEN moneda_id = 16 THEN COALESCE(monto, 0) + COALESCE(impuesto, 0) ELSE 0 END) AS total_debito_crc
             ")
         ->whereIn('cuenta_id', $ids)
-        ->where('status', $status)
         ->whereIn('tipo_movimiento', $tipos);
 
       // Condición para bloqueo de fondos
       if ($bloqueado) {
+        // Fondos bloqueados pueden estar en REGISTRADO o REVISION (ej: ELECTRONICO futuro pendiente)
+        $query->whereIn('status', ['REGISTRADO', 'REVISION']);
         $query->where('bloqueo_fondos', 1);
       } else {
+        $query->where('status', $status);
         $query->where(fn($q) => $q->where('bloqueo_fondos', '!=', 1)->orWhereNull('bloqueo_fondos'));
       }
 

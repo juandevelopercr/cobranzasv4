@@ -1519,11 +1519,10 @@ class Helpers
 
     if ($sumarBloqueados) {
       $dataDebitoBloqueado = Movimiento::getDebito($cuentasId, $dateStart, $dateEnd, $status, true);
-      $dataTransitoBloqueado = Movimiento::getTransito($cuentasId, $dateStart, $dateEnd, 'REVISION', true);
       $dataCreditoBloqueado = Movimiento::getCredito($cuentasId, $dateStart, $dateEnd, $status, true);
 
-      $bloqueadoUsd = $dataDebitoBloqueado['total_debito_usd'] + $dataTransitoBloqueado['total_transito_usd'];
-      $bloqueadoCrc = $dataDebitoBloqueado['total_debito_crc'] + $dataTransitoBloqueado['total_transito_crc'];
+      $bloqueadoUsd = $dataDebitoBloqueado['total_debito_usd'];
+      $bloqueadoCrc = $dataDebitoBloqueado['total_debito_crc'];
 
       $bloqueadoDepositoUsd = $dataCreditoBloqueado['total_credito_usd'];
       $bloqueadoDepositoCrc = $dataCreditoBloqueado['total_credito_crc'];
@@ -1632,12 +1631,10 @@ class Helpers
       $DateEnd = null;
       $status = 'REGISTRADO';
 
-      // Asume que los métodos getDebito y getTransito existen y están definidos como métodos estáticos en Movimiento
       $dataDebitoBloqueado = Movimiento::getDebito([$cuenta_id], $DateStart, $DateEnd, $status, true);
-      $dataTransitoBloqueado = Movimiento::getTransito([$cuenta_id], $DateStart, $DateEnd, 'REVISION', true);
 
-      $bloqueado_usd = $dataDebitoBloqueado['total_debito_usd'] + $dataTransitoBloqueado['total_transito_usd'];
-      $bloqueado_crc = $dataDebitoBloqueado['total_debito_crc'] + $dataTransitoBloqueado['total_transito_crc'];
+      $bloqueado_usd = $dataDebitoBloqueado['total_debito_usd'];
+      $bloqueado_crc = $dataDebitoBloqueado['total_debito_crc'];
 
       $total_bloqueado = $bloqueado_usd + $bloqueado_crc;
     }
