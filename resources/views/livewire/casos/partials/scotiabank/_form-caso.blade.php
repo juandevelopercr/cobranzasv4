@@ -217,11 +217,11 @@ $show = false;
       fireEvent: false,
       wireIgnore: true,
     },
-    asistente1: {
+    asistente1_id: {
       fireEvent: false,
       wireIgnore: true,
     },
-    asistente2: {
+    asistente2_id: {
       fireEvent: false,
       wireIgnore: true,
     },
@@ -310,9 +310,38 @@ $show = false;
 
     initSelect2();
 
+    window.syncSelect2Values = () => {
+      console.log('[DEBUG] syncSelect2Values - START');
+      Object.entries(select2Config).forEach(([id]) => {
+        const $select = $('#' + id);
+        const value = $wire[id];
+        console.log(`[DEBUG] Campo: ${id} | $wire value: ${value} | DOM encontrado: ${$select.length > 0}`);
+        if (!$select.length) return;
+        if (value !== null && value !== undefined && value !== '') {
+          $select.val(value).trigger('change.select2');
+          console.log(`[DEBUG] → Valor seteado en select2: ${id} = ${value}`);
+        } else {
+          console.warn(`[DEBUG] → Sin valor para: ${id}`);
+        }
+      });
+      console.log('[DEBUG] syncSelect2Values - END');
+    };
+
     $wire.on('select2', () => {
+      console.log('[DEBUG] Evento select2 recibido de Livewire');
       setTimeout(() => {
+        console.log('[DEBUG] $wire properties al momento del sync:', {
+          contact_id: $wire.contact_id,
+          product_id: $wire.product_id,
+          proceso_id: $wire.proceso_id,
+          currency_id: $wire.currency_id,
+          abogado_id: $wire.abogado_id,
+          asistente1_id: $wire.asistente1_id,
+          asistente2_id: $wire.asistente2_id,
+          bank_id: $wire.bank_id,
+        });
         initSelect2();
+        syncSelect2Values();
       }, 200); // Retraso para permitir que el DOM se estabilice
     });
   })

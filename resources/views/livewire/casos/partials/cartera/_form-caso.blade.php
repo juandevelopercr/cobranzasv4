@@ -64,11 +64,11 @@ $show = false;
       fireEvent: false,
       wireIgnore: true,
     },
-    asistente1: {
+    asistente1_id: {
       fireEvent: false,
       wireIgnore: true,
     },
-    asistente2: {
+    asistente2_id: {
       fireEvent: false,
       wireIgnore: true,
     },
@@ -157,9 +157,21 @@ $show = false;
 
     initSelect2();
 
+    window.syncSelect2Values = () => {
+      Object.entries(select2Config).forEach(([id]) => {
+        const $select = $('#' + id);
+        if (!$select.length) return;
+        const value = $wire[id];
+        if (value !== null && value !== undefined && value !== '') {
+          $select.val(value).trigger('change.select2');
+        }
+      });
+    };
+
     $wire.on('select2', () => {
       setTimeout(() => {
         initSelect2();
+        syncSelect2Values();
       }, 200); // Retraso para permitir que el DOM se estabilice
     });
   })
