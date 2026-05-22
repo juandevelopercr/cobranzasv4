@@ -808,6 +808,10 @@ window.datePickerLivewire = ({ wireEventName = 'dateSelected', watchProperty = n
       dateFormat: 'd-m-Y',
       //locale: spanishLocale,
       disableMobile: true,
+      parseDate: (dateStr) => {
+        const m = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (m) return new Date(+m[1], +m[2] - 1, +m[3]);
+      },
       onReady: function (selectedDates, dateStr, instance) {
         // Guardar la instancia para poder cerrarla después
         fpInstance = instance;
@@ -830,7 +834,7 @@ window.datePickerLivewire = ({ wireEventName = 'dateSelected', watchProperty = n
       this.$nextTick(() => {
         this.$watch(watchProperty, value => {
           if (el.flatpickrInstance) {
-            if (value) { el.flatpickrInstance.setDate(value, false); }
+            if (value) { el.flatpickrInstance.setDate(value, false, 'Y-m-d'); }
             else { el.flatpickrInstance.clear(); }
           }
         });
