@@ -840,10 +840,10 @@ window.datePickerLivewire = ({ wireEventName = 'dateSelected', watchProperty = n
         this.$watch(watchProperty, value => {
           if (el.flatpickrInstance) {
             if (value) {
-              const date = parseIsoDate(value) || value;
-              el.flatpickrInstance.setDate(date, false);
+              const date = parseIsoDate(value);
+              if (date) el.flatpickrInstance.setDate(date, false);
             } else {
-              el.flatpickrInstance.clear();
+              el.flatpickrInstance.clear(false);
             }
           }
         });
