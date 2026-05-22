@@ -782,6 +782,13 @@ if (typeof window !== 'undefined') {
 //console.log(numeroALetras(21));          // "VEINTIUNO CON 00/100"
 //console.log(numeroALetras(201599.30));   // "DOSCIENTOS UN MIL QUINIENTOS NOVENTA Y NUEVE CON 30/100"
 
+// Convierte string Y-m-d a Date local sin desvíos de zona horaria
+const parseIsoDate = (str) => {
+  if (typeof str !== 'string') return null;
+  const m = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+};
+
 // DatePicker con capacidad de copiar/pegar
 window.datePickerLivewire = ({ wireEventName = 'dateSelected', watchProperty = null }) => ({
   init(el) {
@@ -789,7 +796,7 @@ window.datePickerLivewire = ({ wireEventName = 'dateSelected', watchProperty = n
 
     // Debounce para prevenir múltiples llamadas
     let debounceTimer;
-    let fpInstance; // Guardaremos la instancia de Flatpickr aquí
+    let fpInstance;
 
     const dispatchDate = date => {
       clearTimeout(debounceTimer);
@@ -799,8 +806,12 @@ window.datePickerLivewire = ({ wireEventName = 'dateSelected', watchProperty = n
           id: datePickerId,
           date: date
         });
-      }, 300); // 300ms de debounce
+      }, 300);
     };
+
+    // Capturar valor inicial antes de que Flatpickr lo sobreescriba
+    const initialDate = parseIsoDate(el.value);
+    if (initialDate) el.value = '';
 
     // Inicializar Flatpickr con locale manual
     el.flatpickrInstance = flatpickr(el, {
@@ -808,24 +819,16 @@ window.datePickerLivewire = ({ wireEventName = 'dateSelected', watchProperty = n
       dateFormat: 'd-m-Y',
       //locale: spanishLocale,
       disableMobile: true,
-      parseDate: (dateStr) => {
-        const iso = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-        if (iso) return new Date(+iso[1], +iso[2] - 1, +iso[3]);
-        const dmy = dateStr.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
-        if (dmy) return new Date(+dmy[3], +dmy[2] - 1, +dmy[1]);
-      },
       onReady: function (selectedDates, dateStr, instance) {
-        // Guardar la instancia para poder cerrarla después
         fpInstance = instance;
-
-        // Remover atributo readonly para permitir copiar/pegar
         instance.input.removeAttribute('readonly');
+        // Establecer fecha inicial si venía en formato Y-m-d de PHP
+        if (initialDate) instance.setDate(initialDate, false);
       },
       onClose: function (selectedDates, dateStr) {
         dispatchDate(dateStr);
       },
       onChange: function (selectedDates, dateStr) {
-        // Solo se dispara si hay una fecha válida
         if (selectedDates.length > 0) {
           dispatchDate(dateStr);
         }
@@ -836,8 +839,12 @@ window.datePickerLivewire = ({ wireEventName = 'dateSelected', watchProperty = n
       this.$nextTick(() => {
         this.$watch(watchProperty, value => {
           if (el.flatpickrInstance) {
-            if (value) { el.flatpickrInstance.setDate(value, false, 'Y-m-d'); }
-            else { el.flatpickrInstance.clear(); }
+            if (value) {
+              const date = parseIsoDate(value) || value;
+              el.flatpickrInstance.setDate(date, false);
+            } else {
+              el.flatpickrInstance.clear();
+            }
           }
         });
       });
@@ -847,12 +854,8 @@ window.datePickerLivewire = ({ wireEventName = 'dateSelected', watchProperty = n
     el.addEventListener('input', () => {
       if (el.value === '') {
         dispatchDate('');
-
-        // Cerrar el datepicker después de seleccionar
         if (fpInstance) {
-          setTimeout(() => {
-            fpInstance.close();
-          }, 100); // Pequeño retardo para permitir que se complete la selección
+          setTimeout(() => fpInstance.close(), 100);
         }
       }
     });
