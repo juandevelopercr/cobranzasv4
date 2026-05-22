@@ -809,8 +809,10 @@ window.datePickerLivewire = ({ wireEventName = 'dateSelected', watchProperty = n
       //locale: spanishLocale,
       disableMobile: true,
       parseDate: (dateStr) => {
-        const m = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-        if (m) return new Date(+m[1], +m[2] - 1, +m[3]);
+        const iso = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (iso) return new Date(+iso[1], +iso[2] - 1, +iso[3]);
+        const dmy = dateStr.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+        if (dmy) return new Date(+dmy[3], +dmy[2] - 1, +dmy[1]);
       },
       onReady: function (selectedDates, dateStr, instance) {
         // Guardar la instancia para poder cerrarla después
