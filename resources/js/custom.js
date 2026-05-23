@@ -184,8 +184,16 @@ window.select2LivewireAjax = ({
 
     const initializeSelect2 = () => {
       if ($(el).hasClass('select2-hidden-accessible')) {
-        $(el).off('change').select2('destroy');
+        $(el).select2('destroy');
+      } else {
+        // Livewire morphdom puede quitar 'select2-hidden-accessible' sin wire:ignore,
+        // dejando contenedores Select2 huérfanos — limpiarlos
+        $(el).nextAll('.select2-container').remove();
       }
+      // Siempre eliminar listeners previos: evita que un listener de carga inicial
+      // dispare livewireComponent.set() durante trigger('change'), lo que causaría
+      // que updated('canton_id') reiniciara district_id = null
+      $(el).off('change');
 
       const config = {
         width: 'style',
@@ -259,8 +267,16 @@ window.select2Livewire = ({
 
     const initializeSelect2 = () => {
       if ($(el).hasClass('select2-hidden-accessible')) {
-        $(el).off('change').select2('destroy');
+        $(el).select2('destroy');
+      } else {
+        // Livewire morphdom puede quitar 'select2-hidden-accessible' sin wire:ignore,
+        // dejando contenedores Select2 huérfanos — limpiarlos
+        $(el).nextAll('.select2-container').remove();
       }
+      // Siempre eliminar listeners previos: evita que un listener de carga inicial
+      // dispare livewireComponent.set() durante trigger('change'), lo que causaría
+      // que updated('canton_id') reiniciara district_id = null
+      $(el).off('change');
 
       const config = {
         width: 'style'
@@ -272,7 +288,8 @@ window.select2Livewire = ({
 
       $(el).select2(config);
 
-      // Establece valor desde Livewire
+      // Establece valor desde Livewire. trigger('change') actualiza Select2.
+      // Nuestro handler se agrega DESPUÉS del trigger, así que no dispara aquí.
       const current = livewireComponent.get(wireModelName);
       $(el).val(current ?? '').trigger('change');
 
