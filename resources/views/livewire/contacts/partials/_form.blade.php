@@ -341,7 +341,13 @@
                 <div class="input-group input-group-merge has-validation">
                     <span class="input-group-text"><i class="bx bx-calendar"></i></span>
                     <input type="text" id="exoneration_date" @if (!$recordId) readonly @endif
-                        wire:model="exoneration_date" x-data="datePickerLivewire({ wireEventName: 'dateSelected' })" x-init="init($el)" wire:ignore
+                        wire:model="exoneration_date"
+                        x-data="{
+                          ...datePickerLivewire({ wireEventName: 'dateSelected', watchProperty: 'exonerationDateVal' }),
+                          exonerationDateVal: @entangle('exoneration_date')
+                        }"
+                        x-init="init($el)"
+                        wire:ignore
                         class="form-control date-picke @error('exoneration_date') is-invalid @enderror"
                         placeholder="dd-mm-aaaa">
                 </div>

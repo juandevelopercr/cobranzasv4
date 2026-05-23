@@ -1,5 +1,5 @@
-<div>
-  @if($action == 'list')
+<div wire:key="contacts-datatable-root" x-data="{ action: @entangle('action') }">
+  <div wire:key="contacts-list-container" :class="{ 'd-none': action !== 'list' }">
     <!-- DataTable with Buttons -->
     <div class="card">
       <h4 class="card-header pb-0 text-md-start text-center ms-n2">@if($this->type == 'customer') {{ __('Customers') }} @else {{ __('Suppliers') }} @endif</h4>
@@ -164,11 +164,11 @@
         <div style="width: 1%;"></div>
       </div>
     </div>
-  @endif
+  </div>
 
-  @if($action == 'create' || $action == 'edit')
+  <div wire:key="contacts-form-container" :class="{ 'd-none': action === 'list' }">
     @include('livewire.contacts.partials.form')
-  @endif
+  </div>
 </div>
 
 @push('scripts')
@@ -255,12 +255,11 @@
         };
 
         // Re-ejecuta las inicializaciones después de actualizaciones de Livewire
-        Livewire.on('reinitContactControls', () => {
-            console.log('Reinicializando controles después de Livewire update reinitContactControls');
+        $wire.on('reinitContactControls', () => {
             setTimeout(() => {
                 initializeSelect2Listado();
                 initializeRangePicker();
-            }, 200); // Retraso para permitir que el DOM se estabilice
+            }, 200);
         });
 
         // Para el formulario wire:
@@ -275,36 +274,35 @@
             selects.forEach((id) => {
                 const element = document.getElementById(id);
                 if (element) {
-                    // Verifica si Select2 ya está inicializado
                     if (!$(element).data('select2')) {
-                        console.log(`Inicializando Select2 para: ${id}`);
-
                         $(`#${id}`).select2();
 
-                        $(`#${id}`).on('change', function () {
+                        $(`#${id}`).on('change.select2livewire', function () {
                             const newValue = $(this).val();
-                            const livewireValue = @this.get(`${id}`); // Cambiar acceso a filters
-
+                            const livewireValue = @this.get(`${id}`);
                             if (newValue !== livewireValue) {
-                                @this.set(`${id}`, newValue); // Actualizar filters correctamente
+                                @this.set(`${id}`, newValue);
                             }
                         });
                     }
                 }
 
-                // Sincroniza el valor actual desde Livewire al Select2
-                const currentValue = @this.get(`${id}`); // Cambiar acceso a filters
-                $(`#${id}`).val(currentValue).trigger('change');
+                const currentValue = @this.get(`${id}`);
+                $(`#${id}`).val(currentValue).trigger('change.select2');
             });
         };
 
+        // Inicializar al montar (form siempre en DOM con Alpine :class)
+        setTimeout(() => {
+            initializeSelect2Listado();
+            initializeRangePicker();
+            initializeSelect2Form();
+        }, 100);
 
-        // Re-ejecuta las inicializaciones después de actualizaciones de Livewire
-        Livewire.on('reinitContactSelec2Form', () => {
-            console.log('Reinicializando controles select2 del formulario');
+        $wire.on('reinitContactSelec2Form', () => {
             setTimeout(() => {
                 initializeSelect2Form();
-            }, 200); // Retraso para permitir que el DOM se estabilice
+            }, 150);
         });
     })();
 </script>

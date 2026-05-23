@@ -338,10 +338,8 @@ window.select2Livewire = ({
 
 window.select2LivewireMultipleWithToggle = ({ wireModelName, postUpdate = true }) => ({
   init(el) {
-    if (!el) {
-      console.warn('[select2LivewireMultipleWithToggle] No se encontró el select.');
-      return;
-    }
+    // Sin el → auto-llamada de Alpine sin args, ignorar silenciosamente
+    if (!el) return;
 
     const livewireComponent = window.Livewire.find(el.closest('[wire\\:id]')?.getAttribute('wire:id'));
     if (!livewireComponent) {
@@ -498,12 +496,8 @@ function cleaveLivewire({
 } = {}) {
   return {
     rawValue: initialValue,
-    cleaveInstance: null,
     init(el) {
-      if (!el) {
-        console.warn('cleaveLivewire: El elemento no está disponible aún.');
-        return;
-      }
+      if (!el) return;
 
       // 🧠 Fallback: si no se pasa watchProperty, usar wireModelName
       // quito esto porque no funciona con los repeater
@@ -511,7 +505,8 @@ function cleaveLivewire({
 
       el.value = this.rawValue;
 
-      this.cleaveInstance = new Cleave(el, {
+      // Almacenar en el DOM (NO en Alpine — Cleave tiene refs circulares al DOM)
+      el._cleaveInstance = new Cleave(el, {
         numeral: true,
         numeralThousandsGroupStyle: 'thousand',
         numeralDecimalMark: decimalMark,
@@ -524,7 +519,7 @@ function cleaveLivewire({
       });
 
       el.addEventListener('input', () => {
-        this.rawValue = this.cleaveInstance.getRawValue();
+        this.rawValue = el._cleaveInstance.getRawValue();
 
         if (typeof rawValueCallback === 'function') {
           rawValueCallback(this.rawValue);
@@ -536,10 +531,9 @@ function cleaveLivewire({
       });
 
       if (watchProperty && typeof this.$watch === 'function') {
-        console.log('watch');
         this.$watch(watchProperty, value => {
-          if (this.cleaveInstance) {
-            this.cleaveInstance.setRawValue(value);
+          if (el._cleaveInstance) {
+            el._cleaveInstance.setRawValue(value);
             this.rawValue = value;
           } else {
             el.value = value;

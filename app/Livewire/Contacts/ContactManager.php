@@ -235,6 +235,10 @@ class ContactManager extends BaseComponent
     $this->active = 1;
     $this->dispatch('scroll-to-top');
     $this->dispatch('reinitContactSelec2Form');
+    $this->dispatch('select2:refresh', ['id' => 'country_id']);
+    $this->dispatch('select2:refresh', ['id' => 'province_id']);
+    $this->dispatch('select2:refresh', ['id' => 'canton_id']);
+    $this->dispatch('select2:refresh', ['id' => 'district_id']);
   }
 
   // Definir reglas, mensajes y atributos
@@ -511,7 +515,7 @@ class ContactManager extends BaseComponent
       $this->exoneration_date              = $record->exoneration_date;
       $this->exoneration_percent           = $record->exoneration_percent;
 
-      $this->exoneration_date = !empty($record->exoneration_date) ? Carbon::parse($record->exoneration_date)->format('d-m-Y') : $record->exoneration_date;
+      $this->exoneration_date = !empty($record->exoneration_date) ? Carbon::parse($record->exoneration_date)->format('Y-m-d') : null;
     } catch (ModelNotFoundException $e) {
       $this->dispatch('show-notification', ['type' => 'error', 'message' => __('An error has occurred. Record not found') . ' ' . $e->getMessage()]);
     }
@@ -523,6 +527,10 @@ class ContactManager extends BaseComponent
 
     $this->action = 'edit';
     $this->dispatch('reinitContactSelec2Form');
+    $this->dispatch('select2:refresh', ['id' => 'country_id']);
+    $this->dispatch('select2:refresh', ['id' => 'province_id']);
+    $this->dispatch('select2:refresh', ['id' => 'canton_id']);
+    $this->dispatch('select2:refresh', ['id' => 'district_id']);
   }
 
   public function update()
@@ -793,13 +801,13 @@ class ContactManager extends BaseComponent
           $this->district_id = null;
         }
         $this->dispatch('select2:refresh', ['id' => 'canton_id']);
-        //$this->dispatch('select2:refresh', ['id' => 'district_id']);
+        $this->dispatch('select2:refresh', ['id' => 'district_id']);
       } else if ($property == 'canton_id') {
         // Limpiar el district_id solo si no tiene valor preexistente
         if (!$this->district_id) {
           $this->district_id = null;
         }
-        //$this->dispatch('select2:refresh', ['id' => 'district_id']);
+        $this->dispatch('select2:refresh', ['id' => 'district_id']);
       }
 
       if ($property == 'condition_sale_id') {
