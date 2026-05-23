@@ -531,7 +531,16 @@ function cleaveLivewire({
       });
 
       if (watchProperty && typeof this.$watch === 'function') {
-        this.$watch(watchProperty, value => {
+        const prop = typeof watchProperty === 'string'
+          ? watchProperty.replace('$wire.', '')
+          : watchProperty;
+        this.$watch(() => {
+          try {
+            const cid = el.closest('[wire\\:id]')?.getAttribute('wire:id');
+            const comp = window.safeLivewireFind ? window.safeLivewireFind(cid) : window.Livewire?.find(cid);
+            return comp ? comp.get(prop) : null;
+          } catch (e) { return null; }
+        }, value => {
           if (el._cleaveInstance) {
             el._cleaveInstance.setRawValue(value);
             this.rawValue = value;
@@ -543,12 +552,25 @@ function cleaveLivewire({
 
       // Observar cambios si se proporciona watchProperty
       if (watchProperty && typeof disableWhen === 'function' && typeof this.$watch === 'function') {
-        this.$watch(watchProperty, value => {
+        const disableProp = typeof watchProperty === 'string'
+          ? watchProperty.replace('$wire.', '')
+          : watchProperty;
+        this.$watch(() => {
+          try {
+            const cid = el.closest('[wire\\:id]')?.getAttribute('wire:id');
+            const comp = window.safeLivewireFind ? window.safeLivewireFind(cid) : window.Livewire?.find(cid);
+            return comp ? comp.get(disableProp) : null;
+          } catch (e) { return null; }
+        }, value => {
           el.disabled = disableWhen(value);
         });
 
         // Evaluación inicial
-        el.disabled = disableWhen(this[watchProperty]);
+        try {
+          const cid = el.closest('[wire\\:id]')?.getAttribute('wire:id');
+          const comp = window.safeLivewireFind ? window.safeLivewireFind(cid) : window.Livewire?.find(cid);
+          el.disabled = disableWhen(comp ? comp.get(disableProp) : null);
+        } catch (e) { /* no-op */ }
       }
     }
   };
