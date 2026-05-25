@@ -509,16 +509,10 @@
                 }
             }
 
+            // Listener global — cubre monto, impuesto y filas de centro-costo
             document.addEventListener('input', function(e) {
-                if (e.target && e.target.id && e.target.id.startsWith('amount_')) {
-                    //console.log("Se reasigna el evento en centros de costo");
-                    calculaMontos(e);
-                }
-            });
-
-            document.addEventListener('keyup', function(e) {
-                if (e.target && e.target.id && e.target.id.startsWith('amount_')) {
-                    //console.log("keyup el evento en centros de costo");
+                const id = e.target?.id;
+                if (id && (id === 'monto' || id === 'impuesto' || id.startsWith('amount_'))) {
                     calculaMontos(e);
                 }
             });
