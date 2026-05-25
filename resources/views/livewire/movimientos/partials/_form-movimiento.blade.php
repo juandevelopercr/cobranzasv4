@@ -583,8 +583,8 @@
                     const formattedValue = isNaN(numericValue) ? '0.00' : numericValue.toFixed(2);
 
                     // 1. Actualizar el valor visualmente (Cleave.js maneja la máscara)
-                    if (input.cleaveInstance) {
-                        input.cleaveInstance.setRawValue(formattedValue);
+                    if (input._cleaveInstance) {
+                        input._cleaveInstance.setRawValue(formattedValue);
                     } else {
                         input.value = formattedValue;
                     }
@@ -686,8 +686,8 @@
 
                     console.log('[setFormattedValue] Value numérico:', numericValue);
 
-                    if (inputVisible.cleaveInstance) {
-                        inputVisible.cleaveInstance.setRawValue(numericValue.toFixed(2));
+                    if (inputVisible._cleaveInstance) {
+                        inputVisible._cleaveInstance.setRawValue(numericValue.toFixed(2));
                         console.log('[setFormattedValue] Usando cleaveInstance para setRawValue');
                     } else {
                         inputVisible.value = Number(numericValue).toLocaleString('en-US', {
