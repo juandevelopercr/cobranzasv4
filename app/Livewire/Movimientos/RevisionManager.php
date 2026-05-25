@@ -586,19 +586,19 @@ class RevisionManager extends BaseComponent
     $this->lugar = $record->lugar;
     $this->fecha = Carbon::parse($record->fecha)->format('Y-m-d');
 
-    $this->monto = empty($record->monto) ? 0 : $record->monto;
+    $this->monto = empty($record->monto) ? '0.00' : number_format((float)$record->monto, 2, '.', '');
     $this->monto_letras = $record->monto_letras;
     $this->tiene_retencion = $record->tiene_retencion;
-    $this->saldo_cancelar = empty($record->saldo_cancelar) ? 0 : $record->saldo_cancelar;
-    $this->diferencia = empty($record->diferencia) ? 0 : $record->diferencia;
+    $this->saldo_cancelar = empty($record->saldo_cancelar) ? '0.00' : number_format((float)$record->saldo_cancelar, 2, '.', '');
+    $this->diferencia = empty($record->diferencia) ? '0.00' : number_format((float)$record->diferencia, 2, '.', '');
     $this->descripcion = $record->descripcion;
     $this->numero = $record->numero;
     $this->beneficiario = $record->beneficiario;
 
     $this->comprobante_pendiente = $record->comprobante_pendiente;
     $this->bloqueo_fondos = $record->bloqueo_fondos;
-    $this->impuesto = empty($record->impuesto) ? 0 : $record->impuesto;
-    $this->total_general = empty($record->total_general) ? 0 : $record->total_general;
+    $this->impuesto = empty($record->impuesto) ? '0.00' : number_format((float)$record->impuesto, 2, '.', '');
+    $this->total_general = empty($record->total_general) ? '0.00' : number_format((float)$record->total_general, 2, '.', '');
 
     $this->status = $record->status;
     $this->listo_para_aprobar = $record->listo_para_aprobar;
