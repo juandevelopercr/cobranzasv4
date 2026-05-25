@@ -551,13 +551,10 @@ function cleaveLivewire({
         const prop = typeof watchProperty === 'string'
           ? watchProperty.replace('$wire.', '')
           : watchProperty;
-        this.$watch(() => {
-          try {
-            const cid = el.closest('[wire\\:id]')?.getAttribute('wire:id');
-            const comp = window.safeLivewireFind ? window.safeLivewireFind(cid) : window.Livewire?.find(cid);
-            return comp ? comp.get(prop) : null;
-          } catch (e) { return null; }
-        }, value => {
+        // Observar la propiedad Alpine local (@entangle) directamente.
+        // NO usar comp.get(prop) porque esas props son Alpine locales,
+        // no propiedades Livewire — comp.get() siempre devolvería null.
+        this.$watch(() => this[prop], value => {
           if (el._cleaveInstance) {
             el._cleaveInstance.setRawValue(value);
             this.rawValue = value;
@@ -567,27 +564,17 @@ function cleaveLivewire({
         });
       }
 
-      // Observar cambios si se proporciona watchProperty
+      // Observar cambios de disable si se proporciona disableWhen
       if (watchProperty && typeof disableWhen === 'function' && typeof this.$watch === 'function') {
         const disableProp = typeof watchProperty === 'string'
           ? watchProperty.replace('$wire.', '')
           : watchProperty;
-        this.$watch(() => {
-          try {
-            const cid = el.closest('[wire\\:id]')?.getAttribute('wire:id');
-            const comp = window.safeLivewireFind ? window.safeLivewireFind(cid) : window.Livewire?.find(cid);
-            return comp ? comp.get(disableProp) : null;
-          } catch (e) { return null; }
-        }, value => {
+        this.$watch(() => this[disableProp], value => {
           el.disabled = disableWhen(value);
         });
 
         // Evaluación inicial
-        try {
-          const cid = el.closest('[wire\\:id]')?.getAttribute('wire:id');
-          const comp = window.safeLivewireFind ? window.safeLivewireFind(cid) : window.Livewire?.find(cid);
-          el.disabled = disableWhen(comp ? comp.get(disableProp) : null);
-        } catch (e) { /* no-op */ }
+        el.disabled = disableWhen(this[disableProp] ?? null);
       }
     }
   };
