@@ -987,6 +987,14 @@ class ProformaManager extends TransactionManager {
       ->setTime(now()->hour, now()->minute, now()->second)
       ->format('Y-m-d H:i:s');
 
+    // Asegurar que el customer_name esté sincronizado con el contacto seleccionado
+    if (!empty($this->contact_id)) {
+      $contact = \App\Models\Contact::find($this->contact_id);
+      if ($contact) {
+        $this->customer_name = $contact->name;
+      }
+    }
+
     // Validar
     $validatedData = $this->validate();
 
@@ -1342,6 +1350,14 @@ class ProformaManager extends TransactionManager {
       $pago['total_medio_pago'] = str_replace(',', '', $pago['total_medio_pago']);
       return $pago;
     })->toArray();
+
+    // Asegurar que el customer_name esté sincronizado con el contacto seleccionado
+    if (!empty($this->contact_id)) {
+      $contact = \App\Models\Contact::find($this->contact_id);
+      if ($contact) {
+        $this->customer_name = $contact->name;
+      }
+    }
 
     // Validar
     $validatedData = $this->validate();
