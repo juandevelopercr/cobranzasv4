@@ -1105,6 +1105,37 @@ class InvoiceManager extends TransactionManager
 
       $cloned->save();
 
+      // Clonar líneas
+      foreach ($original->lines as $line) {
+        $clonedLine = $line->replicate();
+        $clonedLine->forceFill([
+          'transaction_id' => $cloned->id,
+        ]);
+        $clonedLine->save();
+
+        // Clonar impuestos
+        foreach ($line->taxes as $tax) {
+          $clonedTax = $tax->replicate();
+          $clonedTax->transaction_line_id = $clonedLine->id;
+          $clonedTax->save();
+        }
+
+        // Clonar descuentos
+        foreach ($line->discounts as $discount) {
+          $clonedDiscount = $discount->replicate();
+          $clonedDiscount->transaction_line_id = $clonedLine->id;
+          $clonedDiscount->save();
+        }
+      }
+
+      // Clonar otros cargos
+      foreach ($original->otherCharges as $charge) {
+        $clonedCharge = $charge->replicate();
+        $clonedCharge->transaction_id = $cloned->id;
+        $clonedCharge->save();
+      }
+
+
       DB::commit();
 
       // Livewire: Notificación y limpieza
