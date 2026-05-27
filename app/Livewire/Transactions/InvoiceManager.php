@@ -1052,8 +1052,8 @@ class InvoiceManager extends TransactionManager
       ])->lockForUpdate()->findOrFail($recordId);
 
       // Validar que la transacción original sea válida para nota de débito
-      if (!$this->isCreditNoteEligible($original->status)) {
-        throw new \Exception(__('El comprobante no es elegible para nota de débito. Seleccione un comprobante con estado ACEPTADO'));
+      if (!in_array($original->status, [Transaction::ACEPTADA, Transaction::RECHAZADA, Transaction::ANULADA])) {
+        throw new \Exception(__('El comprobante no es elegible para nota de débito. Seleccione un comprobante con estado ACEPTADO, RECHAZADA o ANULADA'));
       }
 
       $cloned = $original->replicate();
