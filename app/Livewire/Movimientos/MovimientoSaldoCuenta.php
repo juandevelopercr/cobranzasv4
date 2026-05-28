@@ -344,6 +344,7 @@ class MovimientoSaldoCuenta extends Component
             ->whereNotNull('t.numero_deposito_pago')
             ->whereNull("t.$field_fecha")
             ->where('t.proforma_status', Transaction::FACTURADA)
+            ->where('t.proforma_type', $type)
             ->whereIn('t.id', $subQuery2)
             ->when(
                 !empty($cuenta['banco_ids']) || !empty($cuenta['banco_id']),
