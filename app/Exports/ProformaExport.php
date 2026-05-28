@@ -37,7 +37,7 @@ class ProformaExport implements FromQuery, WithHeadings, WithMapping, WithStyles
             $record->proforma_no,
             $record->consecutivo,
             $record->customer_name,
-            $record->numero_caso . ' ' . $record->nombre_caso, // Caso Info
+            $record->caso_info ?? '', // Caso Info
             $record->user_name,
             $record->issuer_name,
             $record->codigo_contable_code, // Or name if available
