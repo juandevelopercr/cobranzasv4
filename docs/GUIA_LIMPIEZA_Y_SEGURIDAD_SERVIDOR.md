@@ -22,18 +22,11 @@ Conectarse al servidor por SSH y ejecutar:
 ```bash
 cd /home/consorti/public_html/public
 
-# Archivos del ataque SEO spam
 rm -f konten.html
 rm -f kw.txt
 rm -f path.txt
-
-# Sitemaps falsos creados por el atacante
 rm -f sitemap-1.xml sitemap-2.xml sitemap-3.xml sitemap-5.xml sitemap-index.xml
-
-# Archivo oculto de persistencia del atacante
 rm -f .vanta_notified
-
-# Carpetas ajenas al proyecto inyectadas por el atacante
 rm -rf /home/consorti/public_html/public/media
 rm -rf /home/consorti/public_html/public/static
 ```
@@ -42,16 +35,15 @@ rm -rf /home/consorti/public_html/public/static
 
 ## FASE 2 — Restaurar index.php limpio
 
-El `index.php` original de Laravel pesa ~300 bytes. Si pesa más de 400 bytes está infectado.
+Verificar tamaño — si pesa más de 400 bytes está infectado:
 
-**Verificar tamaño:**
 ```bash
 wc -c /home/consorti/public_html/public/index.php
 ```
 
-**Reemplazar con versión limpia:**
-```bash
-cat > /home/consorti/public_html/public/index.php << 'EOF'
+Abrir el archivo con el editor y reemplazar **todo el contenido** con exactamente esto:
+
+```php
 <?php
 
 use Illuminate\Http\Request;
@@ -66,59 +58,53 @@ require __DIR__.'/../vendor/autoload.php';
 
 (require_once __DIR__.'/../bootstrap/app.php')
     ->handleRequest(Request::capture());
-EOF
 ```
 
 ---
 
 ## FASE 3 — Restaurar robots.txt
 
-El atacante cambió el `robots.txt` a `Disallow:` vacío (permite que todos los bots indexen todo el sitio). Para un sistema administrativo que no debe aparecer en buscadores:
+El atacante cambió el `robots.txt` a `Disallow:` vacío para que Google indexara sus páginas spam. El archivo debe contener exactamente esto:
 
-```bash
-cat > /home/consorti/public_html/public/robots.txt << 'EOF'
+```
 User-agent: *
 Disallow: /
-EOF
 ```
 
 ---
 
 ## FASE 4 — Crear .htaccess en carpetas de storage
 
-Esto impide que cualquier archivo PHP subido al storage sea ejecutado por el servidor web. Es la protección principal contra el vector de ataque que fue usado.
+Impide que cualquier archivo PHP subido al storage sea ejecutado por el servidor web. Crear **dos archivos** con el mismo contenido:
+
+**Archivo 1:** `/home/consorti/public_html/storage/app/public/.htaccess`  
+**Archivo 2:** `/home/consorti/public_html/public/storage/.htaccess`
+
+Contenido exacto de ambos archivos:
+
+```apache
+Options -Indexes -ExecCGI
+
+<FilesMatch "\.(php|php3|php4|php5|php7|phtml|phar|sh|bash|py|pl|cgi|asp|aspx)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+php_flag engine off
+```
+
+Permisos de los archivos `.htaccess`:
 
 ```bash
-# Proteger el storage real
-cat > /home/consorti/public_html/storage/app/public/.htaccess << 'EOF'
-Options -Indexes -ExecCGI
-
-<FilesMatch "\.(php|php3|php4|php5|php7|phtml|phar|sh|bash|py|pl|cgi|asp|aspx)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-php_flag engine off
-EOF
-
-# Proteger el symlink public/storage
-cat > /home/consorti/public_html/public/storage/.htaccess << 'EOF'
-Options -Indexes -ExecCGI
-
-<FilesMatch "\.(php|php3|php4|php5|php7|phtml|phar|sh|bash|py|pl|cgi|asp|aspx)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-php_flag engine off
-EOF
+chmod 644 /home/consorti/public_html/storage/app/public/.htaccess
+chmod 644 /home/consorti/public_html/public/storage/.htaccess
 ```
 
 ---
 
 ## FASE 5 — Aplicar permisos correctos de Laravel
 
-### Tabla de referencia de permisos
+### Tabla de referencia
 
 | Recurso | Permiso | Razón |
 |---|---|---|
@@ -134,28 +120,21 @@ EOF
 ```bash
 cd /home/consorti/public_html
 
-# Propietario correcto
 chown -R consorti:consorti .
 
-# Permisos base
 find . -type f -not -path "./vendor/*" -not -path "./node_modules/*" -exec chmod 644 {} \;
 find . -type d -not -path "./vendor/*" -not -path "./node_modules/*" -exec chmod 755 {} \;
 
-# storage/ y bootstrap/cache/ escribibles por el servidor web
 chmod -R 775 storage bootstrap/cache
 find storage -type f -exec chmod 664 {} \;
 find bootstrap/cache -type f -exec chmod 664 {} \;
 
-# .env solo lo puede leer el dueño y el grupo
 chmod 640 .env
-
-# Archivos públicos
 chmod 644 public/index.php
 chmod 644 public/.htaccess
 chmod 644 storage/app/public/.htaccess
 chmod 644 public/storage/.htaccess
 
-# vendor (solo lectura)
 find vendor -type d -exec chmod 755 {} \;
 find vendor -type f -exec chmod 644 {} \;
 ```
@@ -166,39 +145,29 @@ find vendor -type f -exec chmod 644 {} \;
 
 El atacante robó todas las variables del `.env` enviándolas por Telegram. Asumir que TODO está comprometido.
 
-### Clave del usuario Linux
-
+**Clave del usuario Linux:**
 ```bash
 passwd consorti
 ```
 
-### Clave de la base de datos
-
+**Clave de la base de datos:**
 ```bash
 mysql -u root -p
 ```
-
 ```sql
 ALTER USER 'consorti_db'@'localhost' IDENTIFIED BY 'NuevaClaveSegura2026!';
 FLUSH PRIVILEGES;
 EXIT;
 ```
 
-### Actualizar .env con nuevas credenciales
+**Actualizar `.env`** — editar el archivo y cambiar `DB_PASSWORD` y cualquier API key robada.
 
-```bash
-nano /home/consorti/public_html/.env
-# Actualizar: DB_PASSWORD, APP_KEY si se rotó, y cualquier API key
-```
-
-### Limpiar caché de configuración
-
+**Limpiar caché:**
 ```bash
 cd /home/consorti/public_html
 php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
-# Si usa Octane:
 php artisan octane:reload
 ```
 
@@ -228,12 +197,14 @@ find /home/consorti/public_html/public -name ".*" 2>/dev/null
 
 ## FASE 8 — Aplicar lo mismo en cobranzas
 
+**Verificar si index.php está infectado:**
 ```bash
-# Verificar si index.php de cobranzas está infectado
 wc -c /home/cobranza/public_html/public/index.php
+```
 
-# Si está infectado, restaurarlo
-cat > /home/cobranza/public_html/public/index.php << 'EOF'
+Si pesa más de 400 bytes, reemplazar el contenido con:
+
+```php
 <?php
 
 use Illuminate\Http\Request;
@@ -248,10 +219,14 @@ require __DIR__.'/../vendor/autoload.php';
 
 (require_once __DIR__.'/../bootstrap/app.php')
     ->handleRequest(Request::capture());
-EOF
+```
 
-# .htaccess de storage en cobranzas
-cat > /home/cobranza/public_html/storage/app/public/.htaccess << 'EOF'
+Crear los `.htaccess` de storage con el mismo contenido indicado en la FASE 4:
+
+**Archivo 1:** `/home/cobranza/public_html/storage/app/public/.htaccess`  
+**Archivo 2:** `/home/cobranza/public_html/public/storage/.htaccess`
+
+```apache
 Options -Indexes -ExecCGI
 
 <FilesMatch "\.(php|php3|php4|php5|php7|phtml|phar|sh|bash|py|pl|cgi|asp|aspx)$">
@@ -260,20 +235,10 @@ Options -Indexes -ExecCGI
 </FilesMatch>
 
 php_flag engine off
-EOF
+```
 
-cat > /home/cobranza/public_html/public/storage/.htaccess << 'EOF'
-Options -Indexes -ExecCGI
-
-<FilesMatch "\.(php|php3|php4|php5|php7|phtml|phar|sh|bash|py|pl|cgi|asp|aspx)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-php_flag engine off
-EOF
-
-# Permisos cobranzas
+**Permisos cobranzas:**
+```bash
 cd /home/cobranza/public_html
 chown -R cobranza:cobranza .
 find . -type f -not -path "./vendor/*" -not -path "./node_modules/*" -exec chmod 644 {} \;
@@ -289,27 +254,16 @@ chmod 644 public/storage/.htaccess
 
 ## FASE 9 — Monitoreo automático (cron)
 
-Agregar al crontab de root para recibir alertas si aparece algún PHP en storage:
+Ejecutar `crontab -e` como root y agregar al final:
 
-```bash
-crontab -e
 ```
-
-Agregar al final:
-
-```bash
-# Alerta cada hora si aparece PHP en storage
 0 * * * * PHP_FILES=$(find /home/consorti/public_html/storage/app/public /home/consorti/public_html/public/storage -name "*.php" 2>/dev/null); if [ -n "$PHP_FILES" ]; then echo "$PHP_FILES" | mail -s "ALERTA: PHP en storage de Consortium" caceresvega@gmail.com; fi
-
-# Lo mismo para cobranzas
 0 * * * * PHP_FILES=$(find /home/cobranza/public_html/storage/app/public /home/cobranza/public_html/public/storage -name "*.php" 2>/dev/null); if [ -n "$PHP_FILES" ]; then echo "$PHP_FILES" | mail -s "ALERTA: PHP en storage de Cobranzas" caceresvega@gmail.com; fi
 ```
 
 ---
 
 ## FASE 10 — Limpiar Google Search Console
-
-Si los dominios están en Google Search Console:
 
 1. Entrar a [search.google.com/search-console](https://search.google.com/search-console)
 2. Seleccionar el dominio de consortium
@@ -324,24 +278,24 @@ Si los dominios están en Google Search Console:
 | Archivo / Carpeta | Qué era |
 |---|---|
 | `public/konten.html` | Plantilla HTML con contenido spam (522 KB) |
-| `public/kw.txt` | Lista de keywords spam para posicionar (468 KB) |
+| `public/kw.txt` | Lista de keywords spam (468 KB) |
 | `public/path.txt` | Rutas de páginas spam generadas |
 | `public/sitemap-*.xml` | Sitemaps falsos para indexación en Google |
 | `public/sitemap-index.xml` | Índice de sitemaps spam |
-| `public/.vanta_notified` | Archivo de persistencia/marca del atacante |
+| `public/.vanta_notified` | Archivo de persistencia del atacante |
 | `public/media/` | Carpeta inyectada, no era del proyecto |
 | `public/static/` | Carpeta inyectada, no era del proyecto |
-| `public/index.php` | Infectado con inyector SEO (2.34 KB vs 300 bytes original) |
+| `public/index.php` | Infectado con inyector SEO (2.34 KB vs ~300 bytes original) |
 | `public/robots.txt` | Modificado para permitir indexación total |
 
 ---
 
 ## Correcciones implementadas en el código (aplicadas vía git)
 
-Estas correcciones ya están en los repositorios `cobranzasv4` y `consortiumv4` en las ramas `main` y `consortium_test`:
+Aplicadas en `cobranzasv4` y `consortiumv4`, ramas `main` y `consortium_test`:
 
 | Corrección | Archivos afectados |
 |---|---|
 | Regla `NoExecutableFile` en todos los uploads | `CasoDocumentManager`, `MovimientoDocumentManager`, `DocumentsManager` |
 | Autenticación requerida en endpoints de API | `routes/api.php` — `/api/user-roles` y `/api/user-assignments` |
-| `basename()` en descargas de reportes | 5 controllers — `ReportCaso`, `ReportInvoice`, `ReportMovimiento`, `ReportProforma`, `ReportTransaction` |
+| `basename()` en descargas de reportes | `ReportCaso`, `ReportInvoice`, `ReportMovimiento`, `ReportProforma`, `ReportTransaction` |
