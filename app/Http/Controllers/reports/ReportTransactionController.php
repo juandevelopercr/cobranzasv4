@@ -215,6 +215,7 @@ class ReportTransactionController extends Controller
 
   public function descargarExportacionTransacciones($filename)
   {
+    $filename = basename($filename);
     $path = storage_path("app/public/exports/$filename");
 
     if (!file_exists($path)) {

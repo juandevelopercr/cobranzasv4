@@ -21,7 +21,7 @@ Route::get('/user-roles', function (Request $request) {
   return response()->json(
     $user->roles()->get(['roles.id', 'roles.name'])->toArray()
   );
-})->middleware('web'); // Usar middleware web para acceso desde la vista
+})->middleware(['web', 'auth']);
 
 Route::get('/user-assignments', function (Request $request) {
   $email = $request->query('email');
@@ -71,4 +71,4 @@ Route::get('/user-assignments', function (Request $request) {
     });
 
   return response()->json($fullAccessRoles->concat($assignments));
-});
+})->middleware(['web', 'auth']);

@@ -61,6 +61,7 @@ class ReportMovimientoController extends Controller
 
   public function descargarExportacion($filename)
   {
+    $filename = basename($filename);
     $filePath = storage_path("app/public/exports/$filename");
 
     if (!file_exists($filePath)) {

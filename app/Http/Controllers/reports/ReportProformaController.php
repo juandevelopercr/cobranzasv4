@@ -43,6 +43,7 @@ class ReportProformaController extends Controller
 
   public function descargarExportacionProforma($filename)
   {
+    $filename = basename($filename);
     $path = storage_path("app/public/proformas/$filename");
 
     if (!file_exists($path)) {
@@ -92,6 +93,7 @@ class ReportProformaController extends Controller
 
   private function descargarExportacionGenerica($filename, $folder)
   {
+    $filename = basename($filename);
     $path = storage_path("app/public/$folder/$filename");
 
     if (!file_exists($path)) {
@@ -132,6 +134,7 @@ class ReportProformaController extends Controller
 
   public function descargarExportacionCalculoReciboGasto($filename)
   {
+    $filename = basename($filename);
     $path = storage_path("app/public/proformas/$filename");
 
     if (!file_exists($path)) {
@@ -168,6 +171,7 @@ class ReportProformaController extends Controller
 
   public function descargarExportacionEstadoCuenta($filename)
   {
+    $filename = basename($filename);
     $path = storage_path("app/public/proformas/$filename");
 
     if (!file_exists($path)) {

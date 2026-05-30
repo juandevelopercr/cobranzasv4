@@ -42,6 +42,7 @@ class ReportInvoiceController extends Controller
 
   public function descargarExportacionInvoice($filename)
   {
+    $filename = basename($filename);
     $path = storage_path("app/public/invoices/$filename");
 
     if (!file_exists($path)) {
@@ -84,6 +85,7 @@ class ReportInvoiceController extends Controller
 
   public function descargarInvoiceReport($filename)
   {
+    $filename = basename($filename);
     $path = storage_path("app/public/invoices/$filename");
 
     if (!file_exists($path)) {

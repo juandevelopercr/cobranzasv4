@@ -61,6 +61,7 @@ class ReportCasoController extends Controller
 
   public function descargarExportacionCasos($filename)
   {
+    $filename = basename($filename);
     $filePath = storage_path("app/public/casos/$filename");
 
     if (!file_exists($filePath)) {
@@ -97,6 +98,7 @@ class ReportCasoController extends Controller
 
   public function descargarExportacionCasoPendiente($filename)
   {
+    $filename = basename($filename);
     $path = storage_path("app/public/casos/$filename");
 
     if (!file_exists($path)) {
