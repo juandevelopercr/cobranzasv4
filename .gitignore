@@ -39,3 +39,24 @@ RESUMEN_EJECUTIVO_AUDITORIA.md
 *_AUDITORIA*.md
 *_SEGURIDAD*.md
 *_VULNERABILIDADES*.md
+
+# Carpetas de asistentes de IA
+.agent/
+.gemini/
+.sixth/
+
+# Documentos de raíz que no van al repo
+LIVEWIRE_STANDARDS.md
+README.md
+
+# Logs en la raíz (deben estar en storage/logs)
+laravel-*.log
+worker.log
+
+# Archivos de certificados/claves
+*.pem
+*.key
+temp.*
+
+# Carpeta de pruebas locales
+/scratch/
