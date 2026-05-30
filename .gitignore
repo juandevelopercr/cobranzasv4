@@ -39,6 +39,7 @@ RESUMEN_EJECUTIVO_AUDITORIA.md
 *_AUDITORIA*.md
 *_SEGURIDAD*.md
 *_VULNERABILIDADES*.md
+!docs/GUIA_LIMPIEZA_Y_SEGURIDAD_SERVIDOR.md
 
 # Carpetas de asistentes de IA
 .agent/
@@ -62,4 +63,3 @@ temp.*
 /scratch/
 
 # Documentación interna local
-/docs/
