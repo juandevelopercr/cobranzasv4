@@ -3,6 +3,7 @@
 namespace App\Livewire\Casos;
 
 use App\Models\Caso;
+use App\Rules\NoExecutableFile;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use Livewire\WithFileUploads;
@@ -39,7 +40,7 @@ class CasoDocumentManager extends Component
   protected function rules()
   {
       return [
-          "file_by_collection.{$this->collection}" => "required|file|max:{$this->maxUploadSize}|mimes:pdf,doc,docx,xls,xlsx,jpg,png",
+          "file_by_collection.{$this->collection}" => ["required", "file", "max:{$this->maxUploadSize}", "mimes:pdf,doc,docx,xls,xlsx,jpg,png", new NoExecutableFile()],
           "title_by_collection.{$this->collection}" => 'required|string|max:100',
       ];
   }

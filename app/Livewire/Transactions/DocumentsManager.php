@@ -3,6 +3,7 @@
 namespace App\Livewire\Transactions;
 
 use App\Models\Transaction;
+use App\Rules\NoExecutableFile;
 use Illuminate\Database\QueryException;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -32,11 +33,14 @@ class DocumentsManager extends Component
   public $candelete;
   public $canexport;
 
-  protected $rules = [
-    'file' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,jpg,png|max:102400',
-    'title' => 'required|string|max:100',
-    'attach_to_email' => 'boolean',
-  ];
+  protected function rules(): array
+  {
+    return [
+      'file' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,png', 'max:102400', new NoExecutableFile()],
+      'title' => 'required|string|max:100',
+      'attach_to_email' => 'boolean',
+    ];
+  }
 
   public function messages()
   {

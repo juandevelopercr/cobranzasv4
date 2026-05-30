@@ -3,6 +3,7 @@
 namespace App\Livewire\Movimientos;
 
 use App\Models\Movimiento;
+use App\Rules\NoExecutableFile;
 use Illuminate\Database\QueryException;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -28,10 +29,13 @@ class MovimientoDocumentManager extends Component
   public $candelete;
   public $canexport;
 
-  protected $rules = [
-    'file' => 'required|mimes:pdf,doc,docx,xls,xlsx,jpg,png|max:102400',
-    'title' => 'required|string|max:100',
-  ];
+  protected function rules(): array
+  {
+    return [
+      'file' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,png', 'max:102400', new NoExecutableFile()],
+      'title' => 'required|string|max:100',
+    ];
+  }
 
   public function mount($movimiento_id, $onlyview = false, $canview, $cancreate, $canedit, $candelete, $canexport)
   {
