@@ -60,3 +60,6 @@ temp.*
 
 # Carpeta de pruebas locales
 /scratch/
+
+# Documentación interna local
+/docs/
