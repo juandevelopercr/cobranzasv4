@@ -126,8 +126,8 @@ find . -type f -not -path "./vendor/*" -not -path "./node_modules/*" -exec chmod
 find . -type d -not -path "./vendor/*" -not -path "./node_modules/*" -exec chmod 755 {} \;
 
 chmod -R 775 storage bootstrap/cache
-find storage -type f -exec chmod 664 {} \;
-find bootstrap/cache -type f -exec chmod 664 {} \;
+find storage -type f -print0 | xargs -0 chmod 664
+find bootstrap/cache -type f -print0 | xargs -0 chmod 664
 
 chmod 640 .env
 chmod 644 public/index.php
