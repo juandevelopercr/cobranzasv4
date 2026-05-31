@@ -13,10 +13,10 @@
     "barryvdh/laravel-dompdf": "^3.0",
     "chrome-php/chrome": "^1.13",
     "jms/serializer": "^3.32",
-    "laravel/framework": "^11.9",
+    "laravel/framework": "^13.0",
     "laravel/jetstream": "^5.3",
     "laravel/sanctum": "^4.0",
-    "laravel/tinker": "^2.9",
+    "laravel/tinker": "^3.0",
     "livewire/livewire": "^3.5",
     "maatwebsite/excel": "^3.1",
     "spatie/array-to-xml": "^3.4",
@@ -33,9 +33,9 @@
     "laravel/sail": "^1.26",
     "mockery/mockery": "^1.6",
     "nunomaduro/collision": "^8.0",
-    "phpunit/phpunit": "^10.5",
+    "phpunit/phpunit": "^12.0",
     "spatie/laravel-ignition": "^2.4",
-    "themeselection/sneat-html-laravel-jetstream": "^2.0"
+    "themeselection/sneat-html-laravel-jetstream": "^3.0"
   },
   "autoload": {
     "psr-4": {
@@ -69,6 +69,9 @@
       "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
       "@php artisan migrate --graceful --ansi"
     ]
+  },
+  "provide": {
+    "illuminate/contracts": "^12.0"
   },
   "extra": {
     "laravel": {
