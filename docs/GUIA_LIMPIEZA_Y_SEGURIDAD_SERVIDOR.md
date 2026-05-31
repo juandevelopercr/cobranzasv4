@@ -1,7 +1,7 @@
-# Guía de Limpieza y Seguridad del Servidor — Consortium
+# Guía de Limpieza y Seguridad del Servidor — Cobranzas
 
 **Fecha:** 30 de mayo de 2026  
-**Aplica a:** Servidor de producción Consortium (`144.126.137.131`) y Cobranzas (`209.145.53.12`)  
+**Aplica a:** Servidor de producción Cobranzas (`209.145.53.12`) y Consortium (`144.126.137.131`)  
 **Motivo:** Servidores comprometidos — ataque de webshells + inyección SEO spam en `index.php`
 
 ---
@@ -20,15 +20,15 @@ Los servidores fueron comprometidos mediante dos tipos de ataque:
 Conectarse al servidor por SSH y ejecutar:
 
 ```bash
-cd /home/consorti/public_html/public
+cd /home/cobranza/public_html/public
 
 rm -f konten.html
 rm -f kw.txt
 rm -f path.txt
 rm -f sitemap-1.xml sitemap-2.xml sitemap-3.xml sitemap-5.xml sitemap-index.xml
 rm -f .vanta_notified
-rm -rf /home/consorti/public_html/public/media
-rm -rf /home/consorti/public_html/public/static
+rm -rf /home/cobranza/public_html/public/media
+rm -rf /home/cobranza/public_html/public/static
 ```
 
 ---
@@ -38,7 +38,7 @@ rm -rf /home/consorti/public_html/public/static
 Verificar tamaño — si pesa más de 400 bytes está infectado:
 
 ```bash
-wc -c /home/consorti/public_html/public/index.php
+wc -c /home/cobranza/public_html/public/index.php
 ```
 
 Abrir el archivo con el editor y reemplazar **todo el contenido** con exactamente esto:
@@ -77,8 +77,8 @@ Disallow: /
 
 Impide que cualquier archivo PHP subido al storage sea ejecutado por el servidor web. Crear **dos archivos** con el mismo contenido:
 
-**Archivo 1:** `/home/consorti/public_html/storage/app/public/.htaccess`  
-**Archivo 2:** `/home/consorti/public_html/public/storage/.htaccess`
+**Archivo 1:** `/home/cobranza/public_html/storage/app/public/.htaccess`  
+**Archivo 2:** `/home/cobranza/public_html/public/storage/.htaccess`
 
 Contenido exacto de ambos archivos:
 
@@ -96,8 +96,8 @@ php_flag engine off
 Permisos de los archivos `.htaccess`:
 
 ```bash
-chmod 644 /home/consorti/public_html/storage/app/public/.htaccess
-chmod 644 /home/consorti/public_html/public/storage/.htaccess
+chmod 644 /home/cobranza/public_html/storage/app/public/.htaccess
+chmod 644 /home/cobranza/public_html/public/storage/.htaccess
 ```
 
 ---
@@ -115,12 +115,12 @@ chmod 644 /home/consorti/public_html/public/storage/.htaccess
 | `.env` | `640` | Solo dueño y grupo pueden leerlo |
 | `.htaccess` de storage | `644` | Solo lectura |
 
-### Comandos para consortium
+### Comandos para cobranzas
 
 ```bash
-cd /home/consorti/public_html
+cd /home/cobranza/public_html
 
-chown -R consorti:consorti .
+chown -R cobranza:cobranza .
 
 find . -type f -not -path "./vendor/*" -not -path "./node_modules/*" -exec chmod 644 {} \;
 find . -type d -not -path "./vendor/*" -not -path "./node_modules/*" -exec chmod 755 {} \;
@@ -147,7 +147,7 @@ El atacante robó todas las variables del `.env` enviándolas por Telegram. Asum
 
 **Clave del usuario Linux:**
 ```bash
-passwd consorti
+passwd cobranza
 ```
 
 **Clave de la base de datos:**
@@ -155,7 +155,7 @@ passwd consorti
 mysql -u root -p
 ```
 ```sql
-ALTER USER 'consorti_db'@'localhost' IDENTIFIED BY 'NuevaClaveSegura2026!';
+ALTER USER 'cobranza_db'@'%' IDENTIFIED BY 'NuevaClaveSegura2026!';
 FLUSH PRIVILEGES;
 EXIT;
 ```
@@ -164,11 +164,10 @@ EXIT;
 
 **Limpiar caché:**
 ```bash
-cd /home/consorti/public_html
+cd /home/cobranza/public_html
 php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
-php artisan octane:reload
 ```
 
 ---
@@ -177,29 +176,29 @@ php artisan octane:reload
 
 ```bash
 # Webshells en storage
-find /home/consorti/public_html/storage/app/public -name "*.php" 2>/dev/null
+find /home/cobranza/public_html/storage/app/public -name "*.php" 2>/dev/null
 
 # index.php modificados en subdirectorios
-find /home/consorti/public_html -name "index.php" -size +1k \
+find /home/cobranza/public_html -name "index.php" -size +1k \
   -not -path "*/vendor/*" \
   -not -path "*/node_modules/*" 2>/dev/null
 
 # PHP inyectados recientemente en carpeta public
-find /home/consorti/public_html/public -name "*.php" \
-  -newer /home/consorti/public_html/composer.json \
+find /home/cobranza/public_html/public -name "*.php" \
+  -newer /home/cobranza/public_html/composer.json \
   -not -path "*/vendor/*" 2>/dev/null
 
 # Archivos ocultos sospechosos
-find /home/consorti/public_html/public -name ".*" 2>/dev/null
+find /home/cobranza/public_html/public -name ".*" 2>/dev/null
 ```
 
 ---
 
-## FASE 8 — Aplicar lo mismo en cobranzas
+## FASE 8 — Aplicar lo mismo en consortium
 
 **Verificar si index.php está infectado:**
 ```bash
-wc -c /home/cobranza/public_html/public/index.php
+wc -c /home/consorti/public_html/public/index.php
 ```
 
 Si pesa más de 400 bytes, reemplazar el contenido con:
@@ -223,8 +222,8 @@ require __DIR__.'/../vendor/autoload.php';
 
 Crear los `.htaccess` de storage con el mismo contenido indicado en la FASE 4:
 
-**Archivo 1:** `/home/cobranza/public_html/storage/app/public/.htaccess`  
-**Archivo 2:** `/home/cobranza/public_html/public/storage/.htaccess`
+**Archivo 1:** `/home/consorti/public_html/storage/app/public/.htaccess`  
+**Archivo 2:** `/home/consorti/public_html/public/storage/.htaccess`
 
 ```apache
 Options -Indexes -ExecCGI
@@ -237,10 +236,10 @@ Options -Indexes -ExecCGI
 php_flag engine off
 ```
 
-**Permisos cobranzas:**
+**Permisos consortium:**
 ```bash
-cd /home/cobranza/public_html
-chown -R cobranza:cobranza .
+cd /home/consorti/public_html
+chown -R consorti:consorti .
 find . -type f -not -path "./vendor/*" -not -path "./node_modules/*" -exec chmod 644 {} \;
 find . -type d -not -path "./vendor/*" -not -path "./node_modules/*" -exec chmod 755 {} \;
 chmod -R 775 storage bootstrap/cache
@@ -257,8 +256,8 @@ chmod 644 public/storage/.htaccess
 Ejecutar `crontab -e` como root y agregar al final:
 
 ```
-0 * * * * PHP_FILES=$(find /home/consorti/public_html/storage/app/public /home/consorti/public_html/public/storage -name "*.php" 2>/dev/null); if [ -n "$PHP_FILES" ]; then echo "$PHP_FILES" | mail -s "ALERTA: PHP en storage de Consortium" caceresvega@gmail.com; fi
 0 * * * * PHP_FILES=$(find /home/cobranza/public_html/storage/app/public /home/cobranza/public_html/public/storage -name "*.php" 2>/dev/null); if [ -n "$PHP_FILES" ]; then echo "$PHP_FILES" | mail -s "ALERTA: PHP en storage de Cobranzas" caceresvega@gmail.com; fi
+0 * * * * PHP_FILES=$(find /home/consorti/public_html/storage/app/public /home/consorti/public_html/public/storage -name "*.php" 2>/dev/null); if [ -n "$PHP_FILES" ]; then echo "$PHP_FILES" | mail -s "ALERTA: PHP en storage de Consortium" caceresvega@gmail.com; fi
 ```
 
 ---
@@ -266,10 +265,10 @@ Ejecutar `crontab -e` como root y agregar al final:
 ## FASE 10 — Limpiar Google Search Console
 
 1. Entrar a [search.google.com/search-console](https://search.google.com/search-console)
-2. Seleccionar el dominio de consortium
+2. Seleccionar el dominio de cobranzas
 3. Ir a **Eliminación de URLs** → solicitar eliminación temporal de URLs spam
 4. Ir a **Inspección de URL** en el dominio raíz → pedir re-indexación
-5. Repetir para el dominio de cobranzas
+5. Repetir para el dominio de consortium
 
 ---
 
@@ -292,7 +291,7 @@ Ejecutar `crontab -e` como root y agregar al final:
 
 ## Correcciones implementadas en el código (aplicadas vía git)
 
-Aplicadas en `cobranzasv4` y `consortiumv4`, ramas `main` y `consortium_test`:
+Aplicadas en `cobranzasv4` y `consortiumv4`, rama `main`:
 
 | Corrección | Archivos afectados |
 |---|---|
