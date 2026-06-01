@@ -193,4 +193,18 @@ return [
   'features' => [
     'debug' => true,
   ],
+
+  /*
+    |---------------------------------------------------------------------------
+    | Release Token
+    |---------------------------------------------------------------------------
+    |
+    | Livewire stores this token in each component snapshot sent to the browser.
+    | When the token changes (e.g. after a deployment), Livewire will detect the
+    | mismatch and show a "please refresh the page" prompt instead of a 500 error.
+    | Change LIVEWIRE_RELEASE_TOKEN in .env on every production deploy.
+    |
+    */
+
+  'release_token' => env('LIVEWIRE_RELEASE_TOKEN', 'v1'),
 ];

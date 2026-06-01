@@ -106,14 +106,14 @@ chmod 644 /home/cobranza/public_html/public/storage/.htaccess
 
 ### Tabla de referencia
 
-| Recurso | Permiso | Razón |
-|---|---|---|
-| Archivos PHP, blade, config | `644` | Solo el dueño escribe, nadie ejecuta desde web |
-| Carpetas normales | `755` | Web server puede entrar pero no escribir |
-| `storage/` y `bootstrap/cache/` | `775` | Web server necesita escribir logs y cache |
-| Archivos dentro de `storage/` | `664` | Web server puede escribir archivos generados |
-| `.env` | `640` | Solo dueño y grupo pueden leerlo |
-| `.htaccess` de storage | `644` | Solo lectura |
+| Recurso                         | Permiso | Razón                                          |
+| ------------------------------- | ------- | ---------------------------------------------- |
+| Archivos PHP, blade, config     | `644`   | Solo el dueño escribe, nadie ejecuta desde web |
+| Carpetas normales               | `755`   | Web server puede entrar pero no escribir       |
+| `storage/` y `bootstrap/cache/` | `775`   | Web server necesita escribir logs y cache      |
+| Archivos dentro de `storage/`   | `664`   | Web server puede escribir archivos generados   |
+| `.env`                          | `640`   | Solo dueño y grupo pueden leerlo               |
+| `.htaccess` de storage          | `644`   | Solo lectura                                   |
 
 ### Comandos para cobranzas
 
@@ -146,14 +146,17 @@ find vendor -type f -exec chmod 644 {} \;
 El atacante robó todas las variables del `.env` enviándolas por Telegram. Asumir que TODO está comprometido.
 
 **Clave del usuario Linux:**
+
 ```bash
 passwd cobranza
 ```
 
 **Clave de la base de datos:**
+
 ```bash
 mysql -u root -p
 ```
+
 ```sql
 ALTER USER 'cobranza_db'@'%' IDENTIFIED BY 'NuevaClaveSegura2026!';
 FLUSH PRIVILEGES;
@@ -163,6 +166,7 @@ EXIT;
 **Actualizar `.env`** — editar el archivo y cambiar `DB_PASSWORD` y cualquier API key robada.
 
 **Limpiar caché:**
+
 ```bash
 cd /home/cobranza/public_html
 php artisan config:clear
@@ -197,6 +201,7 @@ find /home/cobranza/public_html/public -name ".*" 2>/dev/null
 ## FASE 8 — Aplicar lo mismo en consortium
 
 **Verificar si index.php está infectado:**
+
 ```bash
 wc -c /home/consorti/public_html/public/index.php
 ```
@@ -237,6 +242,7 @@ php_flag engine off
 ```
 
 **Permisos consortium:**
+
 ```bash
 cd /home/consorti/public_html
 chown -R consorti:consorti .
@@ -248,6 +254,30 @@ chmod 640 .env
 chmod 644 storage/app/public/.htaccess
 chmod 644 public/storage/.htaccess
 ```
+
+---
+
+## FASE 10 — Protección adicional en uploads de documentos
+
+En el commit `e980c5f9c2c751c4d04aa52d737244faeaa8a6c4` se agregó una validación de seguridad adicional para los uploads de documentos en el código de Laravel.
+
+Cambios principales:
+
+- Se creó la regla `App\Rules\NoExecutableFile`.
+- Se aplicó en los componentes Livewire que gestionan documentos:
+  - `app/Livewire/Casos/CasoDocumentManager.php`
+  - `app/Livewire/Movimientos/MovimientoDocumentManager.php`
+  - `app/Livewire/Transactions/DocumentsManager.php`
+- La regla bloquea extensiones peligrosas como `php`, `sh`, `py`, `exe`, `bat`, `cmd`, `com`, `cgi`, `asp`, `aspx`, `jsp`, entre otras.
+- También bloquea tipos MIME sospechosos como `application/x-php`, `text/x-php`, `application/x-executable`, `application/x-shellscript`, `text/x-shellscript`, `application/x-sh`.
+
+Recomendación para revisión de `erpv4`:
+
+- Buscar componentes de subida de archivos similares o servicios que acepten uploads de documentos.
+- Verificar si existen reglas de validación equivalentes y, si no, aplicar la misma lógica de `NoExecutableFile`.
+- Evaluar cuidadosamente antes de implementar para no romper el comportamiento existente.
+
+> Nota: en el workspace actual no se encontró otra copia de `docs/GUIA_LIMPIEZA_Y_SEGURIDAD_SERVIDOR.md` en `/dev/consortiumv4`.
 
 ---
 
@@ -274,18 +304,18 @@ Ejecutar `crontab -e` como root y agregar al final:
 
 ## Resumen de archivos eliminados
 
-| Archivo / Carpeta | Qué era |
-|---|---|
-| `public/konten.html` | Plantilla HTML con contenido spam (522 KB) |
-| `public/kw.txt` | Lista de keywords spam (468 KB) |
-| `public/path.txt` | Rutas de páginas spam generadas |
-| `public/sitemap-*.xml` | Sitemaps falsos para indexación en Google |
-| `public/sitemap-index.xml` | Índice de sitemaps spam |
-| `public/.vanta_notified` | Archivo de persistencia del atacante |
-| `public/media/` | Carpeta inyectada, no era del proyecto |
-| `public/static/` | Carpeta inyectada, no era del proyecto |
-| `public/index.php` | Infectado con inyector SEO (2.34 KB vs ~300 bytes original) |
-| `public/robots.txt` | Modificado para permitir indexación total |
+| Archivo / Carpeta          | Qué era                                                     |
+| -------------------------- | ----------------------------------------------------------- |
+| `public/konten.html`       | Plantilla HTML con contenido spam (522 KB)                  |
+| `public/kw.txt`            | Lista de keywords spam (468 KB)                             |
+| `public/path.txt`          | Rutas de páginas spam generadas                             |
+| `public/sitemap-*.xml`     | Sitemaps falsos para indexación en Google                   |
+| `public/sitemap-index.xml` | Índice de sitemaps spam                                     |
+| `public/.vanta_notified`   | Archivo de persistencia del atacante                        |
+| `public/media/`            | Carpeta inyectada, no era del proyecto                      |
+| `public/static/`           | Carpeta inyectada, no era del proyecto                      |
+| `public/index.php`         | Infectado con inyector SEO (2.34 KB vs ~300 bytes original) |
+| `public/robots.txt`        | Modificado para permitir indexación total                   |
 
 ---
 
@@ -293,8 +323,8 @@ Ejecutar `crontab -e` como root y agregar al final:
 
 Aplicadas en `cobranzasv4` y `consortiumv4`, rama `main`:
 
-| Corrección | Archivos afectados |
-|---|---|
-| Regla `NoExecutableFile` en todos los uploads | `CasoDocumentManager`, `MovimientoDocumentManager`, `DocumentsManager` |
-| Autenticación requerida en endpoints de API | `routes/api.php` — `/api/user-roles` y `/api/user-assignments` |
-| `basename()` en descargas de reportes | `ReportCaso`, `ReportInvoice`, `ReportMovimiento`, `ReportProforma`, `ReportTransaction` |
+| Corrección                                    | Archivos afectados                                                                       |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Regla `NoExecutableFile` en todos los uploads | `CasoDocumentManager`, `MovimientoDocumentManager`, `DocumentsManager`                   |
+| Autenticación requerida en endpoints de API   | `routes/api.php` — `/api/user-roles` y `/api/user-assignments`                           |
+| `basename()` en descargas de reportes         | `ReportCaso`, `ReportInvoice`, `ReportMovimiento`, `ReportProforma`, `ReportTransaction` |

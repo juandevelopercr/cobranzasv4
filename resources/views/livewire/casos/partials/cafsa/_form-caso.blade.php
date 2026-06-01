@@ -3,7 +3,7 @@ use App\Models\User;
 use App\Models\CasoEstado;
 use App\Models\CasoProducto;
 $show = false;
-//@if (in_array($this->product_id, [CasoProducto::TARJETA_CREDITO, CasoProducto::PYME, CasoProducto::PERSONAL]))
+//if (in_array($this->product_id, [CasoProducto::TARJETA_CREDITO, CasoProducto::PYME, CasoProducto::PERSONAL]))
 ?>
 <!-- Formulario para productos -->
 <form wire:submit.prevent="{{ $action == 'edit' ? 'update' : 'store' }}">
