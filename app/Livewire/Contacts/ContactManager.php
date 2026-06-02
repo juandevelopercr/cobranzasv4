@@ -21,6 +21,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -263,13 +264,13 @@ class ContactManager extends BaseComponent
               'max:12',
               'regex:/^[A-Za-z0-9]+$/',
               $this->action === 'create'
-                ? 'unique:contacts,identification'
-                : 'unique:contacts,identification,' . $this->recordId
+                ? Rule::unique('contacts', 'identification')->whereNull('deleted_at')
+                : Rule::unique('contacts', 'identification')->whereNull('deleted_at')->ignore($this->recordId)
             ]
           : (
               $this->action === 'create'
-                ? 'required|string|max:12|unique:contacts,identification'
-                : 'required|string|max:12|unique:contacts,identification,' . $this->recordId
+                ? ['required', 'string', 'max:12', Rule::unique('contacts', 'identification')->whereNull('deleted_at')]
+                : ['required', 'string', 'max:12', Rule::unique('contacts', 'identification')->whereNull('deleted_at')->ignore($this->recordId)]
             )
       ),
       'economicActivities' => 'nullable|array|min:0',
@@ -437,11 +438,26 @@ class ContactManager extends BaseComponent
     $validatedData['district_id'] = empty($validatedData['district_id']) ? null : $validatedData['district_id'];
     $validatedData['pay_term_number'] = empty($validatedData['pay_term_number']) ? null : $validatedData['pay_term_number'];
     try {
-      $record = Contact::create($validatedData);
       $closeForm = $this->closeForm;
-      if ($record) {
-        $record->economicActivities()->sync($validatedData['economicActivities'] ?? []);
+
+      // Si existe un registro eliminado con la misma identificación, restaurarlo y actualizar
+      $trashedContact = Contact::withTrashed()
+        ->where('identification', $validatedData['identification'])
+        ->whereNotNull('deleted_at')
+        ->first();
+
+      if ($trashedContact) {
+        $trashedContact->restore();
+        $trashedContact->update($validatedData);
+        $record = $trashedContact;
+        $message = __('El registro existía eliminado y fue restaurado con los nuevos datos.');
+      } else {
+        $record = Contact::create($validatedData);
+        $message = __('The record has been created');
       }
+
+      $record->economicActivities()->sync($validatedData['economicActivities'] ?? []);
+
       $this->resetControls();
       if ($closeForm) {
         $this->action = 'list';
@@ -449,7 +465,7 @@ class ContactManager extends BaseComponent
         $this->action = 'edit';
         $this->edit($record->id);
       }
-      $this->dispatch('show-notification', ['type' => 'success', 'message' => __('The record has been created')]);
+      $this->dispatch('show-notification', ['type' => 'success', 'message' => $message]);
     } catch (\Exception $e) {
       $this->dispatch('show-notification', ['type' => 'error', 'message' => __('Ocurrió un error al crear el registro: ') . $e->getMessage()]);
     }
