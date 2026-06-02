@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('business', function (Blueprint $table) {
-            $table->text('expense_notification_email')->nullable()->after('notification_email');
-        });
+        if (!Schema::hasColumn('business', 'expense_notification_email')) {
+            Schema::table('business', function (Blueprint $table) {
+                $table->text('expense_notification_email')->nullable()->after('notification_email');
+            });
+        }
     }
 
     /**
