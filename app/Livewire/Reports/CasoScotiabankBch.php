@@ -7,8 +7,8 @@ use App\Models\User;
 use Livewire\Component;
 use App\Models\Currency;
 use App\Models\CasoProducto;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\CasoScotiabankBchReport;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class CasoScotiabankBch extends Component
 {
@@ -68,24 +68,17 @@ class CasoScotiabankBch extends Component
 
     $this->loading = true;
 
-    set_time_limit(300);
-
-    $titleDate = $this->filter_date ? ' ' . $this->filter_date : '';
-
-    // Generar y descargar el Excel
-    return Excel::download(new CasoScotiabankBchReport(
-      [
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
         'filter_date'             => $this->filter_date,
         'filter_numero_caso'      => $this->filter_numero_caso,
         'filter_abogado'          => $this->filter_abogado,
         'filter_asistente'        => $this->filter_asistente,
         'filter_currency'         => $this->filter_currency,
         'filter_exclude_products' => $this->filter_exclude_products,
-      ],
-      'REPORTE DE CASOS DE DAVIBANK BCH' . $titleDate
-    ), 'reporte-casos-davibank-bch.xlsx');
+    ], now()->addMinutes(10));
 
-    // No necesitas $this->loading = false aquí,
-    // Livewire maneja la acción de descarga automáticamente
+    $this->dispatch('start-download', url: route('reports.casos-scotiabank-bch.download', ['key' => $key]));
+    $this->loading = false;
   }
 }

@@ -7,8 +7,8 @@ use App\Models\User;
 use Livewire\Component;
 use App\Models\Currency;
 use App\Models\CasoProducto;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\CasoScotiabankReport;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class CasoScotiabank extends Component
 {
@@ -68,24 +68,20 @@ class CasoScotiabank extends Component
 
     $this->loading = true;
 
-    set_time_limit(300);
-
-    $titleDate = $this->filter_date ? ' ' . $this->filter_date : '';
-
-    // Generar y descargar el Excel
-    return Excel::download(new CasoScotiabankReport(
-      [
+    // Guardar filtros en caché y despachar evento de descarga.
+    // Esto evita que Livewire reciba la respuesta binaria del Excel
+    // (causa del "pantallazo negro") — el browser descarga directamente.
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
         'filter_date'             => $this->filter_date,
         'filter_numero_caso'      => $this->filter_numero_caso,
         'filter_abogado'          => $this->filter_abogado,
         'filter_asistente'        => $this->filter_asistente,
         'filter_currency'         => $this->filter_currency,
         'filter_exclude_products' => $this->filter_exclude_products,
-      ],
-      'REPORTE DE CASOS DE DAVIBANK' . $titleDate
-    ), 'reporte-casos-davibank.xlsx');
+    ], now()->addMinutes(10));
 
-    // No necesitas $this->loading = false aquí,
-    // Livewire maneja la acción de descarga automáticamente
+    $this->dispatch('start-download', url: route('reports.casos-scotiabank.download', ['key' => $key]));
+    $this->loading = false;
   }
 }

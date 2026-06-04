@@ -187,6 +187,16 @@
                 }, 200); // Retraso para permitir que el DOM se estabilice
             });
 
+            // Descarga sin pantalla negra: el browser abre la URL directamente
+            Livewire.on('start-download', ({ url }) => {
+                const a = document.createElement('a');
+                a.href = url;
+                a.setAttribute('download', '');
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+
         })();
     </script>
 @endscript

@@ -4,6 +4,9 @@ namespace App\Http\Controllers\reports;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Exports\CasoScotiabankReport;
+use App\Exports\CasoScotiabankBchReport;
+use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ReportJefeController extends Controller
@@ -172,5 +175,37 @@ class ReportJefeController extends Controller
   public function casoCarteraComprada()
   {
     return view('content.reports.casos-cartera-comprada');
+  }
+
+  public function downloadDavibank(string $key)
+  {
+    $filters = Cache::pull($key);
+    if (!is_array($filters)) {
+        abort(404, 'Enlace de descarga inválido o expirado.');
+    }
+
+    set_time_limit(300);
+    $titleDate = !empty($filters['filter_date']) ? ' ' . $filters['filter_date'] : '';
+
+    return Excel::download(
+        new CasoScotiabankReport($filters, 'REPORTE DE CASOS DE DAVIBANK' . $titleDate),
+        'reporte-casos-davibank.xlsx'
+    );
+  }
+
+  public function downloadDavibankBch(string $key)
+  {
+    $filters = Cache::pull($key);
+    if (!is_array($filters)) {
+        abort(404, 'Enlace de descarga inválido o expirado.');
+    }
+
+    set_time_limit(300);
+    $titleDate = !empty($filters['filter_date']) ? ' ' . $filters['filter_date'] : '';
+
+    return Excel::download(
+        new CasoScotiabankBchReport($filters, 'REPORTE DE CASOS DE DAVIBANK BCH' . $titleDate),
+        'reporte-casos-davibank-bch.xlsx'
+    );
   }
 }

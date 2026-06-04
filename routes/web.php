@@ -367,6 +367,12 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
     Route::get('/casos-scotiabank-bch', [ReportJefeController::class, 'casoScotiabankBch'])
         ->name('casos-scotiabank-bch.index');
 
+    Route::get('/casos-scotiabank/download/{key}', [ReportJefeController::class, 'downloadDavibank'])
+        ->name('casos-scotiabank.download');
+
+    Route::get('/casos-scotiabank-bch/download/{key}', [ReportJefeController::class, 'downloadDavibankBch'])
+        ->name('casos-scotiabank-bch.download');
+
     Route::get('/casos-banco-general', [ReportJefeController::class, 'casoBancoGeneral'])
         ->name('casos-banco-general.index');
 
