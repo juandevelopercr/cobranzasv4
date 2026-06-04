@@ -106,7 +106,8 @@
                             </p>
 
                             <ol class="text-dark" style="font-size: 0.9rem; padding-left: 20px;">
-                                <li>Tener fecha de asignación del caso.</li>
+                                <li>Si selecciona un rango de fechas, se filtrarán los casos por fecha de asignación.</li>
+                                <li>Si no selecciona fechas, se exportarán <strong>todos</strong> los casos de Davibank.</li>
                             </ol>
                         </div>
                     </div>

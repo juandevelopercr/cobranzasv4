@@ -2,8 +2,6 @@
 
 namespace App\Livewire\Reports;
 
-use Carbon\Carbon;
-use App\Models\Bank;
 use App\Models\User;
 use Livewire\Component;
 use App\Models\Currency;
@@ -39,15 +37,6 @@ class CasoScotiabankBch extends Component
 
     $this->currencies = Currency::where('active', 1)->get();
 
-    // Primer día del mes actual
-    $startOfMonth = Carbon::now()->startOfMonth()->format('d-m-Y');
-
-    // Último día del mes actual
-    $endOfMonth = Carbon::now()->endOfMonth()->format('d-m-Y');
-
-    // Asignar al daterange con 'to'
-    $this->filter_date = $startOfMonth . ' to ' . $endOfMonth;
-
     $this->dispatch('reinitFormControls');
   }
 
@@ -64,16 +53,11 @@ class CasoScotiabankBch extends Component
 
   public function exportExcel()
   {
-    // Validar que los campos requeridos estén llenos
-    $this->validate([
-        'filter_date' => 'required',
-    ], [
-        'filter_date.required' => 'Debe seleccionar un rango de fechas.',
-    ]);
-
     $this->loading = true;
 
     set_time_limit(300);
+
+    $titleDate = $this->filter_date ? ' ' . $this->filter_date : '';
 
     // Generar y descargar el Excel
     return Excel::download(new CasoScotiabankBchReport(
@@ -84,8 +68,8 @@ class CasoScotiabankBch extends Component
         'filter_asistente' => $this->filter_asistente,
         'filter_currency' => $this->filter_currency
       ],
-      'REPORTE DE CASOS DE SCOTIABANK BCH ' . $this->filter_date
-    ), 'reporte-casos-scotiabank-bch.xlsx');
+      'REPORTE DE CASOS DE DAVIBANK BCH' . $titleDate
+    ), 'reporte-casos-davibank-bch.xlsx');
 
     // No necesitas $this->loading = false aquí,
     // Livewire maneja la acción de descarga automáticamente

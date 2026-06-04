@@ -106,16 +106,8 @@
                             </p>
 
                             <ol class="text-dark" style="font-size: 0.9rem; padding-left: 20px;">
-                                <li>Tener fecha de asignación del caso.</li>
-                                <li>
-                                    En la casilla de expectativa de recuperación escoger, para los casos activos:
-                                    <em>Probable, Posible, Remota, Alta, Baja, Media o Poca</em>.
-                                </li>
-                                <li>
-                                    Para los demás reportes como:
-                                    <em>Incobrables, Arreglos de pago, Prescritos o Terminados</em>,
-                                    simplemente escoger el ítem respectivo.
-                                </li>
+                                <li>Si selecciona un rango de fechas, se filtrarán los casos por fecha de asignación.</li>
+                                <li>Si no selecciona fechas, se exportarán <strong>todos</strong> los casos de Davibank BCH.</li>
                             </ol>
                         </div>
                     </div>
