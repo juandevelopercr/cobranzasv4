@@ -79,6 +79,20 @@
                         @enderror
                     </div>
 
+                    <div class="col-md-6 select2-primary fv-plugins-icon-container">
+                        <label class="form-label" for="filter_exclude_products">{{ __('Excluir Productos') }}</label>
+                        <div wire:ignore>
+                            <select wire:model="filter_exclude_products" id="filter_exclude_products"
+                                multiple
+                                class="select2 form-select @error('filter_exclude_products') is-invalid @enderror">
+                                @foreach ($this->productos as $producto)
+                                    <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <small class="text-muted">Los productos seleccionados NO aparecerán en el reporte.</small>
+                    </div>
+
                     <!-- Botones de acción -->
                     <div class="col-md-3 d-flex align-items-end">
                         {{-- Incluye botones de guardar y guardar y cerrar --}}
@@ -127,7 +141,8 @@
                     'filter_abogado',
                     'filter_asistente',
                     'filter_banco',
-                    'filter_currency'
+                    'filter_currency',
+                    'filter_exclude_products'
                 ];
 
                 selects.forEach((id) => {
@@ -145,7 +160,7 @@
                                 // Actualiza Livewire solo si es el select2 de `condition_sale`
                                 // Hay que poner wire:ignore en el select2 para que todo vaya bien
                                 const specificIds = ['filter_abogado', 'filter_asistente',
-                                    'filter_banco', 'filter_currency'
+                                    'filter_banco', 'filter_currency', 'filter_exclude_products'
                                 ]; // Lista de IDs específicos
 
                                 if (specificIds.includes(id)) {

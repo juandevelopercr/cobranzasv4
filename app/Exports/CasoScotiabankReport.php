@@ -214,6 +214,11 @@ class CasoScotiabankReport extends BaseReport
         }
     }
 
+    // Excluir productos seleccionados
+    if (!empty($filters['filter_exclude_products'])) {
+        $query->whereNotIn('casos.product_id', $filters['filter_exclude_products']);
+    }
+
     //dd($query->toSql(), $query->getBindings());
 
     return $query;
