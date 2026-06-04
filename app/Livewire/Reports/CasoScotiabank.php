@@ -75,6 +75,8 @@ class CasoScotiabank extends Component
 
     $this->loading = true;
 
+    set_time_limit(300);
+
     // Generar y descargar el Excel
     return Excel::download(new CasoScotiabankReport(
       [

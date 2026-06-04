@@ -186,29 +186,10 @@ abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithC
                     }
                 }
 
-                // --- ALTURA AUTOMÁTICA FILAS DATOS ---
-                for ($row = 4; $row <= $lastRow; $row++) {
-                    $sheet->getRowDimension($row)->setRowHeight(-1);
-                }
-
-                // --- FORZAR ID COMO ENTERO ---
+                // --- FORZAR ID COMO ENTERO (solo formato, map() ya devuelve int) ---
                 foreach ($this->columns() as $index => $col) {
                     if (($col['field'] ?? '') === 'id') {
                         $colLetter = $this->columnLetter($index);
-
-                        // Asegurar que cada celda se trate como número entero
-                        for ($row = 4; $row <= $lastRow; $row++) {
-                            $cellValue = $sheet->getCell("{$colLetter}{$row}")->getValue();
-                            if (is_numeric($cellValue)) {
-                                $sheet->setCellValueExplicit(
-                                    "{$colLetter}{$row}",
-                                    (int)$cellValue,
-                                    \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_NUMERIC
-                                );
-                            }
-                        }
-
-                        // Formato de celda entero (sin decimales)
                         $sheet->getStyle("{$colLetter}4:{$colLetter}{$lastRow}")
                               ->getNumberFormat()->setFormatCode('0');
                         break;

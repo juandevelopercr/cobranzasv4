@@ -128,43 +128,11 @@ class CasoScotiabankReport extends BaseReport
         'motivo_terminacion',
         'honorarios_legales_dolares',
         'ahonorarios_totales',
+        'dhonorarios',
         'user_create',
         'user_update',
         DB::raw("DATE_FORMAT(casos.pfecha_asignacion_caso, '%Y-%m-%d') AS fecha_asignacion_caso"),
     ])
-    // --- Honorarios CRC ---
-    ->addSelect(DB::raw("
-        COALESCE((
-            SELECT SUM(
-                COALESCE(t.totalHonorarios, 0)
-                + COALESCE(t.totalTax, 0)
-                - COALESCE(t.totalDiscount, 0)
-            )
-            FROM transactions t
-            WHERE t.caso_id = casos.id
-              AND t.proforma_type = 'HONORARIO'
-              AND t.currency_id = 16
-              AND t.document_type IN ('PR', 'TE', 'FE')
-              AND t.proforma_status = 'FACTURADA'
-        ), 0) AS total_honorarios_crc
-    "))
-
-    // --- Honorarios USD ---
-    ->addSelect(DB::raw("
-        COALESCE((
-            SELECT SUM(
-                COALESCE(t.totalHonorarios, 0)
-                + COALESCE(t.totalTax, 0)
-                - COALESCE(t.totalDiscount, 0)
-            )
-            FROM transactions t
-            WHERE t.caso_id = casos.id
-              AND t.proforma_type = 'HONORARIO'
-              AND t.currency_id = 1
-              AND t.document_type IN ('PR', 'TE', 'FE')
-              AND t.proforma_status = 'FACTURADA'
-        ), 0) AS total_honorarios_usd
-    "))
     ->leftJoin('contacts as c', 'casos.contact_id', '=', 'c.id')
     ->leftJoin('users as ua', 'casos.abogado_id', '=', 'ua.id')
     ->leftJoin('users as ua1', 'casos.asistente1_id', '=', 'ua1.id')
@@ -172,8 +140,8 @@ class CasoScotiabankReport extends BaseReport
     ->leftJoin('casos_productos as product', 'casos.product_id', '=', 'product.id')
     ->leftJoin('casos_procesos as proceso', 'casos.proceso_id', '=', 'proceso.id')
     ->leftJoin('casos_estados as estado', 'casos.aestado_proceso_general_id', '=', 'estado.id')
-    ->join('currencies', 'casos.currency_id', '=', 'currencies.id')
-    ->join('banks', 'casos.bank_id', '=', 'banks.id')
+    ->leftJoin('currencies', 'casos.currency_id', '=', 'currencies.id')
+    ->leftJoin('banks', 'casos.bank_id', '=', 'banks.id')
     ->where('casos.bank_id', Bank::SCOTIABANKCR);
 
     // Filtro especial para rol Asignaciones
