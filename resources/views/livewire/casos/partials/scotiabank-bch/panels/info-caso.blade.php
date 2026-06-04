@@ -517,6 +517,21 @@
   </div>
 
  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
+    <label class="form-label" for="tipo_de_cambio">
+      {{ __('Tipo de Cambio') }}
+      <small class="text-muted">(auto BCCR)</small>
+    </label>
+    <div class="input-group input-group-merge has-validation">
+      <input type="number" step="0.01" wire:model.live="tipo_de_cambio" id="tipo_de_cambio"
+          class="form-control @error('tipo_de_cambio') is-invalid @enderror"
+          placeholder="Ej: 520.50">
+    </div>
+    @error('tipo_de_cambio')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+ <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="pmonto_estimacion_demanda">{{ __('Monto Estimación Demanda') }}</label>
     <div class="input-group input-group-merge has-validation">
       <input type="text" wire:model.live="pmonto_estimacion_demanda" id="pmonto_estimacion_demanda"

@@ -343,6 +343,7 @@ class Caso extends Model implements HasMedia
     'amonto_incobrable',
     'amonto_avaluo',
     'psaldo_dolarizado',
+    'tipo_de_cambio',
     'pnombre_demandado',
     'bgastos_proceso',
     'pdespacho_judicial_juzgado',

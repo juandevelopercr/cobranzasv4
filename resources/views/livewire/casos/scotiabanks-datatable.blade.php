@@ -46,6 +46,27 @@
                                         <livewire:casos.caso-datatable-export />
                                     @endcan
 
+                                    @can('edit-casos')
+                                        <button type="button"
+                                            class="btn btn-warning btn-sm"
+                                            wire:click="dispatchCalculoMasivo"
+                                            wire:loading.attr="disabled"
+                                            wire:target="dispatchCalculoMasivo"
+                                            title="{{ __('Calcular Saldo Dolarizado para todos los casos') }}">
+                                            <span wire:loading.remove wire:target="dispatchCalculoMasivo">
+                                                <i class="bx bx-calculator me-1"></i>{{ __('Calcular Saldo $') }}
+                                            </span>
+                                            <span wire:loading wire:target="dispatchCalculoMasivo">
+                                                <span class="spinner-border spinner-border-sm me-1"></span>{{ __('Procesando...') }}
+                                            </span>
+                                        </button>
+                                        @if($calculoMasivoMensaje)
+                                            <span class="badge bg-{{ $calculoMasivoEstado === 'completado' ? 'success' : 'danger' }} ms-2 align-self-center">
+                                                {{ $calculoMasivoMensaje }}
+                                            </span>
+                                        @endif
+                                    @endcan
+
                                     <div class="btn-group" role="group" aria-label="DataTable Actions">
                                         <!-- Botón para Reiniciar Filtros -->
                                         @include('livewire.includes.button-reset-filters')

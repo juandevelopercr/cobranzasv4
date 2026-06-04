@@ -386,6 +386,7 @@ class CasoManager extends BaseComponent
   public $amonto_incobrable= NULL;
   public $amonto_avaluo= NULL;
   public $psaldo_dolarizado= NULL;
+  public $tipo_de_cambio= NULL;
   public $pnombre_demandado= NULL;
   public $bgastos_proceso= NULL;
   public $pdespacho_judicial_juzgado= NULL;
@@ -849,6 +850,7 @@ class CasoManager extends BaseComponent
       'amonto_incobrable',
       'amonto_avaluo',
       'psaldo_dolarizado',
+      'tipo_de_cambio',
       'pnombre_demandado',
       'bgastos_proceso',
       'pdespacho_judicial_juzgado',

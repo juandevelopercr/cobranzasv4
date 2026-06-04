@@ -31,12 +31,18 @@ use App\Livewire\Casos\CasoManager;
 use App\Exports\CasosTemplateExport;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Jobs\CalcularSaldoDolarizadoJob;
+use App\Services\ApiBCCR;
 use App\Services\DocumentSequenceService;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Validator;
 
 class CasoScotiabankBch extends CasoManager
 {
   public $titleNotification = 'Notificación - Public Edicto';
+
+  public string $calculoMasivoEstado = '';
+  public string $calculoMasivoMensaje = '';
 
   #[Computed]
   public function estados()
@@ -844,6 +850,11 @@ class CasoScotiabankBch extends CasoManager
     //Campos de fecha
     $this->formatDateForView($record);
 
+    // Auto-fetch tipo de cambio desde BCCR si no tiene y tiene fecha de creación
+    if (!$this->tipo_de_cambio && $this->fecha_creacion) {
+        $this->autoFetchTipoCambio();
+    }
+
     $this->getPanelsProperty();
 
     $this->action = 'edit';
@@ -918,11 +929,69 @@ class CasoScotiabankBch extends CasoManager
   public function updatedAsaldoCapitalOperacion($value): void
   {
     $this->pmonto_estimacion_demanda = $value;
+    $this->recalcularSaldoDolarizado();
   }
 
   public function updatedPmontoEstimacionDemanda($value): void
   {
     $this->asaldo_capital_operacion = $value;
+    $this->recalcularSaldoDolarizado();
+  }
+
+  public function updatedTipoDeCambio(): void
+  {
+    $this->recalcularSaldoDolarizado();
+  }
+
+  public function updatedCurrencyId(): void
+  {
+    $this->recalcularSaldoDolarizado();
+  }
+
+  private function recalcularSaldoDolarizado(): void
+  {
+    if (!$this->asaldo_capital_operacion || !$this->tipo_de_cambio) return;
+
+    $saldo = (float) str_replace([',', ' '], '', (string) $this->asaldo_capital_operacion);
+    if ($saldo <= 0) return;
+
+    $currency = Currency::find($this->currency_id);
+
+    if ($currency && strtoupper($currency->code) === 'USD') {
+        $this->psaldo_dolarizado = $saldo;
+    } else {
+        $this->psaldo_dolarizado = round($saldo / (float) $this->tipo_de_cambio, 2);
+    }
+  }
+
+  private function autoFetchTipoCambio(): void
+  {
+    try {
+        $fecha = Carbon::createFromFormat('d-m-Y', $this->fecha_creacion)->format('Y-m-d');
+        $tasa = app(ApiBCCR::class)->obtenerTipoCambio(318, $fecha);
+        if ($tasa) {
+            $this->tipo_de_cambio = $tasa;
+            $this->recalcularSaldoDolarizado();
+        }
+    } catch (\Exception $e) {
+        // Silencioso: usuario puede ingresar manualmente
+    }
+  }
+
+  public function dispatchCalculoMasivo(): void
+  {
+    $this->calculoMasivoEstado   = 'procesando';
+    $this->calculoMasivoMensaje  = '';
+
+    try {
+        set_time_limit(0);
+        Bus::dispatchSync(new CalcularSaldoDolarizadoJob($this->bank_id, true));
+        $this->calculoMasivoEstado  = 'completado';
+        $this->calculoMasivoMensaje = 'Proceso completado. Saldos dolarizados actualizados.';
+    } catch (\Exception $e) {
+        $this->calculoMasivoEstado  = 'error';
+        $this->calculoMasivoMensaje = 'Error: ' . $e->getMessage();
+    }
   }
 
   public function updated($propertyName)
