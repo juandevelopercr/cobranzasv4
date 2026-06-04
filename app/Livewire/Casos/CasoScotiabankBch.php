@@ -915,6 +915,16 @@ class CasoScotiabankBch extends CasoManager
     }
   }
 
+  public function updatedAsaldoCapitalOperacion($value): void
+  {
+    $this->pmonto_estimacion_demanda = $value;
+  }
+
+  public function updatedPmontoEstimacionDemanda($value): void
+  {
+    $this->asaldo_capital_operacion = $value;
+  }
+
   public function updated($propertyName)
   {
     $this->resetErrorBag($propertyName);

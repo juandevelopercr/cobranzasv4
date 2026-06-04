@@ -506,9 +506,20 @@
   </div>
 
  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
+    <label class="form-label" for="asaldo_capital_operacion">{{ __('Saldo Inicial') }}</label>
+    <div class="input-group input-group-merge has-validation">
+      <input type="text" wire:model.live="asaldo_capital_operacion" id="asaldo_capital_operacion"
+          class="form-control @error('asaldo_capital_operacion') is-invalid @enderror">
+    </div>
+    @error('asaldo_capital_operacion')
+    <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+  </div>
+
+ <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="pmonto_estimacion_demanda">{{ __('Monto Estimación Demanda') }}</label>
     <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pmonto_estimacion_demanda" id="pmonto_estimacion_demanda"
+      <input type="text" wire:model.live="pmonto_estimacion_demanda" id="pmonto_estimacion_demanda"
           class="form-control @error('pmonto_estimacion_demanda') is-invalid @enderror">
     </div>
     @error('pmonto_estimacion_demanda')
