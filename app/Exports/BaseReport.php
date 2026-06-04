@@ -204,12 +204,28 @@ abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithC
                 $sheet->setCellValue("A{$totalsRow}", 'TOTALES');
                 $sheet->getStyle("A{$totalsRow}")->getFont()->setBold(true);
 
-                // --- AJUSTE DE TEXTO ---
+                // --- AJUSTE DE TEXTO + FORMATO TEXTO ---
+                // Importante: getStyle($range) crea estilos explícitos de celda que
+                // sobreescriben los estilos de columna (de columnFormats). Si solo
+                // se aplica wrapText, el formato queda en 'General' en lugar de '@'.
+                // Por eso se aplican juntos formato y alineación en un solo applyFromArray.
                 foreach ($this->columns() as $index => $col) {
                     if (($col['type'] ?? 'string') === 'string') {
                         $colLetter = $this->columnLetter($index);
+                        $align = $col['align'] ?? 'left';
+                        $horizontal = match ($align) {
+                            'center' => Alignment::HORIZONTAL_CENTER,
+                            'right'  => Alignment::HORIZONTAL_RIGHT,
+                            default  => Alignment::HORIZONTAL_LEFT,
+                        };
                         $sheet->getStyle("{$colLetter}4:{$colLetter}{$lastRow}")
-                              ->getAlignment()->setWrapText(true);
+                              ->applyFromArray([
+                                  'alignment'    => [
+                                      'wrapText'   => true,
+                                      'horizontal' => $horizontal,
+                                  ],
+                                  'numberFormat' => ['formatCode' => NumberFormat::FORMAT_TEXT],
+                              ]);
                     }
                 }
 
