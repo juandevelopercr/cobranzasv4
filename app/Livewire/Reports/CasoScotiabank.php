@@ -51,8 +51,12 @@ class CasoScotiabank extends Component
     $this->$id = $range;
   }
 
-  public function exportExcel()
+  public function exportExcel(string $rawDate = '')
   {
+    if ($rawDate !== '') {
+        $this->filter_date = $rawDate;
+    }
+
     $this->loading = true;
 
     set_time_limit(300);

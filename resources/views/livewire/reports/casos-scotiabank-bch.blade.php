@@ -83,7 +83,8 @@
                     <div class="col-md-3 d-flex align-items-end">
                         {{-- Incluye botones de guardar y guardar y cerrar --}}
                         <button type="button" class="btn btn-primary data-submit me-sm-4 me-1 mt-5"
-                            wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel">
+                            x-on:click="$wire.exportExcel(document.getElementById('filter_date')?.value?.trim() ?? '')"
+                            wire:loading.attr="disabled" wire:target="exportExcel">
                             <span wire:loading.remove wire:target="exportExcel">
                                 <i class="tf-icons bx bx-save bx-18px me-2"></i>{{ __('Export') }}
                             </span>
