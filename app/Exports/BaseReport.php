@@ -15,6 +15,9 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Cell\DefaultValueBinder;
 
 abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithColumnFormatting, WithStyles, WithColumnWidths, WithEvents, WithCustomStartCell
 {
@@ -25,6 +28,19 @@ abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithC
     {
         $this->filters = $filters;
         $this->title = $title;
+
+        // Evitar que PhpSpreadsheet convierta strings numéricos a float
+        // (preserva ceros iniciales en cédulas, números de caso, operaciones, etc.)
+        Cell::setValueBinder(new class extends DefaultValueBinder {
+            public function bindValue(\PhpOffice\PhpSpreadsheet\Cell\Cell $cell, $value = null): bool
+            {
+                if (is_string($value) && $value !== '') {
+                    $cell->setValueExplicit($value, DataType::TYPE_STRING);
+                    return true;
+                }
+                return parent::bindValue($cell, $value);
+            }
+        });
     }
 
     abstract protected function columns(): array;
@@ -142,20 +158,31 @@ abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithC
                 $lastRow = $sheet->getHighestRow();
                 $totalsRow = $lastRow + 1;
 
-                // --- IDENTIFICATION como TEXTO ---
+                // --- CAMPOS CRÍTICOS COMO TEXTO PURO ---
+                // Incluye cédulas, números de caso y operaciones que deben preservar
+                // ceros iniciales y no ser interpretados como números por Excel.
+                $criticalTextFields = [
+                    'identification', 'pnumero', 'pnumero_cedula',
+                    'pnumero_operacion1', 'pnumero_operacion2',
+                ];
                 foreach ($this->columns() as $index => $col) {
-                    if (($col['field'] ?? '') === 'identification' || ($col['field'] ?? '') === 'pnumero_operacion1' || ($col['field'] ?? '') === 'pnumero_operacion2') {
+                    if (in_array($col['field'] ?? '', $criticalTextFields)) {
                         $colLetter = $this->columnLetter($index);
-                        for ($row = 4; $row <= $lastRow; $row++) {
-                            $sheet->setCellValueExplicit(
-                                "{$colLetter}{$row}",
-                                (string)$sheet->getCell("{$colLetter}{$row}")->getValue(),
-                                \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING
-                            );
-                        }
                         $sheet->getStyle("{$colLetter}4:{$colLetter}{$lastRow}")
                               ->getNumberFormat()
                               ->setFormatCode(NumberFormat::FORMAT_TEXT);
+                        // Con el ValueBinder del constructor, el valor ya es TYPE_STRING
+                        // correcto; re-afirmamos aquí para mayor seguridad.
+                        for ($row = 4; $row <= $lastRow; $row++) {
+                            $cellValue = $sheet->getCell("{$colLetter}{$row}")->getValue();
+                            if ($cellValue !== null && $cellValue !== '') {
+                                $sheet->setCellValueExplicit(
+                                    "{$colLetter}{$row}",
+                                    (string) $cellValue,
+                                    DataType::TYPE_STRING
+                                );
+                            }
+                        }
                     }
                 }
 
@@ -195,6 +222,9 @@ abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithC
                         break;
                     }
                 }
+
+                // Restaurar el value binder por defecto al terminar
+                Cell::setValueBinder(new DefaultValueBinder());
             },
         ];
     }
