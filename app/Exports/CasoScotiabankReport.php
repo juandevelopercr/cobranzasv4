@@ -23,7 +23,7 @@ class CasoScotiabankReport extends BaseReport
       ['label' => 'Nombre del Cliente', 'field' => 'pnombre_demandado', 'type' => 'string', 'align' => 'left', 'width' => 60],
       ['label' => 'Saldo Inicial', 'field' => 'asaldo_capital_operacion', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
       ['label' => 'Saldo Dolarizado', 'field' => 'psaldo_dolarizado', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-      ['label' => 'Firma Legal', 'field' => 'afirma_legal', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
+      ['label' => 'Firma Legal', 'field' => 'afirma_legal', 'type' => 'string', 'align' => 'right', 'width' => 20],
       ['label' => 'Fecha de asignación', 'field' => 'fecha_asignacion_caso', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Fecha de presentación demanda', 'field' => 'pfecha_presentacion_demanda', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Fecha de traslado', 'field' => 'nfecha_traslado_juzgado', 'type' => 'string', 'align' => 'center', 'width' => 15],
