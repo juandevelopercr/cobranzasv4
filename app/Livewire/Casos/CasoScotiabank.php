@@ -959,18 +959,27 @@ class CasoScotiabank extends CasoManager
     $this->recalcularSaldoDolarizado();
   }
 
-  // Normaliza separador decimal: coma → punto (ej: "19.917,11" → "19917.11")
   private function normalizarDecimal(mixed $value): string
   {
     if ($value === null || $value === '') return '';
-    $val = trim((string) $value);
-    if (strpos($val, ',') !== false && strpos($val, '.') !== false) {
-        // Formato europeo: punto = miles, coma = decimal → "1.234,56" → "1234.56"
-        $val = str_replace('.', '', $val);
-        $val = str_replace(',', '.', $val);
+    $val = trim(str_replace(' ', '', (string) $value));
+
+    if (strpos($val, '.') !== false && strpos($val, ',') !== false) {
+        if (strrpos($val, ',') > strrpos($val, '.')) {
+            // Europeo: "116.166,43" → "116166.43"
+            $val = str_replace('.', '', $val);
+            $val = str_replace(',', '.', $val);
+        } else {
+            // Americano: "116,166.43" → "116166.43"
+            $val = str_replace(',', '', $val);
+        }
     } elseif (strpos($val, ',') !== false) {
-        // Solo coma → es decimal → "19917,11" → "19917.11"
-        $val = str_replace(',', '.', $val);
+        $afterComma = substr($val, strrpos($val, ',') + 1);
+        if (strlen($afterComma) <= 2) {
+            $val = str_replace(',', '.', $val); // "116166,43" → "116166.43"
+        } else {
+            $val = str_replace(',', '', $val);  // "1,234,567" → "1234567"
+        }
     }
     return $val;
   }

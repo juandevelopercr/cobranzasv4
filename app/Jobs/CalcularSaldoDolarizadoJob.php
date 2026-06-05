@@ -73,10 +73,19 @@ class CalcularSaldoDolarizadoJob implements ShouldQueue
 
                 $psaldoDolarizado = $this->calcularSaldoDolarizado($saldo, $tasa, $caso->currency);
 
-                $caso->update([
-                    'tipo_de_cambio'   => $tasa,
+                $update = [
+                    'tipo_de_cambio'    => $tasa,
                     'psaldo_dolarizado' => $psaldoDolarizado,
-                ]);
+                ];
+
+                // Normalizar asaldo_capital_operacion si tenía coma como decimal
+                $rawSaldo = (string) $caso->asaldo_capital_operacion;
+                $normalizado = number_format($saldo, 2, '.', '');
+                if ($rawSaldo !== $normalizado) {
+                    $update['asaldo_capital_operacion'] = $normalizado;
+                }
+
+                $caso->update($update);
 
                 $procesados++;
             }
@@ -93,8 +102,29 @@ class CalcularSaldoDolarizadoJob implements ShouldQueue
     private function parseSaldo(mixed $valor): ?float
     {
         if ($valor === null || $valor === '') return null;
-        $limpio = str_replace([',', ' '], ['', ''], (string) $valor);
-        return is_numeric($limpio) ? (float) $limpio : null;
+        $val = trim(str_replace(' ', '', (string) $valor));
+
+        if (strpos($val, '.') !== false && strpos($val, ',') !== false) {
+            // Determinar cuál es el decimal según cuál aparece último
+            if (strrpos($val, ',') > strrpos($val, '.')) {
+                // Europeo: "116.166,43" → "116166.43"
+                $val = str_replace('.', '', $val);
+                $val = str_replace(',', '.', $val);
+            } else {
+                // Americano: "116,166.43" → "116166.43"
+                $val = str_replace(',', '', $val);
+            }
+        } elseif (strpos($val, ',') !== false) {
+            // Solo coma: si hay ≤2 dígitos tras la última coma es decimal; si no, es miles
+            $afterComma = substr($val, strrpos($val, ',') + 1);
+            if (strlen($afterComma) <= 2) {
+                $val = str_replace(',', '.', $val); // "116166,43" → "116166.43"
+            } else {
+                $val = str_replace(',', '', $val);  // "1,234,567" → "1234567"
+            }
+        }
+
+        return is_numeric($val) ? (float) $val : null;
     }
 
     private function calcularSaldoDolarizado(float $saldo, float $tasa, $currency): ?float
