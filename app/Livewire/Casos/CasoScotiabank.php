@@ -935,13 +935,17 @@ class CasoScotiabank extends CasoManager
 
   public function updatedAsaldoCapitalOperacion($value): void
   {
-    $this->pmonto_estimacion_demanda = $value;
+    $normalized = $this->normalizarDecimal($value);
+    $this->asaldo_capital_operacion  = $normalized;
+    $this->pmonto_estimacion_demanda = $normalized;
     $this->recalcularSaldoDolarizado();
   }
 
   public function updatedPmontoEstimacionDemanda($value): void
   {
-    $this->asaldo_capital_operacion = $value;
+    $normalized = $this->normalizarDecimal($value);
+    $this->pmonto_estimacion_demanda = $normalized;
+    $this->asaldo_capital_operacion  = $normalized;
     $this->recalcularSaldoDolarizado();
   }
 
@@ -955,19 +959,39 @@ class CasoScotiabank extends CasoManager
     $this->recalcularSaldoDolarizado();
   }
 
+  // Normaliza separador decimal: coma → punto (ej: "19.917,11" → "19917.11")
+  private function normalizarDecimal(mixed $value): string
+  {
+    if ($value === null || $value === '') return '';
+    $val = trim((string) $value);
+    if (strpos($val, ',') !== false && strpos($val, '.') !== false) {
+        // Formato europeo: punto = miles, coma = decimal → "1.234,56" → "1234.56"
+        $val = str_replace('.', '', $val);
+        $val = str_replace(',', '.', $val);
+    } elseif (strpos($val, ',') !== false) {
+        // Solo coma → es decimal → "19917,11" → "19917.11"
+        $val = str_replace(',', '.', $val);
+    }
+    return $val;
+  }
+
   private function recalcularSaldoDolarizado(): void
   {
     if (!$this->asaldo_capital_operacion || !$this->tipo_de_cambio) return;
 
-    $saldo = (float) str_replace([',', ' '], '', (string) $this->asaldo_capital_operacion);
+    $saldo = (float) $this->asaldo_capital_operacion;
     if ($saldo <= 0) return;
 
     $currency = Currency::find($this->currency_id);
 
     if ($currency && strtoupper($currency->code) === 'USD') {
-        $this->psaldo_dolarizado = $saldo;
+        // psaldo_dolarizado es string en DB → se guarda con punto decimal
+        $this->psaldo_dolarizado = number_format($saldo, 2, '.', '');
     } else {
-        $this->psaldo_dolarizado = round($saldo / (float) $this->tipo_de_cambio, 2);
+        $this->psaldo_dolarizado = number_format(
+            round($saldo / (float) $this->tipo_de_cambio, 2),
+            2, '.', ''
+        );
     }
   }
 
