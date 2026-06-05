@@ -126,7 +126,7 @@ class CasoScotiabankBchReport extends BaseReport
     ->leftJoin('casos_estados as estado', 'casos.aestado_proceso_general_id', '=', 'estado.id')
     ->leftJoin('currencies', 'casos.currency_id', '=', 'currencies.id')
     ->leftJoin('banks', 'casos.bank_id', '=', 'banks.id')
-    ->where('casos.bank_id', Bank::SCOTIABANKCR);
+    ->where('casos.bank_id', Bank::SCOTIABANKBCH);
 
     // Filtro especial para rol Asignaciones
     if (auth()->user() && auth()->user()->hasAnyRole(['ASIGNACIONES'])) {
