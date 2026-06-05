@@ -18,14 +18,7 @@ class CasoScotiabankReport extends BaseReport
       ['label' => 'ID', 'field' => 'id', 'type' => 'integer', 'align' => 'left', 'width' => 10],
       ['label' => 'Número de caso', 'field' => 'pnumero', 'type' => 'string', 'align' => 'left', 'width' => 15],
       ['label' => 'Identificación', 'field' => 'pnumero_cedula', 'type' => 'string', 'align' => 'left', 'width' => 15],
-      ['label' => 'Correo del demandado deudor o arrendatario', 'field' => 'pcorreo_demandado_deudor_o_arrendatario', 'type' => 'string', 'align' => 'left', 'width' => 15],
-
       ['label' => 'Operación Nueva', 'field' => 'pnumero_operacion1', 'type' => 'string', 'align' => 'left', 'width' => 25],
-      ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 10],
-      ['label' => 'Detalle de la garantía', 'field' => 'pdetalle_garantia', 'type' => 'string', 'align' => 'center', 'width' => 10],
-      ['label' => 'Teléfono del demandado deudor o arrendatario', 'field' => 'ptelefono_demandado_deudor_o_arrendatario', 'type' => 'string', 'align' => 'center', 'width' => 10],
-      ['label' => 'Saldo Dolarizado', 'field' => 'psaldo_dolarizado', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-
       ['label' => 'Producto', 'field' => 'producto', 'type' => 'string', 'align' => 'left', 'width' => 30],
       ['label' => 'Nombre del Cliente', 'field' => 'pnombre_demandado', 'type' => 'string', 'align' => 'left', 'width' => 60],
       ['label' => 'Saldo Inicial', 'field' => 'asaldo_capital_operacion', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
@@ -42,7 +35,7 @@ class CasoScotiabankReport extends BaseReport
       ['label' => 'Fecha de presentación protocolización', 'field' => 'afecha_protocolizacion', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Fecha de inscripción', 'field' => 'afecha_inscripcion', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Fecha de presentación de levantamientos', 'field' => 'afecha_levantamiento', 'type' => 'string', 'align' => 'center', 'width' => 15],
-      ['label' => 'Fecha de presentación de terminación', 'field' => 'afecha_terminacion', 'type' => 'string', 'align' => 'center', 'width' => 15],
+      ['label' => 'Fecha de terminación', 'field' => 'afecha_terminacion', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Fecha de suspensión por arreglo', 'field' => 'afecha_aprobacion_arreglo', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Fecha de sentencia', 'field' => 'sfecha_sentencia', 'type' => 'string', 'align' => 'center', 'width' => 15],
       ['label' => 'Fecha de inicio de retenciones', 'field' => 'fecha_inicio_retenciones', 'type' => 'string', 'align' => 'center', 'width' => 15],
@@ -57,14 +50,6 @@ class CasoScotiabankReport extends BaseReport
       ['label' => 'Comentarios', 'field' => 'pavance_cronologico', 'type' => 'string', 'align' => 'left', 'width' => 200],
       ['label' => 'Honorarios Legales Colones', 'field' => 'dhonorarios', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
       ['label' => 'Honorarios Legales Dólares', 'field' => 'honorarios_legales_dolares', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-      ['label' => 'F. Última liquidación', 'field' => 'nfecha_ultima_liquidacion', 'type' => 'string', 'align' => 'center', 'width' => 15],
-      ['label' => 'Monto de la Demanda', 'field' => 'pmonto_estimacion_demanda', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
-      ['label' => 'Usuario que creó el caso', 'field' => 'user_create', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Usuario de última actualización', 'field' => 'user_update', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Fecha de activación', 'field' => 'fecha_activacion', 'type' => 'string', 'align' => 'center', 'width' => 15],
-      ['label' => 'Código de activación', 'field' => 'codigo_activacion', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Tipo exp', 'field' => 'atipo_expediente', 'type' => 'string', 'align' => 'center', 'width' => 25],
-      ['label' => 'Reasignaciones', 'field' => 'areasignaciones', 'type' => 'string', 'align' => 'center', 'width' => 25],
     ];
   }
 
