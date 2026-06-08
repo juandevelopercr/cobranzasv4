@@ -185,7 +185,7 @@ class ReportJefeController extends Controller
     }
 
     ini_set('memory_limit', '512M');
-    set_time_limit(300);
+    set_time_limit(1000);
     $titleDate = !empty($filters['filter_date']) ? ' ' . $filters['filter_date'] : '';
 
     return Excel::download(
@@ -202,7 +202,7 @@ class ReportJefeController extends Controller
     }
 
     ini_set('memory_limit', '512M');
-    set_time_limit(300);
+    set_time_limit(1000);
     $titleDate = !empty($filters['filter_date']) ? ' ' . $filters['filter_date'] : '';
 
     return Excel::download(
