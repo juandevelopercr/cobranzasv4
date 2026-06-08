@@ -192,21 +192,17 @@ abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithC
                 $sheet->setCellValue("A{$totalsRow}", 'TOTALES');
                 $sheet->getStyle("A{$totalsRow}")->getFont()->setBold(true);
 
-                // --- AJUSTE DE TEXTO Y FORMATO PARA COLUMNAS STRING ---
+                // --- FORMATO TEXTO PARA COLUMNAS STRING ---
+                // Se aplica solo el formato numérico (no wrapText) para evitar crear
+                // un objeto de estilo por cada celda del rango, lo que causa timeouts
+                // en reportes con miles de filas.
                 foreach ($this->columns() as $index => $col) {
                     if (($col['type'] ?? 'string') === 'string') {
                         $colLetter = $this->columnLetter($index);
                         $sheet->getStyle("{$colLetter}4:{$colLetter}{$lastRow}")
-                              ->applyFromArray([
-                                  'alignment'    => ['wrapText' => true],
-                                  'numberFormat' => ['formatCode' => NumberFormat::FORMAT_TEXT],
-                              ]);
+                              ->getNumberFormat()
+                              ->setFormatCode(NumberFormat::FORMAT_TEXT);
                     }
-                }
-
-                // --- ALTURA AUTOMÁTICA FILAS DATOS ---
-                for ($row = 4; $row <= $lastRow; $row++) {
-                    $sheet->getRowDimension($row)->setRowHeight(-1);
                 }
 
                 // --- FORZAR ID COMO ENTERO (solo formato, map() ya devuelve int) ---
