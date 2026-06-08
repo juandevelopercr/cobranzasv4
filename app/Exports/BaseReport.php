@@ -159,8 +159,8 @@ abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithC
                 $totalsRow = $lastRow + 1;
 
                 // --- CAMPOS CRÍTICOS COMO TEXTO PURO ---
-                // Incluye cédulas, números de caso y operaciones que deben preservar
-                // ceros iniciales y no ser interpretados como números por Excel.
+                // El ValueBinder del constructor ya garantiza TYPE_STRING en cada celda;
+                // aquí solo se fija el formato de columna para que Excel lo muestre como texto.
                 $criticalTextFields = [
                     'identification', 'pnumero', 'pnumero_cedula',
                     'pnumero_operacion1', 'pnumero_operacion2',
@@ -171,18 +171,6 @@ abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithC
                         $sheet->getStyle("{$colLetter}4:{$colLetter}{$lastRow}")
                               ->getNumberFormat()
                               ->setFormatCode(NumberFormat::FORMAT_TEXT);
-                        // Con el ValueBinder del constructor, el valor ya es TYPE_STRING
-                        // correcto; re-afirmamos aquí para mayor seguridad.
-                        for ($row = 4; $row <= $lastRow; $row++) {
-                            $cellValue = $sheet->getCell("{$colLetter}{$row}")->getValue();
-                            if ($cellValue !== null && $cellValue !== '') {
-                                $sheet->setCellValueExplicit(
-                                    "{$colLetter}{$row}",
-                                    (string) $cellValue,
-                                    DataType::TYPE_STRING
-                                );
-                            }
-                        }
                     }
                 }
 
@@ -204,28 +192,16 @@ abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithC
                 $sheet->setCellValue("A{$totalsRow}", 'TOTALES');
                 $sheet->getStyle("A{$totalsRow}")->getFont()->setBold(true);
 
-                // --- AJUSTE DE TEXTO + FORMATO TEXTO ---
-                // Importante: getStyle($range) crea estilos explícitos de celda que
-                // sobreescriben los estilos de columna (de columnFormats). Si solo
-                // se aplica wrapText, el formato queda en 'General' en lugar de '@'.
-                // Por eso se aplican juntos formato y alineación en un solo applyFromArray.
+                // --- FORMATO TEXTO PARA COLUMNAS STRING ---
+                // Se aplica solo el formato numérico (no wrapText) para evitar crear
+                // un objeto de estilo por cada celda del rango, lo que causa timeouts
+                // en reportes con miles de filas.
                 foreach ($this->columns() as $index => $col) {
                     if (($col['type'] ?? 'string') === 'string') {
                         $colLetter = $this->columnLetter($index);
-                        $align = $col['align'] ?? 'left';
-                        $horizontal = match ($align) {
-                            'center' => Alignment::HORIZONTAL_CENTER,
-                            'right'  => Alignment::HORIZONTAL_RIGHT,
-                            default  => Alignment::HORIZONTAL_LEFT,
-                        };
                         $sheet->getStyle("{$colLetter}4:{$colLetter}{$lastRow}")
-                              ->applyFromArray([
-                                  'alignment'    => [
-                                      'wrapText'   => true,
-                                      'horizontal' => $horizontal,
-                                  ],
-                                  'numberFormat' => ['formatCode' => NumberFormat::FORMAT_TEXT],
-                              ]);
+                              ->getNumberFormat()
+                              ->setFormatCode(NumberFormat::FORMAT_TEXT);
                     }
                 }
 

@@ -94,22 +94,19 @@
                     </div>
 
                     <!-- Botones de acción -->
-                    <div class="col-md-3 d-flex align-items-end">
-                        {{-- Incluye botones de guardar y guardar y cerrar --}}
+                    <div class="col-md-3 d-flex align-items-end"
+                         x-data="{ loading: false }"
+                         @download-ready.window="loading = false">
                         <button type="button" class="btn btn-primary data-submit me-sm-4 me-1 mt-5"
-                            wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel">
-                            <span wire:loading.remove wire:target="exportExcel">
-                                <i class="tf-icons bx bx-save bx-18px me-2"></i>{{ __('Export') }}
+                            :disabled="loading"
+                            @click="loading = true; $wire.exportExcel(document.getElementById('filter_date')?.value?.trim() ?? '')">
+                            <span x-show="!loading">
+                                <i class="tf-icons bx bx-save bx-18px me-2"></i>{{ __('Exportar') }}
                             </span>
-                            <span wire:loading wire:target="exportExcel">
-                                <span class="spinner-border spinner-border-sm me-2"
-                                    role="status"></span>{{ __('Generando reporte...') }}
+                            <span x-show="loading" x-cloak>
+                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>{{ __('Generando reporte...') }}
                             </span>
                         </button>
-                        <!-- Spinner de carga -->
-                        <div wire:loading>
-                            Generando reporte... ⏳
-                        </div>
                     </div>
                 </div>
                 <div class="row g-6">
@@ -183,9 +180,19 @@
                 console.log('Reinicializando controles después de Livewire update reinitFormControls');
                 setTimeout(() => {
                     initializeSelect2();
-                }, 200); // Retraso para permitir que el DOM se estabilice
+                }, 200);
             });
 
-})();
+            Livewire.on('start-download', ({ url }) => {
+                const a = document.createElement('a');
+                a.href = url;
+                a.setAttribute('download', '');
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.dispatchEvent(new CustomEvent('download-ready'));
+            });
+
+        })();
     </script>
 @endscript

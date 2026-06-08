@@ -1,11 +1,14 @@
-// Intercepta errores de Livewire causados por reinicio de workers de Octane
+// Intercepta errores de Livewire causados por reinicio de workers de Octane.
+// Solo recarga en 419 (CSRF expirado) y 503 (worker caído).
+// El 500 NO recarga: puede ser un timeout de exportación largo, no un crash.
 document.addEventListener('livewire:initialized', () => {
   Livewire.hook('request', ({ fail }) => {
     fail(({ status, preventDefault }) => {
-      if (status === 419 || status === 500 || status === 503) {
+      const toastEl  = document.querySelector('.toast-ex');
+      const toastMsg = document.querySelector('#toast-message');
+
+      if (status === 419 || status === 503) {
         preventDefault();
-        const toastEl  = document.querySelector('.toast-ex');
-        const toastMsg = document.querySelector('#toast-message');
         if (toastEl && toastMsg) {
           toastEl.classList.remove('bg-success', 'bg-danger', 'bg-primary', 'bg-warning', 'bg-info');
           toastEl.classList.add('bg-warning', 'top-0', 'end-0');
@@ -13,6 +16,16 @@ document.addEventListener('livewire:initialized', () => {
           new bootstrap.Toast(toastEl, { delay: 4000 }).show();
         }
         setTimeout(() => window.location.reload(), 3000);
+      } else if (status === 500) {
+        preventDefault();
+        if (toastEl && toastMsg) {
+          toastEl.classList.remove('bg-success', 'bg-danger', 'bg-primary', 'bg-warning', 'bg-info');
+          toastEl.classList.add('bg-danger', 'top-0', 'end-0');
+          toastMsg.innerHTML = '&#10060; Ocurrió un error en el servidor. Por favor intente de nuevo.';
+          new bootstrap.Toast(toastEl, { delay: 5000 }).show();
+        }
+        // Notifica a cualquier botón con Alpine que esté en estado loading
+        window.dispatchEvent(new CustomEvent('download-ready'));
       }
     });
   });
