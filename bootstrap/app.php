@@ -42,6 +42,8 @@ return Application::configure(basePath: dirname(__DIR__))
       'api/factura-compra-call-back',
     ]);
 
+    $middleware->appendToGroup('web', \App\Http\Middleware\SecurityHeaders::class);
+
     $middleware->alias([
       'prevent.duplicate' => \App\Http\Middleware\PreventDuplicateAuth::class,
     ]);
