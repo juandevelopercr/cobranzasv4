@@ -7,8 +7,8 @@ use App\Models\User;
 use Livewire\Component;
 use App\Models\Currency;
 use App\Models\CasoProducto;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\CasoScotiabankReport;
 
 class CasoScotiabank extends Component
 {
@@ -60,28 +60,22 @@ class CasoScotiabank extends Component
     $this->$id = $range;
   }
 
-  public function exportExcel(string $rawDate = '')
+  public function exportExcel()
   {
-    if ($rawDate !== '') {
-        $this->filter_date = $rawDate;
-    }
+    ini_set('memory_limit', '512M');
 
-    $this->loading = true;
+    $titleDate = !empty($this->filter_date) ? ' ' . $this->filter_date : '';
 
-    // Guardar filtros en caché y despachar evento de descarga.
-    // Esto evita que Livewire reciba la respuesta binaria del Excel
-    // (causa del "pantallazo negro") — el browser descarga directamente.
-    $key = Str::uuid()->toString();
-    Cache::put($key, [
-        'filter_date'             => $this->filter_date,
-        'filter_numero_caso'      => $this->filter_numero_caso,
-        'filter_abogado'          => $this->filter_abogado,
-        'filter_asistente'        => $this->filter_asistente,
-        'filter_currency'         => $this->filter_currency,
-        'filter_exclude_products' => $this->filter_exclude_products,
-    ], now()->addMinutes(10));
-
-    $this->dispatch('start-download', url: route('reports.casos-scotiabank.download', ['key' => $key]));
-    $this->loading = false;
+    return Excel::download(
+        new CasoScotiabankReport([
+            'filter_date'             => $this->filter_date,
+            'filter_numero_caso'      => $this->filter_numero_caso,
+            'filter_abogado'          => $this->filter_abogado,
+            'filter_asistente'        => $this->filter_asistente,
+            'filter_currency'         => $this->filter_currency,
+            'filter_exclude_products' => $this->filter_exclude_products,
+        ], 'REPORTE DE CASOS DE DAVIBANK' . $titleDate),
+        'reporte-casos-davibank.xlsx'
+    );
   }
 }

@@ -97,8 +97,7 @@
                     <div class="col-md-3 d-flex align-items-end">
                         {{-- Incluye botones de guardar y guardar y cerrar --}}
                         <button type="button" class="btn btn-primary data-submit me-sm-4 me-1 mt-5"
-                            x-on:click="$wire.exportExcel(document.getElementById('filter_date')?.value?.trim() ?? '')"
-                            wire:loading.attr="disabled" wire:target="exportExcel">
+                            wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel">
                             <span wire:loading.remove wire:target="exportExcel">
                                 <i class="tf-icons bx bx-save bx-18px me-2"></i>{{ __('Export') }}
                             </span>
@@ -187,16 +186,6 @@
                 }, 200); // Retraso para permitir que el DOM se estabilice
             });
 
-            // Descarga sin pantalla negra: el browser abre la URL directamente
-            Livewire.on('start-download', ({ url }) => {
-                const a = document.createElement('a');
-                a.href = url;
-                a.setAttribute('download', '');
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            });
-
-        })();
+})();
     </script>
 @endscript
