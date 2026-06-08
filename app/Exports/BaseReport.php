@@ -9,17 +9,18 @@ use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
-use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Cell\DefaultValueBinder;
+use PhpOffice\PhpSpreadsheet\Cell\IValueBinder;
 
-abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithColumnFormatting, WithStyles, WithColumnWidths, WithEvents, WithCustomStartCell
+abstract class BaseReport extends DefaultValueBinder implements FromQuery, WithHeadings, WithMapping, WithColumnFormatting, WithStyles, WithColumnWidths, WithEvents, WithCustomStartCell, WithCustomValueBinder, IValueBinder
 {
     protected array $filters = [];
     protected $title;
@@ -28,19 +29,18 @@ abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithC
     {
         $this->filters = $filters;
         $this->title = $title;
+    }
 
-        // Evitar que PhpSpreadsheet convierta strings numéricos a float
-        // (preserva ceros iniciales en cédulas, números de caso, operaciones, etc.)
-        Cell::setValueBinder(new class extends DefaultValueBinder {
-            public function bindValue(\PhpOffice\PhpSpreadsheet\Cell\Cell $cell, $value = null): bool
-            {
-                if (is_string($value) && $value !== '') {
-                    $cell->setValueExplicit($value, DataType::TYPE_STRING);
-                    return true;
-                }
-                return parent::bindValue($cell, $value);
-            }
-        });
+    // Maatwebsite usa este binder durante la escritura de datos (WithCustomValueBinder).
+    // Almacena strings como TYPE_STRING para evitar que PHP convierta números
+    // grandes (cédulas, operaciones) a float y aparezcan en notación científica.
+    public function bindValue(Cell $cell, $value = null): bool
+    {
+        if (is_string($value) && $value !== '') {
+            $cell->setValueExplicit($value, DataType::TYPE_STRING);
+            return true;
+        }
+        return parent::bindValue($cell, $value);
     }
 
     abstract protected function columns(): array;
@@ -215,8 +215,6 @@ abstract class BaseReport implements FromQuery, WithHeadings, WithMapping, WithC
                     }
                 }
 
-                // Restaurar el value binder por defecto al terminar
-                Cell::setValueBinder(new DefaultValueBinder());
             },
         ];
     }
