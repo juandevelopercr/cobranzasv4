@@ -184,6 +184,7 @@ class ReportJefeController extends Controller
         abort(404, 'Enlace de descarga inválido o expirado.');
     }
 
+    ini_set('memory_limit', '512M');
     set_time_limit(300);
     $titleDate = !empty($filters['filter_date']) ? ' ' . $filters['filter_date'] : '';
 
@@ -200,6 +201,7 @@ class ReportJefeController extends Controller
         abort(404, 'Enlace de descarga inválido o expirado.');
     }
 
+    ini_set('memory_limit', '512M');
     set_time_limit(300);
     $titleDate = !empty($filters['filter_date']) ? ' ' . $filters['filter_date'] : '';
 
