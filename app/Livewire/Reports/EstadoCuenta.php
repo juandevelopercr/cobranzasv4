@@ -6,8 +6,8 @@ use Carbon\Carbon;
 use Livewire\Component;
 use App\Models\Currency;
 use App\Models\Transaction;
-use App\Exports\EstadoCuentaReport;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class EstadoCuenta extends Component
 {
@@ -50,30 +50,32 @@ class EstadoCuenta extends Component
     return $estados;
   }
 
-  public function exportExcel()
+  public function exportExcel(string $rawDate = '')
   {
-    // Validar que los campos requeridos estén llenos
-    $this->validate([
-        'filter_currency' => 'required',
-        'filter_date' => 'required',
-    ], [
-        'filter_currency.required' => 'Debe seleccionar una moneda.',
-        'filter_date.required' => 'Debe seleccionar un rango de fechas.',
-    ]);
+    if ($rawDate !== '') {
+        $this->filter_date = $rawDate;
+    }
 
-    $this->loading = true;
+    try {
+        $this->validate([
+            'filter_currency' => 'required',
+            'filter_date' => 'required',
+        ], [
+            'filter_currency.required' => 'Debe seleccionar una moneda.',
+            'filter_date.required' => 'Debe seleccionar un rango de fechas.',
+        ]);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        $this->dispatch('download-ready');
+        throw $e;
+    }
 
-    // Generar y descargar el Excel
-    return Excel::download(new EstadoCuentaReport(
-      [
-        'filter_date' => $this->filter_date,
-        'filter_contact' => $this->filter_contact,
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
+        'filter_date'     => $this->filter_date,
+        'filter_contact'  => $this->filter_contact,
         'filter_currency' => $this->filter_currency,
-      ],
-      'REPORTE DE ESTADO DE CUENTA' . $this->filter_date
-    ), 'reporte-estado-cuenta.xlsx');
+    ], now()->addMinutes(15));
 
-    // No necesitas $this->loading = false aquí,
-    // Livewire maneja la acción de descarga automáticamente
+    $this->dispatch('start-download', url: route('reports.estado-cuenta.download', ['key' => $key]));
   }
 }

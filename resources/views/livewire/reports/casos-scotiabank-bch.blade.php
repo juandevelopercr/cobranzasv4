@@ -94,10 +94,11 @@
                     </div>
 
                     <!-- Botones de acción -->
-                    <div class="col-md-3 d-flex align-items-end"
+                    <div class="col-md-3"
                          x-data="{ loading: false }"
                          @download-ready.window="loading = false">
-                        <button type="button" class="btn btn-primary data-submit me-sm-4 me-1 mt-5"
+                        <label class="form-label invisible">.</label>
+                        <button type="button" class="btn btn-primary data-submit me-sm-4 me-1 d-block"
                             :disabled="loading"
                             @click="loading = true; $wire.exportExcel(document.getElementById('filter_date')?.value?.trim() ?? '')">
                             <span x-show="!loading">
@@ -183,14 +184,27 @@
                 }, 200);
             });
 
-            Livewire.on('start-download', ({ url }) => {
-                const a = document.createElement('a');
-                a.href = url;
-                a.setAttribute('download', '');
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.dispatchEvent(new CustomEvent('download-ready'));
+            Livewire.on('start-download', async ({ url }) => {
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error('Error al generar el reporte');
+                    const disposition = response.headers.get('Content-Disposition') ?? '';
+                    const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                    const filename = match ? match[1].replace(/['"]/g, '') : 'reporte.xlsx';
+                    const blob = await response.blob();
+                    const blobUrl = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = blobUrl;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(blobUrl);
+                } catch (e) {
+                    console.error(e);
+                } finally {
+                    window.dispatchEvent(new CustomEvent('download-ready'));
+                }
             });
 
         })();

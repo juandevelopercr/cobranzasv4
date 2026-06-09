@@ -7,8 +7,8 @@ use App\Models\Currency;
 use App\Models\Department;
 use App\Models\CentroCosto;
 use App\Models\Transaction;
-use App\Exports\AntiguedadReport;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class Antiguedad extends Component
 {
@@ -56,31 +56,33 @@ class Antiguedad extends Component
     return $estados;
   }
 
-  public function exportExcel()
+  public function exportExcel(string $rawDate = '')
   {
-    // Validar que los campos requeridos estén llenos
-    $this->validate([
-        'filter_currency' => 'required',
-        'filter_date' => 'required',
-    ], [
-        'filter_currency.required' => 'Debe seleccionar una moneda.',
-        'filter_date.required' => 'Debe seleccionar un rango de fechas.',
-    ]);
+    if ($rawDate !== '') {
+        $this->filter_date = $rawDate;
+    }
 
-    $this->loading = true;
+    try {
+        $this->validate([
+            'filter_currency' => 'required',
+            'filter_date' => 'required',
+        ], [
+            'filter_currency.required' => 'Debe seleccionar una moneda.',
+            'filter_date.required' => 'Debe seleccionar un rango de fechas.',
+        ]);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        $this->dispatch('download-ready');
+        throw $e;
+    }
 
-    // Generar y descargar el Excel
-    return Excel::download(new AntiguedadReport(
-      [
-        'filter_date' => $this->filter_date,
-        'filter_contact' => $this->filter_contact,
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
+        'filter_date'        => $this->filter_date,
+        'filter_contact'     => $this->filter_contact,
         'filter_centroCosto' => $this->filter_centroCosto,
-        'filter_currency' => $this->filter_currency,
-      ],
-      'REPORTE DE ANTIGUEDAD DE SALDO ' . $this->filter_date
-    ), 'reporte-antiguedad-saldo.xlsx');
+        'filter_currency'    => $this->filter_currency,
+    ], now()->addMinutes(15));
 
-    // No necesitas $this->loading = false aquí,
-    // Livewire maneja la acción de descarga automáticamente
+    $this->dispatch('start-download', url: route('reports.antiguedad-saldo.download', ['key' => $key]));
   }
 }

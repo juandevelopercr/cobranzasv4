@@ -6,10 +6,10 @@ use Carbon\Carbon;
 use App\Models\User;
 use Livewire\Component;
 use App\Models\Currency;
-use App\Exports\CasoReport;
 use App\Models\Bank;
 use App\Models\Transaction;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class Caso extends Component
 {
@@ -68,24 +68,22 @@ class Caso extends Component
     $this->$id = $range;
   }
 
-  public function exportExcel()
+  public function exportExcel(string $rawDate = '')
   {
-    $this->loading = true;
+    if ($rawDate !== '') {
+        $this->filter_date = $rawDate;
+    }
 
-    // Generar y descargar el Excel
-    return Excel::download(new CasoReport(
-      [
-        'filter_date' => $this->filter_date,
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
+        'filter_date'        => $this->filter_date,
         'filter_numero_caso' => $this->filter_numero_caso,
-        'filter_abogado' => $this->filter_abogado,
-        'filter_asistente' => $this->filter_asistente,
-        'filter_banco' => $this->filter_banco,
-        'filter_currency' => $this->filter_currency
-      ],
-      'REPORTE DE CASOS ' . $this->filter_date
-    ), 'reporte-casos.xlsx');
+        'filter_abogado'     => $this->filter_abogado,
+        'filter_asistente'   => $this->filter_asistente,
+        'filter_banco'       => $this->filter_banco,
+        'filter_currency'    => $this->filter_currency,
+    ], now()->addMinutes(15));
 
-    // No necesitas $this->loading = false aquí,
-    // Livewire maneja la acción de descarga automáticamente
+    $this->dispatch('start-download', url: route('reports.casos.download', ['key' => $key]));
   }
 }

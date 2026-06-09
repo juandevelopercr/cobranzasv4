@@ -6,8 +6,8 @@ use Livewire\Component;
 use App\Models\Department;
 use App\Models\CentroCosto;
 use App\Models\Transaction;
-use App\Exports\RegistroReport;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class Registro extends Component
 {
@@ -60,27 +60,25 @@ class Registro extends Component
     return $estados;
   }
 
-  public function exportExcel()
+  public function exportExcel(string $rawDate = '')
   {
-    $this->loading = true;
+    if ($rawDate !== '') {
+        $this->filter_date = $rawDate;
+    }
 
     if (empty($this->filter_centroCosto) || is_null($this->filter_centroCosto))
       $idsCostos = $this->centrosCosto->pluck('id');
     else
       $idsCostos = $this->filter_centroCosto;
 
-    // Generar y descargar el Excel
-    return Excel::download(new RegistroReport(
-      [
-        'filter_date' => $this->filter_date,
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
+        'filter_date'        => $this->filter_date,
         'filter_centroCosto' => $this->filter_centroCosto,
-        'filter_department' => $this->filter_department,
-        'idsCostos' => $idsCostos,
-      ],
-      'REPORTE DE FACTURACIÓN ' . $this->filter_date
-    ), 'reporte-registro.xlsx');
+        'filter_department'  => $this->filter_department,
+        'idsCostos'          => $idsCostos,
+    ], now()->addMinutes(15));
 
-    // No necesitas $this->loading = false aquí,
-    // Livewire maneja la acción de descarga automáticamente
+    $this->dispatch('start-download', url: route('reports.registro.download', ['key' => $key]));
   }
 }

@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Reports;
 
-use App\Exports\CustomersReport;
 use App\Models\Department;
 use App\Models\Transaction;
 use Livewire\Component;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class CustomerReport extends Component
 {
@@ -34,15 +34,9 @@ class CustomerReport extends Component
 
   public function exportExcel()
   {
-    $this->loading = true;
+    $key = Str::uuid()->toString();
+    Cache::put($key, [], now()->addMinutes(15));
 
-    // Generar y descargar el Excel
-    return Excel::download(new CustomersReport(
-      [],
-      'REPORTE DE CLIENTES'
-    ), 'reporte-clientes.xlsx');
-
-    // No necesitas $this->loading = false aquí,
-    // Livewire maneja la acción de descarga automáticamente
+    $this->dispatch('start-download', url: route('reports.customers.download', ['key' => $key]));
   }
 }

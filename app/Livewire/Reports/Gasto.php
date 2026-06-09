@@ -5,8 +5,8 @@ namespace App\Livewire\Reports;
 use Livewire\Component;
 use App\Models\Currency;
 use App\Models\Transaction;
-use App\Exports\GastoReport;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class Gasto extends Component
 {
@@ -62,24 +62,22 @@ class Gasto extends Component
     return $estados;
   }
 
-  public function exportExcel()
+  public function exportExcel(string $rawDate = '')
   {
-    $this->loading = true;
+    if ($rawDate !== '') {
+        $this->filter_date = $rawDate;
+    }
 
-    // Generar y descargar el Excel
-    return Excel::download(new GastoReport(
-      [
-        'filter_date' => $this->filter_date,
-        'filter_emisor' => $this->filter_emisor,
-        'filter_type' => $this->filter_type,
-        'filter_status' => $this->filter_status,
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
+        'filter_date'     => $this->filter_date,
+        'filter_emisor'   => $this->filter_emisor,
+        'filter_type'     => $this->filter_type,
+        'filter_status'   => $this->filter_status,
         'filter_currency' => $this->filter_currency,
-        'filter_tax_type' => $this->filter_tax_type
-      ],
-      'REPORTE DE GASTOS ' . $this->filter_date
-    ), 'reporte-gastos.xlsx');
+        'filter_tax_type' => $this->filter_tax_type,
+    ], now()->addMinutes(15));
 
-    // No necesitas $this->loading = false aquí,
-    // Livewire maneja la acción de descarga automáticamente
+    $this->dispatch('start-download', url: route('reports.gastos.download', ['key' => $key]));
   }
 }

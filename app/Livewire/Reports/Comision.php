@@ -6,9 +6,9 @@ use App\Models\User;
 use Livewire\Component;
 use App\Models\Currency;
 use App\Models\Transaction;
-use App\Exports\ComisionReport;
 use App\Models\Comisionista;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class Comision extends Component
 {
@@ -63,24 +63,22 @@ class Comision extends Component
     return $estados;
   }
 
-  public function exportExcel()
+  public function exportExcel(string $rawDate = '')
   {
-    $this->loading = true;
+    if ($rawDate !== '') {
+        $this->filter_date = $rawDate;
+    }
 
-    // Generar y descargar el Excel
-    return Excel::download(new ComisionReport(
-      [
-        'filter_date' => $this->filter_date,
-        'filter_abogado' => $this->filter_abogado,
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
+        'filter_date'     => $this->filter_date,
+        'filter_abogado'  => $this->filter_abogado,
         'filter_currency' => $this->filter_currency,
-        'filter_type' => $this->filter_type,
-        'filter_pagar' => $this->filter_pagar
-      ],
-      'REPORTE DE COMISIONES ' . $this->filter_date
-    ), 'reporte-comisiones.xlsx');
+        'filter_type'     => $this->filter_type,
+        'filter_pagar'    => $this->filter_pagar,
+    ], now()->addMinutes(15));
 
-    // No necesitas $this->loading = false aquí,
-    // Livewire maneja la acción de descarga automáticamente
+    $this->dispatch('start-download', url: route('reports.comisiones.download', ['key' => $key]));
   }
 
   public function updatedFilterPagar($value)

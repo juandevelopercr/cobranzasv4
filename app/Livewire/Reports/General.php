@@ -5,9 +5,8 @@ namespace App\Livewire\Reports;
 use Livewire\Component;
 use App\Models\CentroCosto;
 use App\Models\Transaction;
-use App\Exports\GeneralReport;
-use App\Exports\FacturacionReport;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class General extends Component
 {
@@ -55,28 +54,24 @@ class General extends Component
     return $estados;
   }
 
-  public function exportExcel()
+  public function exportExcel(string $rawDate = '')
   {
-    $this->loading = true;
+    if ($rawDate !== '') {
+        $this->filter_date = $rawDate;
+    }
 
     if (empty($this->filter_centroCosto) || is_null($this->filter_centroCosto)){
         $this->filter_centroCosto = CentroCosto::pluck('id');
     }
 
-    $title = $this->getReportName($this->filter_type);
-
-    // Generar y descargar el Excel
-    return Excel::download(new GeneralReport(
-      [
-        'filter_date' => $this->filter_date,
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
+        'filter_date'        => $this->filter_date,
         'filter_centroCosto' => $this->filter_centroCosto,
-        'filter_type' => $this->filter_type
-      ],
-      'REPORTE GENERAL ' .$title .' '. $this->filter_date
-    ), 'reporte-general-'.$title.'.xlsx');
+        'filter_type'        => $this->filter_type,
+    ], now()->addMinutes(15));
 
-    // No necesitas $this->loading = false aquí,
-    // Livewire maneja la acción de descarga automáticamente
+    $this->dispatch('start-download', url: route('reports.generales.download', ['key' => $key]));
   }
 
   public function getReportName($tipo){

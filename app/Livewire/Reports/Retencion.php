@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Reports;
 
-use App\Exports\RetencionReport;
 use App\Models\Transaction;
 use Livewire\Component;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class Retencion extends Component
 {
@@ -50,21 +50,19 @@ class Retencion extends Component
     return $estados;
   }
 
-  public function exportExcel()
+  public function exportExcel(string $rawDate = '')
   {
-    $this->loading = true;
+    if ($rawDate !== '') {
+        $this->filter_date = $rawDate;
+    }
 
-    // Generar y descargar el Excel
-    return Excel::download(new RetencionReport(
-      [
-        'filter_date' => $this->filter_date,
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
+        'filter_date'    => $this->filter_date,
         'filter_contact' => $this->filter_contact,
-        'filter_status' => $this->filter_status
-      ],
-      'REPORTE DE FACTURACIÓN CON RETENCION DEL 2% ' . $this->filter_date
-    ), 'reporte-facturacion-con-retencion.xlsx');
+        'filter_status'  => $this->filter_status,
+    ], now()->addMinutes(15));
 
-    // No necesitas $this->loading = false aquí,
-    // Livewire maneja la acción de descarga automáticamente
+    $this->dispatch('start-download', url: route('reports.retencion.download', ['key' => $key]));
   }
 }

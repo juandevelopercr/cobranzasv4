@@ -6,8 +6,8 @@ use Carbon\Carbon;
 use Livewire\Component;
 use App\Models\Department;
 use App\Models\Transaction;
-use App\Exports\Iva90Report;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class Iva90 extends Component
 {
@@ -62,21 +62,19 @@ class Iva90 extends Component
     return $estados;
   }
 
-  public function exportExcel()
+  public function exportExcel(string $rawDate = '')
   {
-    $this->loading = true;
+    if ($rawDate !== '') {
+        $this->filter_date = $rawDate;
+    }
 
-    // Generar y descargar el Excel
-    return Excel::download(new Iva90Report(
-      [
-        'filter_date' => $this->filter_date,
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
+        'filter_date'    => $this->filter_date,
         'filter_contact' => $this->filter_contact,
-        'filter_status' => $this->filter_status
-      ],
-      'REPORTE DE FACTURACIÓN CON MENOS DE 90 DIAS' . $this->filter_date
-    ), 'reporte-facturacion-menos-90-dias.xlsx');
+        'filter_status'  => $this->filter_status,
+    ], now()->addMinutes(15));
 
-    // No necesitas $this->loading = false aquí,
-    // Livewire maneja la acción de descarga automáticamente
+    $this->dispatch('start-download', url: route('reports.iva-90.download', ['key' => $key]));
   }
 }

@@ -4,8 +4,8 @@ namespace App\Livewire\Reports;
 
 use Livewire\Component;
 use App\Models\Comprobante;
-use App\Exports\ComprobantesReport;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class Comprobantes extends Component
 {
@@ -61,18 +61,17 @@ class Comprobantes extends Component
     }
 
     public function exportExcel()
-    {
-        $this->loading = true;
+  {
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
+        'filter_date'              => $this->filter_date,
+        'filter_emisor'            => $this->filter_emisor,
+        'filter_receptor'          => $this->filter_receptor,
+        'filter_tipo_documento'    => $this->filter_tipo_documento,
+        'filter_estado_hacienda'   => $this->filter_estado_hacienda,
+        'filter_moneda'            => $this->filter_moneda,
+    ], now()->addMinutes(15));
 
-        $filters = [
-            'filter_date' => $this->filter_date,
-            'filter_emisor' => $this->filter_emisor,
-            'filter_receptor' => $this->filter_receptor,
-            'filter_tipo_documento' => $this->filter_tipo_documento,
-            'filter_estado_hacienda' => $this->filter_estado_hacienda,
-            'filter_moneda' => $this->filter_moneda,
-        ];
-
-        return Excel::download(new ComprobantesReport($filters), 'reporte-comprobantes-' . now()->format('YmdHis') . '.xlsx');
-    }
+    $this->dispatch('start-download', url: route('reports.comprobantes.download', ['key' => $key]));
+  }
 }

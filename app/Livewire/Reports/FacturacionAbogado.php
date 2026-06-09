@@ -6,8 +6,8 @@ use Carbon\Carbon;
 use App\Models\Bank;
 use App\Models\User;
 use Livewire\Component;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\FacturacionAbogadoReport;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class FacturacionAbogado extends Component
 {
@@ -53,20 +53,18 @@ class FacturacionAbogado extends Component
     $this->$id = $range;
   }
 
-  public function exportExcel()
+  public function exportExcel(string $rawDate = '')
   {
-    $this->loading = true;
+    if ($rawDate !== '') {
+        $this->filter_date = $rawDate;
+    }
 
-    // Generar y descargar el Excel
-    return Excel::download(new FacturacionAbogadoReport(
-      [
-        'filter_date' => $this->filter_date,
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
+        'filter_date'    => $this->filter_date,
         'filter_abogado' => $this->filter_abogado,
-      ],
-      'REPORTE DE FACTURACION POR ABOGADO ' . $this->filter_date
-    ), 'reporte-facturacion-abogado.xlsx');
+    ], now()->addMinutes(15));
 
-    // No necesitas $this->loading = false aquí,
-    // Livewire maneja la acción de descarga automáticamente
+    $this->dispatch('start-download', url: route('reports.facturacion-abogado.download', ['key' => $key]));
   }
 }

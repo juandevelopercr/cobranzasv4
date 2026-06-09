@@ -80,22 +80,21 @@
         </div>
 
         <div class="row g-3 align-items-end">
-          <!-- Botones de acción -->
-          <div class="col-md-3 d-flex align-items-end">
-            <button type="button"
-                    class="btn btn-primary data-submit me-sm-4 me-1 mt-5"
-                    wire:click="exportExcel"
-                    wire:loading.attr="disabled"
-                    wire:target="exportExcel">
-                <span wire:loading.remove wire:target="exportExcel">
-                    <i class="tf-icons bx bx-save bx-18px me-2"></i>{{ __('Exportar Excel') }}
-                </span>
-                <span wire:loading wire:target="exportExcel">
-                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>{{ __('Generando...') }}
-                </span>
-            </button>
+          <div class="col-md-3"
+               x-data="{ loading: false }"
+               @download-ready.window="loading = false">
+              <label class="form-label invisible">.</label>
+              <button type="button" class="btn btn-primary data-submit me-sm-4 me-1 d-block"
+                  :disabled="loading"
+                  @click="loading = true; $wire.exportExcel()">
+                  <span x-show="!loading">
+                      <i class="tf-icons bx bx-save bx-18px me-2"></i>{{ __('Exportar') }}
+                  </span>
+                  <span x-show="loading" x-cloak>
+                      <span class="spinner-border spinner-border-sm me-2" role="status"></span>{{ __('Generando reporte...') }}
+                  </span>
+              </button>
           </div>
-        </div>
       </form>
     </div>
   </div>
@@ -140,6 +139,30 @@
 
     // Initial load
     initializeSelect2();
+
+
+        Livewire.on('start-download', async ({ url }) => {
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error('Error al generar el reporte');
+                    const disposition = response.headers.get('Content-Disposition') ?? '';
+                    const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                    const filename = match ? match[1].replace(/['"]/g, '') : 'reporte.xlsx';
+                    const blob = await response.blob();
+                    const blobUrl = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = blobUrl;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(blobUrl);
+                } catch (e) {
+                    console.error(e);
+                } finally {
+                    window.dispatchEvent(new CustomEvent('download-ready'));
+                }
+            });
 
   })();
 </script>

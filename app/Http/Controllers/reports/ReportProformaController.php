@@ -180,4 +180,26 @@ class ReportProformaController extends Controller
 
     return response()->download($path, $filename);
   }
+
+  public function index()
+  {
+    return view('content.reports.proforma');
+  }
+
+  public function downloadProforma(string $key)
+  {
+    $filters = Cache::pull($key);
+    if (!is_array($filters)) {
+        abort(404, 'Enlace de descarga inválido o expirado.');
+    }
+
+    ini_set('memory_limit', '512M');
+    set_time_limit(1000);
+    $titleDate = !empty($filters['filter_date']) ? ' ' . $filters['filter_date'] : '';
+
+    return Excel::download(
+        new \App\Exports\ProformaReport($filters, 'REPORTE DE PROFORMAS' . $titleDate),
+        'reporte-proformas.xlsx'
+    );
+  }
 }

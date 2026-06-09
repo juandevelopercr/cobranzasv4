@@ -472,6 +472,154 @@ Route::group(['middleware' => 'auth:sanctum', 'verified', 'session.check'], func
     // Reporte de Proforma
     Route::get('/proforma', [ReportProformaController::class, 'index'])
       ->name('proforma.index');
+
+    // ---- Rutas de descarga (nuevo patrón async fetch) ----
+
+    // ReportJefeController downloads
+    Route::get('/casos/download/{key}', [ReportJefeController::class, 'downloadCasos'])
+        ->name('casos.download');
+
+    Route::get('/facturacion-abogado/download/{key}', [ReportJefeController::class, 'downloadFacturacionAbogado'])
+        ->name('facturacion-abogado.download');
+
+    Route::get('/casos-banco-general/download/{key}', [ReportJefeController::class, 'downloadCasoBancoGeneral'])
+        ->name('casos-banco-general.download');
+
+    Route::get('/casos-bac-cuentas-gestionadas/download/{key}', [ReportJefeController::class, 'downloadCasoBacCuentasGestionadas'])
+        ->name('casos-bac-cuentas-gestionadas.download');
+
+    Route::get('/casos-bac-cuentas-terminadas/download/{key}', [ReportJefeController::class, 'downloadCasoBacCuentasTerminadas'])
+        ->name('casos-bac-cuentas-terminadas.download');
+
+    Route::get('/casos-lafise-activos/download/{key}', [ReportJefeController::class, 'downloadCasoLafiseActivos'])
+        ->name('casos-lafise-activos.download');
+
+    Route::get('/casos-lafise-terminados/download/{key}', [ReportJefeController::class, 'downloadCasoLafiseTerminados'])
+        ->name('casos-lafise-terminados.download');
+
+    Route::get('/casos-lafise-incobrables/download/{key}', [ReportJefeController::class, 'downloadCasoLafiseIncobrables'])
+        ->name('casos-lafise-incobrables.download');
+
+    Route::get('/casos-davivienda-pago-ce/download/{key}', [ReportJefeController::class, 'downloadCasoDaviviendaPagoCe'])
+        ->name('casos-davivienda-pago-ce.download');
+
+    Route::get('/casos-davivienda-pago-tc/download/{key}', [ReportJefeController::class, 'downloadCasoDaviviendaPagoTc'])
+        ->name('casos-davivienda-pago-tc.download');
+
+    Route::get('/casos-davivienda-file-master/download/{key}', [ReportJefeController::class, 'downloadCasoDaviviendaFileMaster'])
+        ->name('casos-davivienda-file-master.download');
+
+    Route::get('/casos-davivienda-matriz/download/{key}', [ReportJefeController::class, 'downloadCasoDaviviendaMatriz'])
+        ->name('casos-davivienda-matriz.download');
+
+    Route::get('/casos-cafsa-activos/download/{key}', [ReportJefeController::class, 'downloadCasoCafsaActivos'])
+        ->name('casos-cafsa-activos.download');
+
+    Route::get('/casos-cafsa-terminados/download/{key}', [ReportJefeController::class, 'downloadCasoCafsaTerminados'])
+        ->name('casos-cafsa-terminados.download');
+
+    Route::get('/casos-cafsa-incobrables/download/{key}', [ReportJefeController::class, 'downloadCasoCafsaIncobrables'])
+        ->name('casos-cafsa-incobrables.download');
+
+    Route::get('/casos-tercero-activos/download/{key}', [ReportJefeController::class, 'downloadCasoTerceroActivos'])
+        ->name('casos-tercero-activos.download');
+
+    Route::get('/casos-tercero-terminados/download/{key}', [ReportJefeController::class, 'downloadCasoTerceroTerminados'])
+        ->name('casos-tercero-terminados.download');
+
+    Route::get('/casos-tercero-incobrables/download/{key}', [ReportJefeController::class, 'downloadCasoTerceroIncobrables'])
+        ->name('casos-tercero-incobrables.download');
+
+    Route::get('/casos-tercero-pago/download/{key}', [ReportJefeController::class, 'downloadCasoTerceroPago'])
+        ->name('casos-tercero-pago.download');
+
+    Route::get('/casos-tercero-prescrito/download/{key}', [ReportJefeController::class, 'downloadCasoTerceroPrescrito'])
+        ->name('casos-tercero-prescrito.download');
+
+    Route::get('/casos-coocique-activos/download/{key}', [ReportJefeController::class, 'downloadCasoCoociqueActivos'])
+        ->name('casos-coocique-activos.download');
+
+    Route::get('/casos-coocique-terminados/download/{key}', [ReportJefeController::class, 'downloadCasoCoociqueTerminados'])
+        ->name('casos-coocique-terminados.download');
+
+    Route::get('/casos-coocique-incobrables/download/{key}', [ReportJefeController::class, 'downloadCasoCoociqueIncobrables'])
+        ->name('casos-coocique-incobrables.download');
+
+    Route::get('/casos-coocique-pago/download/{key}', [ReportJefeController::class, 'downloadCasoCoociquePago'])
+        ->name('casos-coocique-pago.download');
+
+    Route::get('/casos-coocique-prescrito/download/{key}', [ReportJefeController::class, 'downloadCasoCoociquePrescrito'])
+        ->name('casos-coocique-prescrito.download');
+
+    Route::get('/casos-coocique2-activos/download/{key}', [ReportJefeController::class, 'downloadCasoCoocique2Activos'])
+        ->name('casos-coocique2-activos.download');
+
+    Route::get('/casos-coocique2-terminados/download/{key}', [ReportJefeController::class, 'downloadCasoCoocique2Terminados'])
+        ->name('casos-coocique2-terminados.download');
+
+    Route::get('/casos-coocique2-incobrables/download/{key}', [ReportJefeController::class, 'downloadCasoCoocique2Incobrables'])
+        ->name('casos-coocique2-incobrables.download');
+
+    Route::get('/casos-coocique2-pago/download/{key}', [ReportJefeController::class, 'downloadCasoCoocique2Pago'])
+        ->name('casos-coocique2-pago.download');
+
+    Route::get('/casos-coocique2-prescrito/download/{key}', [ReportJefeController::class, 'downloadCasoCoocique2Prescrito'])
+        ->name('casos-coocique2-prescrito.download');
+
+    Route::get('/casos-cartera-comprada/download/{key}', [ReportJefeController::class, 'downloadCasoCarteraComprada'])
+        ->name('casos-cartera-comprada.download');
+
+    // Controladores individuales downloads
+    Route::get('/antiguedad-saldo/download/{key}', [ReportAntiguedadController::class, 'downloadAntiguedad'])
+        ->name('antiguedad-saldo.download');
+
+    Route::get('/comisiones/download/{key}', [ReportComisionesController::class, 'downloadComisiones'])
+        ->name('comisiones.download');
+
+    Route::get('/comprobantes/download/{key}', [ReportComprobantesController::class, 'downloadComprobantes'])
+        ->name('comprobantes.download');
+
+    Route::get('/customers/download/{key}', [CustomersReportController::class, 'downloadCustomers'])
+        ->name('customers.download');
+
+    Route::get('/estado-cuenta/download/{key}', [ReportEstadoCuentaController::class, 'downloadEstadoCuenta'])
+        ->name('estado-cuenta.download');
+
+    Route::get('/facturacion/download/{key}', [ReportFacturacionController::class, 'downloadFacturacion'])
+        ->name('facturacion.download');
+
+    Route::get('/facturacion-detallada/download/{key}', [ReportFacturacionDetalladaController::class, 'downloadFacturacionDetallada'])
+        ->name('facturacion-detallada.download');
+
+    Route::get('/gastos/download/{key}', [ReportGastoController::class, 'downloadGastos'])
+        ->name('gastos.download');
+
+    Route::get('/generales/download/{key}', [ReportGeneralesController::class, 'downloadGenerales'])
+        ->name('generales.download');
+
+    Route::get('/iva-mes/download/{key}', [ReportIvaController::class, 'downloadIva'])
+        ->name('iva-mes.download');
+
+    Route::get('/iva-90/download/{key}', [ReportIva90Controller::class, 'downloadIva90'])
+        ->name('iva-90.download');
+
+    Route::get('/iva-mas90/download/{key}', [ReportIvaMas90Controller::class, 'downloadIvaMas90'])
+        ->name('iva-mas90.download');
+
+    Route::get('/nota-credito/download/{key}', [ReportNotaCreditoController::class, 'downloadNotaCredito'])
+        ->name('nota-credito.download');
+
+    Route::get('/nota-debito/download/{key}', [ReportNotaDebitoController::class, 'downloadNotaDebito'])
+        ->name('nota-debito.download');
+
+    Route::get('/proforma/download/{key}', [ReportProformaController::class, 'downloadProforma'])
+        ->name('proforma.download');
+
+    Route::get('/registro/download/{key}', [ReportRegistroController::class, 'downloadRegistro'])
+        ->name('registro.download');
+
+    Route::get('/retencion/download/{key}', [ReportRetencionController::class, 'downloadRetencion'])
+        ->name('retencion.download');
   });
 });
 //Route::get('/usuarios', [UserCrud::class, 'index'])->name('usuarios.index');

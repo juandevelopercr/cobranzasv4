@@ -9,8 +9,8 @@ use App\Models\Contact;
 use Livewire\Component;
 use App\Models\Currency;
 use App\Models\Transaction;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\CasoTerceroPrescritoReport;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class CasoTerceroPrescrito extends Component
 {
@@ -74,37 +74,40 @@ class CasoTerceroPrescrito extends Component
     $this->$id = $range;
   }
 
-  public function exportExcel()
+  public function exportExcel(string $rawDate = '')
   {
-    // Validar que los campos requeridos estén llenos
-    $this->validate([
-        'filter_contact' => 'required',
-        'filter_date' => 'required',
-    ], [
-        'filter_contact.required' => 'Debe seleccionar un cliente.',
-        'filter_date.required' => 'Debe seleccionar un rango de fechas.',
-    ]);
+    if ($rawDate !== '') {
+        $this->filter_date = $rawDate;
+    }
 
-    $this->loading = true;
+    try {
+        $this->validate([
+            'filter_contact' => 'required',
+            'filter_date' => 'required',
+        ], [
+            'filter_contact.required' => 'Debe seleccionar un cliente.',
+            'filter_date.required' => 'Debe seleccionar un rango de fechas.',
+        ]);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        $this->dispatch('download-ready');
+        throw $e;
+    }
+
     $this->filter_type = 'OTROS';
     if ($this->filter_contact && ($this->filter_contact == 4 || $this->filter_contact == 723)) // CEFA CENTRAL FARMACEUTICA S.A. //COCA COLA FEMSA DE COSTA RICA SOCIEDAD ANONIMA
       $this->filter_type = 'CEFA';
 
-    // Generar y descargar el Excel
-    return Excel::download(new CasoTerceroPrescritoReport(
-      [
-        'filter_date' => $this->filter_date,
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
+        'filter_date'        => $this->filter_date,
         'filter_numero_caso' => $this->filter_numero_caso,
-        'filter_abogado' => $this->filter_abogado,
-        'filter_asistente' => $this->filter_asistente,
-        'filter_currency' => $this->filter_currency,
-        'filter_contact' => $this->filter_contact,
-        'filter_type' => $this->filter_type
-      ],
-      'REPORTE DE CASOS DE TERCERO PRESCRITO ' . $this->filter_date
-    ), 'reporte-casos-tercero-prescrito.xlsx');
+        'filter_abogado'     => $this->filter_abogado,
+        'filter_asistente'   => $this->filter_asistente,
+        'filter_currency'    => $this->filter_currency,
+        'filter_contact'     => $this->filter_contact,
+        'filter_type'        => $this->filter_type,
+    ], now()->addMinutes(15));
 
-    // No necesitas $this->loading = false aquí,
-    // Livewire maneja la acción de descarga automáticamente
+    $this->dispatch('start-download', url: route('reports.casos-tercero-prescrito.download', ['key' => $key]));
   }
 }

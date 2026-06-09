@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Reports;
 
-use App\Exports\ProformaReport;
 use App\Models\Department;
 use App\Models\Transaction;
 use Livewire\Component;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class Proforma extends Component
 {
@@ -51,24 +51,31 @@ class Proforma extends Component
     $this->$id = $range;
   }
 
-  public function exportExcel()
+  public function exportExcel(string $rawDate = '')
   {
-    $this->validate([
-      'filter_date' => 'required',
-    ], [
-      'filter_date.required' => 'La fecha es obligatoria'
-    ]);
+    if ($rawDate !== '') {
+        $this->filter_date = $rawDate;
+    }
 
-    $this->loading = true;
+    try {
+        $this->validate([
+            'filter_date' => 'required',
+        ], [
+            'filter_date.required' => 'La fecha es obligatoria',
+        ]);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        $this->dispatch('download-ready');
+        throw $e;
+    }
 
-    return Excel::download(new ProformaReport(
-      [
-        'filter_date' => $this->filter_date,
-        'filter_contact' => $this->filter_contact,
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
+        'filter_date'       => $this->filter_date,
+        'filter_contact'    => $this->filter_contact,
         'filter_department' => $this->filter_department,
-        'filter_status' => $this->filter_status
-      ],
-      'REPORTE DE PROFORMAS ' . $this->filter_date
-    ), 'reporte-proformas.xlsx');
+        'filter_status'     => $this->filter_status,
+    ], now()->addMinutes(15));
+
+    $this->dispatch('start-download', url: route('reports.proforma.download', ['key' => $key]));
   }
 }

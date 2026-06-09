@@ -8,8 +8,8 @@ use App\Models\User;
 use Livewire\Component;
 use App\Models\Currency;
 use App\Models\Transaction;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\CasoCafsaIncobrableReport;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class CasoCafsaIncobrable extends Component
 {
@@ -65,21 +65,14 @@ class CasoCafsaIncobrable extends Component
 
   public function exportExcel()
   {
-    $this->loading = true;
-
-    // Generar y descargar el Excel
-    return Excel::download(new CasoCafsaIncobrableReport(
-      [
-       // 'filter_date' => $this->filter_date,
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
         'filter_numero_caso' => $this->filter_numero_caso,
-        'filter_abogado' => $this->filter_abogado,
-        'filter_asistente' => $this->filter_asistente,
-        'filter_currency' => $this->filter_currency
-      ],
-      'REPORTE DE CASOS DE CAFSA INCOBRABLE '
-    ), 'reporte-casos-cafsa-incobrables.xlsx');
+        'filter_abogado'     => $this->filter_abogado,
+        'filter_asistente'   => $this->filter_asistente,
+        'filter_currency'    => $this->filter_currency,
+    ], now()->addMinutes(15));
 
-    // No necesitas $this->loading = false aquí,
-    // Livewire maneja la acción de descarga automáticamente
+    $this->dispatch('start-download', url: route('reports.casos-cafsa-incobrables.download', ['key' => $key]));
   }
 }

@@ -9,8 +9,8 @@ use App\Models\Contact;
 use Livewire\Component;
 use App\Models\Currency;
 use App\Models\Transaction;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\CasoCoocique2ActivoReport;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class CasoCoocique2Activo extends Component
 {
@@ -74,30 +74,32 @@ class CasoCoocique2Activo extends Component
     $this->$id = $range;
   }
 
-  public function exportExcel()
+  public function exportExcel(string $rawDate = '')
   {
-    // Validar que los campos requeridos estén llenos
-    $this->validate([
-        'filter_date' => 'required',
-    ], [
-        'filter_date.required' => 'Debe seleccionar un rango de fechas.',
-    ]);
+    if ($rawDate !== '') {
+        $this->filter_date = $rawDate;
+    }
 
-    $this->loading = true;
+    try {
+        $this->validate([
+            'filter_date' => 'required',
+        ], [
+            'filter_date.required' => 'Debe seleccionar un rango de fechas.',
+        ]);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        $this->dispatch('download-ready');
+        throw $e;
+    }
 
-    // Generar y descargar el Excel
-    return Excel::download(new CasoCoocique2ActivoReport(
-      [
-        'filter_date' => $this->filter_date,
+    $key = Str::uuid()->toString();
+    Cache::put($key, [
+        'filter_date'        => $this->filter_date,
         'filter_numero_caso' => $this->filter_numero_caso,
-        'filter_abogado' => $this->filter_abogado,
-        'filter_asistente' => $this->filter_asistente,
-        'filter_currency' => $this->filter_currency,
-      ],
-      'REPORTE DE CASOS DE COOCIQUE 2 ACTIVOS ' . $this->filter_date
-    ), 'reporte-casos-coocique2-activos.xlsx');
+        'filter_abogado'     => $this->filter_abogado,
+        'filter_asistente'   => $this->filter_asistente,
+        'filter_currency'    => $this->filter_currency,
+    ], now()->addMinutes(15));
 
-    // No necesitas $this->loading = false aquí,
-    // Livewire maneja la acción de descarga automáticamente
+    $this->dispatch('start-download', url: route('reports.casos-coocique2-activos.download', ['key' => $key]));
   }
 }
