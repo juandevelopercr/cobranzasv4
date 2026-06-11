@@ -88,12 +88,13 @@
 
                     <!-- Botones de acción -->
                     <div class="col-md-3"
-                         x-data="{ loading: false }"
-                         @download-ready.window="loading = false">
+                         x-data="{ loading: false, _s: false }"
+                         @download-started.window="_s = true"
+               @download-ready.window="loading = false; _s = false">
                         <label class="form-label invisible">.</label>
                         <button type="button" class="btn btn-primary data-submit me-sm-4 me-1 d-block"
                             :disabled="loading"
-                            @click="loading = true; $wire.exportExcel()">
+                            @click="loading = true; _s = false; $wire.exportExcel().then(() => { if (!_s) loading = false })">
                             <span x-show="!loading">
                                 <i class="tf-icons bx bx-save bx-18px me-2"></i>{{ __('Exportar') }}
                             </span>
@@ -180,12 +181,13 @@
 
     
         Livewire.on('start-download', async ({ url }) => {
+        window.dispatchEvent(new CustomEvent('download-started'));
                 try {
                     const response = await fetch(url);
                     if (!response.ok) throw new Error('Error al generar el reporte');
                     const disposition = response.headers.get('Content-Disposition') ?? '';
-                    const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-                    const filename = match ? match[1].replace(/['"]/g, '') : 'reporte.xlsx';
+                    const filenameMatch = disposition.match(/filename=["']?([^"';\n]+)["']?/i);
+                    const filename = filenameMatch ? filenameMatch[1].trim() : 'reporte.xlsx';
                     const blob = await response.blob();
                     const blobUrl = URL.createObjectURL(blob);
                     const a = document.createElement('a');
