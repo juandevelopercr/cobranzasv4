@@ -37,7 +37,7 @@ abstract class BaseReport extends DefaultValueBinder implements FromQuery, WithH
     // grandes (cédulas, operaciones) a float y aparezcan en notación científica.
     public function bindValue(Cell $cell, $value = null): bool
     {
-        if (is_string($value) && $value !== '') {
+        if (is_string($value) && $value !== '' && !str_starts_with($value, '=')) {
             $cell->setValueExplicit($value, DataType::TYPE_STRING);
             return true;
         }
