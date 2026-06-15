@@ -309,7 +309,7 @@ class BusinessLocationManager extends BaseComponent
       $this->validate([
         //'certificate_digital_file' => 'file|mimes:p12|max:5120',
         //'certificate_digital_file' => 'required|file|mimes:pem,application/x-pem-file,application/octet-stream|max:5120',
-        'certificate_digital_file' => 'required|file|mimetypes:pem,application/octet-stream,application/x-x509-user-cert|max:5120',
+        'certificate_digital_file' => 'required|file|mimetypes:pem,application/x-pem-file,application/x-pkcs12,application/octet-stream,application/x-x509-user-cert|max:5120',
       ]);
     }
 
@@ -484,7 +484,7 @@ class BusinessLocationManager extends BaseComponent
     if ($this->certificate_digital_file && $this->certificate_digital_file !== $this->oldcertificate_digital_file) {
       $this->validate([
         //'certificate_digital_file' => 'required|file|mimes:pem,application/octet-stream|max:5120',
-        'certificate_digital_file' => 'required|file|mimetypes:pem,application/octet-stream,application/x-x509-user-cert|max:5120',
+        'certificate_digital_file' => 'required|file|mimetypes:pem,application/x-pem-file,application/x-pkcs12,application/octet-stream,application/x-x509-user-cert|max:5120',
       ]);
     }
 

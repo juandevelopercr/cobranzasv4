@@ -57,30 +57,46 @@ class CertValidationService
 
   public function getCertInfo(BusinessLocation $location): ?array
   {
-    // Obtener la ruta relativa del archivo PEM
-    $pemRelativePath = $location->certificate_digital_file;
-    $pemPath = public_path("storage/assets/certificates/{$pemRelativePath}");
+    $relativePath = $location->certificate_digital_file;
+    $certPath = public_path("storage/assets/certificates/{$relativePath}");
 
-    // Verificar si el archivo existe
-    if (!file_exists($pemPath) || empty($pemRelativePath) || is_null($pemRelativePath)) {
+    if (empty($relativePath) || !file_exists($certPath)) {
       return null;
     }
 
-    // Leer el contenido del archivo PEM
-    $pemContent = file_get_contents($pemPath);
+    $ext = strtolower(pathinfo($certPath, PATHINFO_EXTENSION));
 
-    // Cargar el certificado desde el contenido PEM
-    $cert = openssl_x509_read($pemContent);
+    if ($ext === 'p12' || $ext === 'pfx') {
+      $pin = trim($location->certificate_pin ?? '');
+      $certData = file_get_contents($certPath);
 
-    if (!$cert) {
+      if (openssl_pkcs12_read($certData, $key, $pin)) {
+        return openssl_x509_parse($key['cert']);
+      }
+
+      // Fallback para P12 legacy de Hacienda (RC2/3DES) que fallan con OpenSSL 3.0
+      $errors = [];
+      while ($msg = openssl_error_string()) {
+        $errors[] = $msg;
+      }
+      $errorStr = implode(' | ', $errors);
+
+      if ((strpos($errorStr, 'unsupported') !== false || strpos($errorStr, 'digital envelope') !== false) && function_exists('shell_exec')) {
+        $pinEscaped = escapeshellarg($pin);
+        $pathEscaped = escapeshellarg($certPath);
+        $cmd = "openssl pkcs12 -in $pathEscaped -passin pass:$pinEscaped -nodes -legacy 2>/dev/null | openssl pkcs12 -export -passout pass:$pinEscaped 2>/dev/null";
+        $modernData = shell_exec($cmd);
+        if ($modernData && openssl_pkcs12_read($modernData, $key, $pin)) {
+          return openssl_x509_parse($key['cert']);
+        }
+      }
+
       return null;
     }
 
-    // Parsear la información del certificado
-    $certData = openssl_x509_parse($cert);
-
-    // Devolver la información del certificado
-    return $certData;
+    // PEM
+    $cert = openssl_x509_read(file_get_contents($certPath));
+    return $cert ? openssl_x509_parse($cert) : null;
   }
 
   public function getSerialNumber(BusinessLocation $location): ?string

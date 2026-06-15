@@ -358,7 +358,7 @@
 
                     {{-- Input de archivo oculto --}}
                     <input wire:model.live="certificate_digital_file" id="certificate_digital_file_input"
-                          class="account-file-input" style="display: none;" accept=".pem,application/x-pem-file" type="file" />
+                          class="account-file-input" style="display: none;" accept=".pem,.p12,.pfx,application/x-pem-file,application/x-pkcs12" type="file" />
 
                     {{-- Mensaje de error --}}
                     @error('certificate_digital_file')

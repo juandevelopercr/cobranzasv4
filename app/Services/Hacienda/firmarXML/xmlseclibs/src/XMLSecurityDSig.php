@@ -1365,13 +1365,38 @@ class XMLSecurityDSig
       // Cargar el certificado PFX
       if (openssl_pkcs12_read($certData, $key, $pin)) {
         $certInfo["publicKey"] = $key["cert"];
-        $certInfo["privateKey"] = $key["pkey"];  // Solo existe en PFX
+        $certInfo["privateKey"] = $key["pkey"];
         $keyGet = openssl_pkey_get_private($key["pkey"]);
         $keyComplem = openssl_pkey_get_details($keyGet);
         $certInfo["Modulus"] = base64_encode($keyComplem['rsa']['n']);
         $certInfo["Exponent"] = base64_encode($keyComplem['rsa']['e']);
       } else {
-        return null;
+        // Fallback para certificados P12 legacy de Hacienda (RC2/3DES) que fallan con OpenSSL 3.0
+        $errors = [];
+        while ($msg = openssl_error_string()) {
+          $errors[] = $msg;
+        }
+        $errorStr = implode(' | ', $errors);
+
+        if ((strpos($errorStr, 'unsupported') !== false || strpos($errorStr, 'digital envelope') !== false) && function_exists('shell_exec')) {
+          $pinEscaped = escapeshellarg($pin ?? '');
+          $pathEscaped = escapeshellarg($certPath);
+          $cmd = "openssl pkcs12 -in $pathEscaped -passin pass:$pinEscaped -nodes -legacy 2>/dev/null | openssl pkcs12 -export -passout pass:$pinEscaped 2>/dev/null";
+          $modernData = shell_exec($cmd);
+
+          if ($modernData && openssl_pkcs12_read($modernData, $key, $pin)) {
+            $certInfo["publicKey"] = $key["cert"];
+            $certInfo["privateKey"] = $key["pkey"];
+            $keyGet = openssl_pkey_get_private($key["pkey"]);
+            $keyComplem = openssl_pkey_get_details($keyGet);
+            $certInfo["Modulus"] = base64_encode($keyComplem['rsa']['n']);
+            $certInfo["Exponent"] = base64_encode($keyComplem['rsa']['e']);
+          } else {
+            throw new \Exception("Error al leer P12 (incluso con fallback legacy): " . $errorStr . ". Verifique el PIN.");
+          }
+        } else {
+          throw new \Exception("Error al leer P12: " . $errorStr . " (longitud PIN: " . strlen($pin) . ")");
+        }
       }
     }
     // Verificar si es un archivo PEM
