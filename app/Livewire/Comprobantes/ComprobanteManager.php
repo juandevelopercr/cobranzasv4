@@ -1474,7 +1474,7 @@ class ComprobanteManager extends Component
     $password = $comprobante->location->api_password;
     $token = null;
     try {
-      $authService = new AuthService();
+      $authService = new AuthService($comprobante->location->environment);
       $token = $authService->getToken($username, $password);
     } catch (\Exception $e) {
       //throw new \Exception("An error occurred when trying to obtain the token in the hacienda api" . ' ' . $e->getMessage());
@@ -1532,7 +1532,7 @@ class ComprobanteManager extends Component
     $username = $comprobante->location->api_user_hacienda;
     $password = $comprobante->location->api_password;
     try {
-      $authService = new AuthService();
+      $authService = new AuthService($comprobante->location->environment);
       $token = $authService->getToken($username, $password);
     } catch (\Exception $e) {
       // Si falla la obtención del token, notificar al usuario

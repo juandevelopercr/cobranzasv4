@@ -1671,7 +1671,7 @@ class ProformaManager extends TransactionManager {
     //Loguearme en hacienda para obtener el token
     $username = $transaction->location->api_user_hacienda;
     $password = $transaction->location->api_password;
-    $authService = new AuthService();
+    $authService = new AuthService($transaction->location->environment);
     $token = $authService->getToken($username, $password); // Esto ya lanza una excepción detallada en caso de fallo
 
     $api = new ApiHacienda();

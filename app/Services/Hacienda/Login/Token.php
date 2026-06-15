@@ -25,10 +25,9 @@ class Token
    */
   protected $tokenStorage;
 
-  public function __construct()
+  public function __construct(?string $locationEnvironment = null)
   {
-    // Configuración según el entorno
-    if (env('HACIENDA_ENVIRONMENT') == 'prod') {
+    if ($locationEnvironment === 'produccion') {
       $this->authUrl = 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/token';
       $this->clientId = 'api-prod';
     } else {

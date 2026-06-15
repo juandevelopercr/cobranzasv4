@@ -499,7 +499,7 @@ class ProcessComprobanteEmails extends Command
     $username = $comprobante->location->api_user_hacienda;
     $password = $comprobante->location->api_password;
     try {
-      $authService = new AuthService();
+      $authService = new AuthService($comprobante->location->environment);
       $token = $authService->getToken($username, $password);
     } catch (\Exception $e) {
       Log::channel('scheduler')->error('Ha ocurrido un error al intentar identificarse en la api de hacienda en comando: ' . $e->getMessage());

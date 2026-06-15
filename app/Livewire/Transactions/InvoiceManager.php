@@ -961,7 +961,7 @@ class InvoiceManager extends TransactionManager
       // Obtener token de Hacienda (dentro de la txn: si falla, el rollback evita
       // crear un documento huérfano que nunca podría enviarse)
       try {
-        $authService = new AuthService();
+        $authService = new AuthService($cloned->location->environment);
         $token = $authService->getToken(
           $cloned->location->api_user_hacienda,
           $cloned->location->api_password

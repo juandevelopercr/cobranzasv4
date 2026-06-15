@@ -6,9 +6,9 @@ class AuthService
 {
   protected $token;
 
-  public function __construct()
+  public function __construct(?string $locationEnvironment = null)
   {
-    $this->token = new Token(); // Por defecto usa el entorno de staging
+    $this->token = new Token($locationEnvironment);
   }
 
   /**

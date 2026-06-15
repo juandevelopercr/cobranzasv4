@@ -67,7 +67,7 @@ class PollHaciendaStatus extends Command
             }
 
             try {
-                $authService = new AuthService();
+                $authService = new AuthService($location->environment);
                 $token = $authService->getToken($location->api_user_hacienda, $location->api_password);
             } catch (\Exception $e) {
                 Log::channel('scheduler')->error('hacienda:poll-status: error de autenticación', [

@@ -1112,7 +1112,7 @@ class NotaDebitoElectronicaManager extends TransactionManager
     $username = $transaction->location->api_user_hacienda;
     $password = $transaction->location->api_password;
     try {
-      $authService = new AuthService();
+      $authService = new AuthService($transaction->location->environment);
       $token = $authService->getToken($username, $password);
     } catch (\Exception $e) {
       throw new \Exception("An error occurred when trying to obtain the token in the hacienda api" . ' ' . $e->getMessage());
