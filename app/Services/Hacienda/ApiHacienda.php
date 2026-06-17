@@ -565,15 +565,20 @@ class ApiHacienda
     }
 
     // Log o manejo adicional de la respuesta (opcional)
-    Log::error("Error en la consulta del estado del comprobante: " . $responseBody);
+    Log::error("Error en la consulta del estado del comprobante: " . $responseBody, [
+      'http_status'   => $response->status(),
+      'x-error-cause' => $response->header('x-error-cause'),
+      'key'           => $response->header('clave'),
+    ]);
 
     return [
-      'error' => 1,
-      'mensaje' => $mensaje,
-      'type' => 'danger',
-      'titulo' => 'Error',
-      'response' => $responseBody, // Aquí todavía estamos pasando el cuerpo de la respuesta
-      'headers' => $response->headers(), // Aquí mostramos los encabezados completos para inspección
+      'error'    => 1,
+      'mensaje'  => $mensaje,
+      'type'     => 'danger',
+      'titulo'   => 'Error',
+      'estado'   => '',
+      'response' => $responseBody,
+      'headers'  => $response->headers(),
     ];
   }
 }

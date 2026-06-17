@@ -1487,28 +1487,25 @@ class ComprobanteManager extends Component
 
     $api = new ApiHacienda();
     $result = $api->send($xml, $token, $comprobante, $comprobante->location, $tipoDocumento);
+
     if ($result['error'] == 0) {
       $comprobante->status = Comprobante::RECIBIDA;
       $comprobante->created_at = \Carbon\Carbon::now();
-    } else {
-      //throw new \Exception($result['mensaje']);
-      $this->dispatch('show-notification', [
-        'type' => 'error',
-        'message' => $result['mensaje'],
-      ]);
-    }
 
-    // Guardar la transacción
-    if (!$comprobante->save()) {
-      //throw new \Exception(__('Un error ha ocurrido al enviar el comprobante a Hacienda'));
+      if (!$comprobante->save()) {
+        $this->dispatch('show-notification', [
+          'type' => 'error',
+          'message' => 'Un error ha ocurrido al guardar el comprobante',
+        ]);
+      } else {
+        $this->dispatch('show-notification', [
+          'type' => $result['type'],
+          'message' => $result['mensaje'],
+        ]);
+      }
+    } else {
       $this->dispatch('show-notification', [
         'type' => 'error',
-        'message' => 'Un error ha ocurrido al guardar el comprobante',
-      ]);
-    } else {
-      // Si todo fue exitoso, mostrar notificación de éxito
-      $this->dispatch('show-notification', [
-        'type' => $result['type'],
         'message' => $result['mensaje'],
       ]);
     }
@@ -1554,7 +1551,7 @@ class ComprobanteManager extends Component
 
     Log::info('resultado de getStatusComprobante:', ['result' => $result]);
 
-    if ($result['estado'] == 'aceptado') {
+    if (($result['estado'] ?? '') == 'aceptado') {
       //$sent = Helpers::sendComprobanteElectronicoEmail($recordId);
       /*
       if ($sent) {
@@ -1588,7 +1585,7 @@ class ComprobanteManager extends Component
         'message' => $result['mensaje']
       ]);
 
-      if ($result['estado'] == 'rechazado')
+      if (($result['estado'] ?? '') == 'rechazado')
         $sent = Helpers::sendNotificationMensajeElectronicoRejected($recordId);
     }
   }
