@@ -470,6 +470,7 @@ abstract class TransactionManager extends BaseComponent
       $transaction->totalIVADevuelto = 0; // Por ahora se pone en cero, si se factura algún medicamento debe colocarse
       $transaction->totalOtrosCargos = $totalCharge ? ($totalCharge->total ?? 0) : 0;
       $transaction->totalComprobante = $transaction->totalVentaNeta + $transaction->totalImpuesto + $transaction->totalOtrosCargos;
+
       $transaction->save();
 
       Log::info('TransactionManager::recalculeteTotals - Final Totals Saved (cobranzasv4)', [

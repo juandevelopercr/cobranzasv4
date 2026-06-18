@@ -1450,14 +1450,13 @@ class ProformaManager extends TransactionManager {
       // Confirmar la transacción
       DB::commit();
 
-      // Restablece los controles y emite el evento para desplazar la página al inicio
-      $this->resetControls();
       $this->dispatch('scroll-to-top');
-
       $this->dispatch('show-notification', ['type' => 'success', 'message' => __('The record has been updated')]);
 
       if ($closeForm) {
         $this->action = 'list';
+        // skipChildUpdate=true: no disparar null al TransactionLineManager innecesariamente
+        $this->resetControls(true);
       } else {
         $this->action = 'edit';
         $this->edit($record->id);
@@ -1543,7 +1542,7 @@ class ProformaManager extends TransactionManager {
         'message' => __('An error occurred while updating the registro') . ' ' . $e->getMessage(),
       ]);
     }
-    $this->resetControls();
+    $this->resetControls(true);
   }
 
   #[On('facturar')]
@@ -1622,7 +1621,7 @@ class ProformaManager extends TransactionManager {
       // Registrar el error en el log
       logger()->error('Error en facturar:' . ' ' . $e->getMessage(), ['exception' => $e]);
     }
-    $this->resetControls();
+    $this->resetControls(true);
   }
 
   private function facturarHonorario($transaction) {
@@ -1741,16 +1740,20 @@ class ProformaManager extends TransactionManager {
     }
   }
 
-  public function resetControls() {
+  public function resetControls($skipChildUpdate = false) {
     // Fix: Emitir evento para limpiar inmediatamente el componente hijo (TransactionLineManager)
     // No usamos más la sesión para evitar contaminación cruzada entre pestañas
-    $this->dispatch('updateTransactionContext', [
-        'transaction_id'    => null,
-        'department_id'     => null,
-        'bank_id'           => null,
-        'type_notarial_act' => null,
-        'tipo_facturacion'  => null,
-    ]);
+    // $skipChildUpdate=true evita dispatch innecesario de null después de solicitar/facturar
+    // (patrón portado de consortiumv4 donde solicitarFacturacion usa resetControls(true))
+    if (!$skipChildUpdate) {
+      $this->dispatch('updateTransactionContext', [
+          'transaction_id'    => null,
+          'department_id'     => null,
+          'bank_id'           => null,
+          'type_notarial_act' => null,
+          'tipo_facturacion'  => null,
+      ]);
+    }
     $this->reset(
       //'business_id',
       'location_id',

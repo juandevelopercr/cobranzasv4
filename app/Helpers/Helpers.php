@@ -835,7 +835,7 @@ class Helpers
       $msg[] = __('The total invoice amount must be greater than 0') . '<br>';
     }
 
-    if (count($transaction->lines) <= 0 && count($transaction->otherCharges) <= 0) {
+    if ($transaction->lines()->count() <= 0 && $transaction->otherCharges()->count() <= 0) {
       $msg[] = __('The invoice must have at least one line of detail or other charges') . '<br>';
     }
 
