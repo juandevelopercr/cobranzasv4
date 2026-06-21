@@ -824,9 +824,6 @@ class ReciboPagoManager extends TransactionManager
     $this->consecutivo            = $record->consecutivo;
     $this->key                    = $record->key;
     $this->nombre_caso            = $record->nombre_caso;
-    $this->access_token           = $record->access_token;
-    $this->response_xml           = $record->response_xml;
-    $this->filexml                = $record->filexml;
     $this->filepdf                = $record->filepdf;
     $this->transaction_reference  = $record->transaction_reference;
     $this->transaction_reference_id = $record->transaction_reference_id;

@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
 class SeguimientoManager extends TransactionManager
@@ -41,8 +42,6 @@ class SeguimientoManager extends TransactionManager
   public bool $showDepositoModal = false;
   public bool $showHonorarioModal = false;
   public bool $showGastoModal = false;
-
-  public $listaUsuarios;
 
   public $customer_text; // para mostrar el texto inicial
 
@@ -82,10 +81,15 @@ class SeguimientoManager extends TransactionManager
     'filter_numero_traslado_honorario' => NULL
   ];
 
+  #[Computed]
+  public function listaUsuarios()
+  {
+    return User::where('active', 1)->orderBy('name', 'ASC')->get();
+  }
+
   public function mount()
   {
     parent::mount();
-    $this->listaUsuarios = User::where('active', 1)->orderBy('name', 'ASC')->get();
     // Aquí puedes agregar lógica específica para proformas
     $this->documentTypes = [['id'=>'PR', 'name'=>'PROFORMA'], ['id'=>'FE', 'name'=>'FACTURA'], ['id'=>'TE', 'name'=>'TIQUETE']];
   }
@@ -861,9 +865,6 @@ class SeguimientoManager extends TransactionManager
     $this->consecutivo            = $record->consecutivo;
     $this->key                    = $record->key;
     $this->nombre_caso            = $record->nombre_caso;
-    $this->access_token           = $record->access_token;
-    $this->response_xml           = $record->response_xml;
-    $this->filexml                = $record->filexml;
     $this->filepdf                = $record->filepdf;
     $this->transaction_reference  = $record->transaction_reference;
     $this->transaction_reference_id = $record->transaction_reference_id;

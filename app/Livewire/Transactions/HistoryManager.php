@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
 class HistoryManager extends TransactionManager
@@ -74,14 +75,17 @@ class HistoryManager extends TransactionManager
     'filter_total_crc' => NULL
   ];
 
-  public $listaUsuarios;
+  #[Computed]
+  public function listaUsuarios()
+  {
+    return User::where('active', 1)->orderBy('name', 'ASC')->get();
+  }
 
   public function mount()
   {
     parent::mount();
     // Aquí puedes agregar lógica específica para proformas
     $this->listActives = [['id' => 1, 'name' => 'Con Retención'], ['id' => 0, 'name' => 'Sin Retención']];
-    $this->listaUsuarios = User::where('active', 1)->orderBy('name', 'ASC')->get();
     $this->documentTypes = [['id'=>'PR', 'name'=>'PROFORMA'], ['id'=>'FE', 'name'=>'FACTURA'], ['id'=>'TE', 'name'=>'TIQUETE']];
   }
 
@@ -981,9 +985,6 @@ class HistoryManager extends TransactionManager
     $this->consecutivo            = $record->consecutivo;
     $this->key                    = $record->key;
     $this->nombre_caso            = $record->nombre_caso;
-    $this->access_token           = $record->access_token;
-    $this->response_xml           = $record->response_xml;
-    $this->filexml                = $record->filexml;
     $this->filepdf                = $record->filepdf;
     $this->transaction_reference  = $record->transaction_reference;
     $this->transaction_reference_id = $record->transaction_reference_id;

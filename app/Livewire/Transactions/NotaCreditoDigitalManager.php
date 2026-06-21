@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Livewire\Attributes\Computed;
 
 class NotaCreditoDigitalManager extends TransactionManager
 {
@@ -40,14 +41,17 @@ class NotaCreditoDigitalManager extends TransactionManager
     'filter_action' => NULL,
   ];
 
-  public $listaUsuarios;
-
   public $document_type = ['NC'];
+
+  #[Computed]
+  public function listaUsuarios()
+  {
+    return User::where('active', 1)->orderBy('name', 'ASC')->get();
+  }
 
   public function mount()
   {
     parent::mount();
-    $this->listaUsuarios = User::where('active', 1)->orderBy('name', 'ASC')->get();
     $this->statusOptions = NULL;
     $this->statusOptions = Transaction::getStatusOptions(false);
     $this->tiposFacturacion = [

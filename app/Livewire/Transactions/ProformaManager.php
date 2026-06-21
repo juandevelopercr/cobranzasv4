@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
 class ProformaManager extends TransactionManager {
@@ -63,13 +64,16 @@ class ProformaManager extends TransactionManager {
     'filter_total_crc' => NULL
   ];
 
-  public $listaUsuarios = [];
-
   public $document_type = ['PR', 'FE', 'TE', 'NCE', 'NDE'];
+
+  #[Computed]
+  public function listaUsuarios()
+  {
+    return User::where('active', 1)->orderBy('name', 'ASC')->get();
+  }
 
   public function mount() {
     parent::mount();
-    $this->listaUsuarios = User::where('active', 1)->orderBy('name', 'ASC')->get();
     $this->statusOptions = [];
     $this->statusOptions = Transaction::getStatusOptions(false);
     $this->tiposFacturacion = [
@@ -1165,9 +1169,6 @@ class ProformaManager extends TransactionManager {
     $this->consecutivo            = $record->consecutivo;
     $this->key                    = $record->key;
     $this->nombre_caso            = $record->nombre_caso;
-    $this->access_token           = $record->access_token;
-    $this->response_xml           = $record->response_xml;
-    $this->filexml                = $record->filexml;
     $this->filepdf                = $record->filepdf;
     $this->transaction_reference  = $record->transaction_reference;
     $this->transaction_reference_id = $record->transaction_reference_id;

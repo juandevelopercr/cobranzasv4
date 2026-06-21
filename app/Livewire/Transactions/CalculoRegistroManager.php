@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
 class CalculoRegistroManager extends TransactionManager
@@ -71,7 +72,11 @@ class CalculoRegistroManager extends TransactionManager
     'filter_action' => NULL,
   ];
 
-  public $listaUsuarios;
+  #[Computed]
+  public function listaUsuarios()
+  {
+    return User::where('active', 1)->orderBy('name', 'ASC')->get();
+  }
 
   public function mount()
   {
@@ -79,7 +84,6 @@ class CalculoRegistroManager extends TransactionManager
     // Aquí puedes agregar lógica específica para proformas
     $this->statusOptions = collect([['id' => 'FACTURADA', 'name' => __('FACTURADA')]]);
     $this->monedas = Currency::orderBy('code', 'ASC')->get();
-    $this->listaUsuarios = User::where('active', 1)->orderBy('name', 'ASC')->get();
   }
 
   public function refresDatatable()
@@ -608,9 +612,6 @@ class CalculoRegistroManager extends TransactionManager
     $this->proforma_no            = $record->proforma_no;
     $this->consecutivo            = $record->consecutivo;
     $this->key                    = $record->key;
-    $this->access_token           = $record->access_token;
-    $this->response_xml           = $record->response_xml;
-    $this->filexml                = $record->filexml;
     $this->filepdf                = $record->filepdf;
     $this->transaction_reference  = $record->transaction_reference;
     $this->transaction_reference_id = $record->transaction_reference_id;

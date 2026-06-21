@@ -62,14 +62,7 @@ abstract class TransactionManager extends BaseComponent
   public $action = 'list';
   public $recordId = '';
 
-  // listados
-  public $conditionSales =[];
-  public $currencies = [];
-  public $issuers = [];
-  public $codigosContables = [];
-  public $areas = [];
-  public $users = [];
-  public $departments = [];
+  // listados (convertidos a Computed para no serializar en snapshot)
 
   //public $transaction;
   public $business_id = 1;
@@ -167,8 +160,6 @@ abstract class TransactionManager extends BaseComponent
   public $totalOtrosCargos = 0;
   public $totalComprobante = 0;
 
-  public $cuentas = [];
-  public $paymentMethods = [];
   public $payments = [];
   public float $pendientePorPagar = 0.00;
   public float $totalPagado = 0.00;
@@ -294,6 +285,59 @@ abstract class TransactionManager extends BaseComponent
       }
     }
     return $bancos;
+  }
+
+  #[Computed]
+  public function conditionSales()
+  {
+    return ConditionSale::where('active', 1)->orderBy('code', 'ASC')->get();
+  }
+
+  #[Computed]
+  public function currencies()
+  {
+    return Currency::whereIn('id', [1, 16])->orderBy('code', 'ASC')->get();
+  }
+
+  #[Computed]
+  public function issuers()
+  {
+    return BusinessLocation::where('active', 1)->orderBy('id', 'ASC')->get();
+  }
+
+  #[Computed]
+  public function codigosContables()
+  {
+    return CodigoContable::orderBy('descrip', 'ASC')->get();
+  }
+
+  #[Computed]
+  public function users()
+  {
+    return User::where('active', 1)->orderBy('name', 'ASC')->get();
+  }
+
+  #[Computed]
+  public function cuentas()
+  {
+    return Cuenta::orderBy('nombre_cuenta', 'ASC')->get();
+  }
+
+  #[Computed]
+  public function departments()
+  {
+    return Department::orderBy('name', 'ASC')->get();
+  }
+
+  #[Computed]
+  public function paymentMethods()
+  {
+    return PaymentMethod::where('active', 1)->orderBy('code', 'ASC')->get();
+  }
+
+  public function resetPhoto()
+  {
+    $this->voucher = null;
   }
 
   // Escuha el evento del componente customerModal
@@ -525,16 +569,10 @@ abstract class TransactionManager extends BaseComponent
 
   protected function loadCommonData()
   {
-    // Ejemplo de datos comunes que se podrían necesitar en todos los managers
+    // Los listados (currencies, conditionSales, issuers, codigosContables, users,
+    // banks, cuentas, departments, paymentMethods) son #[Computed] y no se asignan aquí.
     $this->business_id = Session::get('user.business_id');
-    $this->currencies = Currency::whereIn('id', [1,16])->orderBy('code', 'ASC')->get();
-    $this->conditionSales = ConditionSale::where('active', 1)->orderBy('code', 'ASC')->get();
     $this->pay_term_type = 'days';
-    $this->issuers = BusinessLocation::where('active', 1)->orderBy('id', 'ASC')->get();
-    $this->codigosContables = CodigoContable::orderBy('descrip', 'ASC')->get();
-    $this->departments = Department::orderBy('name', 'ASC')->get();
-    $this->users = User::where('active', 1)->orderBy('name', 'ASC')->get();
-    $this->cuentas = Cuenta::orderBy('nombre_cuenta', 'ASC')->get();
 
     $this->instruccionesPagos = [
       ['id' => 'NACIONAL', 'name' => 'NACIONAL'],
@@ -542,8 +580,6 @@ abstract class TransactionManager extends BaseComponent
       ['id' => 'AMBAS', 'name' => 'AMBAS']
     ];
     $this->payments = [];
-    //$this->validatedEmails; // Almacena correos válidos
-    //$this->invalidEmails; // Almacena correos inválidos
     $this->proformaTypes = [
       ['id' => 'HONORARIO', 'name' => 'HONORARIO'],
       ['id' => 'GASTO', 'name' => 'GASTO']
@@ -558,7 +594,6 @@ abstract class TransactionManager extends BaseComponent
 
     $this->condition_sale = ConditionSale::CREDIT;
     $this->pay_term_number = 30;
-    $this->paymentMethods = PaymentMethod::where('active', 1)->orderBy('code', 'ASC')->get();
     $this->statusOptions = $this->getStatusOptions();
 
     $this->refresDatatable();
