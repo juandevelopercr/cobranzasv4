@@ -204,10 +204,13 @@ class CasoBacTerminadaReport extends BaseReport
                 if (count($range) === 2) {
                     $start = Carbon::createFromFormat('d-m-Y', trim($range[0]))->startOfDay();
                     $end   = Carbon::createFromFormat('d-m-Y', trim($range[1]))->endOfDay();
-                    $query->whereBetween("$column", [$start, $end]);
+                    $query->where(function ($q) use ($column, $start, $end) {
+                        $q->whereBetween("casos.$column", [$start, $end])
+                          ->orWhereNull("casos.$column");
+                    });
                 } else {
                     $singleDate = Carbon::createFromFormat('d-m-Y', trim($filters[$filterKey]));
-                    $query->whereDate("$column", $singleDate->format('Y-m-d'));
+                    $query->whereDate("casos.$column", $singleDate->format('Y-m-d'));
                 }
             } catch (\Exception $e) {
                 // ignorar error si fecha inválida
