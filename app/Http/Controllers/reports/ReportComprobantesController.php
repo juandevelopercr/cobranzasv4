@@ -22,7 +22,7 @@ class ReportComprobantesController extends Controller
         abort(404, 'Enlace de descarga inválido o expirado.');
     }
 
-    ini_set('memory_limit', '512M');
+    ini_set('memory_limit', '-1');
     set_time_limit(1000);
 
     return Excel::download(

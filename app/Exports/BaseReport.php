@@ -10,6 +10,7 @@ use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -21,7 +22,7 @@ use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Cell\DefaultValueBinder;
 use PhpOffice\PhpSpreadsheet\Cell\IValueBinder;
 
-abstract class BaseReport extends DefaultValueBinder implements FromQuery, WithHeadings, WithMapping, WithColumnFormatting, WithStyles, WithColumnWidths, WithEvents, WithCustomStartCell, WithCustomValueBinder, IValueBinder
+abstract class BaseReport extends DefaultValueBinder implements FromQuery, WithHeadings, WithMapping, WithColumnFormatting, WithStyles, WithColumnWidths, WithEvents, WithCustomStartCell, WithCustomValueBinder, IValueBinder, WithChunkReading
 {
     protected array $filters = [];
     protected $title;
@@ -42,6 +43,11 @@ abstract class BaseReport extends DefaultValueBinder implements FromQuery, WithH
             return true;
         }
         return parent::bindValue($cell, $value);
+    }
+
+    public function chunkSize(): int
+    {
+        return 500;
     }
 
     abstract protected function columns(): array;
@@ -112,22 +118,30 @@ abstract class BaseReport extends DefaultValueBinder implements FromQuery, WithH
                 $sheet = $event->sheet->getDelegate();
 
                 // --- LOGO ---
-                $logoPath = public_path('storage/assets/default-image.png');
+                $logoPath = null;
                 if (method_exists($this, 'getLogoPath')) {
                     $customLogo = $this->getLogoPath();
                     if ($customLogo && file_exists($customLogo)) {
                         $logoPath = $customLogo;
                     }
                 }
-                $drawing = new Drawing();
-                $drawing->setName('Logo');
-                $drawing->setDescription('Logo de la empresa');
-                $drawing->setPath($logoPath);
-                $drawing->setHeight(50);
-                $drawing->setCoordinates('A1');
-                $drawing->setOffsetX(10);
-                $drawing->setOffsetY(5);
-                $drawing->setWorksheet($sheet);
+                if (!$logoPath) {
+                    $defaultLogo = public_path('storage/assets/default-image.png');
+                    if (file_exists($defaultLogo)) {
+                        $logoPath = $defaultLogo;
+                    }
+                }
+                if ($logoPath) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Logo');
+                    $drawing->setDescription('Logo de la empresa');
+                    $drawing->setPath($logoPath);
+                    $drawing->setHeight(50);
+                    $drawing->setCoordinates('A1');
+                    $drawing->setOffsetX(10);
+                    $drawing->setOffsetY(5);
+                    $drawing->setWorksheet($sheet);
+                }
 
                 // --- TÍTULO ---
                 $lastColumnLetter = $this->columnLetter(count($this->columns()) - 1);
