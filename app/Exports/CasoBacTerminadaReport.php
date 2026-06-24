@@ -154,7 +154,7 @@ class CasoBacTerminadaReport extends BaseReport
     ->leftJoin('casos_productos as product', 'casos.product_id', '=', 'product.id')
     ->leftJoin('casos_procesos as proceso', 'casos.proceso_id', '=', 'proceso.id')
     ->leftJoin('casos_estados as estado', 'casos.aestado_proceso_general_id', '=', 'estado.id')
-    ->join('currencies', 'casos.currency_id', '=', 'currencies.id')
+    ->leftJoin('currencies', 'casos.currency_id', '=', 'currencies.id')
     ->join('banks', 'casos.bank_id', '=', 'banks.id')
     ->where('casos.bank_id', Bank::SANJOSE)
     ->where('casos.pestatus_operacion', '=', 'TERMINADO')

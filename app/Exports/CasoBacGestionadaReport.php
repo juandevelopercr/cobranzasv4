@@ -155,10 +155,17 @@ class CasoBacGestionadaReport extends BaseReport
     ->leftJoin('casos_productos as product', 'casos.product_id', '=', 'product.id')
     ->leftJoin('casos_procesos as proceso', 'casos.proceso_id', '=', 'proceso.id')
     ->leftJoin('casos_estados as estado', 'casos.aestado_proceso_general_id', '=', 'estado.id')
-    ->join('currencies', 'casos.currency_id', '=', 'currencies.id')
+    ->leftJoin('currencies', 'casos.currency_id', '=', 'currencies.id')
     ->join('banks', 'casos.bank_id', '=', 'banks.id')
     ->where('casos.bank_id', Bank::SANJOSE)
-    ->where('casos.pestatus_operacion', '!=', 'TERMINADO')
+    ->where(function ($q) {
+        $q->where('casos.pestatus_operacion', '!=', 'TERMINADO')
+          ->orWhereNull('casos.pestatus_operacion');
+    })
+    ->where(function ($q) {
+        $q->where('estado.name', '!=', 'TERMINADO')
+          ->orWhereNull('casos.aestado_proceso_general_id');
+    })
     ->whereNull('casos.afecha_terminacion');
 
     // Filtro especial para rol Asignaciones
