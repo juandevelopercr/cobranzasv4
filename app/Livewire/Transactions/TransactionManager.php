@@ -437,6 +437,9 @@ abstract class TransactionManager extends BaseComponent
       $lineCount = $transaction->lines()->count();
       Log::info('TransactionManager::recalculeteTotals - Lines found', ['count' => $lineCount]);
 
+      // Cascading discount correction before aggregating totals
+      $this->applyCascadingDiscountCorrection($transaction);
+
       //Poner aqui el calculo de los totales
       // Realizar una única consulta para calcular todos los totales
       $totals = $transaction->lines()
@@ -562,6 +565,61 @@ abstract class TransactionManager extends BaseComponent
 
       // Esto para refrescar la pestaña de comisiones y actualizar el monto a distribuir
       $this->contador++;
+    }
+  }
+
+  protected function applyCascadingDiscountCorrection(\App\Models\Transaction $transaction): void
+  {
+    $invoicedStatuses = [\App\Models\Transaction::FACTURADA, \App\Models\Transaction::RECHAZADA, \App\Models\Transaction::ANULADA];
+    if (in_array($transaction->proforma_status, $invoicedStatuses)) {
+      return;
+    }
+
+    $lines = $transaction->lines()
+      ->where('porcientoDescuento', '>', 0)
+      ->orderBy('id')
+      ->get(['id', 'honorarios', 'timbres', 'discount', 'servGravados', 'desglose_honorarios', 'porcientoDescuento']);
+
+    if ($lines->isEmpty()) return;
+
+    $uniqueRates = $lines->pluck('porcientoDescuento')->unique();
+    if ($uniqueRates->count() !== 1) return;
+
+    $rate = floatval($uniqueRates->first());
+    $cumulativeHonorarios = 0;
+    $cumulativeDiscount   = 0;
+
+    foreach ($lines as $line) {
+      $cumulativeHonorarios += floatval($line->honorarios);
+      $targetCumDiscount = round($cumulativeHonorarios * $rate / 100, 2);
+      $correctDiscount   = round($targetCumDiscount - $cumulativeDiscount, 2);
+      $cumulativeDiscount = $targetCumDiscount;
+
+      if (round(floatval($line->discount), 2) === $correctDiscount) {
+        continue;
+      }
+
+      $correctNet = round(floatval($line->honorarios) - $correctDiscount, 2);
+      $updateData = [
+        'discount'     => number_format($correctDiscount, 5, '.', ''),
+        'servGravados' => number_format($correctNet,      5, '.', ''),
+        'subtotal'     => number_format(round(floatval($line->honorarios) + floatval($line->timbres ?? 0) - $correctDiscount, 2), 5, '.', ''),
+      ];
+
+      $desglose = $line->desglose_honorarios;
+      if (is_array($desglose)) {
+        $oldNet = $desglose['monto_con_descuento'] ?? 0;
+        $delta  = round($correctNet - $oldNet, 2);
+        $desglose['monto_con_descuento'] = $correctNet;
+        if ($delta != 0 && !empty($desglose['datos'])) {
+          $lastIdx = count($desglose['datos']) - 1;
+          $desglose['datos'][$lastIdx]['monto_con_descuento'] =
+            round($desglose['datos'][$lastIdx]['monto_con_descuento'] + $delta, 2);
+        }
+        $updateData['desglose_honorarios'] = json_encode($desglose);
+      }
+
+      DB::table('transaction_lines')->where('id', $line->id)->update($updateData);
     }
   }
 
