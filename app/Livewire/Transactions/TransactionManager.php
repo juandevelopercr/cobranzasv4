@@ -513,7 +513,12 @@ abstract class TransactionManager extends BaseComponent
       $transaction->totalImpAsumEmisorFabrica = $totals ? ($totals->totalImpuestoAsumidoEmisorFabrica ?? 0) : 0;
       $transaction->totalIVADevuelto = 0; // Por ahora se pone en cero, si se factura algún medicamento debe colocarse
       $transaction->totalOtrosCargos = $totalCharge ? ($totalCharge->total ?? 0) : 0;
-      $transaction->totalComprobante = $transaction->totalVentaNeta + $transaction->totalImpuesto + $transaction->totalOtrosCargos;
+
+      // No sobreescribir totalComprobante si la factura ya fue enviada a Hacienda
+      $invoicedStatuses = [Transaction::FACTURADA, Transaction::RECHAZADA, Transaction::ANULADA];
+      if (!in_array($transaction->proforma_status, $invoicedStatuses)) {
+        $transaction->totalComprobante = $transaction->totalVentaNeta + $transaction->totalImpuesto + $transaction->totalOtrosCargos;
+      }
 
       $transaction->save();
 
@@ -929,6 +934,15 @@ abstract class TransactionManager extends BaseComponent
       $this->dispatch('show-notification', [
         'type' => 'error',
         'message' => "Invoice not found in the database for ID: $recordId"
+      ]);
+      return;
+    }
+
+    // Validar que la factura tiene emisor configurado
+    if (!$transaction->location) {
+      $this->dispatch('show-notification', [
+        'type' => 'error',
+        'message' => __('Esta factura no tiene emisor (location) asignado. Contacte al administrador.')
       ]);
       return;
     }

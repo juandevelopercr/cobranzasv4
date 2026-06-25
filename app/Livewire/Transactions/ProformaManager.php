@@ -1390,7 +1390,8 @@ class ProformaManager extends TransactionManager {
       if (in_array($record->proforma_status, $terminalStatuses)) {
         unset($validatedData['proforma_status'], $validatedData['document_type'],
               $validatedData['consecutivo'], $validatedData['key'],
-              $validatedData['status'], $validatedData['invoice_date']);
+              $validatedData['status'], $validatedData['invoice_date'],
+              $validatedData['location_id']);
         Log::warning('ProformaManager::update() - Campos terminales protegidos de sobreescritura', [
           'user_id'         => Auth::id(),
           'record_id'       => $recordId,
