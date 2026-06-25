@@ -876,12 +876,33 @@ class TransactionLine extends Model
   // Es para forma el xml de FE
   public function getMontoTotal()
   {
+    // When discount percent exists and desgloses are available, use their monto_con_descuento
+    // (same value shown as "Precio" in the PDF) to avoid FP rounding inconsistencies.
+    if ($this->porcientoDescuento > 0 && is_array($this->desglose_honorarios) && !empty($this->desglose_honorarios)) {
+      $amount = ($this->desglose_honorarios['monto_con_descuento'] ?? 0)
+              + (is_array($this->desglose_calculo_monto_honorario_manual) ? ($this->desglose_calculo_monto_honorario_manual['monto_con_descuento'] ?? 0) : 0);
+      return number_format($amount, 5, '.', '');
+    }
     $amount = $this->honorarios - ($this->discount ?? 0);
     return number_format($amount, 5, '.', '');
   }
 
   public function getDescuento()
   {
+    // When desgloses are available, derive discount as gross - net so that
+    // MontoTotal - MontoDescuento = SubTotal exactly (Hacienda XML requirement).
+    if ($this->porcientoDescuento > 0 && is_array($this->desglose_honorarios) && !empty($this->desglose_honorarios)) {
+      $net_honorarios = ($this->desglose_honorarios['monto_con_descuento'] ?? 0)
+                      + (is_array($this->desglose_calculo_monto_honorario_manual) ? ($this->desglose_calculo_monto_honorario_manual['monto_con_descuento'] ?? 0) : 0);
+      $net_timbres = (is_array($this->desglose_timbre_formula) ? ($this->desglose_timbre_formula['monto_con_descuento'] ?? 0) : 0)
+                   + (is_array($this->desglose_tabla_abogados) ? ($this->desglose_tabla_abogados['monto_con_descuento'] ?? 0) : 0)
+                   + (is_array($this->desglose_calculos_fijos) ? ($this->desglose_calculos_fijos['monto_con_descuento'] ?? 0) : 0)
+                   + (is_array($this->desglose_calculo_monto_timbre_manual) ? ($this->desglose_calculo_monto_timbre_manual['monto_con_descuento'] ?? 0) : 0);
+      $gross = $this->honorarios + $this->timbres;
+      $descuento = round($gross - ($net_honorarios + $net_timbres), 2);
+      return number_format($descuento, 5, '.', '');
+    }
+
     //$discounts = !is_null($this->discounts) ? $this->discounts : collect([]);
     $monto = $this->honorarios;
     $descuento = $this->calculaMontoDescuentos($monto, $this->porcientoDescuento);
