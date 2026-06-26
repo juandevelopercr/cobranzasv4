@@ -619,7 +619,7 @@ abstract class TransactionManager extends BaseComponent
         $updateData['desglose_honorarios'] = json_encode($desglose);
       }
 
-      DB::table('transaction_lines')->where('id', $line->id)->update($updateData);
+      DB::table($line->getTable())->where('id', $line->id)->update($updateData);
     }
   }
 
