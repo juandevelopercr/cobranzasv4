@@ -1225,7 +1225,10 @@ abstract class TransactionManager extends BaseComponent
     if ($caso) {
       $this->pnombre_demandado = $caso->pnombre_demandado.' '.$caso->pnombre_apellidos_deudor;
       $this->producto = $caso->producto ? $caso->producto->nombre: '';
-      $this->numero_operacion = $caso->pnumero_operacion1;
+      $this->numero_operacion = implode('-', array_filter(
+        [$caso->pnumero_operacion1, $caso->pnumero_operacion2],
+        fn($value) => $value !== null && $value !== ''
+      ));
       $this->proceso = $caso->proceso ? $caso->proceso->nombre: '';
     }
   }

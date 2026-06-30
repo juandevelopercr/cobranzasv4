@@ -524,6 +524,7 @@ class Caso extends Model implements HasMedia
       'casos.id',
       'casos.pnumero',
       'casos.pnumero_operacion1',
+      'casos.pnumero_operacion2',
       'casos.pfecha_ingreso_cobro_judicial',
       'casos.nestado_actual_primera_notificacion',
       'casos.pfecha_asignacion_caso',
@@ -577,6 +578,10 @@ class Caso extends Model implements HasMedia
 
     if (!empty($filters['filter_pnumero_operacion1'])) {
       $query->where('casos.pnumero_operacion1', $filters['filter_pnumero_operacion1']);
+    }
+
+    if (!empty($filters['filter_pnumero_operacion2'])) {
+      $query->where('casos.pnumero_operacion2', $filters['filter_pnumero_operacion2']);
     }
 
     if (!empty($filters['filter_pfecha_ingreso_cobro_judicial'])) {
