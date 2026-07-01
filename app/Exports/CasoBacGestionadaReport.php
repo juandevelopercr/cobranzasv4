@@ -159,12 +159,12 @@ class CasoBacGestionadaReport extends BaseReport
     ->join('banks', 'casos.bank_id', '=', 'banks.id')
     ->where('casos.bank_id', Bank::SANJOSE)
     ->where(function ($q) {
-        $q->where('casos.pestatus_operacion', '!=', 'TERMINADO')
-          ->orWhereNull('casos.pestatus_operacion');
+        $q->where('casos.pestatus_operacion', '!=', 'TERMINADO');
+          //->orWhereNull('casos.pestatus_operacion');
     })
     ->where(function ($q) {
-        $q->where('estado.name', '!=', 'TERMINADO')
-          ->orWhereNull('casos.aestado_proceso_general_id');
+        $q->where('estado.name', '!=', 'TERMINADO');
+          //->orWhereNull('casos.aestado_proceso_general_id');
     })
     ->whereNull('casos.afecha_terminacion');
 

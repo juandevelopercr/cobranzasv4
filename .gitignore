@@ -45,6 +45,7 @@ RESUMEN_EJECUTIVO_AUDITORIA.md
 .agent/
 .gemini/
 .sixth/
+.claude/worktrees/
 
 # Documentos de raíz que no van al repo
 LIVEWIRE_STANDARDS.md
