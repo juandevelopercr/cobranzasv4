@@ -19,6 +19,7 @@
             @error('filter_date')
             <div class="text-danger mt-1">{{ $message }}</div>
             @enderror
+            <small class="text-muted d-block mt-1">{{ __('Deje el campo vacío para exportar sin filtrar por fecha.') }}</small>
           </div>
 
           <div class="col-md-3 fv-plugins-icon-container">
@@ -103,11 +104,12 @@
 
               <ol class="text-dark" style="font-size: 0.9rem; padding-left: 20px;">
                 <li>
-                  Obtiene los casos donde los estados del Proceso General y el status de la operación
-                  sean igual a <em>"TERMINADO"</em>.
+                  Obtiene los casos donde <em>al menos una</em> de estas condiciones se cumple: el status de la
+                  operación es <em>"TERMINADO"</em>, el estado del Proceso General es <em>"TERMINADO"</em>,
+                  o el caso tiene asignada una <em>fecha de terminación</em>.
                 </li>
                 <li>
-                  Deben tener asignado <em>fecha de terminación</em>.
+                  El filtro de <em>Fecha de asignación de caso</em> es opcional: si lo deja vacío, se exportan los casos sin filtrar por esa fecha.
                 </li>
               </ol>
             </div>

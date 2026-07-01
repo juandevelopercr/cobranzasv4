@@ -69,17 +69,6 @@ class CasoBacCuentaGestionada extends Component
         $this->filter_date = $rawDate;
     }
 
-    try {
-        $this->validate([
-            'filter_date' => 'required',
-        ], [
-            'filter_date.required' => 'Debe seleccionar un rango de fechas.',
-        ]);
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        $this->dispatch('download-ready');
-        throw $e;
-    }
-
     $key = Str::uuid()->toString();
     Cache::put($key, [
         'filter_date'        => $this->filter_date,

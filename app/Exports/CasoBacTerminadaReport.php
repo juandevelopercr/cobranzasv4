@@ -157,8 +157,11 @@ class CasoBacTerminadaReport extends BaseReport
     ->leftJoin('currencies', 'casos.currency_id', '=', 'currencies.id')
     ->join('banks', 'casos.bank_id', '=', 'banks.id')
     ->where('casos.bank_id', Bank::SANJOSE)
-    ->where('casos.pestatus_operacion', '=', 'TERMINADO')
-    ->whereNotNull('casos.afecha_terminacion');
+    ->where(function ($q) {
+        $q->where('casos.pestatus_operacion', 'TERMINADO')
+          ->orWhere('estado.name', 'TERMINADO')
+          ->orWhereNotNull('casos.afecha_terminacion');
+    });
 
     // Filtro especial para rol Asignaciones
     if (auth()->user() && auth()->user()->hasAnyRole(['ASIGNACIONES'])) {
