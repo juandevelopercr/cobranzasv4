@@ -68,6 +68,11 @@ class DocumentsManager extends Component
   #[On('updateTransactionContext')]
   public function handleUpdateContext($data)
   {
+    // Evita que una edición de documento sin guardar de la proforma anterior
+    // quede activa y termine aplicándose sobre la nueva transacción.
+    $this->editingDocumentId = null;
+    $this->reset(['file', 'title', 'attach_to_email']);
+
     $this->transaction_id = $data['transaction_id'];
     if ($this->transaction_id) {
       $this->loadDocuments();
@@ -167,6 +172,18 @@ class DocumentsManager extends Component
   public function updateDocument()
   {
     if ($this->editingDocumentId) {
+      $transaction = Transaction::findOrFail($this->transaction_id);
+
+      // Nunca guardar sobre un documento que no pertenece a la transacción
+      // actual: evita aplicar cambios a la proforma equivocada si el
+      // contexto cambió mientras el formulario estaba abierto.
+      if (!$transaction->getMedia('documents')->contains('id', $this->editingDocumentId)) {
+        $this->dispatch('show-notification', ['type' => 'error', 'message' => __('This record no longer matches the current record. Please reopen it and try again.')]);
+        $this->editingDocumentId = null;
+        $this->reset(['title', 'attach_to_email']);
+        return;
+      }
+
       $document = Media::find($this->editingDocumentId);
       $document->name = $this->title;
       $document->setCustomProperty('title', $this->title);

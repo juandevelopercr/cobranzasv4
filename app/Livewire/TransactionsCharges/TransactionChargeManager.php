@@ -100,6 +100,11 @@ class TransactionChargeManager extends BaseComponent
   #[On('updateTransactionContext')]
   public function handleUpdateContext($data)
   {
+    // Evita que un formulario de creación/edición sin guardar de la proforma
+    // anterior quede activo y termine guardándose contra la nueva transacción.
+    $this->action = 'list';
+    $this->resetControls();
+
     $this->transaction_id = $data['transaction_id'];
     $this->bank_id = $data['bank_id'];
     $this->type_notarial_act = $data['type_notarial_act'];
@@ -380,6 +385,16 @@ class TransactionChargeManager extends BaseComponent
     try {
       // Encuentra el registro existente
       $record = TransactionOtherCharge::findOrFail($recordId);
+
+      // Nunca guardar un registro contra una transacción distinta a la que
+      // realmente pertenece: evita reasignar líneas a la proforma equivocada
+      // si el contexto cambió mientras el formulario estaba abierto.
+      if ((int) $record->transaction_id !== (int) $this->transaction_id) {
+        $this->dispatch('show-notification', ['type' => 'error', 'message' => __('This record no longer matches the current record. Please reopen it and try again.')]);
+        $this->action = 'list';
+        $this->resetControls();
+        return;
+      }
 
       // Actualiza el registro
       $record->update($validatedData);

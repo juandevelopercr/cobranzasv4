@@ -1369,7 +1369,8 @@ class ProformaManager extends TransactionManager {
       'totalServGravados', 'totalServExentos', 'totalServExonerado', 'totalServNoSujeto',
       'totalMercGravadas', 'totalMercExentas', 'totalMercExonerada', 'totalMercNoSujeta',
       'totalGravado', 'totalExento', 'totalVenta', 'totalVentaNeta', 'totalExonerado',
-      'totalNoSujeto', 'totalImpAsumEmisorFabrica', 'totalComprobante'
+      'totalNoSujeto', 'totalImpAsumEmisorFabrica', 'totalComprobante',
+      'totalOtrosCargos', 'totalIVADevuelto'
     ];
     foreach ($totalsToExclude as $field) {
       if (isset($validatedData[$field])) {
