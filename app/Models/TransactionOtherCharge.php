@@ -8,11 +8,14 @@ use App\Helpers\Helpers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TransactionOtherCharge extends Model
 {
   use HasFactory;
+  use LogsActivity;
 
   protected $table = 'transactions_other_charges';
 
@@ -151,6 +154,16 @@ class TransactionOtherCharge extends Model
     //Log::debug("Bindings: ", $query->getBindings());
 
     return $query;
+  }
+
+  public function getActivitylogOptions(): LogOptions
+  {
+    return LogOptions::defaults()
+      ->logOnly(['*'])
+      ->setDescriptionForEvent(fn(string $eventName) => "El cargo adicional ha sido {$eventName}")
+      ->useLogName('transaction_other_charge')
+      ->logOnlyDirty()
+      ->dontSubmitEmptyLogs();
   }
 
   public function getHtmlTotal()

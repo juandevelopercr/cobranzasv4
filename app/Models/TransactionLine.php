@@ -14,10 +14,13 @@ use App\Models\TransactionLineDiscount;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Hacienda\ComprobanteElectronico\ImpuestoType\DatosImpuestoEspecificoAType;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class TransactionLine extends Model
 {
   use HasFactory;
+  use LogsActivity;
 
   protected $table = 'transactions_lines';
 
@@ -122,6 +125,16 @@ class TransactionLine extends Model
   public function caso()
   {
     return $this->belongsTo(Caso::class);
+  }
+
+  public function getActivitylogOptions(): LogOptions
+  {
+    return LogOptions::defaults()
+      ->logOnly(['*'])
+      ->setDescriptionForEvent(fn(string $eventName) => "La línea de la transacción ha sido {$eventName}")
+      ->useLogName('transaction_line')
+      ->logOnlyDirty()
+      ->dontSubmitEmptyLogs();
   }
 
   public function scopeSearch($query, $value, $filters = [])

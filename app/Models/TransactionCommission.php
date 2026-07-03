@@ -6,10 +6,13 @@ use App\Models\Comisionista;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class TransactionCommission extends Model
 {
   use HasFactory;
+  use LogsActivity;
 
   protected $table = 'transactions_commissions';
 
@@ -137,6 +140,16 @@ class TransactionCommission extends Model
     }
     */
     return $query;
+  }
+
+  public function getActivitylogOptions(): LogOptions
+  {
+    return LogOptions::defaults()
+      ->logOnly(['*'])
+      ->setDescriptionForEvent(fn(string $eventName) => "La comisión ha sido {$eventName}")
+      ->useLogName('transaction_commission')
+      ->logOnlyDirty()
+      ->dontSubmitEmptyLogs();
   }
 
   public function calculateDistributionAmount()
