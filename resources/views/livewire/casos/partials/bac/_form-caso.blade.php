@@ -206,7 +206,9 @@ $show = false;
         const value = $wire[id];
         if (value !== null && value !== undefined && value !== '') {
           $select.val(value).trigger('change.select2');
-        }
+        } else {
+          $select.val(null).trigger('change.select2');
+      }
       });
     };
 

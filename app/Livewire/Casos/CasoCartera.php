@@ -759,7 +759,7 @@ class CasoCartera extends CasoManager
 
     $this->action = 'create';
     $this->dispatch('scroll-to-top');
-    //$this->dispatch('select2');
+    $this->dispatch('select2');
     $this->dispatch('reinitSelect2Controls');
   }
 

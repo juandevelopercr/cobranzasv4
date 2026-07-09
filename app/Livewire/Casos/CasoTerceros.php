@@ -184,7 +184,6 @@ class CasoTerceros extends CasoManager
       'psaldo_de_seguros' => ['nullable', 'numeric'],
       'psaldo_de_multas'  => ['nullable', 'numeric'],
       //'_colones'          => ['nullable', 'numeric'],
-      'pmonto_estimacion_demanda_dolares' => ['nullable', 'numeric'],
       'pgastos_legales_caso' => ['nullable', 'numeric'],
       'pmonto_prima' => ['nullable', 'numeric'],
       'nhonorarios_notificacion' => ['nullable', 'numeric'],
@@ -371,8 +370,6 @@ class CasoTerceros extends CasoManager
 
       'dcorreo_electronico' => ['nullable', 'email'],
       'pcorreo_demandado_deudor_o_arrendatario' => ['nullable', 'email'],
-      'pcorreo_coarrendatario' => ['nullable', 'email'],
-
       'pnumero_operacion2' => ['nullable', 'string', 'max:50'],
       'pnumero_contrato' => ['nullable', 'string', 'max:50'],
       'anumero_placa1' => ['nullable', 'string', 'max:50'],
@@ -766,7 +763,7 @@ class CasoTerceros extends CasoManager
 
     $this->action = 'create';
     $this->dispatch('scroll-to-top');
-    //$this->dispatch('select2');
+    $this->dispatch('select2');
     $this->dispatch('reinitSelect2Controls');
   }
 

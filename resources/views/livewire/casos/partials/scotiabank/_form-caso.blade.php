@@ -321,7 +321,8 @@ $show = false;
           $select.val(value).trigger('change.select2');
           console.log(`[DEBUG] → Valor seteado en select2: ${id} = ${value}`);
         } else {
-          console.warn(`[DEBUG] → Sin valor para: ${id}`);
+          $select.val(null).trigger('change.select2');
+          console.warn(`[DEBUG] → Sin valor para: ${id}, se limpió el select2`);
         }
       });
       console.log('[DEBUG] syncSelect2Values - END');
