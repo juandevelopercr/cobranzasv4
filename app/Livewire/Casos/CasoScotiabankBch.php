@@ -39,6 +39,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CasoScotiabankBch extends CasoManager
 {
+  protected string $deletePermission = 'delete-scotiabank-bch-casos';
+
   public $titleNotification = 'Notificación - Public Edicto';
 
   public string $calculoMasivoEstado = '';

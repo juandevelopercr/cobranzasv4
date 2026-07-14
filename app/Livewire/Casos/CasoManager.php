@@ -56,6 +56,9 @@ class CasoManager extends BaseComponent
   public $columns;
   public $defaultColumns;
 
+  // Permiso que controla el botón/acción Eliminar de este banco. Cada subclase lo sobreescribe.
+  protected string $deletePermission = 'delete-casos';
+
   public $document_type = 'CASO';
 
   public $fechasRemate = [];
@@ -1073,6 +1076,14 @@ class CasoManager extends BaseComponent
 
   public function beforedelete()
   {
+    if (!auth()->user()->can($this->deletePermission)) {
+      $this->dispatch('show-notification', [
+        'type' => 'error',
+        'message' => __('No tiene permisos para eliminar este registro.')
+      ]);
+      return;
+    }
+
     $this->confirmarAccion(
       null,
       'delete',
@@ -1085,6 +1096,14 @@ class CasoManager extends BaseComponent
   #[On('delete')]
   public function delete($recordId)
   {
+    if (!auth()->user()->can($this->deletePermission)) {
+      $this->dispatch('show-notification', [
+        'type' => 'error',
+        'message' => __('No tiene permisos para eliminar este registro.')
+      ]);
+      return;
+    }
+
     try {
       $record = Caso::findOrFail($recordId);
 

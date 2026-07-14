@@ -38,6 +38,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CasoLafise extends CasoManager
 {
+  protected string $deletePermission = 'delete-lafise-casos';
+
   public $titleNotification = 'Notificación - Public Edicto';
   public $poderdantes = [];
 

@@ -37,6 +37,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CasoBancoGeneral extends CasoManager
 {
+  protected string $deletePermission = 'delete-banco-general-casos';
+
   public $titleNotification = 'Notificación - Public Edicto';
 
   #[Computed]

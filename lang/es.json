@@ -503,6 +503,15 @@
   "View-davivienda": "Ver Casos de Davivienda",
   "View-lafise": "Ver Casos de Lafise",
   "View-cafsa": "Ver Casos de CAFSA",
+  "Delete-scotiabank": "Eliminar Casos de Davibank",
+  "Delete-scotiabank-bch": "Eliminar Casos de Davibank BCH",
+  "Delete-bac": "Eliminar Casos de Bac",
+  "Delete-banco-general": "Eliminar Casos de Banco General",
+  "Delete-terceros": "Eliminar Casos de Terceros",
+  "Delete-coocique": "Eliminar Casos de Coocique",
+  "Delete-davivienda": "Eliminar Casos de Davivienda",
+  "Delete-lafise": "Eliminar Casos de Lafise",
+  "Delete-cafsa": "Eliminar Casos de CAFSA",
   "Recalcular-cuentas": "Recalcular saldo final de cuentas",
   "Reiniciar-saldo-inicial-cuentas": "Recalcular saldo inicial de cuentas",
   "View-cliente": "Ver reporte de clientes",
@@ -550,6 +559,7 @@
   "View-casos-coocique-prescrito": "Ver reporte de casos coocique prescrito",
   "View-casos-banco-general": "Ver reporte de casos de banco general",
   "View-coocique2": "Ver casos de Coocique 2",
+  "Delete-coocique2": "Eliminar casos de Coocique 2",
   "View-casos-coocique2-activos": "Ver reporte de casos coocique 2 activos",
   "View-casos-coocique2-terminados": "Ver reporte de casos coocique 2 terminados",
   "View-casos-coocique2-incobrables": "Ver reporte de casos coocique 2 incobrables",
@@ -559,5 +569,6 @@
   "view-notas-credito": "Ver reporte de notas de crédito",
   "view-notas-debito": "Ver reporte de notas de debito",
   "View-cartera": "Ver casos de cartera comprada",
-  "View-casos-cartera-comprada": "Ver casos de cartera comprada"
+  "View-casos-cartera-comprada": "Ver casos de cartera comprada",
+  "Delete-cartera": "Eliminar casos de cartera comprada"
 }

@@ -36,6 +36,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CasoCoocique2 extends CasoManager
 {
+  protected string $deletePermission = 'delete-coocique2-casos';
+
   public $titleNotification = 'Notificación - Public Edicto';
 
   #[Computed]

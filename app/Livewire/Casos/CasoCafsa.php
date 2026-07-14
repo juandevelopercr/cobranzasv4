@@ -37,6 +37,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CasoCafsa extends CasoManager
 {
+  protected string $deletePermission = 'delete-cafsa-casos';
+
   public $titleNotification = 'Notificación - Public Edicto';
 
   #[Computed]

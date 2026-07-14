@@ -37,6 +37,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CasoDavivienda extends CasoManager
 {
+  protected string $deletePermission = 'delete-davivienda-casos';
+
   public $titleNotification = 'Notificación - Public Edicto';
   public $poderdantes = [];
 

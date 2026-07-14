@@ -36,6 +36,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CasoTerceros extends CasoManager
 {
+  protected string $deletePermission = 'delete-terceros-casos';
+
   public $titleNotification = 'Notificación - Public Edicto';
 
   #[Computed]

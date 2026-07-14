@@ -36,7 +36,7 @@
                     @include('livewire.includes.button-import')
                   @endcan
 
-                  @can("delete-casos")
+                  @can("delete-davivienda-casos")
                     @include('livewire.includes.button-delete', ['textButton' => __('Eliminar')])
                   @endcan
 

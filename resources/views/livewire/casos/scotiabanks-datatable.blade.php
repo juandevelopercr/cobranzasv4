@@ -36,7 +36,7 @@
                                         @include('livewire.includes.button-import')
                                     @endcan
 
-                                    @can('delete-casos')
+                                    @can('delete-scotiabank-casos')
                                         @include('livewire.includes.button-delete', [
                                             'textButton' => __('Eliminar'),
                                         ])

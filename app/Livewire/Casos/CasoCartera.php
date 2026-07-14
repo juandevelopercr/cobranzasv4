@@ -38,6 +38,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CasoCartera extends CasoManager
 {
+  protected string $deletePermission = 'delete-cartera-casos';
+
   public $titleNotification = 'Notificación - Public Edicto';
 
   #[Computed]

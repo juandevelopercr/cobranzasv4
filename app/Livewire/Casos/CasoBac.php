@@ -38,6 +38,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CasoBac extends CasoManager
 {
+  protected string $deletePermission = 'delete-bac-casos';
+
   public $titleNotification = 'Notificación - Public Edicto';
 
   #[Computed]
