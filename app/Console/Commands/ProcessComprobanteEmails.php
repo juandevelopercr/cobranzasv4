@@ -85,6 +85,9 @@ class ProcessComprobanteEmails extends Command
       $this->info("Estableciendo conexión...");
       $client->connect();
 
+      $this->info("Verificando carpetas requeridas...");
+      $this->ensureFoldersExist($client);
+
       $this->info("✓ Conexión exitosa. Obteniendo bandeja de entrada...");
       $inbox = $client->getFolder('INBOX');
       $messages = $inbox->messages()->all()->get();
@@ -98,8 +101,74 @@ class ProcessComprobanteEmails extends Command
       $this->info("✔ Proceso completado exitosamente");
     } catch (ConnectionFailedException $e) {
       $this->handleConnectionError($e, $host);
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
       $this->handleGenericError($e);
+    }
+  }
+
+  /**
+   * Asegura que las carpetas usadas por el procesamiento existan en el buzón IMAP.
+   *
+   * IMPORTANTE: Client::getFolder() de webklex/php-imap devuelve null cuando la
+   * carpeta no existe, NO lanza excepción — por eso el chequeo se hace con
+   * is_null() y no con try/catch alrededor de getFolder().
+   */
+  private function ensureFoldersExist($client): void
+  {
+    $folders = ['PROCESADOS', 'ERRORES', 'RECHAZADOS', 'DUPLICADOS'];
+
+    foreach ($folders as $name) {
+      try {
+        $folder = $client->getFolder($name);
+        if (is_null($folder)) {
+          $this->info("Carpeta '{$name}' no existe. Creando...");
+          Log::channel('scheduler')->info("Carpeta '{$name}' no existe en el buzón. Creando...");
+
+          // $expunge=false: createFolder() por defecto manda un EXPUNGE justo
+          // después de crear la carpeta, y EXPUNGE requiere una carpeta ya
+          // seleccionada (RFC 3501). En este punto todavía no se ha seleccionado
+          // ninguna (INBOX se selecciona después), así que el servidor respondía
+          // "BAD No mailbox selected" y la carpeta nunca terminaba de crearse.
+          $newFolder = $client->createFolder($name, false);
+
+          // Crear una carpeta IMAP no la suscribe automáticamente en muchos
+          // servidores — sin esto queda invisible en el webmail (Roundcube y
+          // similares solo muestran carpetas suscritas) aunque el sistema sí
+          // la use para mover los correos.
+          try {
+            $newFolder?->subscribe();
+          } catch (\Exception $e) {
+            Log::channel('scheduler')->warning("No se pudo suscribir la carpeta '{$name}': " . $e->getMessage());
+          }
+
+          $this->info("✓ Carpeta '{$name}' creada correctamente.");
+        }
+      } catch (\Exception $e) {
+        $this->error("No se pudo verificar/crear la carpeta '{$name}': " . $e->getMessage());
+        Log::channel('scheduler')->error("No se pudo verificar/crear la carpeta '{$name}': " . $e->getMessage());
+      }
+    }
+  }
+
+  /**
+   * Mueve el mensaje a la carpeta indicada; si el MOVE del servidor IMAP falla
+   * (algunos proveedores devuelven errores intermitentes), al menos lo marca
+   * como leído para que quede visible que algo pasó con él, en vez de fallar
+   * en silencio y dejarlo indefinidamente sin ningún rastro de haber sido
+   * tocado.
+   */
+  private function moveOrMarkSeen($message, string $folder): void
+  {
+    try {
+      $message->move($folder);
+    } catch (\Throwable $e) {
+      $this->error("No se pudo mover el mensaje a '{$folder}': " . $e->getMessage());
+      Log::channel('scheduler')->warning("No se pudo mover el correo a '{$folder}' ({$e->getMessage()}). Se marca como leído.");
+      try {
+        $message->setFlag('Seen');
+      } catch (\Throwable $inner) {
+        Log::channel('scheduler')->error("Tampoco se pudo marcar el correo como leído: " . $inner->getMessage());
+      }
     }
   }
 
@@ -138,7 +207,7 @@ class ProcessComprobanteEmails extends Command
 
       if (count($attachments) === 0) {
         $this->warn("⚠ Mensaje sin adjuntos - Moviendo a RECHAZADOS");
-        $message->move('RECHAZADOS');
+        $this->moveOrMarkSeen($message, 'RECHAZADOS');
         return;
       }
 
@@ -231,12 +300,12 @@ class ProcessComprobanteEmails extends Command
 
             if ($hoy->gt($fechaLimite)) {
               $this->info("La fecha de emisión de la factura ha expirado. (Válido hasta 8 días hábiles del mes siguiente a la emisión). No se procesará este comprobante.");
-              $message->move('RECHAZADOS');
+              $this->moveOrMarkSeen($message, 'RECHAZADOS');
               return;
             }
           } catch (\Exception $e) {
             $this->error("No se pudo validar la fecha de emisión del comprobante. No se procesará este comprobante.");
-            $message->move('RECHAZADOS');
+            $this->moveOrMarkSeen($message, 'RECHAZADOS');
             return;
           }
         }
@@ -247,44 +316,62 @@ class ProcessComprobanteEmails extends Command
           ->first();
 
         if ($existing) {
-          $this->info("✔ Comprobante ya existe [ID: {$existing->id}]: {$comprobanteData['key']}");
+          $this->info("✔ Comprobante ya existe [ID: {$existing->id}]: {$comprobanteData['key']} - Moviendo a DUPLICADOS");
 
           // Opcional: Actualizar fecha de último visto
           $existing->touch();
 
-          // Mover el mensaje
-          try {
-            $message->move('PROCESADOS');
-            Log::channel('scheduler')->info("Comprobante duplicado manejado", [
-              'comprobante_id' => $existing->id,
-              'key' => $comprobanteData['key']
-            ]);
-          } catch (\Exception $e) {
-            $this->error("Error moviendo mensaje a PROCESADOS: " . $e->getMessage());
-            Log::channel('scheduler')->error("Error moviendo mensaje a procesado: " . $e->getMessage(), [
-              'trace' => $e->getTraceAsString()
-            ]);
-          }
+          // Mover el mensaje a una carpeta dedicada para duplicados: nunca se
+          // deja sin procesar ni se mezcla con los comprobantes recién creados
+          // en PROCESADOS, para poder auditarlos por separado.
+          $this->moveOrMarkSeen($message, 'DUPLICADOS');
+          Log::channel('scheduler')->info("Comprobante duplicado manejado", [
+            'comprobante_id' => $existing->id,
+            'key' => $comprobanteData['key']
+          ]);
           return;
         }
 
         try {
           $comprobante = $this->createComprobante($comprobanteData, $xmlComprobante, $xmlRespuesta, $pdf);
-          $message->move('PROCESADOS');
+
+          // createComprobante() captura sus propias excepciones y devuelve null
+          // en vez de relanzarlas (ver su catch interno) — sin este chequeo el
+          // mensaje se marcaba como PROCESADOS y luego el acceso a
+          // $comprobante->key producía un TypeError (\Error, no \Exception) que
+          // el catch de abajo NO captura, abortando todo el comando a mitad del
+          // lote y dejando el resto de correos del INBOX sin siquiera intentarse.
+          if (!$comprobante) {
+            throw new \Exception("createComprobante() no devolvió un comprobante válido");
+          }
+
+          $this->moveOrMarkSeen($message, 'PROCESADOS');
           $this->info("✔ Comprobante creado: " . $comprobante->key);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
           $this->error("Error creando comprobante: " . $e->getMessage());
-          $message->move('ERRORES');
+          Log::channel('scheduler')->error("Error creando comprobante: " . $e->getMessage(), [
+            'key' => $comprobanteData['key'] ?? null,
+            'trace' => $e->getTraceAsString()
+          ]);
+          $this->moveOrMarkSeen($message, 'ERRORES');
         }
       } else {
         $this->warn("⚠ No se encontró XML válido - Moviendo a RECHAZADOS");
-        $message->move('RECHAZADOS');
+        $this->moveOrMarkSeen($message, 'RECHAZADOS');
       }
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
+      // \Throwable (no solo \Exception) a propósito: un \Error (p.ej. TypeError)
+      // en un solo mensaje no debe abortar el foreach de handle() y dejar sin
+      // siquiera intentar el resto del lote de correos pendientes.
       $this->error("Error procesando mensaje: " . $e->getMessage());
       Log::channel('scheduler')->error("Error procesando mensaje: " . $e->getMessage(), [
         'trace' => $e->getTraceAsString()
       ]);
+
+      // No dejar el mensaje atascado indefinidamente en INBOX reintentándose
+      // en cada corrida sin nunca resolverse: se manda a ERRORES para revisión
+      // manual, igual que cuando falla la creación del comprobante.
+      $this->moveOrMarkSeen($message, 'ERRORES');
     }
   }
 
