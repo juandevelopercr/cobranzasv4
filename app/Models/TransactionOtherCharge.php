@@ -68,12 +68,7 @@ class TransactionOtherCharge extends Model
       'transactions_other_charges.id',
       'transactions_other_charges.transaction_id',
       'transactions_other_charges.product_id',
-       DB::raw("CONCAT_WS(' / ',
-          NULLIF(casos.pnumero, ''),
-          NULLIF(casos.pnumero_operacion1, ''),
-          NULLIF(casos.pnombre_demandado, ''),
-          NULLIF(casos.pnombre_apellidos_deudor, '')
-      ) as caso_info"),
+       DB::raw(\App\Models\Caso::sqlDisplayExpression('casos') . " as caso_info"),
       'products.name as product_name',
       'additional_charge_type_id',
       'additional_charge_types.code as charge_code',

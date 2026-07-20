@@ -383,6 +383,24 @@ class Caso extends Model implements HasMedia
     return $this->belongsTo(CasoProceso::class, 'proceso_id');
   }
 
+  public function getNumeroOperacionesAttribute(): string
+  {
+    return implode('-', array_filter(
+      [$this->pnumero_operacion1, $this->pnumero_operacion2],
+      fn($value) => $value !== null && $value !== ''
+    ));
+  }
+
+  public static function sqlDisplayExpression(string $prefix = ''): string
+  {
+    $col = fn(string $name) => $prefix ? "{$prefix}.{$name}" : $name;
+    return "CONCAT_WS(' / ',
+        {$col('pnumero')},
+        NULLIF(CONCAT_WS('-', NULLIF({$col('pnumero_operacion1')}, ''), NULLIF({$col('pnumero_operacion2')}, '')), ''),
+        TRIM(CONCAT_WS(' ', {$col('pnombre_demandado')}, {$col('pnombre_apellidos_deudor')}))
+    )";
+  }
+
   public function currency()
   {
     return $this->belongsTo(Currency::class, 'currency_id');

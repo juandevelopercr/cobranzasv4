@@ -145,12 +145,7 @@ class TransactionLine extends Model
       'transactions_lines.transaction_id',
       'transactions_lines.product_id',
       'transactions_lines.codigo',
-       DB::raw("CONCAT_WS(' / ',
-          NULLIF(casos.pnumero, ''),
-          NULLIF(casos.pnumero_operacion1, ''),
-          NULLIF(casos.pnombre_demandado, ''),
-          NULLIF(casos.pnombre_apellidos_deudor, '')
-      ) as caso_info"),
+       DB::raw(\App\Models\Caso::sqlDisplayExpression('casos') . " as caso_info"),
       'transactions_lines.codigocabys',
       'transactions_lines.detail',
       'transactions_lines.quantity',

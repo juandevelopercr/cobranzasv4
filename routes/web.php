@@ -730,14 +730,12 @@ Route::get('/api/casos/search', function (\Illuminate\Http\Request $request) {
   $models = \App\Models\Caso::query()
     ->select([
       'id',
-      DB::raw("CONCAT_WS(' / ',
-                        CONCAT_WS(' / ', pnumero, pnumero_operacion1),
-                        TRIM(CONCAT_WS(' ', pnombre_demandado, pnombre_apellidos_deudor))
-                    ) AS pnumero")
+      DB::raw(\App\Models\Caso::sqlDisplayExpression() . " AS pnumero")
     ])
     ->where(function ($query) use ($term) {
       $query->where('pnumero', 'like', "%{$term}%")
         ->orWhere('pnumero_operacion1', 'like', "%{$term}%")
+        ->orWhere('pnumero_operacion2', 'like', "%{$term}%")
         ->orWhere('pnombre_demandado', 'like', "%{$term}%")
         ->orWhere('pnombre_apellidos_deudor', 'like', "%{$term}%");
     })

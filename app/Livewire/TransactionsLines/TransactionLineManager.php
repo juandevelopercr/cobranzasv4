@@ -735,10 +735,7 @@ class TransactionLineManager extends BaseComponent {
     if ($this->caso_id) {
       $caso = Caso::select(
         'casos.*',
-        DB::raw("CONCAT_WS(' / ',
-              CONCAT_WS(' / ', pnumero, pnumero_operacion1),
-              TRIM(CONCAT_WS(' ', pnombre_demandado, pnombre_apellidos_deudor))
-          ) AS pnumero_text")
+        DB::raw(Caso::sqlDisplayExpression() . " AS pnumero_text")
       )
         ->where('id', $this->caso_id)
         ->first();

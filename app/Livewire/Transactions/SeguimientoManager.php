@@ -992,7 +992,7 @@ class SeguimientoManager extends TransactionManager
       $this->caso_text = strtoupper(
         implode(' / ', array_filter([
           $record->caso->pnumero,
-          $record->caso->pnumero_operacion1,
+          $record->caso->numero_operaciones,
           ($record->caso->pnombre_demandado || $record->caso->pnombre_apellidos_deudor)
             ? trim($record->caso->pnombre_demandado . ' ' . $record->caso->pnombre_apellidos_deudor)
             : null

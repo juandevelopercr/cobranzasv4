@@ -92,7 +92,7 @@
           @if ($transaction->tipo_facturacion == \App\Models\Transaction::INDIVIDUAL && $transaction->caso)
           @php
             $demendado = ($transaction->bank_id == \App\Models\Bank::DAVIVIENDA) ? $transaction->caso->pnombre_apellidos_deudor : $transaction->caso->pnombre_demandado;
-            $numero_operacion = $transaction->bank_id == \App\Models\Bank::DAVIVIENDA ? $transaction->caso->pnumero_operacion2: $transaction->caso->pnumero_operacion1;
+            $numero_operacion = $transaction->caso->numero_operaciones;
 
             $tipo_proceso = $transaction->caso->proceso ? $transaction->caso->proceso->nombre: '-';
             $numero_expediente = $transaction->caso->pnumero_expediente_judicial;
@@ -118,6 +118,7 @@
                     @if($caso)
                     <tr>
                       <td class="tm_width_1" valign="top">
+                        <b class="tm_primary_color">Caso:</b> {{ $transaction->caso->pnumero }}<br>
                         <b class="tm_primary_color">Nombre:</b> {{ $demendado }}<br>
                         <b class="tm_primary_color">O.P:</b> {{ $numero_operacion }}<br>
                         <b class="tm_primary_color">EXP.:</b> {{ $numero_expediente }}<br>
@@ -259,7 +260,7 @@
                         @if ($line->caso)
                           @php
                             $demendado = ($transaction->bank_id == \App\Models\Bank::DAVIVIENDA) ? $line->caso->pnombre_apellidos_deudor : $line->caso->pnombre_demandado;
-                            $numero_operacion = $transaction->bank_id == \App\Models\Bank::DAVIVIENDA ? $line->caso->pnumero_operacion2: $line->caso->pnumero_operacion1;
+                            $numero_operacion = $line->caso->numero_operaciones;
 
                             $tipo_proceso = $line->caso->proceso->nombre;
                             $numero_expediente = $line->caso->pnumero_expediente_judicial;
@@ -522,7 +523,7 @@
                           @if ($charge->caso)
                             @php
                               $demendado = ($transaction->bank_id == \App\Models\Bank::DAVIVIENDA) ? $charge->caso->pnombre_apellidos_deudor : $charge->caso->pnombre_demandado;
-                              $numero_operacion = $transaction->bank_id == \App\Models\Bank::DAVIVIENDA ? $charge->caso->pnumero_operacion2: $charge->caso->pnumero_operacion1;
+                              $numero_operacion = $charge->caso->numero_operaciones;
 
                               $tipo_proceso = $charge->caso->proceso->nombre;
                               $numero_expediente = $charge->caso->pnumero_expediente_judicial;
