@@ -580,15 +580,25 @@ function cleaveLivewire({
         }
       });
 
+      // Dos formas de usar watchProperty en esta base de código:
+      // - '$wire.campo' (usado en los formularios de Casos): referencia una
+      //   propiedad real de Livewire, así que hay que leerla vía this.$wire.
+      // - 'nombreLocal' (usado en Movimientos, Transaction Lines, Contactos,
+      //   Impuestos de Productos): referencia una propiedad Alpine local
+      //   definida junto a este x-data, normalmente con @entangle — hay que
+      //   evaluarla tal cual en el scope de Alpine, NO como $wire[prop], o
+      //   Livewire la interpreta como llamada a un método inexistente.
+      const resolveWatch = (raw) => {
+        if (typeof raw !== 'string') return () => raw;
+        if (raw.startsWith('$wire.')) {
+          const prop = raw.replace('$wire.', '');
+          return () => this.$wire[prop];
+        }
+        return raw;
+      };
+
       if (watchProperty && typeof this.$watch === 'function') {
-        const prop = typeof watchProperty === 'string'
-          ? watchProperty.replace('$wire.', '')
-          : watchProperty;
-        // Observar la propiedad real de Livewire a través del proxy $wire.
-        // this[prop] NO funciona: el objeto de datos de Alpine nunca define
-        // esa clave, así que el watch nunca disparaba y el input se quedaba
-        // con el valor del registro anterior al cambiar de caso/expediente.
-        this.$watch(() => this.$wire[prop], value => {
+        this.$watch(resolveWatch(watchProperty), value => {
           if (el._cleaveInstance) {
             el._cleaveInstance.setRawValue(value);
             this.rawValue = value;
@@ -600,15 +610,15 @@ function cleaveLivewire({
 
       // Observar cambios de disable si se proporciona disableWhen
       if (watchProperty && typeof disableWhen === 'function' && typeof this.$watch === 'function') {
-        const disableProp = typeof watchProperty === 'string'
-          ? watchProperty.replace('$wire.', '')
-          : watchProperty;
-        this.$watch(() => this.$wire[disableProp], value => {
+        this.$watch(resolveWatch(watchProperty), value => {
           el.disabled = disableWhen(value);
         });
 
         // Evaluación inicial
-        el.disabled = disableWhen(this.$wire[disableProp] ?? null);
+        const initialProp = typeof watchProperty === 'string' && watchProperty.startsWith('$wire.')
+          ? this.$wire[watchProperty.replace('$wire.', '')]
+          : this[watchProperty];
+        el.disabled = disableWhen(initialProp ?? null);
       }
     }
   };
@@ -889,18 +899,14 @@ window.datePickerLivewire = ({ wireEventName = 'dateSelected', watchProperty = n
       }
     });
 
-    // Si no se pasa watchProperty explícito, se deriva del wire:model del
-    // propio input (siempre presente en estos date pickers). Sin esto, el
-    // campo quedaba wire:ignore sin ningún watch — al cambiar de registro
-    // sin recargar la página (ej. de un expediente a otro) Flatpickr seguía
-    // mostrando la fecha del registro anterior.
-    const dateProp = watchProperty
-      ? (typeof watchProperty === 'string' ? watchProperty.replace('$wire.', '') : watchProperty)
-      : el.getAttribute('wire:model');
-
-    if (dateProp && typeof this.$watch === 'function') {
+    if (watchProperty && typeof this.$watch === 'function') {
+      // watchProperty explícito: es una propiedad Alpine local (p. ej. un
+      // @entangle definido junto a este x-data, como en los formularios de
+      // Facturación), así que se evalúa tal cual en el scope de Alpine —
+      // NO como propiedad de $wire, o Livewire la interpreta como llamada
+      // a un método inexistente.
       this.$nextTick(() => {
-        this.$watch(() => this.$wire[dateProp], value => {
+        this.$watch(watchProperty, value => {
           if (el.flatpickrInstance) {
             if (value) {
               const date = parseIsoDate(value);
@@ -911,6 +917,28 @@ window.datePickerLivewire = ({ wireEventName = 'dateSelected', watchProperty = n
           }
         });
       });
+    } else if (typeof this.$watch === 'function') {
+      // Sin watchProperty: se deriva del wire:model del propio input
+      // (siempre presente en estos date pickers de Casos) y se observa el
+      // valor real de Livewire vía $wire. Sin esto, el campo quedaba
+      // wire:ignore sin ningún watch — al cambiar de registro sin recargar
+      // la página (ej. de un expediente a otro) Flatpickr seguía mostrando
+      // la fecha del registro anterior.
+      const dateProp = el.getAttribute('wire:model');
+      if (dateProp) {
+        this.$nextTick(() => {
+          this.$watch(() => this.$wire[dateProp], value => {
+            if (el.flatpickrInstance) {
+              if (value) {
+                const date = parseIsoDate(value);
+                if (date) el.flatpickrInstance.setDate(date, false);
+              } else {
+                el.flatpickrInstance.clear(false);
+              }
+            }
+          });
+        });
+      }
     }
 
     // Detectar limpieza manual
