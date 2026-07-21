@@ -584,10 +584,11 @@ function cleaveLivewire({
         const prop = typeof watchProperty === 'string'
           ? watchProperty.replace('$wire.', '')
           : watchProperty;
-        // Observar la propiedad Alpine local (@entangle) directamente.
-        // NO usar comp.get(prop) porque esas props son Alpine locales,
-        // no propiedades Livewire — comp.get() siempre devolvería null.
-        this.$watch(() => this[prop], value => {
+        // Observar la propiedad real de Livewire a través del proxy $wire.
+        // this[prop] NO funciona: el objeto de datos de Alpine nunca define
+        // esa clave, así que el watch nunca disparaba y el input se quedaba
+        // con el valor del registro anterior al cambiar de caso/expediente.
+        this.$watch(() => this.$wire[prop], value => {
           if (el._cleaveInstance) {
             el._cleaveInstance.setRawValue(value);
             this.rawValue = value;
@@ -602,12 +603,12 @@ function cleaveLivewire({
         const disableProp = typeof watchProperty === 'string'
           ? watchProperty.replace('$wire.', '')
           : watchProperty;
-        this.$watch(() => this[disableProp], value => {
+        this.$watch(() => this.$wire[disableProp], value => {
           el.disabled = disableWhen(value);
         });
 
         // Evaluación inicial
-        el.disabled = disableWhen(this[disableProp] ?? null);
+        el.disabled = disableWhen(this.$wire[disableProp] ?? null);
       }
     }
   };
@@ -888,9 +889,18 @@ window.datePickerLivewire = ({ wireEventName = 'dateSelected', watchProperty = n
       }
     });
 
-    if (watchProperty && typeof this.$watch === 'function') {
+    // Si no se pasa watchProperty explícito, se deriva del wire:model del
+    // propio input (siempre presente en estos date pickers). Sin esto, el
+    // campo quedaba wire:ignore sin ningún watch — al cambiar de registro
+    // sin recargar la página (ej. de un expediente a otro) Flatpickr seguía
+    // mostrando la fecha del registro anterior.
+    const dateProp = watchProperty
+      ? (typeof watchProperty === 'string' ? watchProperty.replace('$wire.', '') : watchProperty)
+      : el.getAttribute('wire:model');
+
+    if (dateProp && typeof this.$watch === 'function') {
       this.$nextTick(() => {
-        this.$watch(watchProperty, value => {
+        this.$watch(() => this.$wire[dateProp], value => {
           if (el.flatpickrInstance) {
             if (value) {
               const date = parseIsoDate(value);
