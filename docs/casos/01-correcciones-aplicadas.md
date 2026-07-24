@@ -113,3 +113,42 @@ no tenemos acceso desde el código.
 - No se resolvió la causa de fondo del punto 4 (por qué el valor no coincide
   con CCC) porque requiere comparar contra el sistema del banco, información
   que no está disponible desde el código.
+
+## 5. Incidentes durante el despliegue a producción (2026-07-23)
+
+Al aplicar todo lo anterior en el servidor real aparecieron 3 problemas
+adicionales, todos resueltos el mismo día:
+
+**5.1 — `route:cache`/`config:cache` rompió el sitio completo** (`Target
+class [verified] does not exist`). No tiene relación con este incidente;
+es una interacción entre el caché de rutas de este servidor y el
+middleware `verified`. Solución: no cachear rutas/config en este servidor,
+usar solo `:clear`.
+
+**5.2 — `agastos_legales` se quedó en `varchar` en producción** aunque el
+modelo ya la trataba como `decimal`. Causa: se migró a mano (por SQL
+directo) mientras se investigaba el bug de MySQL en la tabla `casos`
+(307 columnas — ver `04-plan-migracion-campos-numericos.md`), y por error
+se excluyó de la migración versionada pensando que ya estaba resuelta. Se
+agregó la migración que faltaba
+(`2026_07_23_211036_migrate_agastos_legales_column_to_decimal.php`) y se
+limpiaron 17,305 filas que tenían `''` real (no `0.00` — ojo con comparar
+`columna = ''` en SQL sobre una columna numérica, MySQL la convierte a `0`
+para comparar y da falsos positivos/negativos según el contexto).
+
+**5.3 — `pmonto_estimacion_demanda` y `pmonto_estimacion_demanda_dolares`
+nunca se limpiaron.** Se les corrigió el input y la validación (por la
+sincronización con "Saldo Inicial", ver punto de arriba) pero no los datos
+que ya tenían — bloqueaba el guardado de cualquier caso con un valor viejo
+mal formado en ese campo, aunque el usuario no lo tocara. 8,756 filas
+normalizadas (`docs/casos/scripts/clean_monto_estimacion_demanda*.php`).
+
+**5.4 — Revisión proactiva del importador de Excel.** A raíz de 5.3 se
+revisó si el importador (`ImportColumns.php` + `importar()` de cada banco)
+tenía el mismo riesgo para los 9 campos ya endurecidos — sí lo tenía: los
+mapeaba como texto libre, así que importar un Excel con un valor tipo
+`"1,234.56"` habría tronado el importador completo (no un error de fila,
+una excepción sin manejar). Corregido con `ImportColumns::parseMoney()`
+(mismo parser reutilizado en toda la limpieza) y un `try/catch` por fila
+como red de seguridad adicional. Esto no había fallado aún en producción —
+se encontró y corrigió antes de que pasara.
