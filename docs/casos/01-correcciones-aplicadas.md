@@ -152,3 +152,39 @@ una excepción sin manejar). Corregido con `ImportColumns::parseMoney()`
 (mismo parser reutilizado en toda la limpieza) y un `try/catch` por fila
 como red de seguridad adicional. Esto no había fallado aún en producción —
 se encontró y corrigió antes de que pasara.
+
+## 6. Segunda ronda: 11 campos más del panel Aprobación (2026-07-24)
+
+**Origen:** el cliente reportó (captura de pantalla) que el campo
+`ahonorarios_totales` ("Honorarios Totales") aceptaba texto libre sin
+ningún formato de dinero. Se revisó sistemáticamente el panel "Aprobación"
+en los 11 bancos y se encontraron 11 campos con el mismo patrón de la
+causa raíz original (punto 1): input sin `cleaveLivewire` + validación
+`string` en vez de `numeric` + columna `varchar` en vez de `decimal`.
+
+**Campos corregidos:** `ahonorarios_totales`, `ahonorarios_totales_usd`,
+`aestimacion_demanda_en_presentacion`,
+`aestimacion_demanda_en_presentacion_usd`, `amonto_cancelar`,
+`amonto_incobrable`, `bgastos_proceso`, `liquidacion_intereses_aprobada_crc`,
+`liquidacion_intereses_aprobada_usd`, `pmonto_estimacion_demanda_colones`,
+`pmonto_estimacion_demanda_dolares` — en los 11 bancos.
+
+**Aplicado el mismo proceso de la corrección original, en orden:**
+
+1. Limpieza de datos sucios existentes (268 filas — placeholders sin valor
+   real y fórmulas de Excel sin calcular, todas aprobadas por el usuario
+   antes de aplicarse, ninguna es un monto recuperable). Ver
+   `docs/casos/scripts/clean_panel_aprobacion_campos.php`.
+2. 24 inputs planos reemplazados por `cleaveLivewire` en los 11 bancos.
+3. Validación cambiada de `string` a `numeric` en los 11 componentes.
+4. Las 11 columnas migradas de `varchar` a `decimal(18,2)` — migración
+   `2026_07_24_120000_migrate_panel_aprobacion_money_columns_to_decimal.php`,
+   mismo método seguro (columna nueva + backfill + verificar + drop +
+   rename) que ya evita el bug de MySQL en esta tabla de 307 columnas.
+5. Cast `decimal:2` agregado en `app/Models/Caso.php`.
+6. Probado automáticamente contra la base de datos real (transacciones que
+   siempre revierten): 110/110 combinaciones banco×campo sin fallos — ver
+   `docs/casos/06-certificacion-formularios.md`.
+
+Ver `docs/casos/05-instrucciones-produccion.md` para los pasos de
+despliegue de esta ronda en el servidor real.

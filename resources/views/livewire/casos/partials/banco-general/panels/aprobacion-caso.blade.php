@@ -75,8 +75,26 @@
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="ahonorarios_totales">{{ __('Honorarios Totales Colones') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="ahonorarios_totales" id="ahonorarios_totales" class="form-control @error('ahonorarios_totales') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $ahonorarios_totales ?? '' }}',
+        wireModelName: 'ahonorarios_totales',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('ahonorarios_totales', val);
+          }
+        },
+      watchProperty: '$wire.ahonorarios_totales'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="ahonorarios_totales" x-ref="cleaveInput" wire:ignore class="form-control js-input-ahonorarios_totales">
+      </div>
     </div>
     @error('ahonorarios_totales')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -261,8 +279,26 @@
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="bgastos_proceso">{{ __('Gastos del proceso') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="bgastos_proceso" id="bgastos_proceso" class="form-control @error('bgastos_proceso') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $bgastos_proceso ?? '' }}',
+        wireModelName: 'bgastos_proceso',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('bgastos_proceso', val);
+          }
+        },
+      watchProperty: '$wire.bgastos_proceso'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="bgastos_proceso" x-ref="cleaveInput" wire:ignore class="form-control js-input-bgastos_proceso">
+      </div>
     </div>
     @error('bgastos_proceso')
     <div class="text-danger mt-1">{{ $message }}</div>

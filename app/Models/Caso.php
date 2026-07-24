@@ -44,6 +44,20 @@ class Caso extends Model implements HasMedia
       'pmonto_retencion_colones' => 'decimal:2',
       'pmonto_retencion_dolares' => 'decimal:2',
       'psaldo_dolarizado' => 'decimal:2',
+
+      // Migradas de varchar a decimal(18,2) — panel Aprobación, ver
+      // docs/casos/01-correcciones-aplicadas.md
+      'aestimacion_demanda_en_presentacion' => 'decimal:2',
+      'aestimacion_demanda_en_presentacion_usd' => 'decimal:2',
+      'ahonorarios_totales' => 'decimal:2',
+      'ahonorarios_totales_usd' => 'decimal:2',
+      'amonto_cancelar' => 'decimal:2',
+      'amonto_incobrable' => 'decimal:2',
+      'bgastos_proceso' => 'decimal:2',
+      'liquidacion_intereses_aprobada_crc' => 'decimal:2',
+      'liquidacion_intereses_aprobada_usd' => 'decimal:2',
+      'pmonto_estimacion_demanda_colones' => 'decimal:2',
+      'pmonto_estimacion_demanda_dolares' => 'decimal:2',
     ];
   }
 

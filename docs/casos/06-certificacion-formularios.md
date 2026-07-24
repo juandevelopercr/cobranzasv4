@@ -179,3 +179,54 @@ guardado al editar también funciona al crear un caso nuevo.
   Levantamiento, Segmento, Denuncia, Anotaciones, Traspaso, Filtro1/2)
   quedan pendientes de certificar en la mayoría de los bancos — requieren
   ubicar o crear casos de esos tipos de producto específicos.
+
+## Segunda ronda (2026-07-24): 11 campos adicionales del panel Aprobación
+
+A raíz de un reporte del cliente con captura de pantalla mostrando que
+`ahonorarios_totales` aceptaba texto libre ("hgjhghj"), se revisó
+sistemáticamente el panel "Aprobación" en busca de más campos de dinero con
+el mismo problema (input sin formato + validación `string` en vez de
+`numeric`). Se encontraron y corrigieron 11 campos, en los 11 bancos:
+
+`ahonorarios_totales`, `ahonorarios_totales_usd`,
+`aestimacion_demanda_en_presentacion`,
+`aestimacion_demanda_en_presentacion_usd`, `amonto_cancelar`,
+`amonto_incobrable`, `bgastos_proceso`, `liquidacion_intereses_aprobada_crc`,
+`liquidacion_intereses_aprobada_usd`, `pmonto_estimacion_demanda_colones`,
+`pmonto_estimacion_demanda_dolares`.
+
+**Proceso aplicado (mismo patrón que la primera ronda):**
+
+1. Auditoría de datos sucios existentes en las 11 columnas (script
+   `docs/casos/scripts/clean_panel_aprobacion_campos.php`) — 268 filas con
+   formato sucio o placeholders sin valor real, todas clasificadas y
+   aprobadas por el usuario antes de tocar la base de datos (89 placeholders
+   → `null`, 15 fórmulas de Excel sin calcular → `null`, resto reformateado).
+2. Reemplazo de los 24 inputs planos (`wire:model` sin formato) por el
+   control `cleaveLivewire` (2 decimales), en los 11 bancos.
+3. Cambio de validación de `['nullable', 'string', 'max:190']` a
+   `['nullable', 'numeric']` en la función `rules()` de los 11 componentes
+   Livewire — confirmado con auditoría automática que el 100% de las 121
+   combinaciones campo×banco (11×11, menos 1 que ya estaba `numeric` en
+   Cartera Comprada) quedaron con la regla correcta.
+4. Migración de las 11 columnas de `varchar` a `decimal(18,2)`
+   (`2026_07_24_120000_migrate_panel_aprobacion_money_columns_to_decimal.php`),
+   mismo método seguro de columna nueva + backfill + verificación + drop +
+   rename ya usado en la primera ronda (ver
+   `04-plan-migracion-campos-numericos.md`).
+5. Cast `'decimal:2'` agregado en `app/Models/Caso.php` para las 11
+   columnas.
+
+**Prueba automatizada** (`docs/casos/scripts/test_panel_aprobacion_campos.php`,
+corre contra la base de datos real dentro de transacciones que siempre
+revierten): para cada uno de los 11 bancos y cada uno de los 11 campos se
+probó (a) que un valor vacío se guarda sin error (`cleanEmptyNumericFields`
+lo convierte a `null` antes de tocar la columna decimal), y (b) que texto
+basura ("hgjhghj") es rechazado por la validación, no por una excepción SQL.
+Se probó también la regla de validación en el contexto de `store()`
+(crear), confirmando que usa exactamente la misma regla que `update()`
+(ambos métodos comparten `rules()` y `cleanEmptyNumericFields()` — se
+verificó leyendo el código de los 11 componentes, no son implementaciones
+separadas). **Resultado: 110/110 combinaciones probadas sin fallos**
+(Cartera Comprada quedó fuera del conteo de `update()` por no tener casos
+en esta base de datos, igual que en la primera ronda).

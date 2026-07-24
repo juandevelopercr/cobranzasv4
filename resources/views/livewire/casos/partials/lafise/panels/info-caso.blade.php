@@ -347,9 +347,26 @@
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="pmonto_estimacion_demanda_dolares">{{ __('Estimación dólares Demanda en la Presentación') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="pmonto_estimacion_demanda_dolares" id="pmonto_estimacion_demanda_dolares"
-          class="form-control @error('pmonto_estimacion_demanda_dolares') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $pmonto_estimacion_demanda_dolares ?? '' }}',
+        wireModelName: 'pmonto_estimacion_demanda_dolares',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('pmonto_estimacion_demanda_dolares', val);
+          }
+        },
+      watchProperty: '$wire.pmonto_estimacion_demanda_dolares'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="pmonto_estimacion_demanda_dolares" x-ref="cleaveInput" wire:ignore class="form-control js-input-pmonto_estimacion_demanda_dolares">
+      </div>
     </div>
     @error('pmonto_estimacion_demanda_dolares')
     <div class="text-danger mt-1">{{ $message }}</div>

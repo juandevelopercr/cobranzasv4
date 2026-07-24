@@ -109,3 +109,91 @@ php artisan cache:clear
    guardar de nuevo.
 
 Si los 5 puntos anteriores pasan, el despliegue está completo.
+
+## 8. Segunda ronda (2026-07-24): 11 campos adicionales del panel Aprobación
+
+Mismo checklist, para los 11 campos nuevos (`ahonorarios_totales` y
+afines — ver `01-correcciones-aplicadas.md` punto 6 y
+`06-certificacion-formularios.md`). **No saltarse el respaldo ni el orden
+de los pasos**, es la misma lógica: limpiar datos antes de migrar el
+esquema.
+
+### 8.0. Respaldo
+
+```bash
+mysqldump -u<usuario> -p<password> <base_de_datos> > backup-antes-migracion-panel-aprobacion-$(date +%Y%m%d).sql
+```
+
+### 8.1. Desplegar el código
+
+```bash
+git pull
+composer install --no-dev --optimize-autoloader   # si aplica en su flujo normal
+```
+
+### 8.2. Limpiar los datos sucios en las 11 columnas nuevas
+
+```bash
+php artisan tinker docs/casos/scripts/clean_panel_aprobacion_campos.php
+```
+
+Igual que antes: si dice `Filas sin resolver: 0` seguido de `COMMIT
+realizado`, continuar. Si aparece `SIN RESOLVER col id=X 'valor'` con
+alguna fila nueva que no estaba en la copia de prueba, el script **no
+aplica ningún cambio** — copiar esa lista y decidir cómo interpretarla
+antes de reintentar (no adivinar un monto).
+
+### 8.3. Correr la migración de esquema
+
+```bash
+php artisan migrate --force
+```
+
+Debe decir `DONE` para
+`2026_07_24_120000_migrate_panel_aprobacion_money_columns_to_decimal`. Si
+aborta con "Migración abortada: la columna casos.X tiene un valor no
+numérico" → el paso 8.2 no dejó esa columna limpia en este servidor
+(revisar el id indicado, no reintentar hasta resolverlo).
+
+### 8.4. Verificar
+
+```bash
+php artisan migrate:status | grep panel_aprobacion
+# debe decir "Ran"
+
+php artisan tinker --execute="
+foreach (['aestimacion_demanda_en_presentacion','aestimacion_demanda_en_presentacion_usd','ahonorarios_totales','ahonorarios_totales_usd','amonto_cancelar','amonto_incobrable','bgastos_proceso','liquidacion_intereses_aprobada_crc','liquidacion_intereses_aprobada_usd','pmonto_estimacion_demanda_colones','pmonto_estimacion_demanda_dolares'] as \$c) {
+  echo \$c.': '.\Illuminate\Support\Facades\Schema::getColumnType('casos', \$c).PHP_EOL;
+}
+"
+# las 11 deben decir 'decimal'
+```
+
+### 8.5. Limpiar caché de la aplicación
+
+```bash
+php artisan config:clear
+php artisan view:clear
+php artisan cache:clear
+```
+
+**No usar `config:cache` ni `route:cache` en este servidor** — ya rompió el
+sitio completo una vez durante el primer despliegue (ver punto 5.1 de
+`01-correcciones-aplicadas.md`), no tiene relación con esta corrección, es
+una particularidad de este servidor con el middleware `verified`.
+
+### 8.6. Prueba manual rápida
+
+1. Entrar como usuario real a cualquier banco, abrir un caso existente,
+   panel "Aprobación".
+2. Escribir texto libre (ej. "abc") en el campo "Honorarios Totales" y dar
+   Guardar → debe aparecer el mensaje de validación normal (campo
+   resaltado en rojo, "debe ser un número válido"), **no** un error 500 ni
+   el cuadro de error SQL.
+3. Borrar el campo, dar Guardar → debe guardar sin error (notificación azul
+   "Caso actualizado correctamente").
+4. Poner un valor con formato (ej. "1.234,56"), confirmar que se muestra
+   con el separador de miles y 2 decimales tras guardar.
+5. Restaurar el valor original y guardar de nuevo.
+
+Si los 5 puntos pasan, el despliegue de esta segunda ronda está completo.

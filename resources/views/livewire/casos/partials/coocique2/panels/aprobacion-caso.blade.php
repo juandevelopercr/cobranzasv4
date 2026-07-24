@@ -91,8 +91,26 @@
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="ahonorarios_totales">{{ __('Honorarios Totales Colones') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="ahonorarios_totales" id="ahonorarios_totales" class="form-control @error('ahonorarios_totales') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $ahonorarios_totales ?? '' }}',
+        wireModelName: 'ahonorarios_totales',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('ahonorarios_totales', val);
+          }
+        },
+      watchProperty: '$wire.ahonorarios_totales'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="ahonorarios_totales" x-ref="cleaveInput" wire:ignore class="form-control js-input-ahonorarios_totales">
+      </div>
     </div>
     @error('ahonorarios_totales')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -337,8 +355,26 @@
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="amonto_cancelar">{{ __('Monto que debe cancelar') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="amonto_cancelar" id="amonto_cancelar" class="form-control @error('amonto_cancelar') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $amonto_cancelar ?? '' }}',
+        wireModelName: 'amonto_cancelar',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('amonto_cancelar', val);
+          }
+        },
+      watchProperty: '$wire.amonto_cancelar'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="amonto_cancelar" x-ref="cleaveInput" wire:ignore class="form-control js-input-amonto_cancelar">
+      </div>
     </div>
     @error('amonto_cancelar')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -347,8 +383,26 @@
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="amonto_incobrable">{{ __('Monto incobrable') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="amonto_incobrable" id="amonto_incobrable" class="form-control @error('amonto_incobrable') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $amonto_incobrable ?? '' }}',
+        wireModelName: 'amonto_incobrable',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('amonto_incobrable', val);
+          }
+        },
+      watchProperty: '$wire.amonto_incobrable'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="amonto_incobrable" x-ref="cleaveInput" wire:ignore class="form-control js-input-amonto_incobrable">
+      </div>
     </div>
     @error('amonto_incobrable')
     <div class="text-danger mt-1">{{ $message }}</div>

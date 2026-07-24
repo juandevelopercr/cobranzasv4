@@ -148,8 +148,26 @@
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="aestimacion_demanda_en_presentacion">{{ __('Estimación Demanda en la Presentación Colones') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="aestimacion_demanda_en_presentacion" id="aestimacion_demanda_en_presentacion" class="form-control @error('aestimacion_demanda_en_presentacion') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $aestimacion_demanda_en_presentacion ?? '' }}',
+        wireModelName: 'aestimacion_demanda_en_presentacion',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('aestimacion_demanda_en_presentacion', val);
+          }
+        },
+      watchProperty: '$wire.aestimacion_demanda_en_presentacion'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="aestimacion_demanda_en_presentacion" x-ref="cleaveInput" wire:ignore class="form-control js-input-aestimacion_demanda_en_presentacion">
+      </div>
     </div>
     @error('aestimacion_demanda_en_presentacion')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -158,8 +176,26 @@
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="aestimacion_demanda_en_presentacion_usd">{{ __('Estimación Demanda en la Presentación Dólares') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="aestimacion_demanda_en_presentacion_usd" id="aestimacion_demanda_en_presentacion_usd" class="form-control @error('aestimacion_demanda_en_presentacion_usd') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $aestimacion_demanda_en_presentacion_usd ?? '' }}',
+        wireModelName: 'aestimacion_demanda_en_presentacion_usd',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('aestimacion_demanda_en_presentacion_usd', val);
+          }
+        },
+      watchProperty: '$wire.aestimacion_demanda_en_presentacion_usd'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="aestimacion_demanda_en_presentacion_usd" x-ref="cleaveInput" wire:ignore class="form-control js-input-aestimacion_demanda_en_presentacion_usd">
+      </div>
     </div>
     @error('aestimacion_demanda_en_presentacion_usd')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -168,8 +204,26 @@
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="liquidacion_intereses_aprobada_crc">{{ __('Liquidacion de intereses aprobada Colones') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="liquidacion_intereses_aprobada_crc" id="liquidacion_intereses_aprobada_crc" class="form-control @error('liquidacion_intereses_aprobada_crc') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $liquidacion_intereses_aprobada_crc ?? '' }}',
+        wireModelName: 'liquidacion_intereses_aprobada_crc',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('liquidacion_intereses_aprobada_crc', val);
+          }
+        },
+      watchProperty: '$wire.liquidacion_intereses_aprobada_crc'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="liquidacion_intereses_aprobada_crc" x-ref="cleaveInput" wire:ignore class="form-control js-input-liquidacion_intereses_aprobada_crc">
+      </div>
     </div>
     @error('liquidacion_intereses_aprobada_crc')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -178,8 +232,26 @@
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="liquidacion_intereses_aprobada_usd">{{ __('Liquidacion de intereses aprobada Dólares') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="liquidacion_intereses_aprobada_usd" id="liquidacion_intereses_aprobada_usd" class="form-control @error('liquidacion_intereses_aprobada_usd') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $liquidacion_intereses_aprobada_usd ?? '' }}',
+        wireModelName: 'liquidacion_intereses_aprobada_usd',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('liquidacion_intereses_aprobada_usd', val);
+          }
+        },
+      watchProperty: '$wire.liquidacion_intereses_aprobada_usd'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="liquidacion_intereses_aprobada_usd" x-ref="cleaveInput" wire:ignore class="form-control js-input-liquidacion_intereses_aprobada_usd">
+      </div>
     </div>
     @error('liquidacion_intereses_aprobada_usd')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -257,8 +329,26 @@
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="ahonorarios_totales">{{ __('Honorarios Totales Colones') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="ahonorarios_totales" id="ahonorarios_totales" class="form-control @error('ahonorarios_totales') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $ahonorarios_totales ?? '' }}',
+        wireModelName: 'ahonorarios_totales',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('ahonorarios_totales', val);
+          }
+        },
+      watchProperty: '$wire.ahonorarios_totales'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="ahonorarios_totales" x-ref="cleaveInput" wire:ignore class="form-control js-input-ahonorarios_totales">
+      </div>
     </div>
     @error('ahonorarios_totales')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -267,8 +357,26 @@
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="ahonorarios_totales_usd">{{ __('Honorarios Totales Dólares') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="ahonorarios_totales_usd" id="ahonorarios_totales_usd" class="form-control @error('ahonorarios_totales_usd') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $ahonorarios_totales_usd ?? '' }}',
+        wireModelName: 'ahonorarios_totales_usd',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('ahonorarios_totales_usd', val);
+          }
+        },
+      watchProperty: '$wire.ahonorarios_totales_usd'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="ahonorarios_totales_usd" x-ref="cleaveInput" wire:ignore class="form-control js-input-ahonorarios_totales_usd">
+      </div>
     </div>
     @error('ahonorarios_totales_usd')
     <div class="text-danger mt-1">{{ $message }}</div>
