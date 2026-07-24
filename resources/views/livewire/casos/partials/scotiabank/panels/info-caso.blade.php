@@ -105,9 +105,26 @@
 
  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="asaldo_capital_operacion">{{ __('Saldo Inicial') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model.live="asaldo_capital_operacion" id="asaldo_capital_operacion"
-          class="form-control @error('asaldo_capital_operacion') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $asaldo_capital_operacion ?? '' }}',
+        wireModelName: 'asaldo_capital_operacion',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('asaldo_capital_operacion', val);
+          }
+        },
+      watchProperty: '$wire.asaldo_capital_operacion'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="asaldo_capital_operacion" x-ref="cleaveInput" wire:ignore class="form-control js-input-asaldo_capital_operacion">
+      </div>
     </div>
     @error('asaldo_capital_operacion')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -129,8 +146,6 @@
     @enderror
   </div>
 
-  @php
-  /*
  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="psaldo_dolarizado">{{ __('Saldo Dolarizado') }}</label>
     <div
@@ -159,18 +174,6 @@
     </div>
     @error('psaldo_dolarizado')
       <div class="text-danger mt-1">{{ $message }}</div>
-    @enderror
-  </div>
-  */
-  @endphp
- <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
-    <label class="form-label" for="psaldo_dolarizado">{{ __('Saldo Dolarizado') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="psaldo_dolarizado" id="psaldo_dolarizado"
-          class="form-control @error('psaldo_dolarizado') is-invalid @enderror">
-    </div>
-    @error('psaldo_dolarizado')
-    <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
   </div>
 
@@ -601,9 +604,26 @@
   @endphp
  <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="pmonto_estimacion_demanda">{{ __('Monto Estimación Demanda') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model.live="pmonto_estimacion_demanda" id="pmonto_estimacion_demanda"
-          class="form-control @error('pmonto_estimacion_demanda') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $pmonto_estimacion_demanda ?? '' }}',
+        wireModelName: 'pmonto_estimacion_demanda',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('pmonto_estimacion_demanda', val);
+          }
+        },
+      watchProperty: '$wire.pmonto_estimacion_demanda'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="pmonto_estimacion_demanda" x-ref="cleaveInput" wire:ignore class="form-control js-input-pmonto_estimacion_demanda">
+      </div>
     </div>
     @error('pmonto_estimacion_demanda')
     <div class="text-danger mt-1">{{ $message }}</div>

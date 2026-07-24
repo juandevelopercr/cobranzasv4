@@ -338,8 +338,8 @@ class CasoDavivienda extends CasoManager
       'rcausa' => ['nullable', 'string'],
       'dresultado_sentencia' => ['nullable', 'string'],
       'apuesta_posesion' => ['nullable', 'string'],
-      'pmonto_retencion_colones' => ['nullable', 'string'],
-      'pmonto_retencion_dolares' => ['nullable', 'string'],
+      'pmonto_retencion_colones' => ['nullable', 'numeric'],
+      'pmonto_retencion_dolares' => ['nullable', 'numeric'],
       'codigo_alerta' => ['nullable', 'string'],
       'ames_avance_judicial' => ['nullable', 'string'],
       'lavance_cronologico' => ['nullable', 'string'],
@@ -451,22 +451,22 @@ class CasoDavivienda extends CasoManager
       'pdatos_fiadores' => ['nullable', 'string', 'max:190'],
       'pnumero_expediente_judicial' => ['nullable', 'string', 'max:190'],
       'pnumero_operacion1' => ['nullable', 'string', 'max:190'],
-      'pmonto_estimacion_demanda' => ['nullable', 'string', 'max:190'],
+      'pmonto_estimacion_demanda' => ['nullable', 'numeric'],
       'pmonto_estimacion_demanda_colones' => ['nullable', 'string', 'max:190'],
       'pmonto_estimacion_demanda_dolares' => ['nullable', 'string', 'max:190'],
-      'asaldo_capital_operacion' => ['nullable', 'string', 'max:190'],
-      'asaldo_capital_operacion_usd' => ['nullable', 'string', 'max:190'],
+      'asaldo_capital_operacion' => ['nullable', 'numeric'],
+      'asaldo_capital_operacion_usd' => ['nullable', 'numeric'],
       'aestimacion_demanda_en_presentacion' => ['nullable', 'string', 'max:190'],
       'aestimacion_demanda_en_presentacion_usd' => ['nullable', 'string', 'max:190'],
       'liquidacion_intereses_aprobada_crc' => ['nullable', 'string', 'max:190'],
       'liquidacion_intereses_aprobada_usd' => ['nullable', 'string', 'max:190'],
-      'agastos_legales' => ['nullable', 'string', 'max:190'],
+      'agastos_legales' => ['nullable', 'numeric'],
       'ahonorarios_totales' => ['nullable', 'string', 'max:190'],
       'ahonorarios_totales_usd' => ['nullable', 'string', 'max:190'],
       'amonto_cancelar' => ['nullable', 'string', 'max:190'],
       'amonto_incobrable' => ['nullable', 'string', 'max:190'],
-      'amonto_avaluo' => ['nullable', 'string', 'max:190'],
-      'psaldo_dolarizado' => ['nullable', 'string', 'max:190'],
+      'amonto_avaluo' => ['nullable', 'numeric'],
+      'psaldo_dolarizado' => ['nullable', 'numeric'],
       'pnombre_demandado' => ['nullable', 'string', 'max:190'],
       'bgastos_proceso' => ['nullable', 'string', 'max:190'],
       'pdespacho_judicial_juzgado' => ['nullable', 'string', 'max:190'],
@@ -776,6 +776,7 @@ class CasoDavivienda extends CasoManager
   public function store()
   {
     $this->cleanEmptyForeignKeys();
+    $this->cleanEmptyNumericFields();
     $this->validate();
     $this->user_create = auth()->user()->name;
     $this->formatDateForStorageDB();
@@ -856,6 +857,7 @@ class CasoDavivienda extends CasoManager
   public function update()
   {
     $this->cleanEmptyForeignKeys();
+    $this->cleanEmptyNumericFields();
     $this->validate();
     $this->user_update = auth()->user()->name;
     $this->formatDateForStorageDB();

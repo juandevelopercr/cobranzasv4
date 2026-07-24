@@ -109,7 +109,7 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 select2-primary fv-plugins-icon-container">
-    <label class="form-label" for="codigo_activacion">{{ __('Exonerado de cobro') }}</label>
+    <label class="form-label" for="codigo_activacion">{{ __('Código de Activación') }}</label>
     <div wire:ignore>
       <select wire:model.live="codigo_activacion" id="codigo_activacion" class="select2 form-select @error('codigo_activacion') is-invalid @enderror">
         <option value="">{{ __('Seleccione...') }}</option>

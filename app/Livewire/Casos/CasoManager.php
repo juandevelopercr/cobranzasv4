@@ -1204,6 +1204,28 @@ class CasoManager extends BaseComponent
     }
   }
 
+  // Evita el error SQL "Incorrect decimal value: ''" cuando un campo de dinero
+  // (validado como 'numeric') se deja vacío: Livewire envía '' y 'nullable' no
+  // lo convierte a null antes del update/insert en una columna decimal.
+  protected function cleanEmptyNumericFields()
+  {
+    if (!method_exists($this, 'rules')) {
+      return;
+    }
+
+    foreach ($this->rules() as $key => $rules) {
+      if (!is_array($rules) || !in_array('numeric', $rules, true)) {
+        continue;
+      }
+
+      $property = strtok($key, '.'); // soporta reglas tipo 'fechasRemate.*.fecha'
+
+      if (property_exists($this, $property) && $this->$property === '') {
+        $this->$property = null;
+      }
+    }
+  }
+
   public function updatedPerPage($value)
   {
     $this->resetPage(); // Resetea la página a la primera cada vez que se actualiza $perPage

@@ -92,8 +92,26 @@
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="asaldo_capital_operacion">{{ __('Saldo Capital de la Operación Colones') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="asaldo_capital_operacion" id="asaldo_capital_operacion" class="form-control @error('asaldo_capital_operacion') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $asaldo_capital_operacion ?? '' }}',
+        wireModelName: 'asaldo_capital_operacion',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('asaldo_capital_operacion', val);
+          }
+        },
+      watchProperty: '$wire.asaldo_capital_operacion'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="asaldo_capital_operacion" x-ref="cleaveInput" wire:ignore class="form-control js-input-asaldo_capital_operacion">
+      </div>
     </div>
     @error('asaldo_capital_operacion')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -102,8 +120,26 @@
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="asaldo_capital_operacion_usd">{{ __('Saldo Capital de la Operación Dólares') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="asaldo_capital_operacion_usd" id="asaldo_capital_operacion_usd" class="form-control @error('asaldo_capital_operacion_usd') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $asaldo_capital_operacion_usd ?? '' }}',
+        wireModelName: 'asaldo_capital_operacion_usd',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('asaldo_capital_operacion_usd', val);
+          }
+        },
+      watchProperty: '$wire.asaldo_capital_operacion_usd'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="asaldo_capital_operacion_usd" x-ref="cleaveInput" wire:ignore class="form-control js-input-asaldo_capital_operacion_usd">
+      </div>
     </div>
     @error('asaldo_capital_operacion_usd')
     <div class="text-danger mt-1">{{ $message }}</div>
@@ -152,8 +188,26 @@
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="agastos_legales">{{ __('Gastos Legales') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="agastos_legales" id="agastos_legales" class="form-control @error('agastos_legales') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $agastos_legales ?? '' }}',
+        wireModelName: 'agastos_legales',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('agastos_legales', val);
+          }
+        },
+      watchProperty: '$wire.agastos_legales'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="agastos_legales" x-ref="cleaveInput" wire:ignore class="form-control js-input-agastos_legales">
+      </div>
     </div>
     @error('agastos_legales')
     <div class="text-danger mt-1">{{ $message }}</div>

@@ -79,8 +79,26 @@
 
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 fv-plugins-icon-container">
     <label class="form-label" for="agastos_legales">{{ __('Gastos Legales') }}</label>
-    <div class="input-group input-group-merge has-validation">
-      <input type="text" wire:model="agastos_legales" id="agastos_legales" class="form-control @error('agastos_legales') is-invalid @enderror">
+    <div
+      x-data="cleaveLivewire({
+        initialValue: '{{ $agastos_legales ?? '' }}',
+        wireModelName: 'agastos_legales',
+        postUpdate: false,
+        decimalScale: 2,
+        allowNegative: true,
+        rawValueCallback: (val) => {
+          const component = Livewire.find($refs.cleaveInput.closest('[wire\\:id]').getAttribute('wire:id'));
+          if (component) {
+            component.set('agastos_legales', val);
+          }
+        },
+      watchProperty: '$wire.agastos_legales'
+      })"
+      x-init="init($refs.cleaveInput)"
+    >
+      <div class="input-group input-group-merge has-validation">
+        <input type="text" id="agastos_legales" x-ref="cleaveInput" wire:ignore class="form-control js-input-agastos_legales">
+      </div>
     </div>
     @error('agastos_legales')
     <div class="text-danger mt-1">{{ $message }}</div>

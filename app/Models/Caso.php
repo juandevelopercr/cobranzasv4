@@ -33,6 +33,20 @@ class Caso extends Model implements HasMedia
 
   protected $table = 'casos';
 
+  protected function casts(): array
+  {
+    return [
+      // Migradas de varchar a decimal(18,2) — ver docs/casos/04-plan-migracion-campos-numericos.md
+      'agastos_legales' => 'decimal:2',
+      'amonto_avaluo' => 'decimal:2',
+      'asaldo_capital_operacion' => 'decimal:2',
+      'asaldo_capital_operacion_usd' => 'decimal:2',
+      'pmonto_retencion_colones' => 'decimal:2',
+      'pmonto_retencion_dolares' => 'decimal:2',
+      'psaldo_dolarizado' => 'decimal:2',
+    ];
+  }
+
   protected $fillable = [
     'contact_id',
     'bank_id',
