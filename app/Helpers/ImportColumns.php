@@ -20,6 +20,58 @@ class ImportColumns
         );
     }
 
+    /**
+     * Convierte un valor de celda de Excel (posiblemente con símbolo de
+     * moneda, separador de miles, coma o punto decimal, o sufijo/prefijo
+     * USD/CRC) a un número limpio, o null si no se puede interpretar con
+     * confianza. Usado para los campos de dinero de `casos` que ya son
+     * `decimal` en la base de datos — nunca hay que asignarles texto sin
+     * pasar por aquí, porque el cast a decimal del modelo truena con
+     * cualquier string que no sea un número simple (ver incidente
+     * 2026-07-23, docs/casos/04-plan-migracion-campos-numericos.md).
+     */
+    public static function parseMoney($raw): ?float
+    {
+        if ($raw === null) return null;
+        if (is_int($raw) || is_float($raw)) return (float) $raw;
+
+        $val = trim(str_replace(['$', '₡', '¢', ' ', "\xc2\xa0"], '', (string) $raw));
+        $val = preg_replace('/^(USD|CRC)\s*/i', '', $val);
+        $val = preg_replace('/\s*(USD|CRC)\.?$/i', '', $val);
+        $val = trim($val, ' .');
+        if ($val === '') return null;
+
+        $commaCount = substr_count($val, ',');
+        $dotCount = substr_count($val, '.');
+
+        if ($commaCount >= 1 && $dotCount >= 1) {
+            if (strrpos($val, ',') > strrpos($val, '.')) {
+                $val = str_replace('.', '', $val);
+                $val = str_replace(',', '.', $val);
+            } else {
+                $val = str_replace(',', '', $val);
+            }
+        } elseif ($commaCount >= 2) {
+            $lastComma = strrpos($val, ',');
+            $decimals = substr($val, $lastComma + 1);
+            $intPart = str_replace(',', '', substr($val, 0, $lastComma));
+            $val = $intPart . '.' . $decimals;
+        } elseif ($commaCount === 1) {
+            $afterComma = substr($val, strrpos($val, ',') + 1);
+            $val = strlen($afterComma) <= 2 ? str_replace(',', '.', $val) : str_replace(',', '', $val);
+        } elseif ($dotCount >= 2) {
+            $lastDot = strrpos($val, '.');
+            $decimals = substr($val, $lastDot + 1);
+            $intPart = str_replace('.', '', substr($val, 0, $lastDot));
+            $val = $intPart . '.' . $decimals;
+        } elseif (preg_match('/^\d+\.$/', $val)) {
+            $val = rtrim($val, '.');
+        }
+
+        if (!preg_match('/^-?\d+(\.\d+)?$/', $val)) return null;
+        return is_numeric($val) ? (float) $val : null;
+    }
+
     public const COLUMNAS_SANJOSE = [
         'Número'=> ['campo'=>'pnumero', 'tipo'=>'string'],
         'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
@@ -28,7 +80,7 @@ class ImportColumns
         'Operación' => ['campo' => 'pnumero_operacion1', 'tipo' => 'string'],
         'Nombre' => ['campo' => 'pnombre_demandado', 'tipo' => 'string'],
         'Cédula' => ['campo' => 'pnumero_cedula', 'tipo' => 'string'],
-        'Monto demanda' => ['campo' => 'pmonto_estimacion_demanda', 'tipo' => 'string'],
+        'Monto demanda' => ['campo' => 'pmonto_estimacion_demanda', 'tipo' => 'money'],
         'Moneda' => ['campo' => 'currency_id', 'tipo' => 'string'],
         'Expediente' => ['campo' => 'pnumero_expediente_judicial', 'tipo' => 'string'],
         'Estado Procesal' => ['campo' => 'aestado_proceso_general_id', 'tipo' => 'string'],
@@ -42,8 +94,8 @@ class ImportColumns
         'F. Protocolización' => ['campo' => 'afecha_protocolizacion', 'tipo' => 'date'],
         'F. Puesta en Posesión' => ['campo' => 'afecha_senalamiento_puesta_posesion', 'tipo' => 'date'],
         'F. Arreglo P' => ['campo' => 'afecha_suspencion_arreglo', 'tipo' => 'date'],
-        'Monto Retenc ¢' => ['campo' => 'pmonto_retencion_colones', 'tipo' => 'string'],
-        'Monto Retenc $' => ['campo' => 'pmonto_retencion_dolares', 'tipo' => 'string'],
+        'Monto Retenc ¢' => ['campo' => 'pmonto_retencion_colones', 'tipo' => 'money'],
+        'Monto Retenc $' => ['campo' => 'pmonto_retencion_dolares', 'tipo' => 'money'],
         'Inmueble' => ['campo' => 'pinmueble', 'tipo' => 'string'],
         'Vehículo' => ['campo' => 'pvehiculo', 'tipo' => 'string'],
         'F. Captura' => ['campo' => 'sfecha_captura', 'tipo' => 'date'],
@@ -108,13 +160,13 @@ class ImportColumns
                         'Bienes Adjudicados'=>['campo'=>'abienes_adjudicados', 'tipo'=>'string'],
                         'Fecha señalamiento de puesta en posesión'=>['campo'=>'afecha_senalamiento_puesta_posesion', 'tipo'=>'date'],
                         'Puesta en posesión'=>['campo'=>'apuesta_posesion', 'tipo'=>'string'],
-                        'Saldo Capital de la Operación Colones'=>['campo'=>'asaldo_capital_operacion', 'tipo'=>'string'],
-                        'Saldo Capital de la Operación Dólares'=>['campo'=>'asaldo_capital_operacion_usd', 'tipo'=>'string'],
+                        'Saldo Capital de la Operación Colones'=>['campo'=>'asaldo_capital_operacion', 'tipo'=>'money'],
+                        'Saldo Capital de la Operación Dólares'=>['campo'=>'asaldo_capital_operacion_usd', 'tipo'=>'money'],
                         'Estimación de la Demanda en la Presentación Colones'=>['campo'=>'aestimacion_demanda_en_presentacion', 'tipo'=>'string'],
                         'Estimación de la Demanda en la Presentación Dólares'=>['campo'=>'aestimacion_demanda_en_presentacion_usd', 'tipo'=>'string'],
                         'Liquidacion de intereses aprobada Colones'=>['campo'=>'liquidacion_intereses_aprobada_crc', 'tipo'=>'string'],
                         'Liquidacion de intereses aprobada Dólares'=>['campo'=>'liquidacion_intereses_aprobada_usd', 'tipo'=>'string'],
-                        'Gastos Legales'=>['campo'=>'agastos_legales', 'tipo'=>'string'],
+                        'Gastos Legales'=>['campo'=>'agastos_legales', 'tipo'=>'money'],
                         'Honorarios totales Dólares'=>['campo'=>'ahonorarios_totales_usd', 'tipo'=>'string'],
                         'Honorarios totales Colones'=>['campo'=>'ahonorarios_totales', 'tipo'=>'string'],
                         'Bufete'=>['campo'=>'abufete', 'tipo'=>'string'],
@@ -122,8 +174,8 @@ class ImportColumns
                         'Tiempo en años'=>['campo'=>'tiempo_annos', 'tipo'=>'string'],
                         'Retenciones'=>['campo'=>'pretenciones', 'tipo'=>'string'],
                         'Fecha de última liquidación'=>['campo'=>'nfecha_ultima_liquidacion', 'tipo'=>'date'],
-                        'Monto Retenc Colones'=>['campo'=>'pmonto_retencion_colones', 'tipo'=>'string'],
-                        'Monto Retenc Dólares'=>['campo'=>'pmonto_retencion_dolares', 'tipo'=>'string'],
+                        'Monto Retenc Colones'=>['campo'=>'pmonto_retencion_colones', 'tipo'=>'money'],
+                        'Monto Retenc Dólares'=>['campo'=>'pmonto_retencion_dolares', 'tipo'=>'money'],
                         'Fecha de activación'=>['campo'=>'fecha_activacion', 'tipo'=>'date'],
                         'Código de activación'=>['campo'=>'codigo_activacion', 'tipo'=>'string'],
                         'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
@@ -147,9 +199,9 @@ class ImportColumns
         'MONEDA'=>['campo'=>'currency_id', 'tipo'=>'string'],
         'Detalle de garantía'=>['campo'=>'pdetalle_garantia', 'tipo'=>'string'],
         'Teléfono Demandado Deudor O Arrendatario'=>['campo'=>'ptelefono_demandado_deudor_o_arrendatario', 'tipo'=>'string'],
-        'Saldo Dolarizado'=>['campo'=>'psaldo_dolarizado', 'tipo'=>'string'],
+        'Saldo Dolarizado'=>['campo'=>'psaldo_dolarizado', 'tipo'=>'money'],
 
-        'Monto Estimación Demanda'=>['campo'=>'pmonto_estimacion_demanda', 'tipo'=>'string'],
+        'Monto Estimación Demanda'=>['campo'=>'pmonto_estimacion_demanda', 'tipo'=>'money'],
         'Firma Legal'=>['campo'=>'afirma_legal', 'tipo'=>'string'],
         'Fecha Asignación de Caso'=>['campo'=>'pfecha_asignacion_caso', 'tipo'=>'date'],
         'Fecha Presentación Demanda'=>['campo'=>'pfecha_presentacion_demanda', 'tipo'=>'date'],
@@ -203,7 +255,7 @@ class ImportColumns
         'DETALLE DE GARANTÍA O DOCUMENTO'=>['campo'=>'pdetalle_garantia', 'tipo'=>'string'],
         'Despacho Judicial Juzgado'=>['campo'=>'pdespacho_judicial_juzgado', 'tipo'=>'string'],
         'Número Expediente Judicial'=>['campo'=>'pnumero_expediente_judicial', 'tipo'=>'string'],
-        'Monto Estimación Demanda'=>['campo'=>'pmonto_estimacion_demanda', 'tipo'=>'string'],
+        'Monto Estimación Demanda'=>['campo'=>'pmonto_estimacion_demanda', 'tipo'=>'money'],
         'INMUEBLES'=>['campo'=>'pinmueble', 'tipo'=>'string'],
         'MUEBLES'=>['campo'=>'pmueble', 'tipo'=>'string'],
         'Fecha Presentación Demanda'=>['campo'=>'pfecha_presentacion_demanda', 'tipo'=>'date'],
@@ -267,7 +319,7 @@ class ImportColumns
         'Avance cronológico'=>['campo'=>'pavance_cronologico', 'tipo'=>'string'],
         'Tipo de Garantía'=>['campo'=>'ntipo_garantia', 'tipo'=>'string'],
         'Detalle de la Garantía'=>['campo'=>'pdetalle_garantia', 'tipo'=>'string'],
-        'Monto Avaluo'=>['campo'=>'amonto_avaluo', 'tipo'=>'string'],
+        'Monto Avaluo'=>['campo'=>'amonto_avaluo', 'tipo'=>'money'],
         'Fecha avaluo'=>['campo'=>'afecha_avaluo', 'tipo'=>'date'],
         'Embargos cuentas'=>['campo'=>'aembargo_cuentas', 'tipo'=>'string'],
         'Embargos Salarios'=>['campo'=>'aembargo_salarios', 'tipo'=>'string'],
@@ -283,11 +335,11 @@ class ImportColumns
         'Bienes Adjudicados'=>['campo'=>'abienes_adjudicados', 'tipo'=>'string'],
         'Fecha señalamiento de puesta en posesión'=>['campo'=>'afecha_senalamiento_puesta_posesion', 'tipo'=>'date'],
         'Puesta en posesión'=>['campo'=>'apuesta_posesion', 'tipo'=>'string'],
-        'Saldo Capital de la Operación'=>['campo'=>'asaldo_capital_operacion', 'tipo'=>'string'],
+        'Saldo Capital de la Operación'=>['campo'=>'asaldo_capital_operacion', 'tipo'=>'money'],
         'Estimación en colones de la Demanda en la Presentación'=>['campo'=>'pmonto_estimacion_demanda_colones', 'tipo'=>'string'],
-        'Estimación en dólares de la Demanda en la Presentación'=>['campo'=>'pmonto_estimacion_demanda_dolares', 'tipo'=>'string'],
-        'Estimación dolarizada de la Demanda en la Presentación'=>['campo'=>'psaldo_dolarizado', 'tipo'=>'string'],
-        'Gastos Legales'=>['campo'=>'agastos_legales', 'tipo'=>'string'],
+        'Estimación en dólares de la Demanda en la Presentación'=>['campo'=>'pmonto_estimacion_demanda_dolares', 'tipo'=>'money'],
+        'Estimación dolarizada de la Demanda en la Presentación'=>['campo'=>'psaldo_dolarizado', 'tipo'=>'money'],
+        'Gastos Legales'=>['campo'=>'agastos_legales', 'tipo'=>'money'],
         'Honorarios totales'=>['campo'=>'ahonorarios_totales', 'tipo'=>'string'],
         'Bufete'=>['campo'=>'abufete', 'tipo'=>'string'],
         'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
@@ -323,8 +375,8 @@ class ImportColumns
         'Fecha de celebración de Tercer remate'=>['campo'=>'sfecha_tercer_remate', 'tipo'=>'date'],
         'Fecha de firmeza de aprobación de remate'=>['campo'=>'afecha_aprobacion_remate', 'tipo'=>'date'],
         'Moneda'=>['campo'=>'currency_id', 'tipo'=>'string'],
-        'Estimación de la demanda'=>['campo'=>'pmonto_estimacion_demanda', 'tipo'=>'string'],
-        'Saldo Capital de la Operación'=>['campo'=>'asaldo_capital_operacion', 'tipo'=>'string'],
+        'Estimación de la demanda'=>['campo'=>'pmonto_estimacion_demanda', 'tipo'=>'money'],
+        'Saldo Capital de la Operación'=>['campo'=>'asaldo_capital_operacion', 'tipo'=>'money'],
         'Probabilidad de recuperación'=>['campo'=>'pexpectativa_recuperacion_id', 'tipo'=>'string'],
         'Mes de avance judicial'=>['campo'=>'ames_avance_judicial', 'tipo'=>'string'],
         'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
@@ -353,7 +405,7 @@ class ImportColumns
         'Fecha de Remate 3'=>['campo'=>'sfecha_tercer_remate', 'tipo'=>'date'],
         'Bien adjudicado #'=>['campo'=>'abienes_adjudicados', 'tipo'=>'string'],
         'Moneda'=>['campo'=>'currency_id', 'tipo'=>'string'],
-        'Monto Estimación Demanda'=>['campo'=>'pmonto_estimacion_demanda', 'tipo'=>'string'],
+        'Monto Estimación Demanda'=>['campo'=>'pmonto_estimacion_demanda', 'tipo'=>'money'],
         'ESTIMACION DE GASTOS'=>['campo'=>'bgastos_proceso', 'tipo'=>'string'],
         'Fecha de Terminación'=>['campo'=>'afecha_terminacion', 'tipo'=>'date'],
         'Fecha de asignación al capturador' => ['campo' => 'f1fecha_asignacion_capturador', 'tipo' => 'date'],
@@ -372,7 +424,7 @@ class ImportColumns
         'Operación' => ['campo' => 'pnumero_operacion1', 'tipo' => 'string'],
         'Cliente'=>['campo'=>'contact_id', 'tipo'=>'string'],
         'Cédula' => ['campo' => 'pnumero_cedula', 'tipo' => 'string'],
-        'Saldo adeudado' => ['campo' => 'psaldo_dolarizado', 'tipo' => 'string'],
+        'Saldo adeudado' => ['campo' => 'psaldo_dolarizado', 'tipo' => 'money'],
         'Moneda' => ['campo' => 'currency_id', 'tipo' => 'string'],
         'Expediente' => ['campo' => 'pnumero_expediente_judicial', 'tipo' => 'string'],
         'Estado Procesal' => ['campo' => 'estado_del_proceso', 'tipo' => 'string'],
@@ -381,8 +433,8 @@ class ImportColumns
         'F. Curso demanda' => ['campo' => 'pfecha_curso_demanda', 'tipo' => 'date'],
         'F. Notificación' => ['campo' => 'nfecha_notificacion_todas_partes', 'tipo' => 'date'],
         'F. Arreglo P' => ['campo' => 'afecha_suspencion_arreglo', 'tipo' => 'date'],
-        'Monto Retenc ¢' => ['campo' => 'pmonto_retencion_colones', 'tipo' => 'string'],
-        'Monto Retenc $' => ['campo' => 'pmonto_retencion_dolares', 'tipo' => 'string'],
+        'Monto Retenc ¢' => ['campo' => 'pmonto_retencion_colones', 'tipo' => 'money'],
+        'Monto Retenc $' => ['campo' => 'pmonto_retencion_dolares', 'tipo' => 'money'],
         'F. Terminado' => ['campo' => 'afecha_terminacion', 'tipo' => 'date'],
         'Comentarios' => ['campo' => 'ncomentarios', 'tipo' => 'string'],
         'Fecha de asignación al notificador' => ['campo' => 'f1fecha_asignacion_notificador', 'tipo' => 'date'],

@@ -1832,6 +1832,8 @@ class CasoCoocique2 extends CasoManager
                 $valor = is_numeric($valor) ? (int)$valor : null;
             } elseif ($tipo === 'float') {
                 $valor = is_numeric($valor) ? (float)$valor : null;
+            } elseif ($tipo === 'money') {
+                $valor = \App\Helpers\ImportColumns::parseMoney($valor);
             } elseif ($tipo === 'string') {
                 $valor = trim((string)$valor);
                 if ($valor === '') {
@@ -1864,7 +1866,12 @@ class CasoCoocique2 extends CasoManager
             continue;
         }
 
-        $validator = Validator::make($caso->toArray(), $this->rules());
+        try {
+            $validator = Validator::make($caso->toArray(), $this->rules());
+        } catch (\Throwable $e) {
+            $errores[] = "Fila " . ($r + 1) . ": no se pudo procesar la fila (revisar los valores numéricos) — " . $e->getMessage();
+            continue;
+        }
 
         if ($validator->fails()) {
             foreach ($validator->errors()->messages() as $field => $messages) {
