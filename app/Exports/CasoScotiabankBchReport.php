@@ -20,6 +20,7 @@ class CasoScotiabankBchReport extends BaseReport
       ['label' => 'Operación Nueva', 'field' => 'pnumero_operacion1', 'type' => 'string', 'align' => 'left', 'width' => 25],
       ['label' => 'Producto', 'field' => 'producto', 'type' => 'string', 'align' => 'left', 'width' => 30],
       ['label' => 'Nombre del Cliente', 'field' => 'pnombre_demandado', 'type' => 'string', 'align' => 'left', 'width' => 60],
+      ['label' => 'Moneda', 'field' => 'moneda', 'type' => 'string', 'align' => 'center', 'width' => 10],
       ['label' => 'Saldo Inicial', 'field' => 'asaldo_capital_operacion', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
       ['label' => 'Saldo Dolarizado', 'field' => 'psaldo_dolarizado', 'type' => 'decimal', 'align' => 'right', 'width' => 20],
       ['label' => 'Firma Legal', 'field' => 'afirma_legal', 'type' => 'string', 'align' => 'right', 'width' => 20],
@@ -75,12 +76,7 @@ class CasoScotiabankBchReport extends BaseReport
         'casos.ptelefono_demandado_deudor_o_arrendatario',
         'casos.psaldo_dolarizado',
         'casos.afirma_legal',
-        DB::raw("
-            CASE
-                WHEN currencies.code = 'USD' THEN 2
-                ELSE 1
-            END AS moneda
-        "),
+        'currencies.code as moneda',
         'product.nombre as producto',
         'proceso.nombre as proceso',
         DB::raw("'BUFETE LACLE' AS buffete"),

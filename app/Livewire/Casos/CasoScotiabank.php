@@ -776,6 +776,10 @@ class CasoScotiabank extends CasoManager
     $this->user_create = auth()->user()->name;
     $this->user_update = auth()->user()->name;
 
+    if (!$this->tipo_de_cambio && $this->fecha_creacion) {
+        $this->autoFetchTipoCambio();
+    }
+
     $this->action = 'create';
     $this->dispatch('scroll-to-top');
     $this->dispatch('select2');
@@ -786,6 +790,7 @@ class CasoScotiabank extends CasoManager
   {
     $this->cleanEmptyForeignKeys();
     $this->cleanEmptyNumericFields();
+    $this->sincronizarSaldosYDolarizado();
     $this->validate();
     $this->formatDateForStorageDB();
     $this->user_create = auth()->user()->name;
@@ -872,6 +877,7 @@ class CasoScotiabank extends CasoManager
   {
     $this->cleanEmptyForeignKeys();
     $this->cleanEmptyNumericFields();
+    $this->sincronizarSaldosYDolarizado();
     $this->validate();
     $this->formatDateForStorageDB();
     $this->user_update = auth()->user()->name;
@@ -960,6 +966,12 @@ class CasoScotiabank extends CasoManager
     $this->recalcularSaldoDolarizado();
   }
 
+  public function updatedFechaCreacion(): void
+  {
+    $this->tipo_de_cambio = null;
+    $this->autoFetchTipoCambio();
+  }
+
   private function normalizarDecimal(mixed $value): string
   {
     if ($value === null || $value === '') return '';
@@ -1017,6 +1029,21 @@ class CasoScotiabank extends CasoManager
     } catch (\Exception $e) {
         // Silencioso: usuario puede ingresar manualmente
     }
+  }
+
+  // Refuerzo al guardar: los hooks updated* solo sincronizan al escribir en el formulario.
+  private function sincronizarSaldosYDolarizado(): void
+  {
+    $tieneCapital    = $this->asaldo_capital_operacion !== null && $this->asaldo_capital_operacion !== '';
+    $tieneEstimacion = $this->pmonto_estimacion_demanda !== null && $this->pmonto_estimacion_demanda !== '';
+
+    if ($tieneCapital && !$tieneEstimacion) {
+        $this->pmonto_estimacion_demanda = $this->asaldo_capital_operacion;
+    } elseif ($tieneEstimacion && !$tieneCapital) {
+        $this->asaldo_capital_operacion = $this->pmonto_estimacion_demanda;
+    }
+
+    $this->recalcularSaldoDolarizado();
   }
 
   public function dispatchCalculoMasivo(): void
