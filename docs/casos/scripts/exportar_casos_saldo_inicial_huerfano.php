@@ -14,17 +14,29 @@
 use Illuminate\Support\Facades\DB;
 
 $rows = DB::table('casos')
-    ->whereIn('bank_id', [1, 13])
-    ->whereNull('asaldo_capital_operacion')
-    ->whereNull('pmonto_estimacion_demanda')
-    ->whereNotNull('psaldo_dolarizado')
-    ->orderBy('bank_id')
-    ->orderBy('pnumero')
-    ->get(['pnumero', 'pnombre_demandado', 'pnumero_expediente_judicial', 'bank_id', 'currency_id', 'psaldo_dolarizado', 'tipo_de_cambio']);
+    ->leftJoin('casos_productos', 'casos.product_id', '=', 'casos_productos.id')
+    ->whereIn('casos.bank_id', [1, 13])
+    ->whereNull('casos.asaldo_capital_operacion')
+    ->whereNull('casos.pmonto_estimacion_demanda')
+    ->whereNotNull('casos.psaldo_dolarizado')
+    ->orderBy('casos.bank_id')
+    ->orderBy('casos.pnumero')
+    ->get([
+        'casos.pnumero',
+        'casos.pnombre_demandado',
+        'casos_productos.nombre as producto',
+        'casos.pnumero_operacion1',
+        'casos.pnumero_operacion2',
+        'casos.pnumero_expediente_judicial',
+        'casos.bank_id',
+        'casos.currency_id',
+        'casos.psaldo_dolarizado',
+        'casos.tipo_de_cambio',
+    ]);
 
 $path = storage_path('app/casos_saldo_inicial_huerfano.csv');
 $fh = fopen($path, 'w');
-fputcsv($fh, ['Banco', 'Numero de caso', 'Nombre del Cliente', 'Numero expediente judicial', 'Saldo Dolarizado (sistema, no verificado)', 'Tipo de cambio usado', 'Saldo Inicial real (a llenar por el banco)']);
+fputcsv($fh, ['Banco', 'Numero de caso', 'Nombre del Cliente', 'Tipo de producto', 'Numero de Operacion #1', 'Numero de Operacion #2', 'Numero expediente judicial', 'Saldo Dolarizado (sistema, no verificado)', 'Tipo de cambio usado', 'Saldo Inicial real (a llenar por el banco)']);
 
 foreach ($rows as $row) {
     $banco = $row->bank_id == 1 ? 'DAVIBANK' : 'DAVIBANK-BCH';
@@ -32,6 +44,9 @@ foreach ($rows as $row) {
         $banco,
         $row->pnumero,
         $row->pnombre_demandado,
+        $row->producto,
+        $row->pnumero_operacion1,
+        $row->pnumero_operacion2,
         $row->pnumero_expediente_judicial,
         $row->psaldo_dolarizado,
         $row->tipo_de_cambio,
