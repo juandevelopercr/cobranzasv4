@@ -55,16 +55,29 @@ foreach ($textColumns as $col) {
     $sheet->getStyle($col . '2:' . $col . '1000')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
 }
 
+// Forzar como formula de texto ="..." ademas del formato @: Google Sheets a
+// veces ignora el formato de texto al importar un .xlsx en columnas que
+// parecen puramente numericas (12+ digitos) y las muestra en notacion
+// cientifica. La formula ="valor" es respetada tanto por Excel como por
+// Google Sheets, sin importar el formato de la columna.
+$asText = function (string $col, int $row, $value) use ($sheet) {
+    $value = (string) $value;
+    if ($value === '') {
+        return;
+    }
+    $sheet->setCellValue($col . $row, '="' . str_replace('"', '""', $value) . '"');
+};
+
 $r = 2;
 foreach ($rows as $row) {
     $banco = $row->bank_id == 1 ? 'DAVIBANK' : 'DAVIBANK-BCH';
     $sheet->setCellValueExplicit('A' . $r, $banco, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-    $sheet->setCellValueExplicit('B' . $r, (string) $row->pnumero, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+    $asText('B', $r, $row->pnumero);
     $sheet->setCellValueExplicit('C' . $r, (string) $row->pnombre_demandado, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
     $sheet->setCellValueExplicit('D' . $r, (string) $row->producto, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-    $sheet->setCellValueExplicit('E' . $r, (string) $row->pnumero_operacion1, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-    $sheet->setCellValueExplicit('F' . $r, (string) $row->pnumero_operacion2, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-    $sheet->setCellValueExplicit('G' . $r, (string) $row->pnumero_expediente_judicial, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+    $asText('E', $r, $row->pnumero_operacion1);
+    $asText('F', $r, $row->pnumero_operacion2);
+    $asText('G', $r, $row->pnumero_expediente_judicial);
     $sheet->setCellValue('H' . $r, (float) $row->psaldo_dolarizado);
     $sheet->setCellValue('I' . $r, $row->tipo_de_cambio !== null ? (float) $row->tipo_de_cambio : null);
     $sheet->setCellValue('J' . $r, null);
